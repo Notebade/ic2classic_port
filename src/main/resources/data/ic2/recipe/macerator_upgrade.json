@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "III",
+    "IMI",
+    "ICI"
+  ],
+  "key": {
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "M": {
+      "item": "ic2:stone_macerator"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    }
+  },
+  "result": {
+    "id": "ic2:macerator"
+  }
+}

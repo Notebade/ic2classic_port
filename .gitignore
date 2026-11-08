@@ -24,6 +24,8 @@ src/main/resources/assets/ic2/textures/block/electric/generator/solar_panel/
 src/main/resources/assets/ic2/textures/block/machine/lv/macerator/
 src/main/resources/assets/ic2/textures/block/machine/lv/electric_furnace/
 src/main/resources/assets/ic2/textures/block/machine/stone/iron_furnace/
+src/main/resources/assets/ic2/textures/block/machine/stone/macerator/*.png
+src/main/resources/assets/ic2/textures/item/dust/tin.png
 src/main/resources/assets/ic2/textures/block/machine/lv/extractor/
 src/main/resources/assets/ic2/textures/block/machine/lv/compressor/
 src/main/resources/assets/ic2/textures/block/machine/lv/pump/

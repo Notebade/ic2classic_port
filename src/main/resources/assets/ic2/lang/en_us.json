@@ -20,6 +20,8 @@
   "block.ic2.macerator": "Macerator",
   "block.ic2.electric_furnace": "Electric Furnace",
   "block.ic2.iron_furnace": "Iron Furnace",
+  "block.ic2.stone_macerator": "Stone Macerator",
+  "item.ic2.dust_tin": "Tin Dust",
   "block.ic2.extractor": "Extractor",
   "block.ic2.compressor": "Compressor",
   "block.ic2.pump": "Pump",

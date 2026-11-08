@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/machine/stone/macerator/active_down",
+    "up": "ic2:block/machine/stone/macerator/active_up",
+    "north": "ic2:block/machine/stone/macerator/active_south",
+    "south": "ic2:block/machine/stone/macerator/active_east",
+    "west": "ic2:block/machine/stone/macerator/active_west",
+    "east": "ic2:block/machine/stone/macerator/active_east"
+  }
+}

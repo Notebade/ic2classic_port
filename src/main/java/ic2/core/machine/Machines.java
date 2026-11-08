@@ -3,12 +3,17 @@ package ic2.core.machine;
 import ic2.core.IC2;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SimpleCookingSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -16,12 +21,25 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 
 public final class Machines {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(IC2.MOD_ID);
     private static final DeferredRegister<BlockEntityType<?>> ENTITIES =
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, IC2.MOD_ID);
     private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, IC2.MOD_ID);
+    private static final DeferredRegister<RecipeType<?>> RECIPE_TYPES =
+        DeferredRegister.create(Registries.RECIPE_TYPE, IC2.MOD_ID);
+    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
+        DeferredRegister.create(Registries.RECIPE_SERIALIZER, IC2.MOD_ID);
+    static final Supplier<RecipeType<StoneMacerationRecipe>> STONE_MACERATING =
+        RECIPE_TYPES.register("stone_macerating",
+            () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "stone_macerating")));
+    static final Supplier<RecipeSerializer<StoneMacerationRecipe>> STONE_MACERATING_SERIALIZER =
+        RECIPE_SERIALIZERS.register("stone_macerating", () -> new SimpleCookingSerializer<>(StoneMacerationRecipe::new, 400));
+    static final Supplier<MenuType<StoneMaceratorMenu>> STONE_MACERATOR_MENU =
+        MENUS.register("stone_macerator", () -> new MenuType<>(StoneMaceratorMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> MENU =
         MENUS.register("machine", () -> new MenuType<>(MachineMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> BATBOX_MENU =
@@ -46,6 +64,8 @@ public final class Machines {
             machineProperties());
     static final DeferredBlock<IronFurnaceBlock> IRON_FURNACE =
         BLOCKS.registerBlock("iron_furnace", IronFurnaceBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.FURNACE));
+    static final DeferredBlock<StoneMaceratorBlock> STONE_MACERATOR =
+        BLOCKS.registerBlock("stone_macerator", StoneMaceratorBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.FURNACE));
     static final DeferredBlock<EnergyStorageBlock> BATBOX =
         BLOCKS.registerBlock("batbox", properties -> new EnergyStorageBlock(properties, MachineKind.BATBOX), machineProperties());
     static final DeferredBlock<EnergyStorageBlock> MFE =
@@ -80,6 +100,9 @@ public final class Machines {
         ENTITIES.register("electric_furnace", () -> entityType(ELECTRIC_FURNACE.get()));
     static final Supplier<BlockEntityType<IronFurnaceBlockEntity>> IRON_FURNACE_ENTITY =
         ENTITIES.register("iron_furnace", () -> BlockEntityType.Builder.of(IronFurnaceBlockEntity::new, IRON_FURNACE.get()).build(null));
+    static final Supplier<BlockEntityType<StoneMaceratorBlockEntity>> STONE_MACERATOR_ENTITY =
+        ENTITIES.register("stone_macerator",
+            () -> BlockEntityType.Builder.of(StoneMaceratorBlockEntity::new, STONE_MACERATOR.get()).build(null));
     static final Supplier<BlockEntityType<MachineEntity>> BATBOX_ENTITY =
         ENTITIES.register("batbox", () -> entityType(BATBOX.get()));
     static final Supplier<BlockEntityType<MachineEntity>> MFE_ENTITY =
@@ -99,6 +122,8 @@ public final class Machines {
         BLOCKS.register(bus);
         ENTITIES.register(bus);
         MENUS.register(bus);
+        RECIPE_TYPES.register(bus);
+        RECIPE_SERIALIZERS.register(bus);
         bus.addListener(Machines::registerCapabilities);
         items.registerSimpleBlockItem(GENERATOR);
         items.registerSimpleBlockItem(GEOTHERMAL);
@@ -106,6 +131,7 @@ public final class Machines {
         items.registerSimpleBlockItem(MACERATOR);
         items.registerSimpleBlockItem(ELECTRIC_FURNACE);
         items.registerSimpleBlockItem(IRON_FURNACE);
+        items.registerSimpleBlockItem(STONE_MACERATOR);
         items.registerSimpleBlockItem(BATBOX);
         items.registerSimpleBlockItem(MFE);
         items.registerSimpleBlockItem(EXTRACTOR);
@@ -125,6 +151,7 @@ public final class Machines {
                 event.accept(MACERATOR.get());
                 event.accept(ELECTRIC_FURNACE.get());
                 event.accept(IRON_FURNACE.get());
+                event.accept(STONE_MACERATOR.get());
                 event.accept(BATBOX.get());
                 event.accept(MFE.get());
                 event.accept(EXTRACTOR.get());
@@ -144,7 +171,8 @@ public final class Machines {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GEOTHERMAL_ENTITY.get(), MachineEntity::geothermalFluid);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACERATOR_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ELECTRIC_FURNACE_ENTITY.get(), MachineEntity::automation);
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, IRON_FURNACE_ENTITY.get(), IronFurnaceBlockEntity::automation);
+        registerFuelInventory(event, IRON_FURNACE_ENTITY.get());
+        registerFuelInventory(event, STONE_MACERATOR_ENTITY.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BATBOX_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MFE_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, EXTRACTOR_ENTITY.get(), MachineEntity::automation);
@@ -153,6 +181,12 @@ public final class Machines {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, PUMP_ENTITY.get(), MachineEntity::fluidOutput);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, RECYCLER_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MASS_FABRICATOR_ENTITY.get(), MachineEntity::automation);
+    }
+
+    private static void registerFuelInventory(RegisterCapabilitiesEvent event,
+            BlockEntityType<? extends AbstractFurnaceBlockEntity> type) {
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, type,
+            (entity, side) -> side == null ? new InvWrapper(entity) : new SidedInvWrapper(entity, side));
     }
 
     private static BlockEntityType<MachineEntity> entityType(Block block) {

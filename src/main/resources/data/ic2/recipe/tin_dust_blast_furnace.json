@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "ingredient": {
+    "item": "ic2:dust_tin"
+  },
+  "result": {
+    "id": "ic2:ingot_tin"
+  },
+  "experience": 0.2,
+  "cookingtime": 100
+}

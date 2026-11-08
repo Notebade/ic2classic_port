@@ -22,6 +22,7 @@ final class Materials {
             BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
         var rawTin = items.registerSimpleItem("raw_tin");
         var tin = items.registerSimpleItem("ingot_tin");
+        var tinDust = items.registerSimpleItem("dust_tin");
         var refinedIron = items.registerSimpleItem("ingot_refined_iron");
         var circuit = items.registerSimpleItem("circuit");
         BLOCKS.register(bus);
@@ -33,6 +34,7 @@ final class Materials {
             if (event.getTabKey().equals(CreativeModeTabs.INGREDIENTS)) {
                 event.accept(rawTin.get());
                 event.accept(tin.get());
+                event.accept(tinDust.get());
                 event.accept(refinedIron.get());
                 event.accept(circuit.get());
                 event.accept(machineBlock.get());
