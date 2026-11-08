@@ -257,9 +257,11 @@ public final class Machines {
         var doubleInsulatedIronCableItem = items.registerSimpleBlockItem("iron_double_insulated_cable_item", DOUBLE_INSULATED_IRON_CABLE);
         var tripleInsulatedIronCableItem = items.registerSimpleBlockItem("iron_triple_insulated_cable_item", TRIPLE_INSULATED_IRON_CABLE);
         var wrench = items.registerItem("wrench", WrenchItem::new, new Item.Properties().durability(160));
+        var electricWrench = items.registerItem("electric_wrench", ElectricWrenchItem::new, new Item.Properties().stacksTo(1));
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTabKey().equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) {
                 event.accept(wrench.get());
+                event.accept(electricWrench.get());
             }
             if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) {
                 event.accept(GENERATOR.get());

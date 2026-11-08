@@ -1,5 +1,7 @@
 package ic2.core.machine;
 
+import java.util.function.IntConsumer;
+import java.util.function.IntPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -19,6 +21,11 @@ final class WrenchItem extends Item {
 
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        return useOnMachine(context, cost -> true, cost ->
+            stack.hurtAndBreak(cost, context.getPlayer(), LivingEntity.getSlotForHand(context.getHand())));
+    }
+
+    static InteractionResult useOnMachine(UseOnContext context, IntPredicate canPay, IntConsumer pay) {
         var level = context.getLevel();
         var player = context.getPlayer();
         var pos = context.getClickedPos();
@@ -34,15 +41,19 @@ final class WrenchItem extends Item {
         if (hasFacing && !facing.getPossibleValues().contains(target)) {
             return InteractionResult.PASS;
         }
+        boolean rotate = hasFacing && state.getValue(facing) != target;
+        int cost = rotate ? 1 : 10;
+        if (!canPay.test(cost)) {
+            return InteractionResult.PASS;
+        }
         if (level instanceof ServerLevel server) {
-            boolean rotate = hasFacing && state.getValue(facing) != target;
             boolean changed = rotate
                 ? server.setBlockAndUpdate(pos, state.setValue(facing, target))
                 : dismantle(server, pos, state, context);
             if (!changed) {
                 return InteractionResult.PASS;
             }
-            stack.hurtAndBreak(rotate ? 1 : 10, player, LivingEntity.getSlotForHand(context.getHand()));
+            pay.accept(cost);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
