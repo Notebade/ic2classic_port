@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "ic2:block/resources/rubberwood/log_top",
+    "side": "ic2:block/resources/rubberwood/log_sides"
+  }
+}

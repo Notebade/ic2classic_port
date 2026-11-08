@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "ic2:block/resources/rubberwood/log_sides",
+    "down": "ic2:block/resources/rubberwood/log_top",
+    "up": "ic2:block/resources/rubberwood/log_top",
+    "north": "ic2:block/resources/rubberwood/log_resin_full",
+    "east": "#particle",
+    "south": "#particle",
+    "west": "#particle"
+  }
+}

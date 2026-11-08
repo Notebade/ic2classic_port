@@ -11,6 +11,8 @@ reference/
 runs/
 src/main/resources/assets/ic2/textures/item/misc/rubber.png
 src/main/resources/assets/ic2/textures/item/misc/resin.png
+src/main/resources/assets/ic2/textures/block/resources/rubberwood/
+src/main/resources/assets/ic2/textures/item/tools/treetap/
 src/main/resources/assets/ic2/textures/block/electric/cable/copper.png
 src/main/resources/assets/ic2/textures/block/electric/generator/generator/
 src/main/resources/assets/ic2/textures/block/electric/generator/geothermal/

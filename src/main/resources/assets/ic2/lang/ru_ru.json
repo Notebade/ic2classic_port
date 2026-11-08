@@ -1,6 +1,10 @@
 {
   "item.ic2.rubber": "Резина",
   "item.ic2.sticky_resin": "Латекс",
+  "item.ic2.tree_tap": "Краник",
+  "block.ic2.rubber_wood": "Бревно гевеи",
+  "block.ic2.rubber_leaves": "Листва гевеи",
+  "block.ic2.rubber_sapling": "Саженец гевеи",
   "block.ic2.generator": "Генератор",
   "block.ic2.solar_panel": "Солнечная панель",
   "message.ic2.solar_panel_output": "Солнечная панель: %s EU/тик",

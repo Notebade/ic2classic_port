@@ -1,6 +1,10 @@
 {
   "item.ic2.rubber": "Rubber",
   "item.ic2.sticky_resin": "Sticky Resin",
+  "item.ic2.tree_tap": "Treetap",
+  "block.ic2.rubber_wood": "Rubberwood Log",
+  "block.ic2.rubber_leaves": "Rubberwood Leaves",
+  "block.ic2.rubber_sapling": "Rubberwood Sapling",
   "block.ic2.generator": "Generator",
   "block.ic2.solar_panel": "Solar Panel",
   "message.ic2.solar_panel_output": "Solar panel: %s EU/t",

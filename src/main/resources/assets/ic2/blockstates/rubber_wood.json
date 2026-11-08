@@ -1,0 +1,46 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "ic2:block/rubber_wood",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z": {
+      "model": "ic2:block/rubber_wood",
+      "x": 90
+    },
+    "axis=y,resin=false": {
+      "model": "ic2:block/rubber_wood"
+    },
+    "axis=y,resin=true,collectable=false,facing=north": {
+      "model": "ic2:block/rubber_wood_empty"
+    },
+    "axis=y,resin=true,collectable=false,facing=east": {
+      "model": "ic2:block/rubber_wood_empty",
+      "y": 90
+    },
+    "axis=y,resin=true,collectable=false,facing=south": {
+      "model": "ic2:block/rubber_wood_empty",
+      "y": 180
+    },
+    "axis=y,resin=true,collectable=false,facing=west": {
+      "model": "ic2:block/rubber_wood_empty",
+      "y": 270
+    },
+    "axis=y,resin=true,collectable=true,facing=north": {
+      "model": "ic2:block/rubber_wood_full"
+    },
+    "axis=y,resin=true,collectable=true,facing=east": {
+      "model": "ic2:block/rubber_wood_full",
+      "y": 90
+    },
+    "axis=y,resin=true,collectable=true,facing=south": {
+      "model": "ic2:block/rubber_wood_full",
+      "y": 180
+    },
+    "axis=y,resin=true,collectable=true,facing=west": {
+      "model": "ic2:block/rubber_wood_full",
+      "y": 270
+    }
+  }
+}

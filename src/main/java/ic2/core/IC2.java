@@ -5,6 +5,7 @@ import ic2.core.item.ReBatteryItem;
 import ic2.core.item.ScrapBoxItem;
 import ic2.core.machine.Machines;
 import ic2.core.recipe.UuMatterRecipe;
+import ic2.core.tree.Rubberwood;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
@@ -45,6 +46,7 @@ public final class IC2 {
         ITEMS.register(modBus);
         RECIPE_SERIALIZERS.register(modBus);
         Machines.register(modBus, ITEMS);
+        Rubberwood.register(modBus, ITEMS);
         modBus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(ScrapBoxItem::registerDispenser));
     }
 }
