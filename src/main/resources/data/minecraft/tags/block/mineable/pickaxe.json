@@ -8,6 +8,7 @@
     "ic2:transformer_lv",
     "ic2:transformer_mv",
     "ic2:transformer_hv",
+    "ic2:transformer_ev",
     "ic2:alloy_smelter",
     "ic2:electric_blast_furnace",
     "ic2:electric_smoker",

@@ -94,6 +94,10 @@ public final class Machines {
         BLOCKS.registerBlock("transformer_hv",
             properties -> new TransformerBlock(properties, MachineKind.HV_TRANSFORMER, TransformerBlock.HV_HIGH_PACKET),
             machineProperties());
+    static final DeferredBlock<TransformerBlock> EV_TRANSFORMER =
+        BLOCKS.registerBlock("transformer_ev",
+            properties -> new TransformerBlock(properties, MachineKind.EV_TRANSFORMER, TransformerBlock.EV_HIGH_PACKET),
+            machineProperties());
     static final DeferredBlock<MachineBlock> MACERATOR =
         BLOCKS.registerBlock("macerator", properties -> new MachineBlock(properties, MachineKind.MACERATOR), machineProperties());
     static final DeferredBlock<MachineBlock> ELECTRIC_FURNACE =
@@ -164,6 +168,8 @@ public final class Machines {
         ENTITIES.register("transformer_mv", () -> entityType(MV_TRANSFORMER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> HV_TRANSFORMER_ENTITY =
         ENTITIES.register("transformer_hv", () -> entityType(HV_TRANSFORMER.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> EV_TRANSFORMER_ENTITY =
+        ENTITIES.register("transformer_ev", () -> entityType(EV_TRANSFORMER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> MACERATOR_ENTITY =
         ENTITIES.register("macerator", () -> entityType(MACERATOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> ELECTRIC_FURNACE_ENTITY =
@@ -220,6 +226,7 @@ public final class Machines {
         items.registerSimpleBlockItem(LV_TRANSFORMER);
         items.registerSimpleBlockItem(MV_TRANSFORMER);
         items.registerSimpleBlockItem(HV_TRANSFORMER);
+        items.registerSimpleBlockItem(EV_TRANSFORMER);
         items.registerSimpleBlockItem(MACERATOR);
         items.registerSimpleBlockItem(ELECTRIC_FURNACE);
         items.registerSimpleBlockItem(ELECTRIC_BLAST_FURNACE);
@@ -261,6 +268,7 @@ public final class Machines {
                 event.accept(LV_TRANSFORMER.get());
                 event.accept(MV_TRANSFORMER.get());
                 event.accept(HV_TRANSFORMER.get());
+                event.accept(EV_TRANSFORMER.get());
                 event.accept(copperCableItem.get());
                 event.accept(insulatedCopperCableItem.get());
                 event.accept(goldCableItem.get());

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " C ",
+    "SME",
+    " C "
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:ingot_silver"
+    },
+    "S": {
+      "item": "ic2:advanced_circuit"
+    },
+    "M": {
+      "item": "ic2:transformer_hv"
+    },
+    "E": {
+      "item": "ic2:lapatron_crystal"
+    }
+  },
+  "result": {
+    "id": "ic2:transformer_ev",
+    "count": 1
+  }
+}

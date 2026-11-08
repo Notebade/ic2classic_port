@@ -100,3 +100,4 @@ src/main/resources/assets/ic2/textures/block/electric/transformer/hv/
 src/main/resources/assets/ic2/textures/block/electric/cable/iron.png
 src/main/resources/assets/ic2/textures/block/electric/cable/*x_insulated_iron/
 src/main/resources/assets/ic2/textures/item/cable/*iron.png
+src/main/resources/assets/ic2/textures/block/electric/transformer/ev/
