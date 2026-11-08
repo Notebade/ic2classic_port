@@ -44,6 +44,9 @@ public final class Machines {
             machineProperties());
     static final DeferredBlock<MachineBlock> PUMP =
         BLOCKS.registerBlock("pump", properties -> new MachineBlock(properties, MachineKind.PUMP), machineProperties());
+    static final DeferredBlock<MachineBlock> RECYCLER =
+        BLOCKS.registerBlock("recycler", properties -> new MachineBlock(properties, MachineKind.RECYCLER),
+            machineProperties());
     static final DeferredBlock<CopperCableBlock> COPPER_CABLE =
         BLOCKS.registerBlock("copper_cable", CopperCableBlock::new, BlockBehaviour.Properties.of().strength(0.4F).noOcclusion());
 
@@ -63,6 +66,8 @@ public final class Machines {
         ENTITIES.register("compressor", () -> entityType(COMPRESSOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> PUMP_ENTITY =
         ENTITIES.register("pump", () -> entityType(PUMP.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> RECYCLER_ENTITY =
+        ENTITIES.register("recycler", () -> entityType(RECYCLER.get()));
 
     public static void register(IEventBus bus, DeferredRegister.Items items) {
         BLOCKS.register(bus);
@@ -77,6 +82,7 @@ public final class Machines {
         items.registerSimpleBlockItem(EXTRACTOR);
         items.registerSimpleBlockItem(COMPRESSOR);
         items.registerSimpleBlockItem(PUMP);
+        items.registerSimpleBlockItem(RECYCLER);
         var copperCableItem = items.registerSimpleBlockItem("copper_cable_item", COPPER_CABLE);
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) {
@@ -89,6 +95,7 @@ public final class Machines {
                 event.accept(EXTRACTOR.get());
                 event.accept(COMPRESSOR.get());
                 event.accept(PUMP.get());
+                event.accept(RECYCLER.get());
                 event.accept(IC2.RE_BATTERY.get());
             }
         });
@@ -103,6 +110,7 @@ public final class Machines {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, COMPRESSOR_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PUMP_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, PUMP_ENTITY.get(), MachineEntity::fluidOutput);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, RECYCLER_ENTITY.get(), MachineEntity::automation);
     }
 
     private static BlockEntityType<MachineEntity> entityType(Block block) {

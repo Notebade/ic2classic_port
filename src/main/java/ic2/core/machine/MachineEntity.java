@@ -97,6 +97,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case EXTRACTOR -> Machines.EXTRACTOR_ENTITY.get();
             case COMPRESSOR -> Machines.COMPRESSOR_ENTITY.get();
             case PUMP -> Machines.PUMP_ENTITY.get();
+            case RECYCLER -> Machines.RECYCLER_ENTITY.get();
         };
     }
 
@@ -105,7 +106,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR -> tickGenerator();
             case SOLAR_PANEL -> tickSolarPanel();
             case PUMP -> tickPump();
-            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR -> tickProcessor();
+            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
             case BATBOX -> tickStorage();
         }
     }
@@ -223,6 +224,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
             case COMPRESSOR -> CompressionRecipes.find(stack) != null;
             case PUMP -> stack.is(Items.BUCKET);
+            case RECYCLER -> RecyclingRecipes.find(stack) != null;
             case BATBOX, SOLAR_PANEL -> false;
         };
     }
@@ -239,6 +241,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case COMPRESSOR -> {
                 CompressionRecipes.Recipe recipe = CompressionRecipes.find(stack);
                 yield recipe == null ? null : new Work(recipe.inputCount(), new ItemStack(recipe.output()));
+            }
+            case RECYCLER -> {
+                RecyclingRecipes.Recipe recipe = RecyclingRecipes.find(stack);
+                yield recipe == null ? null
+                    : new Work(1, new ItemStack(recipe.output(), recipe.count()), recipe.chanceDenominator());
             }
             case GENERATOR, BATBOX, SOLAR_PANEL, PUMP -> null;
         };
@@ -281,13 +288,19 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             } else {
                 waterSource.drain(new FluidStack(Fluids.WATER, PumpTank.BUCKET), FluidAction.EXECUTE);
             }
-            addOutput(work.output());
+            if (work.chanceDenominator() == 1 || level.random.nextInt(work.chanceDenominator()) == 0) {
+                addOutput(work.output());
+            }
             progress = 0;
         }
         setChanged();
     }
 
-    private record Work(int inputCount, ItemStack output) {}
+    private record Work(int inputCount, ItemStack output, int chanceDenominator) {
+        Work(int inputCount, ItemStack output) {
+            this(inputCount, output, 1);
+        }
+    }
 
     private PumpTank findWaterSource() {
         for (Direction direction : Direction.values()) {
@@ -321,7 +334,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         return switch (kind) {
             case GENERATOR, SOLAR_PANEL -> false;
-            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP -> true;
+            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> true;
             case BATBOX -> canChargeStorage && incomingSide != outputSide();
         };
     }
@@ -384,7 +397,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR -> burnTicks;
             case BATBOX -> outputSide().ordinal();
             case SOLAR_PANEL -> 0;
-            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP -> progress;
+            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> progress;
         };
     }
 

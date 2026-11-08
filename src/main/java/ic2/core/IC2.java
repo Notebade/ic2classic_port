@@ -27,6 +27,8 @@ public final class IC2 {
     public static final DeferredItem<Item> RUBBER = ITEMS.registerSimpleItem("rubber");
     public static final DeferredItem<Item> STICKY_RESIN = ITEMS.registerSimpleItem("sticky_resin");
     public static final DeferredItem<Item> DENSE_COPPER_PLATE = ITEMS.registerSimpleItem("plate_dense_copper");
+    public static final DeferredItem<Item> SCRAP = ITEMS.registerSimpleItem("scrap");
+    public static final DeferredItem<Item> SCRAP_METAL = ITEMS.registerSimpleItem("scrap_metal");
 
     public IC2(IEventBus modBus) {
         COMPONENTS.register(modBus);

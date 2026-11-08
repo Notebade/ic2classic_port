@@ -19,8 +19,11 @@ src/main/resources/assets/ic2/textures/block/machine/lv/electric_furnace/
 src/main/resources/assets/ic2/textures/block/machine/lv/extractor/
 src/main/resources/assets/ic2/textures/block/machine/lv/compressor/
 src/main/resources/assets/ic2/textures/block/machine/lv/pump/
+src/main/resources/assets/ic2/textures/block/machine/lv/recycler/
 src/main/resources/assets/ic2/textures/block/electric/energy_storage/batbox/
 src/main/resources/assets/ic2/textures/item/cable/copper.png
 src/main/resources/assets/ic2/textures/item/dust/copper.png
 src/main/resources/assets/ic2/textures/item/battery/reusable_battery_0.png
 src/main/resources/assets/ic2/textures/item/plates/dense_copper.png
+src/main/resources/assets/ic2/textures/item/matter/scrap.png
+src/main/resources/assets/ic2/textures/item/matter/scrapmetal.png
