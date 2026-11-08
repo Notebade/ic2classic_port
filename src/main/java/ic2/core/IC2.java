@@ -2,12 +2,14 @@ package ic2.core;
 
 import com.mojang.serialization.Codec;
 import ic2.core.item.ReBatteryItem;
+import ic2.core.item.ScrapBoxItem;
 import ic2.core.machine.Machines;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -29,10 +31,12 @@ public final class IC2 {
     public static final DeferredItem<Item> DENSE_COPPER_PLATE = ITEMS.registerSimpleItem("plate_dense_copper");
     public static final DeferredItem<Item> SCRAP = ITEMS.registerSimpleItem("scrap");
     public static final DeferredItem<Item> SCRAP_METAL = ITEMS.registerSimpleItem("scrap_metal");
+    public static final DeferredItem<ScrapBoxItem> SCRAP_BOX = ITEMS.registerItem("scrapbox", ScrapBoxItem::new);
 
     public IC2(IEventBus modBus) {
         COMPONENTS.register(modBus);
         ITEMS.register(modBus);
         Machines.register(modBus, ITEMS);
+        modBus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(ScrapBoxItem::registerDispenser));
     }
 }

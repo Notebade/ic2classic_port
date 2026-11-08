@@ -96,6 +96,7 @@ public final class Machines {
                 event.accept(COMPRESSOR.get());
                 event.accept(PUMP.get());
                 event.accept(RECYCLER.get());
+                event.accept(IC2.SCRAP_BOX.get());
                 event.accept(IC2.RE_BATTERY.get());
             }
         });

@@ -16,6 +16,7 @@
   "item.ic2.plate_dense_copper": "Плотная медная пластина",
   "item.ic2.scrap": "Утиль",
   "item.ic2.scrap_metal": "Металлолом",
+  "item.ic2.scrapbox": "Коробка утиля",
   "item.ic2.re_battery": "Аккумулятор",
   "item.ic2.re_battery.charge": "Заряд: %s / %s EU",
   "gui.ic2.machine_status": "%s EU | %s тиков",

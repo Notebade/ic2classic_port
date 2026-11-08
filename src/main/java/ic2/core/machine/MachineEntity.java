@@ -245,7 +245,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case RECYCLER -> {
                 RecyclingRecipes.Recipe recipe = RecyclingRecipes.find(stack);
                 yield recipe == null ? null
-                    : new Work(1, new ItemStack(recipe.output(), recipe.count()), recipe.chanceDenominator());
+                    : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
+                        recipe.chanceDenominator(), recipe.extraTicks());
             }
             case GENERATOR, BATBOX, SOLAR_PANEL, PUMP -> null;
         };
@@ -282,7 +283,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         energy -= kind.energyPerTick;
         progress++;
-        if (progress == kind.recipeTicks) {
+        if (progress >= kind.recipeTicks + work.extraTicks()) {
             if (waterSource == null) {
                 inventory.extractItem(INPUT_SLOT, work.inputCount(), false);
             } else {
@@ -296,9 +297,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         setChanged();
     }
 
-    private record Work(int inputCount, ItemStack output, int chanceDenominator) {
+    private record Work(int inputCount, ItemStack output, int chanceDenominator, int extraTicks) {
         Work(int inputCount, ItemStack output) {
-            this(inputCount, output, 1);
+            this(inputCount, output, 1, 0);
         }
     }
 
@@ -447,6 +448,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         } else if (kind.recipeTicks > 0) {
             processingInput = inventory.getStackInSlot(INPUT_SLOT).copyWithCount(1);
             int maxProgress = kind == MachineKind.PUMP ? kind.recipeTicks : kind.recipeTicks - 1;
+            if (kind == MachineKind.RECYCLER && processingInput.is(IC2.SCRAP.get())) {
+                maxProgress += RecyclingRecipes.BOX_EXTRA_TICKS;
+            }
             progress = Mth.clamp(tag.getInt("progress"), 0, maxProgress);
         }
     }

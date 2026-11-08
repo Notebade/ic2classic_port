@@ -16,6 +16,7 @@
   "item.ic2.plate_dense_copper": "Dense Copper Plate",
   "item.ic2.scrap": "Scrap",
   "item.ic2.scrap_metal": "Scrap Metal",
+  "item.ic2.scrapbox": "Scrap Box",
   "item.ic2.re_battery": "RE-Battery",
   "item.ic2.re_battery.charge": "Charge: %s / %s EU",
   "gui.ic2.machine_status": "%s EU | %s ticks",
