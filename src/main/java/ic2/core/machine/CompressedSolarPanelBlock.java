@@ -18,8 +18,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 final class CompressedSolarPanelBlock extends SolarPanelBlock implements SimpleWaterloggedBlock {
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 8, 16);
 
-    CompressedSolarPanelBlock(Properties properties) {
-        super(properties);
+    CompressedSolarPanelBlock(Properties properties, int output) {
+        super(properties, output);
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
     }
 

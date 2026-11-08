@@ -12,7 +12,8 @@ enum MachineKind {
     RECYCLER(1, 45),
     MASS_FABRICATOR(7_100_000, 0, 0),
     BATBOX(40_000, 0, 0, 32),
-    MFE(600_000, 0, 0, 128);
+    MFE(600_000, 0, 0, 128),
+    LV_TRANSFORMER(256, 0, 0);
 
     final int capacity;
     final int energyPerTick;

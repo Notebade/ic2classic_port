@@ -115,6 +115,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR -> Machines.GENERATOR_ENTITY.get();
             case GEOTHERMAL -> Machines.GEOTHERMAL_ENTITY.get();
             case SOLAR_PANEL -> Machines.SOLAR_PANEL_ENTITY.get();
+            case LV_TRANSFORMER -> Machines.LV_TRANSFORMER_ENTITY.get();
             case MACERATOR -> Machines.MACERATOR_ENTITY.get();
             case ELECTRIC_FURNACE -> Machines.ELECTRIC_FURNACE_ENTITY.get();
             case BATBOX -> Machines.BATBOX_ENTITY.get();
@@ -132,6 +133,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR -> tickGenerator();
             case GEOTHERMAL -> tickGeothermal();
             case SOLAR_PANEL -> tickSolarPanel();
+            case LV_TRANSFORMER -> tickTransformer();
             case PUMP -> tickPump();
             case MASS_FABRICATOR -> tickMassFabricator();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
@@ -236,7 +238,20 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         setActive(active);
         if (active) {
             var panel = (SolarPanelBlock) getBlockState().getBlock();
-            CopperNetwork.send(level, worldPosition, SolarPanelBlock.OUTPUT, panel::emitsTo, kind);
+            CopperNetwork.send(level, worldPosition, panel.output(), panel::emitsTo, kind);
+        }
+    }
+
+    private void tickTransformer() {
+        boolean stepUp = level.hasNeighborSignal(worldPosition);
+        setActive(stepUp);
+        int packet = stepUp ? LvTransformerBlock.HIGH_PACKET : LvTransformerBlock.LOW_PACKET;
+        int packetCount = stepUp ? 1 : LvTransformerBlock.LOW_PACKETS;
+        Direction highSide = outputSide();
+        for (int index = 0; index < packetCount && energy >= packet; index++) {
+            if (sendEnergy(packet, side -> stepUp == (side == highSide)) == 0) {
+                break;
+            }
         }
     }
 
@@ -280,12 +295,13 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-    private void sendEnergy(int available, Predicate<Direction> emitsTo) {
+    private int sendEnergy(int available, Predicate<Direction> emitsTo) {
         int sent = CopperNetwork.send(level, worldPosition, available, emitsTo, kind);
         if (sent > 0) {
             energy -= sent;
             setChanged();
         }
+        return sent;
     }
 
     private void startBurning() {
@@ -314,7 +330,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> stack.is(Items.BUCKET);
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
             case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
-            case BATBOX, MFE, SOLAR_PANEL -> false;
+            case BATBOX, MFE, SOLAR_PANEL, LV_TRANSFORMER -> false;
         };
     }
 
@@ -341,7 +357,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
-            case GENERATOR, GEOTHERMAL, BATBOX, MFE, SOLAR_PANEL, PUMP, MASS_FABRICATOR -> null;
+            case GENERATOR, GEOTHERMAL, BATBOX, MFE, SOLAR_PANEL, LV_TRANSFORMER, PUMP, MASS_FABRICATOR -> null;
         };
     }
 
@@ -431,7 +447,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-    boolean canReceiveEnergy(Direction incomingSide, MachineKind sourceKind) {
+    boolean canReceiveEnergy(Direction incomingSide, MachineKind sourceKind, int packetSize) {
         if (energy >= kind.capacity) {
             return false;
         }
@@ -439,9 +455,16 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR, GEOTHERMAL, SOLAR_PANEL -> false;
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> true;
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
+            case LV_TRANSFORMER -> canReceiveTransformerEnergy(incomingSide, packetSize);
             // Only charge up the storage tiers, so a cable loop cannot feed energy back.
             case BATBOX, MFE -> sourceKind.storageOutput < kind.storageOutput && incomingSide != outputSide();
         };
+    }
+
+    private boolean canReceiveTransformerEnergy(Direction side, int packetSize) {
+        boolean stepUp = level.hasNeighborSignal(worldPosition);
+        int maxPacket = stepUp ? LvTransformerBlock.LOW_PACKET : LvTransformerBlock.HIGH_PACKET;
+        return packetSize <= maxPacket && stepUp == (side != outputSide());
     }
 
     private Direction outputSide() {
@@ -450,6 +473,12 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
 
     Component storageStatus() {
         return Component.translatable("message.ic2.batbox_status", energy, kind.capacity, kind.storageOutput,
+            Component.translatable("direction.ic2." + outputSide().getName()));
+    }
+
+    Component transformerStatus() {
+        String mode = level.hasNeighborSignal(worldPosition) ? "up" : "down";
+        return Component.translatable("message.ic2.transformer_" + mode, energy, kind.capacity,
             Component.translatable("direction.ic2." + outputSide().getName()));
     }
 
@@ -525,7 +554,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (kind) {
             case GENERATOR -> burnTicks;
             case BATBOX, MFE -> outputSide().ordinal();
-            case SOLAR_PANEL, GEOTHERMAL -> 0;
+            case SOLAR_PANEL, GEOTHERMAL, LV_TRANSFORMER -> 0;
             case MASS_FABRICATOR -> amplifier;
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> progress;
         };

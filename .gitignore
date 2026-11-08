@@ -21,6 +21,8 @@ src/main/resources/assets/ic2/textures/block/resources/ore/deepslate_tin_ore.png
 src/main/resources/assets/ic2/textures/block/electric/generator/generator/
 src/main/resources/assets/ic2/textures/block/electric/generator/geothermal/
 src/main/resources/assets/ic2/textures/block/electric/generator/solar_panel/
+src/main/resources/assets/ic2/textures/block/electric/generator/lv_solar_panel/
+src/main/resources/assets/ic2/textures/block/electric/transformer/lv/
 src/main/resources/assets/ic2/textures/block/machine/lv/macerator/
 src/main/resources/assets/ic2/textures/block/machine/lv/electric_furnace/
 src/main/resources/assets/ic2/textures/block/machine/stone/iron_furnace/

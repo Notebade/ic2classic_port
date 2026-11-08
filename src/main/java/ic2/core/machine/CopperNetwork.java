@@ -37,8 +37,8 @@ final class CopperNetwork {
                     SectionPos.blockToSectionCoord(next.getX()), SectionPos.blockToSectionCoord(next.getZ()))) {
                     continue;
                 }
-                if (level.getBlockEntity(next) instanceof MachineEntity machine
-                    && machine.canReceiveEnergy(direction.getOpposite(), sourceKind)) {
+                if (!next.equals(source) && level.getBlockEntity(next) instanceof MachineEntity machine
+                    && machine.canReceiveEnergy(direction.getOpposite(), sourceKind, available)) {
                     remaining -= machine.receiveEnergy(remaining - loss) + loss;
                 }
                 var state = level.getBlockState(next);

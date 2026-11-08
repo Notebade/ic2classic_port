@@ -57,9 +57,19 @@ public final class Machines {
     static final DeferredBlock<GeothermalGeneratorBlock> GEOTHERMAL =
         BLOCKS.registerBlock("geothermal_generator", GeothermalGeneratorBlock::new, machineProperties());
     static final DeferredBlock<SolarPanelBlock> SOLAR_PANEL =
-        BLOCKS.registerBlock("solar_panel", SolarPanelBlock::new, machineProperties());
+        BLOCKS.registerBlock("solar_panel", properties -> new SolarPanelBlock(properties, SolarPanelBlock.BASE_OUTPUT),
+            machineProperties());
     static final DeferredBlock<CompressedSolarPanelBlock> COMPRESSED_SOLAR_PANEL =
-        BLOCKS.registerBlock("solar_panel_compressed", CompressedSolarPanelBlock::new, machineProperties().noOcclusion());
+        BLOCKS.registerBlock("solar_panel_compressed",
+            properties -> new CompressedSolarPanelBlock(properties, SolarPanelBlock.BASE_OUTPUT), machineProperties().noOcclusion());
+    static final DeferredBlock<SolarPanelBlock> LV_SOLAR_PANEL =
+        BLOCKS.registerBlock("solar_panel_lv", properties -> new SolarPanelBlock(properties, SolarPanelBlock.LV_OUTPUT),
+            machineProperties());
+    static final DeferredBlock<CompressedSolarPanelBlock> COMPRESSED_LV_SOLAR_PANEL =
+        BLOCKS.registerBlock("solar_panel_lv_compressed",
+            properties -> new CompressedSolarPanelBlock(properties, SolarPanelBlock.LV_OUTPUT), machineProperties().noOcclusion());
+    static final DeferredBlock<LvTransformerBlock> LV_TRANSFORMER =
+        BLOCKS.registerBlock("transformer_lv", LvTransformerBlock::new, machineProperties());
     static final DeferredBlock<MachineBlock> MACERATOR =
         BLOCKS.registerBlock("macerator", properties -> new MachineBlock(properties, MachineKind.MACERATOR), machineProperties());
     static final DeferredBlock<MachineBlock> ELECTRIC_FURNACE =
@@ -96,7 +106,10 @@ public final class Machines {
     static final Supplier<BlockEntityType<MachineEntity>> GEOTHERMAL_ENTITY =
         ENTITIES.register("geothermal_generator", () -> entityType(GEOTHERMAL.get()));
     static final Supplier<BlockEntityType<MachineEntity>> SOLAR_PANEL_ENTITY =
-        ENTITIES.register("solar_panel", () -> entityType(SOLAR_PANEL.get(), COMPRESSED_SOLAR_PANEL.get()));
+        ENTITIES.register("solar_panel", () -> entityType(SOLAR_PANEL.get(), COMPRESSED_SOLAR_PANEL.get(),
+            LV_SOLAR_PANEL.get(), COMPRESSED_LV_SOLAR_PANEL.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> LV_TRANSFORMER_ENTITY =
+        ENTITIES.register("transformer_lv", () -> entityType(LV_TRANSFORMER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> MACERATOR_ENTITY =
         ENTITIES.register("macerator", () -> entityType(MACERATOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> ELECTRIC_FURNACE_ENTITY =
@@ -132,6 +145,9 @@ public final class Machines {
         items.registerSimpleBlockItem(GEOTHERMAL);
         items.registerSimpleBlockItem(SOLAR_PANEL);
         items.registerSimpleBlockItem(COMPRESSED_SOLAR_PANEL);
+        items.registerSimpleBlockItem(LV_SOLAR_PANEL);
+        items.registerSimpleBlockItem(COMPRESSED_LV_SOLAR_PANEL);
+        items.registerSimpleBlockItem(LV_TRANSFORMER);
         items.registerSimpleBlockItem(MACERATOR);
         items.registerSimpleBlockItem(ELECTRIC_FURNACE);
         items.registerSimpleBlockItem(IRON_FURNACE);
@@ -151,6 +167,9 @@ public final class Machines {
                 event.accept(GEOTHERMAL.get());
                 event.accept(SOLAR_PANEL.get());
                 event.accept(COMPRESSED_SOLAR_PANEL.get());
+                event.accept(LV_SOLAR_PANEL.get());
+                event.accept(COMPRESSED_LV_SOLAR_PANEL.get());
+                event.accept(LV_TRANSFORMER.get());
                 event.accept(copperCableItem.get());
                 event.accept(insulatedCopperCableItem.get());
                 event.accept(MACERATOR.get());

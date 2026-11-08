@@ -14,10 +14,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 
 class SolarPanelBlock extends MachineBlock {
-    static final int OUTPUT = 1;
+    static final int BASE_OUTPUT = 1;
+    static final int LV_OUTPUT = 8;
+    private final int output;
 
-    SolarPanelBlock(Properties properties) {
+    SolarPanelBlock(Properties properties, int output) {
         super(properties, MachineKind.SOLAR_PANEL);
+        this.output = output;
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.LIT, false));
     }
 
@@ -43,10 +46,14 @@ class SolarPanelBlock extends MachineBlock {
         return side != Direction.UP;
     }
 
+    int output() {
+        return output;
+    }
+
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide) {
-            int production = state.getValue(BlockStateProperties.LIT) ? OUTPUT : 0;
+            int production = state.getValue(BlockStateProperties.LIT) ? output : 0;
             player.displayClientMessage(Component.translatable("message.ic2.solar_panel_output", production), true);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
