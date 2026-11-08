@@ -31,22 +31,27 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
 final class MachineEntity extends BlockEntity implements MenuProvider {
     static final int INPUT_SLOT = 0;
     static final int OUTPUT_SLOT = 1;
     static final int SLOT_COUNT = 2;
+    static final int GEOTHERMAL_BATTERY_SLOT = SLOT_COUNT;
     private static final int GENERATOR_OUTPUT = 10;
     private static final int BATBOX_OUTPUT = 32;
     private static final int STACK_LIMIT = 64;
 
     private final MachineKind kind;
     private final PumpTank pumpTank;
+    private final FluidTank geothermalTank;
     private final RecipeManager.CachedCheck<SingleRecipeInput, SmeltingRecipe> smelting =
         RecipeManager.createCheck(RecipeType.SMELTING);
     private int energy;
@@ -56,42 +61,58 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int amplifierRefillThreshold;
     private long nextPumpAttempt;
     private ItemStack processingInput = ItemStack.EMPTY;
-    private final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT) {
-        @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            if (kind == MachineKind.BATBOX) {
-                return ReBatteryItem.isBattery(stack);
-            }
-            return slot == INPUT_SLOT && accepts(stack);
-        }
-
-        @Override
-        protected void onContentsChanged(int slot) {
-            if (slot == INPUT_SLOT && kind.recipeTicks > 0 && kind != MachineKind.PUMP) {
-                trackInput();
-            }
-            setChanged();
-        }
-    };
-    private final IItemHandler automationInput = new RangedWrapper(inventory, INPUT_SLOT, INPUT_SLOT + 1) {
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return ItemStack.EMPTY;
-        }
-    };
-    private final IItemHandler automationOutput = new RangedWrapper(inventory, OUTPUT_SLOT, OUTPUT_SLOT + 1);
-    private final IItemHandler batteryChargeSlot = new BatterySlot(inventory, INPUT_SLOT, true);
-    private final IItemHandler batteryDischargeSlot = new BatterySlot(inventory, OUTPUT_SLOT, false);
+    private final ItemStackHandler inventory;
+    private final IItemHandler automationInput;
+    private final IItemHandler automationOutput;
+    private final IItemHandler batteryChargeSlot;
+    private final IItemHandler batteryDischargeSlot;
 
     MachineEntity(BlockPos pos, BlockState state) {
         super(typeFor(state), pos, state);
         kind = ((MachineBlock) state.getBlock()).kind();
         pumpTank = kind == MachineKind.PUMP ? new PumpTank(this::setChanged) : null;
+        geothermalTank = kind == MachineKind.GEOTHERMAL
+            ? new FluidTank(GeothermalGeneratorBlock.TANK_CAPACITY, stack -> stack.getFluid() == Fluids.LAVA) {
+                @Override
+                protected void onContentsChanged() {
+                    setChanged();
+                }
+            } : null;
+        inventory = new ItemStackHandler(kind == MachineKind.GEOTHERMAL ? SLOT_COUNT + 1 : SLOT_COUNT) {
+            @Override
+            public boolean isItemValid(int slot, ItemStack stack) {
+                if (kind == MachineKind.BATBOX || slot == GEOTHERMAL_BATTERY_SLOT) {
+                    return ReBatteryItem.isBattery(stack);
+                }
+                return slot == INPUT_SLOT && accepts(stack);
+            }
+
+            @Override
+            protected void onContentsChanged(int slot) {
+                if (slot == INPUT_SLOT && kind.recipeTicks > 0 && kind != MachineKind.PUMP) {
+                    trackInput();
+                }
+                setChanged();
+            }
+        };
+        automationInput = new RangedWrapper(inventory, INPUT_SLOT, INPUT_SLOT + 1) {
+            @Override
+            public ItemStack extractItem(int slot, int amount, boolean simulate) {
+                return ItemStack.EMPTY;
+            }
+        };
+        var output = new RangedWrapper(inventory, OUTPUT_SLOT, OUTPUT_SLOT + 1);
+        automationOutput = kind == MachineKind.GEOTHERMAL
+            ? new CombinedInvWrapper(output, new BatterySlot(inventory, GEOTHERMAL_BATTERY_SLOT, true))
+            : output;
+        batteryChargeSlot = new BatterySlot(inventory, INPUT_SLOT, true);
+        batteryDischargeSlot = new BatterySlot(inventory, OUTPUT_SLOT, false);
     }
 
     static BlockEntityType<MachineEntity> typeFor(BlockState state) {
         return switch (((MachineBlock) state.getBlock()).kind()) {
             case GENERATOR -> Machines.GENERATOR_ENTITY.get();
+            case GEOTHERMAL -> Machines.GEOTHERMAL_ENTITY.get();
             case SOLAR_PANEL -> Machines.SOLAR_PANEL_ENTITY.get();
             case MACERATOR -> Machines.MACERATOR_ENTITY.get();
             case ELECTRIC_FURNACE -> Machines.ELECTRIC_FURNACE_ENTITY.get();
@@ -107,11 +128,41 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     void tick() {
         switch (kind) {
             case GENERATOR -> tickGenerator();
+            case GEOTHERMAL -> tickGeothermal();
             case SOLAR_PANEL -> tickSolarPanel();
             case PUMP -> tickPump();
             case MASS_FABRICATOR -> tickMassFabricator();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
             case BATBOX -> tickStorage();
+        }
+    }
+
+    private void tickGeothermal() {
+        refillGeothermalTank();
+        boolean generated = energy == 0 && geothermalTank.getFluidAmount() > 0;
+        if (generated) {
+            geothermalTank.drain(1, FluidAction.EXECUTE);
+            energy = GeothermalGeneratorBlock.OUTPUT;
+        }
+        transferBattery(GEOTHERMAL_BATTERY_SLOT, true);
+        if (energy > 0) {
+            sendEnergy(energy, side -> true, true);
+        }
+        setActive(generated && energy < kind.capacity);
+    }
+
+    private void refillGeothermalTank() {
+        ItemStack input = inventory.getStackInSlot(INPUT_SLOT);
+        if (input.isEmpty() || geothermalTank.getFluidAmount() > geothermalTank.getCapacity() - PumpTank.BUCKET) {
+            return;
+        }
+        var preview = FluidUtil.tryEmptyContainer(input, geothermalTank, Integer.MAX_VALUE, null, false);
+        if (preview.isSuccess() && canAddOutput(preview.getResult())) {
+            var drained = FluidUtil.tryEmptyContainer(input, geothermalTank, Integer.MAX_VALUE, null, true);
+            if (drained.isSuccess()) {
+                inventory.extractItem(INPUT_SLOT, 1, false);
+                addOutput(drained.getResult());
+            }
         }
     }
 
@@ -180,12 +231,16 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
 
     private void tickSolarPanel() {
         boolean active = SolarPanelBlock.hasSun(level, worldPosition);
+        setActive(active);
+        if (active) {
+            CopperNetwork.send(level, worldPosition, SolarPanelBlock.OUTPUT, side -> side != Direction.UP, true);
+        }
+    }
+
+    private void setActive(boolean active) {
         BlockState state = getBlockState();
         if (state.getValue(BlockStateProperties.LIT) != active) {
             level.setBlock(worldPosition, state.setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS);
-        }
-        if (active) {
-            CopperNetwork.send(level, worldPosition, SolarPanelBlock.OUTPUT, side -> side != Direction.UP, true);
         }
     }
 
@@ -248,6 +303,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private boolean accepts(ItemStack stack) {
         return switch (kind) {
             case GENERATOR -> fuelTicks(stack) > 0;
+            case GEOTHERMAL -> GeothermalGeneratorBlock.hasLava(stack);
             case MACERATOR -> stack.is(Items.RAW_COPPER);
             case ELECTRIC_FURNACE -> furnaceRecipe(new SingleRecipeInput(stack)).isPresent();
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
@@ -278,7 +334,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
-            case GENERATOR, BATBOX, SOLAR_PANEL, PUMP, MASS_FABRICATOR -> null;
+            case GENERATOR, GEOTHERMAL, BATBOX, SOLAR_PANEL, PUMP, MASS_FABRICATOR -> null;
         };
     }
 
@@ -364,7 +420,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             return false;
         }
         return switch (kind) {
-            case GENERATOR, SOLAR_PANEL -> false;
+            case GENERATOR, GEOTHERMAL, SOLAR_PANEL -> false;
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> true;
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
             case BATBOX -> canChargeStorage && incomingSide != outputSide();
@@ -418,6 +474,10 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return side == Direction.DOWN ? null : pumpTank;
     }
 
+    IFluidHandler geothermalFluid(Direction side) {
+        return geothermalTank;
+    }
+
     @Override
     public Component getDisplayName() {
         return getBlockState().getBlock().getName();
@@ -427,26 +487,34 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player) {
         return new MachineMenu(id, playerInventory, inventory, ContainerLevelAccess.create(level, worldPosition),
             getBlockState().getBlock(), () -> energy,
-            this::menuWork, () -> pumpTank == null ? -1 : pumpTank.getFluidAmount(),
+            this::menuWork, this::menuFluid,
             this::setChanged, switch (kind) {
                 case BATBOX -> Machines.BATBOX_MENU.get();
                 case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
+                case GEOTHERMAL -> Machines.GEOTHERMAL_MENU.get();
                 default -> Machines.MENU.get();
             });
+    }
+
+    private int menuFluid() {
+        if (geothermalTank != null) {
+            return geothermalTank.getFluidAmount();
+        }
+        return pumpTank == null ? -1 : pumpTank.getFluidAmount();
     }
 
     private int menuWork() {
         return switch (kind) {
             case GENERATOR -> burnTicks;
             case BATBOX -> outputSide().ordinal();
-            case SOLAR_PANEL -> 0;
+            case SOLAR_PANEL, GEOTHERMAL -> 0;
             case MASS_FABRICATOR -> amplifier;
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> progress;
         };
     }
 
     void dropContents(Level world) {
-        for (int slot = 0; slot < SLOT_COUNT; slot++) {
+        for (int slot = 0; slot < inventory.getSlots(); slot++) {
             Containers.dropItemStack(world, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
                 inventory.getStackInSlot(slot));
         }
@@ -465,6 +533,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         if (kind == MachineKind.GENERATOR) {
             tag.putInt("burn_ticks", burnTicks);
+        } else if (kind == MachineKind.GEOTHERMAL) {
+            tag.putInt("lava", geothermalTank.getFluidAmount());
         } else if (kind == MachineKind.MASS_FABRICATOR) {
             tag.putInt("amplifier", amplifier);
             tag.putInt("amplifier_refill", amplifierRefillThreshold);
@@ -491,6 +561,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         if (kind == MachineKind.GENERATOR) {
             burnTicks = Math.max(0, tag.getInt("burn_ticks"));
+        } else if (kind == MachineKind.GEOTHERMAL) {
+            geothermalTank.setFluid(new FluidStack(Fluids.LAVA,
+                Mth.clamp(tag.getInt("lava"), 0, geothermalTank.getCapacity())));
         } else if (kind == MachineKind.MASS_FABRICATOR) {
             amplifier = Mth.clamp(tag.getInt("amplifier"), 0, 2_000_000);
             amplifierRefillThreshold = Mth.clamp(tag.getInt("amplifier_refill"), 0, 1_000_000);

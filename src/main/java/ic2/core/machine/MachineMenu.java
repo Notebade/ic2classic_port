@@ -27,6 +27,7 @@ final class MachineMenu extends AbstractContainerMenu {
     private final Block block;
     private final ContainerData data;
     private final boolean storage;
+    private final int machineSlots;
 
     MachineMenu(int id, Inventory playerInventory) {
         this(id, playerInventory, Machines.MENU.get());
@@ -40,8 +41,13 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.FABRICATOR_MENU.get());
     }
 
+    static MachineMenu geothermal(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.GEOTHERMAL_MENU.get());
+    }
+
     private MachineMenu(int id, Inventory playerInventory, MenuType<MachineMenu> type) {
-        this(id, playerInventory, new ItemStackHandler(MachineEntity.SLOT_COUNT),
+        this(id, playerInventory, new ItemStackHandler(type == Machines.GEOTHERMAL_MENU.get()
+                ? MachineEntity.SLOT_COUNT + 1 : MachineEntity.SLOT_COUNT),
             ContainerLevelAccess.NULL, Blocks.AIR, new SimpleContainerData(DATA_COUNT), () -> {}, type);
         data.set(FLUID, -1);
     }
@@ -59,9 +65,16 @@ final class MachineMenu extends AbstractContainerMenu {
         this.access = access;
         this.block = block;
         this.data = data;
+        machineSlots = inventory.getSlots();
         addDataSlots(data);
-        addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 53, changed);
-        addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 107, changed);
+        if (isGeothermal()) {
+            addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 24, changed);
+            addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 80, changed);
+            addMachineSlot(inventory, MachineEntity.GEOTHERMAL_BATTERY_SLOT, 136, changed);
+        } else {
+            addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 53, changed);
+            addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 107, changed);
+        }
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
                 addSlot(new Slot(playerInventory, column + row * 9 + 9, 8 + column * 18, 83 + row * 18));
@@ -76,7 +89,7 @@ final class MachineMenu extends AbstractContainerMenu {
         addSlot(new SlotItemHandler(inventory, index, x, 40) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return storage ? ReBatteryItem.isBattery(stack) : index == MachineEntity.INPUT_SLOT && super.mayPlace(stack);
+                return storage ? ReBatteryItem.isBattery(stack) : index != MachineEntity.OUTPUT_SLOT && super.mayPlace(stack);
             }
 
             @Override
@@ -131,6 +144,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return getType() == Machines.FABRICATOR_MENU.get();
     }
 
+    boolean isGeothermal() {
+        return getType() == Machines.GEOTHERMAL_MENU.get();
+    }
+
     @Override
     public boolean stillValid(Player player) {
         return stillValid(access, player, block);
@@ -144,10 +161,16 @@ final class MachineMenu extends AbstractContainerMenu {
         }
         ItemStack stack = slot.getItem();
         ItemStack before = stack.copy();
-        int input = storage && ReBatteryItem.isBattery(stack) && ReBatteryItem.charge(stack) > 0
-            ? MachineEntity.OUTPUT_SLOT : MachineEntity.INPUT_SLOT;
-        boolean moved = index < MachineEntity.SLOT_COUNT
-            ? moveItemStackTo(stack, MachineEntity.SLOT_COUNT, slots.size(), true)
+        int input = MachineEntity.INPUT_SLOT;
+        if (ReBatteryItem.isBattery(stack)) {
+            if (isGeothermal()) {
+                input = MachineEntity.GEOTHERMAL_BATTERY_SLOT;
+            } else if (storage && ReBatteryItem.charge(stack) > 0) {
+                input = MachineEntity.OUTPUT_SLOT;
+            }
+        }
+        boolean moved = index < machineSlots
+            ? moveItemStackTo(stack, machineSlots, slots.size(), true)
             : moveItemStackTo(stack, input, input + 1, false);
         if (!moved) {
             return ItemStack.EMPTY;

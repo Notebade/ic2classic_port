@@ -2,6 +2,7 @@ package ic2.core.machine;
 
 enum MachineKind {
     GENERATOR(4000, 0, 0),
+    GEOTHERMAL(GeothermalGeneratorBlock.OUTPUT, 0, 0),
     SOLAR_PANEL(0, 0, 0),
     MACERATOR(2, 400),
     ELECTRIC_FURNACE(3, 130),

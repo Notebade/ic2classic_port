@@ -23,6 +23,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.MENU.get(), MachineScreen::new);
         event.register(Machines.BATBOX_MENU.get(), MachineScreen::new);
         event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
+        event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
     }
 
     @Override
@@ -54,6 +55,14 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             Component output = Component.translatable("gui.ic2.storage_output",
                 Component.translatable("direction.ic2." + direction.getName()));
             graphics.drawString(font, output, imageWidth - 8 - font.width(output), inventoryLabelY, 0x404040, false);
+            return;
+        }
+        if (menu.isGeothermal()) {
+            graphics.drawString(font, Component.translatable("gui.ic2.geothermal_status", menu.energy(),
+                menu.fluid(), GeothermalGeneratorBlock.TANK_CAPACITY), 8, 21, 0x404040, false);
+            graphics.drawString(font, Component.translatable("gui.ic2.input"), 9, 61, 0x404040, false);
+            graphics.drawString(font, Component.translatable("gui.ic2.output"), 69, 61, 0x404040, false);
+            graphics.drawString(font, Component.translatable("gui.ic2.charge"), 120, 61, 0x404040, false);
             return;
         }
         if (menu.isFabricator()) {
