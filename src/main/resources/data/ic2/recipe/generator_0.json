@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " B ",
+    "III",
+    " F "
+  ],
+  "key": {
+    "B": {
+      "item": "ic2:re_battery"
+    },
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "F": {
+      "item": "ic2:iron_furnace"
+    }
+  },
+  "result": {
+    "id": "ic2:generator",
+    "count": 1
+  }
+}

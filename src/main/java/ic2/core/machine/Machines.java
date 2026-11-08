@@ -7,6 +7,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
@@ -43,6 +44,8 @@ public final class Machines {
     static final DeferredBlock<MachineBlock> ELECTRIC_FURNACE =
         BLOCKS.registerBlock("electric_furnace", properties -> new MachineBlock(properties, MachineKind.ELECTRIC_FURNACE),
             machineProperties());
+    static final DeferredBlock<IronFurnaceBlock> IRON_FURNACE =
+        BLOCKS.registerBlock("iron_furnace", IronFurnaceBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.FURNACE));
     static final DeferredBlock<EnergyStorageBlock> BATBOX =
         BLOCKS.registerBlock("batbox", properties -> new EnergyStorageBlock(properties, MachineKind.BATBOX), machineProperties());
     static final DeferredBlock<EnergyStorageBlock> MFE =
@@ -75,6 +78,8 @@ public final class Machines {
         ENTITIES.register("macerator", () -> entityType(MACERATOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> ELECTRIC_FURNACE_ENTITY =
         ENTITIES.register("electric_furnace", () -> entityType(ELECTRIC_FURNACE.get()));
+    static final Supplier<BlockEntityType<IronFurnaceBlockEntity>> IRON_FURNACE_ENTITY =
+        ENTITIES.register("iron_furnace", () -> BlockEntityType.Builder.of(IronFurnaceBlockEntity::new, IRON_FURNACE.get()).build(null));
     static final Supplier<BlockEntityType<MachineEntity>> BATBOX_ENTITY =
         ENTITIES.register("batbox", () -> entityType(BATBOX.get()));
     static final Supplier<BlockEntityType<MachineEntity>> MFE_ENTITY =
@@ -100,6 +105,7 @@ public final class Machines {
         items.registerSimpleBlockItem(SOLAR_PANEL);
         items.registerSimpleBlockItem(MACERATOR);
         items.registerSimpleBlockItem(ELECTRIC_FURNACE);
+        items.registerSimpleBlockItem(IRON_FURNACE);
         items.registerSimpleBlockItem(BATBOX);
         items.registerSimpleBlockItem(MFE);
         items.registerSimpleBlockItem(EXTRACTOR);
@@ -118,6 +124,7 @@ public final class Machines {
                 event.accept(insulatedCopperCableItem.get());
                 event.accept(MACERATOR.get());
                 event.accept(ELECTRIC_FURNACE.get());
+                event.accept(IRON_FURNACE.get());
                 event.accept(BATBOX.get());
                 event.accept(MFE.get());
                 event.accept(EXTRACTOR.get());
@@ -137,6 +144,7 @@ public final class Machines {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GEOTHERMAL_ENTITY.get(), MachineEntity::geothermalFluid);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACERATOR_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ELECTRIC_FURNACE_ENTITY.get(), MachineEntity::automation);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, IRON_FURNACE_ENTITY.get(), IronFurnaceBlockEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BATBOX_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MFE_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, EXTRACTOR_ENTITY.get(), MachineEntity::automation);

@@ -2,6 +2,7 @@
   "values": [
     "ic2:tin_ore",
     "ic2:deepslate_tin_ore",
-    "ic2:machine_block"
+    "ic2:machine_block",
+    "ic2:iron_furnace"
   ]
 }
