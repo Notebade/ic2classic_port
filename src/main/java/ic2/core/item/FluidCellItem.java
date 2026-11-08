@@ -5,12 +5,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -42,17 +44,38 @@ public final class FluidCellItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
-        if (fluid != Fluids.EMPTY) {
-            return InteractionResultHolder.pass(held);
-        }
-        BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+        ClipContext.Fluid clip = fluid == Fluids.EMPTY ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE;
+        BlockHitResult hit = getPlayerPOVHitResult(level, player, clip);
         if (hit.getType() != HitResult.Type.BLOCK) {
             return InteractionResultHolder.pass(held);
         }
         BlockPos pos = hit.getBlockPos();
-        if (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos.relative(hit.getDirection()), hit.getDirection(), held)) {
+        BlockPos adjacent = pos.relative(hit.getDirection());
+        if (!level.mayInteract(player, pos) || !player.mayUseItemAt(adjacent, hit.getDirection(), held)) {
             return InteractionResultHolder.fail(held);
         }
+        if (fluid != Fluids.EMPTY) {
+            return pour(level, player, held, hit, adjacent);
+        }
+        return collect(level, player, held, pos);
+    }
+
+    private InteractionResultHolder<ItemStack> pour(Level level, Player player, ItemStack held, BlockHitResult hit,
+            BlockPos adjacent) {
+        BlockPos pos = hit.getBlockPos();
+        BlockState state = level.getBlockState(pos);
+        BlockPos target = state.getBlock() instanceof LiquidBlockContainer container
+            && container.canPlaceLiquid(player, level, pos, state, fluid) ? pos : adjacent;
+        BucketItem bucket = (BucketItem) fluid.getBucket();
+        if (!bucket.emptyContents(player, level, target, hit, held)) {
+            return InteractionResultHolder.fail(held);
+        }
+        ItemStack result = player.hasInfiniteMaterials() ? held
+            : ItemUtils.createFilledResult(held, player, new ItemStack(IC2.CELL_EMPTY.get()));
+        return InteractionResultHolder.sidedSuccess(result, level.isClientSide);
+    }
+
+    private static InteractionResultHolder<ItemStack> collect(Level level, Player player, ItemStack held, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         FluidState source = state.getFluidState();
         ItemStack filled = filledStack(source.getType());
