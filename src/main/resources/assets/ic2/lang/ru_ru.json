@@ -1,4 +1,9 @@
 {
+  "block.ic2.rare_earth_extractor": "Редкоземельный экстрактор",
+  "item.ic2.dust_rare_earth": "Редкоземельная пыль",
+  "item.ic2.rare_earth_chunk": "Редкоземельный сплав",
+  "item.ic2.dead_magnet": "Незаряженный магнит",
+  "gui.ic2.rare_earth_status": "%s EU | %s т | %s%%",
   "block.ic2.alloy_smelter": "Сплавочная печь",
   "block.ic2.advanced_machine_block": "Продвинутый корпус механизма",
   "block.ic2.aluminium_ore_nether": "Незерская алюминиевая руда",

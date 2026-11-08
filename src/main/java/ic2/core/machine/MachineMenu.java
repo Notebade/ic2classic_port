@@ -57,6 +57,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.ALLOY_SMELTER_MENU.get());
     }
 
+    static MachineMenu rareEarth(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.RARE_EARTH_MENU.get());
+    }
+
     private MachineMenu(int id, Inventory playerInventory, MenuType<MachineMenu> type) {
         this(id, playerInventory, new ItemStackHandler(type == Machines.GEOTHERMAL_MENU.get() || type == Machines.ALLOY_SMELTER_MENU.get()
                 ? MachineEntity.SLOT_COUNT + 1 : MachineEntity.SLOT_COUNT),
@@ -184,6 +188,10 @@ final class MachineMenu extends AbstractContainerMenu {
 
     boolean isAlloySmelter() {
         return getType() == Machines.ALLOY_SMELTER_MENU.get();
+    }
+
+    boolean isRareEarth() {
+        return getType() == Machines.RARE_EARTH_MENU.get();
     }
 
     @Override

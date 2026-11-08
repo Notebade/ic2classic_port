@@ -26,6 +26,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.MFE_MENU.get(), MachineScreen::new);
         event.register(Machines.MFSU_MENU.get(), MachineScreen::new);
         event.register(Machines.ALLOY_SMELTER_MENU.get(), MachineScreen::new);
+        event.register(Machines.RARE_EARTH_MENU.get(), MachineScreen::new);
         event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
     }
@@ -83,9 +84,14 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             graphics.drawString(font, Component.translatable("gui.ic2.amplifier", menu.work()),
                 8, 30, 0x404040, false);
         } else {
-            Component status = menu.fluid() < 0
-                ? Component.translatable("gui.ic2.machine_status", menu.energy(), menu.work())
-                : Component.translatable("gui.ic2.pump_status", menu.energy(), menu.work(), menu.fluid());
+            Component status;
+            if (menu.isRareEarth()) {
+                status = Component.translatable("gui.ic2.rare_earth_status", menu.energy(), menu.work(), menu.fluid());
+            } else if (menu.fluid() < 0) {
+                status = Component.translatable("gui.ic2.machine_status", menu.energy(), menu.work());
+            } else {
+                status = Component.translatable("gui.ic2.pump_status", menu.energy(), menu.work(), menu.fluid());
+            }
             graphics.drawString(font, status, 8, 21, 0x404040, false);
         }
         Component input = Component.translatable(menu.isFabricator() ? "gui.ic2.amplifier_slot" : "gui.ic2.input");

@@ -54,6 +54,9 @@ final class Materials {
                 event.accept(carbonFiber.get());
                 event.accept(IC2.CARBON_MESH.get());
                 event.accept(IC2.CARBON_PLATE.get());
+                event.accept(IC2.RARE_EARTH_DUST.get());
+                event.accept(IC2.RARE_EARTH_CHUNK.get());
+                event.accept(IC2.DEAD_MAGNET.get());
                 event.accept(ironDust.get());
                 event.accept(goldDust.get());
                 event.accept(coalDust.get());

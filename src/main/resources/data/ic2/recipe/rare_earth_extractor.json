@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GEG",
+    "GRG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "E": {
+      "item": "ic2:extractor"
+    },
+    "R": {
+      "item": "ic2:recycler"
+    }
+  },
+  "result": {
+    "id": "ic2:rare_earth_extractor"
+  }
+}

@@ -1,4 +1,9 @@
 {
+  "block.ic2.rare_earth_extractor": "Rare Earth Extractor",
+  "item.ic2.dust_rare_earth": "Rare Earth Dust",
+  "item.ic2.rare_earth_chunk": "Rare Earth Chunk",
+  "item.ic2.dead_magnet": "Uncharged Magnet",
+  "gui.ic2.rare_earth_status": "%s EU | %s t | %s%%",
   "block.ic2.alloy_smelter": "Alloy Smelter",
   "block.ic2.advanced_machine_block": "Advanced Machine Block",
   "block.ic2.aluminium_ore_nether": "Nether Aluminium Ore",

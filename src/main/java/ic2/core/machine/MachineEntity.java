@@ -61,6 +61,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int progress;
     private int amplifier;
     private int amplifierRefillThreshold;
+    private RareEarthRecipes.Material accumulatedMaterial;
+    private int materialUnits;
     private long nextPumpAttempt;
     private ItemStack processingInput = ItemStack.EMPTY;
     private ItemStack processingSecondInput = ItemStack.EMPTY;
@@ -142,6 +144,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MFSU -> Machines.MFSU_ENTITY.get();
             case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_ENTITY.get();
             case EXTRACTOR -> Machines.EXTRACTOR_ENTITY.get();
+            case RARE_EARTH_EXTRACTOR -> Machines.RARE_EARTH_ENTITY.get();
             case COMPRESSOR -> Machines.COMPRESSOR_ENTITY.get();
             case PUMP -> Machines.PUMP_ENTITY.get();
             case RECYCLER -> Machines.RECYCLER_ENTITY.get();
@@ -159,6 +162,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MASS_FABRICATOR -> tickMassFabricator();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
             case ALLOY_SMELTER -> setActive(tickProcessor());
+            case RARE_EARTH_EXTRACTOR -> setActive(tickRareEarth());
             case BATBOX, MFE, MFSU -> tickStorage();
         }
     }
@@ -349,6 +353,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ELECTRIC_FURNACE -> furnaceRecipe(new SingleRecipeInput(stack)).isPresent();
             case ALLOY_SMELTER -> AlloyRecipes.accepts(stack, secondInput());
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
+            case RARE_EARTH_EXTRACTOR -> RareEarthRecipes.find(stack) != null;
             case COMPRESSOR -> CompressionRecipes.find(stack) != null;
             case PUMP -> stack.is(Items.BUCKET);
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
@@ -384,7 +389,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
-            case GENERATOR, GEOTHERMAL, BATBOX, MFE, MFSU, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER, PUMP, MASS_FABRICATOR -> null;
+            case GENERATOR, GEOTHERMAL, BATBOX, MFE, MFSU, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER,
+                PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR -> null;
         };
     }
 
@@ -453,6 +459,39 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return true;
     }
 
+    private boolean tickRareEarth() {
+        var entry = RareEarthRecipes.find(inventory.getStackInSlot(INPUT_SLOT));
+        if (entry == null || energy < kind.energyPerTick) {
+            int nextProgress = entry == null ? 0 : Math.max(0, progress - 1);
+            if (progress != nextProgress) {
+                progress = nextProgress;
+                setChanged();
+            }
+            return false;
+        }
+
+        int existing = entry.material() == accumulatedMaterial ? materialUnits : 0;
+        int total = existing + entry.units();
+        boolean producesDust = total >= RareEarthRecipes.UNITS_PER_OUTPUT;
+        ItemStack output = producesDust ? entry.material().output() : ItemStack.EMPTY;
+        if (!canAddOutput(output)) {
+            return false;
+        }
+
+        accumulatedMaterial = entry.material();
+        materialUnits = existing;
+        energy -= kind.energyPerTick;
+        progress++;
+        if (progress >= kind.recipeTicks) {
+            inventory.extractItem(INPUT_SLOT, 1, false);
+            materialUnits = producesDust ? total - RareEarthRecipes.UNITS_PER_OUTPUT : total;
+            addOutput(output);
+            progress = 0;
+        }
+        setChanged();
+        return true;
+    }
+
     private record Work(int inputCount, int secondInputCount, ItemStack output, int chanceDenominator, int extraTicks) {
         Work(int inputCount, ItemStack output, int chanceDenominator, int extraTicks) {
             this(inputCount, 0, output, chanceDenominator, extraTicks);
@@ -495,7 +534,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         return switch (kind) {
             case GENERATOR, GEOTHERMAL, SOLAR_PANEL -> false;
-            case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> true;
+            case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
+                COMPRESSOR, PUMP, RECYCLER -> true;
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
             case LV_TRANSFORMER, MV_TRANSFORMER -> canReceiveTransformerEnergy(incomingSide, packetSize);
             // Only charge up the storage tiers, so a cable loop cannot feed energy back.
@@ -585,6 +625,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 case MFE -> Machines.MFE_MENU.get();
                 case MFSU -> Machines.MFSU_MENU.get();
                 case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_MENU.get();
+                case RARE_EARTH_EXTRACTOR -> Machines.RARE_EARTH_MENU.get();
                 case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
                 case GEOTHERMAL -> Machines.GEOTHERMAL_MENU.get();
                 default -> Machines.MENU.get();
@@ -592,6 +633,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     }
 
     private int menuFluid() {
+        if (kind == MachineKind.RARE_EARTH_EXTRACTOR) {
+            return materialUnits * 100 / RareEarthRecipes.UNITS_PER_OUTPUT;
+        }
         if (geothermalTank != null) {
             return geothermalTank.getFluidAmount();
         }
@@ -604,7 +648,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
             case SOLAR_PANEL, GEOTHERMAL, LV_TRANSFORMER, MV_TRANSFORMER -> 0;
             case MASS_FABRICATOR -> amplifier;
-            case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> progress;
+            case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
+                COMPRESSOR, PUMP, RECYCLER -> progress;
         };
     }
 
@@ -635,6 +680,10 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             tag.putInt("amplifier_refill", amplifierRefillThreshold);
         } else if (kind.recipeTicks > 0) {
             tag.putInt("progress", progress);
+            if (kind == MachineKind.RARE_EARTH_EXTRACTOR) {
+                tag.putString("material", accumulatedMaterial == null ? "" : accumulatedMaterial.id);
+                tag.putInt("material_units", materialUnits);
+            }
         }
     }
 
@@ -674,6 +723,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 maxProgress += RecyclingRecipes.BOX_EXTRA_TICKS;
             }
             progress = Mth.clamp(tag.getInt("progress"), 0, maxProgress);
+            if (kind == MachineKind.RARE_EARTH_EXTRACTOR) {
+                accumulatedMaterial = RareEarthRecipes.Material.byId(tag.getString("material"));
+                materialUnits = accumulatedMaterial == null ? 0
+                    : Mth.clamp(tag.getInt("material_units"), 0, RareEarthRecipes.UNITS_PER_OUTPUT - 1);
+            }
         }
     }
 }
