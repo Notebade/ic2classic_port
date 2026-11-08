@@ -18,7 +18,7 @@ final class EnergyNetwork {
         var pending = new PriorityQueue<>(Comparator.comparingInt(Route::lossMilliEu).thenComparingLong(Route::order));
         var visited = new HashSet<BlockPos>();
         long order = 0;
-        pending.add(new Route(source, 0, order++));
+        pending.add(new Route(source, 0, order++, null));
         int remaining = available;
 
         while (!pending.isEmpty()) {
@@ -41,14 +41,20 @@ final class EnergyNetwork {
                 }
                 if (!next.equals(source) && level.getBlockEntity(next) instanceof MachineEntity machine
                     && machine.canReceiveEnergy(direction.getOpposite(), sourceKind, available)) {
-                    remaining -= machine.receiveEnergy(remaining - loss) + loss;
+                    int accepted = machine.receiveEnergy(remaining - loss);
+                    remaining -= accepted + loss;
+                    if (accepted > 0) {
+                        recordTransfer(level, route.detectors());
+                    }
                 }
                 var state = level.getBlockState(next);
                 if (state.getBlock() instanceof EnergyCableBlock cable && cable.canCarry(state, available)
                     && !visited.contains(next)) {
                     int nextLoss = route.lossMilliEu() + cable.lossMilliEu();
                     if (nextLoss / MILLIEU_PER_EU < remaining) {
-                        pending.add(new Route(next, nextLoss, order++));
+                        DetectorVisit detectors = cable instanceof DetectorCableBlock
+                            ? new DetectorVisit(next, route.detectors()) : route.detectors();
+                        pending.add(new Route(next, nextLoss, order++, detectors));
                     }
                 }
             }
@@ -56,5 +62,13 @@ final class EnergyNetwork {
         return available - remaining;
     }
 
-    private record Route(BlockPos position, int lossMilliEu, long order) {}
+    private static void recordTransfer(Level level, DetectorVisit detectors) {
+        for (DetectorVisit visit = detectors; visit != null; visit = visit.previous()) {
+            DetectorCableBlock.recordTransfer(level, visit.position());
+        }
+    }
+
+    private record Route(BlockPos position, int lossMilliEu, long order, DetectorVisit detectors) {}
+
+    private record DetectorVisit(BlockPos position, DetectorVisit previous) {}
 }

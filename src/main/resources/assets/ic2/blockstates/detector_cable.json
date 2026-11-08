@@ -1,0 +1,138 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "powered": "false"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_unpowered_center"
+      }
+    },
+    {
+      "when": {
+        "powered": "false",
+        "north": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_unpowered_arm"
+      }
+    },
+    {
+      "when": {
+        "powered": "false",
+        "east": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_unpowered_arm",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "powered": "false",
+        "south": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_unpowered_arm",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "powered": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_unpowered_arm",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "powered": "false",
+        "up": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_unpowered_arm",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "powered": "false",
+        "down": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_unpowered_arm",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "powered": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_powered_center"
+      }
+    },
+    {
+      "when": {
+        "powered": "true",
+        "north": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_powered_arm"
+      }
+    },
+    {
+      "when": {
+        "powered": "true",
+        "east": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_powered_arm",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "powered": "true",
+        "south": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_powered_arm",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "powered": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_powered_arm",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "powered": "true",
+        "up": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_powered_arm",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "powered": "true",
+        "down": "true"
+      },
+      "apply": {
+        "model": "ic2:block/detector_cable_powered_arm",
+        "x": 90
+      }
+    }
+  ]
+}

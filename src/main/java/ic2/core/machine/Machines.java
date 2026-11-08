@@ -150,6 +150,8 @@ public final class Machines {
     static final DeferredBlock<EnergyCableBlock> TIN_CABLE = cable("tin_cable", 25, 5, 2.5F);
     static final DeferredBlock<SplitterCableBlock> SPLITTER_CABLE = BLOCKS.registerBlock("splitter_cable",
         SplitterCableBlock::new, cableProperties());
+    static final DeferredBlock<DetectorCableBlock> DETECTOR_CABLE = BLOCKS.registerBlock("detector_cable",
+        DetectorCableBlock::new, cableProperties());
     static final DeferredBlock<EnergyCableBlock> COPPER_CABLE = cable("copper_cable", 300, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> INSULATED_COPPER_CABLE = cable("copper_insulated_cable", 200, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> BRONZE_CABLE = cable("bronze_cable", 700, 128);
@@ -266,6 +268,7 @@ public final class Machines {
         items.registerSimpleBlockItem(MASS_FABRICATOR);
         var tinCableItem = items.registerSimpleBlockItem("tin_cable_item", TIN_CABLE);
         var splitterCableItem = items.registerSimpleBlockItem("splitter_cable_item", SPLITTER_CABLE);
+        var detectorCableItem = items.registerSimpleBlockItem("detector_cable_item", DETECTOR_CABLE);
         var copperCableItem = items.registerSimpleBlockItem("copper_cable_item", COPPER_CABLE);
         var insulatedCopperCableItem = items.registerSimpleBlockItem("copper_insulated_cable_item", INSULATED_COPPER_CABLE);
         var bronzeCableItem = items.registerSimpleBlockItem("bronze_cable_item", BRONZE_CABLE);
@@ -312,6 +315,7 @@ public final class Machines {
                 event.accept(EV_TRANSFORMER.get());
                 event.accept(tinCableItem.get());
                 event.accept(splitterCableItem.get());
+                event.accept(detectorCableItem.get());
                 event.accept(copperCableItem.get());
                 event.accept(insulatedCopperCableItem.get());
                 event.accept(bronzeCableItem.get());
