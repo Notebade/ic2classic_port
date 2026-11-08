@@ -1,0 +1,5 @@
+{
+  "type": "ic2:uu_matter",
+  "pattern": ["   ","M  "," M "],
+  "result": { "id": "minecraft:red_sandstone", "count": 16 }
+}

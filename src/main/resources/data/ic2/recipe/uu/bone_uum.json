@@ -1,0 +1,5 @@
+{
+  "type": "ic2:uu_matter",
+  "pattern": ["M  ","MM ","M  "],
+  "result": { "id": "minecraft:bone", "count": 32 }
+}

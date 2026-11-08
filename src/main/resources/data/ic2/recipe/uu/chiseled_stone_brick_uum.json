@@ -1,0 +1,5 @@
+{
+  "type": "ic2:uu_matter",
+  "pattern": ["MM ","MM ","M  "],
+  "result": { "id": "minecraft:chiseled_stone_bricks", "count": 48 }
+}

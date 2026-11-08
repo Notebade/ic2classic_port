@@ -1,0 +1,5 @@
+{
+  "type": "ic2:uu_matter",
+  "pattern": ["MM ","  M","MM "],
+  "result": { "id": "minecraft:cocoa_beans", "count": 32 }
+}

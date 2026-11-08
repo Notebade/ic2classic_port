@@ -4,9 +4,11 @@ import com.mojang.serialization.Codec;
 import ic2.core.item.ReBatteryItem;
 import ic2.core.item.ScrapBoxItem;
 import ic2.core.machine.Machines;
+import ic2.core.recipe.UuMatterRecipe;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -18,6 +20,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class IC2 {
     public static final String MOD_ID = "ic2";
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
+    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
+        DeferredRegister.create(Registries.RECIPE_SERIALIZER, MOD_ID);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<UuMatterRecipe>> UU_MATTER_RECIPE =
+        RECIPE_SERIALIZERS.register("uu_matter", () -> UuMatterRecipe.SERIALIZER);
     private static final DeferredRegister.DataComponents COMPONENTS =
         DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BATTERY_CHARGE =
@@ -37,6 +43,7 @@ public final class IC2 {
     public IC2(IEventBus modBus) {
         COMPONENTS.register(modBus);
         ITEMS.register(modBus);
+        RECIPE_SERIALIZERS.register(modBus);
         Machines.register(modBus, ITEMS);
         modBus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(ScrapBoxItem::registerDispenser));
     }

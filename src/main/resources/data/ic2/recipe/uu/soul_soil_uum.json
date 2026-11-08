@@ -1,0 +1,5 @@
+{
+  "type": "ic2:uu_matter",
+  "pattern": ["MMM"," M "," M "],
+  "result": { "id": "minecraft:soul_soil", "count": 24 }
+}

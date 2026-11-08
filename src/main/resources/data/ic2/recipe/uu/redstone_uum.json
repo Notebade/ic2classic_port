@@ -1,0 +1,5 @@
+{
+  "type": "ic2:uu_matter",
+  "pattern": ["   "," M ","MMM"],
+  "result": { "id": "minecraft:redstone", "count": 24 }
+}
