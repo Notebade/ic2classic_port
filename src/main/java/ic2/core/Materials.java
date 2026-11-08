@@ -1,11 +1,13 @@
 package ic2.core;
 
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 final class Materials {
@@ -22,9 +24,18 @@ final class Materials {
             BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
         var advancedMachineBlock = items.registerSimpleBlockItem(BLOCKS.registerBlock("advanced_machine_block", Block::new,
             BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
+        var stabilizedMachineBlock = items.registerSimpleBlockItem(BLOCKS.registerBlock("stabilized_machine_block", Block::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
         var aluminiumOre = items.registerSimpleBlockItem(BLOCKS.registerBlock("aluminium_ore_nether", Block::new,
             BlockBehaviour.Properties.ofFullCopy(Blocks.NETHER_QUARTZ_ORE).strength(4.0F, 5.0F).requiresCorrectToolForDrops()));
         var rawTin = items.registerSimpleItem("raw_tin");
+        var silverOre = registerSilverOre(items, "silver_ore", Blocks.COPPER_ORE);
+        var deepslateSilverOre = registerSilverOre(items, "deepslate_silver_ore", Blocks.DEEPSLATE_COPPER_ORE);
+        var netherSilverOre = registerSilverOre(items, "silver_ore_nether", Blocks.NETHER_QUARTZ_ORE);
+        var rawSilver = items.registerSimpleItem("raw_silver");
+        var silverDust = items.registerSimpleItem("dust_silver");
+        var silver = items.registerSimpleItem("ingot_silver");
+        var emptyCell = items.registerSimpleItem("cell_empty");
         var rawAluminium = items.registerSimpleItem("raw_aluminium");
         var carbonFiber = items.registerSimpleItem("carbon_fiber");
         var ironDust = items.registerSimpleItem("dust_iron");
@@ -40,6 +51,9 @@ final class Materials {
                 event.accept(tinOre.get());
                 event.accept(deepslateTinOre.get());
                 event.accept(aluminiumOre.get());
+                event.accept(silverOre.get());
+                event.accept(deepslateSilverOre.get());
+                event.accept(netherSilverOre.get());
             }
             if (event.getTabKey().equals(CreativeModeTabs.INGREDIENTS)) {
                 event.accept(rawTin.get());
@@ -57,6 +71,11 @@ final class Materials {
                 event.accept(IC2.RARE_EARTH_DUST.get());
                 event.accept(IC2.RARE_EARTH_CHUNK.get());
                 event.accept(IC2.DEAD_MAGNET.get());
+                event.accept(IC2.MAGNET.get());
+                event.accept(rawSilver.get());
+                event.accept(silverDust.get());
+                event.accept(silver.get());
+                event.accept(emptyCell.get());
                 event.accept(ironDust.get());
                 event.accept(goldDust.get());
                 event.accept(coalDust.get());
@@ -66,7 +85,14 @@ final class Materials {
                 event.accept(advancedCircuit.get());
                 event.accept(machineBlock.get());
                 event.accept(advancedMachineBlock.get());
+                event.accept(stabilizedMachineBlock.get());
             }
         });
+    }
+
+    private static DeferredItem<BlockItem> registerSilverOre(
+            DeferredRegister.Items items, String name, Block template) {
+        return items.registerSimpleBlockItem(BLOCKS.registerBlock(name, Block::new,
+            BlockBehaviour.Properties.ofFullCopy(template).strength(4.0F, 5.0F).requiresCorrectToolForDrops()));
     }
 }

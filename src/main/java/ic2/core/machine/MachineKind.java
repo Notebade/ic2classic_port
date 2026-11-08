@@ -9,6 +9,7 @@ enum MachineKind {
     ALLOY_SMELTER(16, 250),
     EXTRACTOR(2, 400),
     RARE_EARTH_EXTRACTOR(1120, 1, 35),
+    ELECTROLYZER(20_000, 0, 0),
     COMPRESSOR(2, 400),
     PUMP(200, 1, 120),
     RECYCLER(1, 45),

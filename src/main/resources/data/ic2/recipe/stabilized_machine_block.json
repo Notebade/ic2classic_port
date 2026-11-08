@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " M ",
+    "SAS",
+    " M "
+  ],
+  "key": {
+    "M": {
+      "item": "ic2:magnet"
+    },
+    "S": {
+      "item": "ic2:ingot_silver"
+    },
+    "A": {
+      "item": "ic2:advanced_machine_block"
+    }
+  },
+  "result": {
+    "id": "ic2:stabilized_machine_block",
+    "count": 1
+  }
+}

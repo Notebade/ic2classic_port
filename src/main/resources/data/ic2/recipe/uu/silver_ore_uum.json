@@ -1,0 +1,12 @@
+{
+  "type": "ic2:uu_matter",
+  "pattern": [
+    " M ",
+    "M M",
+    "MM "
+  ],
+  "result": {
+    "id": "ic2:silver_ore",
+    "count": 2
+  }
+}

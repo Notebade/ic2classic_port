@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "ingredient": {
+    "item": "ic2:dust_silver"
+  },
+  "result": {
+    "id": "ic2:ingot_silver"
+  },
+  "experience": 0.4,
+  "cookingtime": 100
+}

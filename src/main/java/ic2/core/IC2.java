@@ -56,6 +56,7 @@ public final class IC2 {
     public static final DeferredItem<Item> RARE_EARTH_DUST = ITEMS.registerSimpleItem("dust_rare_earth");
     public static final DeferredItem<Item> RARE_EARTH_CHUNK = ITEMS.registerSimpleItem("rare_earth_chunk");
     public static final DeferredItem<Item> DEAD_MAGNET = ITEMS.registerSimpleItem("dead_magnet");
+    public static final DeferredItem<Item> MAGNET = ITEMS.registerSimpleItem("magnet");
     public static final DeferredItem<Item> SCRAP = ITEMS.registerSimpleItem("scrap");
     public static final DeferredItem<Item> SCRAP_METAL = ITEMS.registerSimpleItem("scrap_metal");
     public static final DeferredItem<ScrapBoxItem> SCRAP_BOX = ITEMS.registerItem("scrapbox", ScrapBoxItem::new);

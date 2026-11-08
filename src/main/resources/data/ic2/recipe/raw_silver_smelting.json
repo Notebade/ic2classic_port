@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "ingredient": {
+    "item": "ic2:raw_silver"
+  },
+  "result": {
+    "id": "ic2:ingot_silver"
+  },
+  "experience": 0.4,
+  "cookingtime": 200
+}

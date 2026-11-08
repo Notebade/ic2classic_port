@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " T ",
+    "T T",
+    " T "
+  ],
+  "key": {
+    "T": {
+      "item": "ic2:ingot_tin"
+    }
+  },
+  "result": {
+    "id": "ic2:cell_empty",
+    "count": 16
+  }
+}

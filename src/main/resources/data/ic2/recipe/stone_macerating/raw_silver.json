@@ -1,0 +1,12 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": {
+    "item": "ic2:raw_silver"
+  },
+  "result": {
+    "id": "ic2:dust_silver",
+    "count": 2
+  },
+  "experience": 0.8,
+  "cookingtime": 400
+}

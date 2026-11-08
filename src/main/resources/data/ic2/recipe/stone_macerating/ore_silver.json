@@ -1,0 +1,20 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": [
+    {
+      "item": "ic2:silver_ore"
+    },
+    {
+      "item": "ic2:deepslate_silver_ore"
+    },
+    {
+      "item": "ic2:silver_ore_nether"
+    }
+  ],
+  "result": {
+    "id": "ic2:dust_silver",
+    "count": 2
+  },
+  "experience": 0.8,
+  "cookingtime": 400
+}

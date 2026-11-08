@@ -22,6 +22,14 @@ src/main/resources/assets/ic2/textures/block/machine/lv/rare_earth_extractor/*.p
 src/main/resources/assets/ic2/textures/item/dust/rare_earth.png
 src/main/resources/assets/ic2/textures/item/misc/rare_earth_chunk.png
 src/main/resources/assets/ic2/textures/item/misc/dead_magnet.png
+src/main/resources/assets/ic2/textures/item/misc/magnet.png
+src/main/resources/assets/ic2/textures/item/cells/empty.png
+src/main/resources/assets/ic2/textures/item/raw/silver.png
+src/main/resources/assets/ic2/textures/item/dust/silver.png
+src/main/resources/assets/ic2/textures/item/ingots/silver.png
+src/main/resources/assets/ic2/textures/block/resources/ore/*silver_ore*.png
+src/main/resources/assets/ic2/textures/block/misc/stabilized_machine_block/
+src/main/resources/assets/ic2/textures/block/machine/lv/electrolyzer/*.png
 src/main/resources/assets/ic2/textures/block/resources/ore/aluminium_ore_nether.png
 src/main/resources/assets/ic2/textures/item/raw/aluminium.png
 src/main/resources/assets/ic2/textures/item/dust/aluminium.png

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GCG",
+    "ALA",
+    "GCG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "C": {
+      "item": "ic2:advanced_circuit"
+    },
+    "A": {
+      "item": "ic2:stabilized_machine_block"
+    },
+    "L": {
+      "item": "ic2:lapatron_crystal"
+    }
+  },
+  "result": {
+    "id": "ic2:mass_fabricator",
+    "count": 1
+  }
+}

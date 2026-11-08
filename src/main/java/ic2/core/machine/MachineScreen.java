@@ -27,6 +27,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.MFSU_MENU.get(), MachineScreen::new);
         event.register(Machines.ALLOY_SMELTER_MENU.get(), MachineScreen::new);
         event.register(Machines.RARE_EARTH_MENU.get(), MachineScreen::new);
+        event.register(Machines.ELECTROLYZER_MENU.get(), MachineScreen::new);
         event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
     }
@@ -87,6 +88,8 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             Component status;
             if (menu.isRareEarth()) {
                 status = Component.translatable("gui.ic2.rare_earth_status", menu.energy(), menu.work(), menu.fluid());
+            } else if (menu.isElectrolyzer()) {
+                status = Component.translatable("gui.ic2.storage_energy", menu.energy(), MachineKind.ELECTROLYZER.capacity);
             } else if (menu.fluid() < 0) {
                 status = Component.translatable("gui.ic2.machine_status", menu.energy(), menu.work());
             } else {

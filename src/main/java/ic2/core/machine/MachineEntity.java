@@ -145,6 +145,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_ENTITY.get();
             case EXTRACTOR -> Machines.EXTRACTOR_ENTITY.get();
             case RARE_EARTH_EXTRACTOR -> Machines.RARE_EARTH_ENTITY.get();
+            case ELECTROLYZER -> Machines.ELECTROLYZER_ENTITY.get();
             case COMPRESSOR -> Machines.COMPRESSOR_ENTITY.get();
             case PUMP -> Machines.PUMP_ENTITY.get();
             case RECYCLER -> Machines.RECYCLER_ENTITY.get();
@@ -163,6 +164,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
             case ALLOY_SMELTER -> setActive(tickProcessor());
             case RARE_EARTH_EXTRACTOR -> setActive(tickRareEarth());
+            case ELECTROLYZER -> setActive(tickElectrolyzer());
             case BATBOX, MFE, MFSU -> tickStorage();
         }
     }
@@ -354,6 +356,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ALLOY_SMELTER -> AlloyRecipes.accepts(stack, secondInput());
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
             case RARE_EARTH_EXTRACTOR -> RareEarthRecipes.find(stack) != null;
+            case ELECTROLYZER -> stack.is(IC2.DEAD_MAGNET.get());
             case COMPRESSOR -> CompressionRecipes.find(stack) != null;
             case PUMP -> stack.is(Items.BUCKET);
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
@@ -390,7 +393,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
             case GENERATOR, GEOTHERMAL, BATBOX, MFE, MFSU, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER,
-                PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR -> null;
+                PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER -> null;
         };
     }
 
@@ -492,6 +495,42 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return true;
     }
 
+    private boolean tickElectrolyzer() {
+        if (!inventory.getStackInSlot(INPUT_SLOT).is(IC2.DEAD_MAGNET.get())) {
+            return false;
+        }
+        ItemStack magnet = new ItemStack(IC2.MAGNET.get());
+        if (!canAddOutput(magnet)) {
+            return false;
+        }
+        MachineEntity storage = adjacentStorage();
+        if (storage == null || storage.energy * 10L < storage.kind.capacity * 7L) {
+            return false;
+        }
+
+        int drawn = Math.min(kind.capacity - energy, storage.kind.storageOutput / 16);
+        storage.energy -= drawn;
+        storage.setChanged();
+        energy += drawn;
+        if (energy == kind.capacity) {
+            inventory.extractItem(INPUT_SLOT, 1, false);
+            addOutput(magnet);
+            energy = 0;
+        }
+        setChanged();
+        return true;
+    }
+
+    private MachineEntity adjacentStorage() {
+        for (Direction side : Direction.values()) {
+            BlockPos pos = worldPosition.relative(side);
+            if (level.isLoaded(pos) && level.getBlockEntity(pos) instanceof MachineEntity machine && machine.kind.isStorage()) {
+                return machine;
+            }
+        }
+        return null;
+    }
+
     private record Work(int inputCount, int secondInputCount, ItemStack output, int chanceDenominator, int extraTicks) {
         Work(int inputCount, ItemStack output, int chanceDenominator, int extraTicks) {
             this(inputCount, 0, output, chanceDenominator, extraTicks);
@@ -533,7 +572,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             return false;
         }
         return switch (kind) {
-            case GENERATOR, GEOTHERMAL, SOLAR_PANEL -> false;
+            case GENERATOR, GEOTHERMAL, SOLAR_PANEL, ELECTROLYZER -> false;
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> true;
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
@@ -587,6 +626,13 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     }
 
     IItemHandler automation(Direction side) {
+        if (kind == MachineKind.ELECTROLYZER) {
+            return switch (side) {
+                case UP -> automationInput;
+                case DOWN -> automationOutput;
+                case null, default -> null;
+            };
+        }
         if (kind == MachineKind.PUMP) {
             if (side == Direction.UP) {
                 return automationInput;
@@ -626,6 +672,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 case MFSU -> Machines.MFSU_MENU.get();
                 case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_MENU.get();
                 case RARE_EARTH_EXTRACTOR -> Machines.RARE_EARTH_MENU.get();
+                case ELECTROLYZER -> Machines.ELECTROLYZER_MENU.get();
                 case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
                 case GEOTHERMAL -> Machines.GEOTHERMAL_MENU.get();
                 default -> Machines.MENU.get();
@@ -646,7 +693,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (kind) {
             case GENERATOR -> burnTicks;
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
-            case SOLAR_PANEL, GEOTHERMAL, LV_TRANSFORMER, MV_TRANSFORMER -> 0;
+            case SOLAR_PANEL, GEOTHERMAL, LV_TRANSFORMER, MV_TRANSFORMER, ELECTROLYZER -> 0;
             case MASS_FABRICATOR -> amplifier;
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> progress;
