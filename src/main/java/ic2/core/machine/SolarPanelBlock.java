@@ -16,6 +16,7 @@ import net.minecraft.world.phys.BlockHitResult;
 class SolarPanelBlock extends MachineBlock {
     static final int BASE_OUTPUT = 1;
     static final int LV_OUTPUT = 8;
+    static final int MV_OUTPUT = 64;
     private final int output;
 
     SolarPanelBlock(Properties properties, int output) {

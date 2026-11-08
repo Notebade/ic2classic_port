@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "PPP",
+    "PTP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "ic2:solar_panel_lv"
+    },
+    "T": {
+      "item": "ic2:transformer_mv"
+    }
+  },
+  "result": {
+    "id": "ic2:solar_panel_mv",
+    "count": 1
+  }
+}

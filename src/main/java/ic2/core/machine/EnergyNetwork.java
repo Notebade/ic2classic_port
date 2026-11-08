@@ -9,11 +9,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.Level;
 
-final class CopperNetwork {
-    private CopperNetwork() {}
+final class EnergyNetwork {
+    private EnergyNetwork() {}
 
     static int send(Level level, BlockPos source, int available, Predicate<Direction> emitsTo, MachineKind sourceKind) {
-        var pending = new PriorityQueue<>(Comparator.comparingInt(Route::lossTenths).thenComparingLong(Route::order));
+        var pending = new PriorityQueue<>(Comparator.comparingInt(Route::lossHundredths).thenComparingLong(Route::order));
         var visited = new HashSet<BlockPos>();
         long order = 0;
         pending.add(new Route(source, 0, order++));
@@ -24,12 +24,12 @@ final class CopperNetwork {
             if (!visited.add(route.position())) {
                 continue;
             }
-            int loss = route.lossTenths() / 10;
+            int loss = route.lossHundredths() / 100;
             for (Direction direction : Direction.values()) {
                 if (remaining <= loss) {
                     break;
                 }
-                if (route.lossTenths() == 0 && !emitsTo.test(direction)) {
+                if (route.lossHundredths() == 0 && !emitsTo.test(direction)) {
                     continue;
                 }
                 BlockPos next = route.position().relative(direction);
@@ -42,9 +42,9 @@ final class CopperNetwork {
                     remaining -= machine.receiveEnergy(remaining - loss) + loss;
                 }
                 var state = level.getBlockState(next);
-                if (state.getBlock() instanceof CopperCableBlock && !visited.contains(next)) {
-                    int nextLoss = route.lossTenths() + (state.is(Machines.INSULATED_COPPER_CABLE.get()) ? 2 : 3);
-                    if (nextLoss / 10 < remaining) {
+                if (state.getBlock() instanceof EnergyCableBlock cable && !visited.contains(next)) {
+                    int nextLoss = route.lossHundredths() + cable.lossHundredths();
+                    if (nextLoss / 100 < remaining) {
                         pending.add(new Route(next, nextLoss, order++));
                     }
                 }
@@ -53,5 +53,5 @@ final class CopperNetwork {
         return available - remaining;
     }
 
-    private record Route(BlockPos position, int lossTenths, long order) {}
+    private record Route(BlockPos position, int lossHundredths, long order) {}
 }

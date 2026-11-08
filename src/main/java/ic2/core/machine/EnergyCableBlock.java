@@ -1,6 +1,8 @@
 package ic2.core.machine;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -11,11 +13,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-final class CopperCableBlock extends PipeBlock {
-    private static final MapCodec<CopperCableBlock> CODEC = simpleCodec(CopperCableBlock::new);
+final class EnergyCableBlock extends PipeBlock {
+    private static final MapCodec<EnergyCableBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+        propertiesCodec(),
+        Codec.intRange(1, 100).fieldOf("loss_hundredths").forGetter(EnergyCableBlock::lossHundredths)
+    ).apply(instance, EnergyCableBlock::new));
+    private final int lossHundredths;
 
-    CopperCableBlock(Properties properties) {
+    EnergyCableBlock(Properties properties, int lossHundredths) {
         super(2.0F / 16, properties);
+        this.lossHundredths = lossHundredths;
         BlockState state = defaultBlockState();
         for (BooleanProperty property : PROPERTY_BY_DIRECTION.values()) {
             state = state.setValue(property, false);
@@ -24,8 +31,12 @@ final class CopperCableBlock extends PipeBlock {
     }
 
     @Override
-    protected MapCodec<CopperCableBlock> codec() {
+    protected MapCodec<EnergyCableBlock> codec() {
         return CODEC;
+    }
+
+    int lossHundredths() {
+        return lossHundredths;
     }
 
     @Override
@@ -50,6 +61,6 @@ final class CopperCableBlock extends PipeBlock {
     }
 
     private boolean connectsTo(BlockState state) {
-        return state.getBlock() instanceof CopperCableBlock || state.getBlock() instanceof MachineBlock;
+        return state.getBlock() instanceof EnergyCableBlock || state.getBlock() instanceof MachineBlock;
     }
 }

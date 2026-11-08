@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "C",
+    "M",
+    "C"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:gold_double_insulated_cable_item"
+    },
+    "M": {
+      "item": "ic2:machine_block"
+    }
+  },
+  "result": {
+    "id": "ic2:transformer_mv",
+    "count": 1
+  }
+}

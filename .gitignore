@@ -23,6 +23,14 @@ src/main/resources/assets/ic2/textures/block/electric/generator/geothermal/
 src/main/resources/assets/ic2/textures/block/electric/generator/solar_panel/
 src/main/resources/assets/ic2/textures/block/electric/generator/lv_solar_panel/
 src/main/resources/assets/ic2/textures/block/electric/transformer/lv/
+src/main/resources/assets/ic2/textures/block/electric/transformer/mv/
+src/main/resources/assets/ic2/textures/block/electric/generator/mv_solar_panel/
+src/main/resources/assets/ic2/textures/block/electric/cable/gold.png
+src/main/resources/assets/ic2/textures/block/electric/cable/1x_insulated_gold/
+src/main/resources/assets/ic2/textures/block/electric/cable/2x_insulated_gold/
+src/main/resources/assets/ic2/textures/item/cable/gold.png
+src/main/resources/assets/ic2/textures/item/cable/insulated_gold.png
+src/main/resources/assets/ic2/textures/item/cable/double_insulated_gold.png
 src/main/resources/assets/ic2/textures/block/machine/lv/macerator/
 src/main/resources/assets/ic2/textures/block/machine/lv/electric_furnace/
 src/main/resources/assets/ic2/textures/block/machine/stone/iron_furnace/
