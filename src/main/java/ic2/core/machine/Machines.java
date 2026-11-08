@@ -44,6 +44,8 @@ public final class Machines {
         RECIPE_SERIALIZERS.register("stone_macerating", () -> new SimpleCookingSerializer<>(MacerationRecipe::new, 400));
     static final Supplier<MenuType<StoneMaceratorMenu>> STONE_MACERATOR_MENU =
         MENUS.register("stone_macerator", () -> new MenuType<>(StoneMaceratorMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<ComparingCableMenu>> COMPARING_CABLE_MENU =
+        MENUS.register("comparing_cable", () -> new MenuType<>(ComparingCableMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> MENU =
         MENUS.register("machine", () -> new MenuType<>(MachineMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> BATBOX_MENU =
@@ -152,6 +154,8 @@ public final class Machines {
         SplitterCableBlock::new, cableProperties());
     static final DeferredBlock<DetectorCableBlock> DETECTOR_CABLE = BLOCKS.registerBlock("detector_cable",
         DetectorCableBlock::new, cableProperties());
+    static final DeferredBlock<ComparingCableBlock> COMPARING_CABLE = BLOCKS.registerBlock("comparing_cable",
+        ComparingCableBlock::new, cableProperties());
     static final DeferredBlock<EnergyCableBlock> COPPER_CABLE = cable("copper_cable", 300, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> INSULATED_COPPER_CABLE = cable("copper_insulated_cable", 200, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> BRONZE_CABLE = cable("bronze_cable", 700, 128);
@@ -178,6 +182,9 @@ public final class Machines {
 
     static final Supplier<BlockEntityType<MachineEntity>> GENERATOR_ENTITY =
         ENTITIES.register("generator", () -> entityType(GENERATOR.get()));
+    static final Supplier<BlockEntityType<ComparingCableEntity>> COMPARING_CABLE_ENTITY =
+        ENTITIES.register("comparing_cable", () ->
+            BlockEntityType.Builder.of(ComparingCableEntity::new, COMPARING_CABLE.get()).build(null));
     static final Supplier<BlockEntityType<MachineEntity>> GEOTHERMAL_ENTITY =
         ENTITIES.register("geothermal_generator", () -> entityType(GEOTHERMAL.get()));
     static final Supplier<BlockEntityType<MachineEntity>> SOLAR_PANEL_ENTITY =
@@ -269,6 +276,7 @@ public final class Machines {
         var tinCableItem = items.registerSimpleBlockItem("tin_cable_item", TIN_CABLE);
         var splitterCableItem = items.registerSimpleBlockItem("splitter_cable_item", SPLITTER_CABLE);
         var detectorCableItem = items.registerSimpleBlockItem("detector_cable_item", DETECTOR_CABLE);
+        var comparingCableItem = items.registerSimpleBlockItem("comparing_cable_item", COMPARING_CABLE);
         var copperCableItem = items.registerSimpleBlockItem("copper_cable_item", COPPER_CABLE);
         var insulatedCopperCableItem = items.registerSimpleBlockItem("copper_insulated_cable_item", INSULATED_COPPER_CABLE);
         var bronzeCableItem = items.registerSimpleBlockItem("bronze_cable_item", BRONZE_CABLE);
@@ -316,6 +324,7 @@ public final class Machines {
                 event.accept(tinCableItem.get());
                 event.accept(splitterCableItem.get());
                 event.accept(detectorCableItem.get());
+                event.accept(comparingCableItem.get());
                 event.accept(copperCableItem.get());
                 event.accept(insulatedCopperCableItem.get());
                 event.accept(bronzeCableItem.get());

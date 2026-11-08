@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    " C ",
+    "RIR",
+    " R "
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:advanced_circuit"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "I": {
+      "item": "ic2:iron_triple_insulated_cable_item"
+    }
+  },
+  "result": {
+    "id": "ic2:comparing_cable_item",
+    "count": 1
+  }
+}

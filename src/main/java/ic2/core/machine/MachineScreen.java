@@ -20,6 +20,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
 
     @SubscribeEvent
     public static void register(RegisterMenuScreensEvent event) {
+        event.register(Machines.COMPARING_CABLE_MENU.get(), ComparingCableScreen::new);
         event.register(Machines.STONE_MACERATOR_MENU.get(), StoneMaceratorScreen::new);
         event.register(Machines.MENU.get(), MachineScreen::new);
         event.register(Machines.BATBOX_MENU.get(), MachineScreen::new);

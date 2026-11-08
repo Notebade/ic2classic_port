@@ -44,7 +44,7 @@ final class EnergyNetwork {
                     int accepted = machine.receiveEnergy(remaining - loss);
                     remaining -= accepted + loss;
                     if (accepted > 0) {
-                        recordTransfer(level, route.detectors());
+                        recordTransfer(level, route.meters(), accepted, loss);
                     }
                 }
                 var state = level.getBlockState(next);
@@ -52,9 +52,9 @@ final class EnergyNetwork {
                     && !visited.contains(next)) {
                     int nextLoss = route.lossMilliEu() + cable.lossMilliEu();
                     if (nextLoss / MILLIEU_PER_EU < remaining) {
-                        DetectorVisit detectors = cable instanceof DetectorCableBlock
-                            ? new DetectorVisit(next, route.detectors()) : route.detectors();
-                        pending.add(new Route(next, nextLoss, order++, detectors));
+                        MeterVisit meters = cable instanceof EnergyMeterCableBlock meter
+                            ? new MeterVisit(meter, next, nextLoss / MILLIEU_PER_EU, route.meters()) : route.meters();
+                        pending.add(new Route(next, nextLoss, order++, meters));
                     }
                 }
             }
@@ -62,13 +62,14 @@ final class EnergyNetwork {
         return available - remaining;
     }
 
-    private static void recordTransfer(Level level, DetectorVisit detectors) {
-        for (DetectorVisit visit = detectors; visit != null; visit = visit.previous()) {
-            DetectorCableBlock.recordTransfer(level, visit.position());
+    private static void recordTransfer(Level level, MeterVisit meters, int accepted, int routeLoss) {
+        for (MeterVisit visit = meters; visit != null; visit = visit.previous()) {
+            // A meter reports energy leaving its cable, including any loss farther along the route.
+            visit.meter().recordTransfer(level, visit.position(), accepted + routeLoss - visit.loss());
         }
     }
 
-    private record Route(BlockPos position, int lossMilliEu, long order, DetectorVisit detectors) {}
+    private record Route(BlockPos position, int lossMilliEu, long order, MeterVisit meters) {}
 
-    private record DetectorVisit(BlockPos position, DetectorVisit previous) {}
+    private record MeterVisit(EnergyMeterCableBlock meter, BlockPos position, int loss, MeterVisit previous) {}
 }

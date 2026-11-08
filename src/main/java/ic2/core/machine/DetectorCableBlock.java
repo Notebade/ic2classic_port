@@ -13,13 +13,12 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-final class DetectorCableBlock extends EnergyCableBlock {
+final class DetectorCableBlock extends EnergyMeterCableBlock {
     private static final MapCodec<DetectorCableBlock> CODEC = simpleCodec(DetectorCableBlock::new);
     private static final BooleanProperty TRANSFERRED = BooleanProperty.create("transferred");
-    private static final int SAMPLE_INTERVAL = 20;
 
     DetectorCableBlock(Properties properties) {
-        super(properties, 500, 2048, 4);
+        super(properties);
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.POWERED, false)
             .setValue(TRANSFERRED, false));
     }
@@ -35,12 +34,12 @@ final class DetectorCableBlock extends EnergyCableBlock {
         builder.add(BlockStateProperties.POWERED, TRANSFERRED);
     }
 
-    static void recordTransfer(Level level, BlockPos pos) {
+    @Override
+    void recordTransfer(Level level, BlockPos pos, int energy) {
         BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof DetectorCableBlock detector && !state.getValue(TRANSFERRED)) {
+        if (state.is(this) && !state.getValue(TRANSFERRED)) {
             level.setBlock(pos, state.setValue(TRANSFERRED, true), Block.UPDATE_KNOWN_SHAPE);
-            int delay = SAMPLE_INTERVAL - Math.floorMod(level.getGameTime() + pos.hashCode(), SAMPLE_INTERVAL);
-            level.scheduleTick(pos, detector, delay);
+            scheduleSample(level, pos);
         }
     }
 
@@ -56,22 +55,7 @@ final class DetectorCableBlock extends EnergyCableBlock {
     }
 
     @Override
-    public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
-        return true;
-    }
-
-    @Override
-    protected boolean isSignalSource(BlockState state) {
-        return true;
-    }
-
-    @Override
     protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
         return state.getValue(BlockStateProperties.POWERED) ? 15 : 0;
-    }
-
-    @Override
-    protected int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
-        return getSignal(state, level, pos, side);
     }
 }
