@@ -1,0 +1,7 @@
+{
+  "parent": "ic2:block/copper_cable_center",
+  "textures": {
+    "copper": "ic2:block/electric/cable/bronze",
+    "particle": "ic2:block/electric/cable/bronze"
+  }
+}

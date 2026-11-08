@@ -104,3 +104,6 @@ src/main/resources/assets/ic2/textures/block/electric/transformer/ev/
 src/main/resources/assets/ic2/textures/item/tools/wrench/manual.png
 src/main/resources/assets/ic2/textures/item/tools/wrench/base.png
 src/main/resources/assets/ic2/textures/item/tools/insulation_cutter.png
+src/main/resources/assets/ic2/textures/block/electric/cable/bronze.png
+src/main/resources/assets/ic2/textures/block/electric/cable/*x_insulated_bronze/
+src/main/resources/assets/ic2/textures/item/cable/*bronze.png

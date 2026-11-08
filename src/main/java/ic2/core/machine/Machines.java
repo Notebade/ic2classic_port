@@ -148,6 +148,9 @@ public final class Machines {
             machineProperties());
     static final DeferredBlock<EnergyCableBlock> COPPER_CABLE = cable("copper_cable", 300, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> INSULATED_COPPER_CABLE = cable("copper_insulated_cable", 200, Integer.MAX_VALUE);
+    static final DeferredBlock<EnergyCableBlock> BRONZE_CABLE = cable("bronze_cable", 700, 128);
+    static final DeferredBlock<EnergyCableBlock> INSULATED_BRONZE_CABLE = cable("bronze_insulated_cable", 650, 128, 3);
+    static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_BRONZE_CABLE = cable("bronze_double_insulated_cable", 600, 128, 3.5F);
     static final DeferredBlock<EnergyCableBlock> GOLD_CABLE = cable("gold_cable", 500, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> INSULATED_GOLD_CABLE = cable("gold_insulated_cable", 450, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_GOLD_CABLE = cable("gold_double_insulated_cable", 400, Integer.MAX_VALUE);
@@ -249,6 +252,9 @@ public final class Machines {
         items.registerSimpleBlockItem(MASS_FABRICATOR);
         var copperCableItem = items.registerSimpleBlockItem("copper_cable_item", COPPER_CABLE);
         var insulatedCopperCableItem = items.registerSimpleBlockItem("copper_insulated_cable_item", INSULATED_COPPER_CABLE);
+        var bronzeCableItem = items.registerSimpleBlockItem("bronze_cable_item", BRONZE_CABLE);
+        var insulatedBronzeCableItem = items.registerSimpleBlockItem("bronze_insulated_cable_item", INSULATED_BRONZE_CABLE);
+        var doubleInsulatedBronzeCableItem = items.registerSimpleBlockItem("bronze_double_insulated_cable_item", DOUBLE_INSULATED_BRONZE_CABLE);
         var goldCableItem = items.registerSimpleBlockItem("gold_cable_item", GOLD_CABLE);
         var insulatedGoldCableItem = items.registerSimpleBlockItem("gold_insulated_cable_item", INSULATED_GOLD_CABLE);
         var doubleInsulatedGoldCableItem = items.registerSimpleBlockItem("gold_double_insulated_cable_item", DOUBLE_INSULATED_GOLD_CABLE);
@@ -282,6 +288,9 @@ public final class Machines {
                 event.accept(EV_TRANSFORMER.get());
                 event.accept(copperCableItem.get());
                 event.accept(insulatedCopperCableItem.get());
+                event.accept(bronzeCableItem.get());
+                event.accept(insulatedBronzeCableItem.get());
+                event.accept(doubleInsulatedBronzeCableItem.get());
                 event.accept(goldCableItem.get());
                 event.accept(insulatedGoldCableItem.get());
                 event.accept(doubleInsulatedGoldCableItem.get());
@@ -355,7 +364,7 @@ public final class Machines {
         return cable(name, lossMilliEu, maxPacket, 2);
     }
 
-    private static DeferredBlock<EnergyCableBlock> cable(String name, int lossMilliEu, int maxPacket, int radius) {
+    private static DeferredBlock<EnergyCableBlock> cable(String name, int lossMilliEu, int maxPacket, float radius) {
         return BLOCKS.registerBlock(name, properties -> new EnergyCableBlock(properties, lossMilliEu, maxPacket, radius),
             BlockBehaviour.Properties.of().strength(0.4F).noOcclusion());
     }

@@ -19,13 +19,13 @@ final class EnergyCableBlock extends PipeBlock {
         Codec.intRange(1, 1000).fieldOf("loss_millieu").forGetter(EnergyCableBlock::lossMilliEu),
         Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("max_packet", Integer.MAX_VALUE)
             .forGetter(EnergyCableBlock::maxPacket),
-        Codec.intRange(1, 8).optionalFieldOf("radius", 2).forGetter(cable -> cable.radius)
+        Codec.floatRange(1, 8).optionalFieldOf("radius", 2.0F).forGetter(cable -> cable.radius)
     ).apply(instance, EnergyCableBlock::new));
     private final int lossMilliEu;
     private final int maxPacket;
-    private final int radius;
+    private final float radius;
 
-    EnergyCableBlock(Properties properties, int lossMilliEu, int maxPacket, int radius) {
+    EnergyCableBlock(Properties properties, int lossMilliEu, int maxPacket, float radius) {
         super(radius / 16.0F, properties);
         this.lossMilliEu = lossMilliEu;
         this.maxPacket = maxPacket;

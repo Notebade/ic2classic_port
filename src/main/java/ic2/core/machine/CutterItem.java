@@ -15,6 +15,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 final class CutterItem extends Item {
     private static final List<List<DeferredBlock<EnergyCableBlock>>> INSULATION_LEVELS = List.of(
         List.of(Machines.COPPER_CABLE, Machines.INSULATED_COPPER_CABLE),
+        List.of(Machines.BRONZE_CABLE, Machines.INSULATED_BRONZE_CABLE, Machines.DOUBLE_INSULATED_BRONZE_CABLE),
         List.of(Machines.GOLD_CABLE, Machines.INSULATED_GOLD_CABLE, Machines.DOUBLE_INSULATED_GOLD_CABLE),
         List.of(Machines.IRON_CABLE, Machines.INSULATED_IRON_CABLE,
             Machines.DOUBLE_INSULATED_IRON_CABLE, Machines.TRIPLE_INSULATED_IRON_CABLE)

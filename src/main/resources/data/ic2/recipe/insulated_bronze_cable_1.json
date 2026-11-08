@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RBR",
+    "RBR",
+    "RBR"
+  ],
+  "key": {
+    "B": {
+      "tag": "c:ingots/bronze"
+    },
+    "R": {
+      "item": "ic2:rubber"
+    }
+  },
+  "result": {
+    "id": "ic2:bronze_insulated_cable_item",
+    "count": 6
+  }
+}
