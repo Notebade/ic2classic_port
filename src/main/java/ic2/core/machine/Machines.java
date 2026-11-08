@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SimpleCookingSerializer;
@@ -255,7 +256,11 @@ public final class Machines {
         var insulatedIronCableItem = items.registerSimpleBlockItem("iron_insulated_cable_item", INSULATED_IRON_CABLE);
         var doubleInsulatedIronCableItem = items.registerSimpleBlockItem("iron_double_insulated_cable_item", DOUBLE_INSULATED_IRON_CABLE);
         var tripleInsulatedIronCableItem = items.registerSimpleBlockItem("iron_triple_insulated_cable_item", TRIPLE_INSULATED_IRON_CABLE);
+        var wrench = items.registerItem("wrench", WrenchItem::new, new Item.Properties().durability(160));
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
+            if (event.getTabKey().equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) {
+                event.accept(wrench.get());
+            }
             if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) {
                 event.accept(GENERATOR.get());
                 event.accept(GEOTHERMAL.get());

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'ic2'
-version = '0.38.0-local'
+version = '0.39.0-local'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
