@@ -9,6 +9,7 @@ enum MachineKind {
     COMPRESSOR(2, 400),
     PUMP(200, 1, 120),
     RECYCLER(1, 45),
+    MASS_FABRICATOR(7_100_000, 0, 0),
     BATBOX(40000, 0, 0);
 
     final int capacity;

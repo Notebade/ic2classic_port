@@ -5,8 +5,10 @@ import java.util.function.IntSupplier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -15,42 +17,49 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
 final class MachineMenu extends AbstractContainerMenu {
+    private static final int ENERGY_LOW = 0;
+    private static final int ENERGY_HIGH = 1;
+    private static final int WORK_LOW = 2;
+    private static final int WORK_HIGH = 3;
+    private static final int FLUID = 4;
+    private static final int DATA_COUNT = 5;
     private final ContainerLevelAccess access;
     private final Block block;
-    private final DataSlot energy;
-    private final DataSlot work;
-    private final DataSlot fluid;
+    private final ContainerData data;
     private final boolean storage;
 
     MachineMenu(int id, Inventory playerInventory) {
-        this(id, playerInventory, false);
+        this(id, playerInventory, Machines.MENU.get());
     }
 
     static MachineMenu batbox(int id, Inventory playerInventory) {
-        return new MachineMenu(id, playerInventory, true);
+        return new MachineMenu(id, playerInventory, Machines.BATBOX_MENU.get());
     }
 
-    private MachineMenu(int id, Inventory playerInventory, boolean storage) {
+    static MachineMenu fabricator(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.FABRICATOR_MENU.get());
+    }
+
+    private MachineMenu(int id, Inventory playerInventory, MenuType<MachineMenu> type) {
         this(id, playerInventory, new ItemStackHandler(MachineEntity.SLOT_COUNT),
-            ContainerLevelAccess.NULL, Blocks.AIR, DataSlot.standalone(), DataSlot.standalone(),
-            DataSlot.standalone(), () -> {}, storage);
-        fluid.set(-1);
+            ContainerLevelAccess.NULL, Blocks.AIR, new SimpleContainerData(DATA_COUNT), () -> {}, type);
+        data.set(FLUID, -1);
     }
 
     MachineMenu(int id, Inventory playerInventory, ItemStackHandler inventory, ContainerLevelAccess access,
-                Block block, IntSupplier energy, IntSupplier work, IntSupplier fluid, Runnable changed, boolean storage) {
-        this(id, playerInventory, inventory, access, block, readOnly(energy), readOnly(work), readOnly(fluid), changed, storage);
+                Block block, IntSupplier energy, IntSupplier work, IntSupplier fluid, Runnable changed,
+                MenuType<MachineMenu> type) {
+        this(id, playerInventory, inventory, access, block, readOnly(energy, work, fluid), changed, type);
     }
 
     private MachineMenu(int id, Inventory playerInventory, ItemStackHandler inventory, ContainerLevelAccess access,
-                        Block block, DataSlot energy, DataSlot work, DataSlot fluid, Runnable changed, boolean storage) {
-        super(storage ? Machines.BATBOX_MENU.get() : Machines.MENU.get(), id);
-        this.storage = storage;
+                        Block block, ContainerData data, Runnable changed, MenuType<MachineMenu> type) {
+        super(type, id);
+        storage = type == Machines.BATBOX_MENU.get();
         this.access = access;
         this.block = block;
-        this.energy = addDataSlot(energy);
-        this.work = addDataSlot(work);
-        this.fluid = addDataSlot(fluid);
+        this.data = data;
+        addDataSlots(data);
         addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 53, changed);
         addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 107, changed);
         for (int row = 0; row < 3; row++) {
@@ -77,33 +86,49 @@ final class MachineMenu extends AbstractContainerMenu {
         });
     }
 
-    private static DataSlot readOnly(IntSupplier value) {
-        return new DataSlot() {
+    private static ContainerData readOnly(IntSupplier energy, IntSupplier work, IntSupplier fluid) {
+        return new ContainerData() {
             @Override
-            public int get() {
-                return value.getAsInt();
+            public int get(int index) {
+                // Minecraft 1.21.1 sends menu data as shorts.
+                return switch (index) {
+                    case ENERGY_LOW -> energy.getAsInt() & 0xffff;
+                    case ENERGY_HIGH -> energy.getAsInt() >>> 16;
+                    case WORK_LOW -> work.getAsInt() & 0xffff;
+                    case WORK_HIGH -> work.getAsInt() >>> 16;
+                    case FLUID -> fluid.getAsInt();
+                    default -> throw new IndexOutOfBoundsException(index);
+                };
             }
 
             @Override
-            public void set(int ignored) {}
+            public void set(int index, int value) {}
+
+            @Override
+            public int getCount() {
+                return DATA_COUNT;
+            }
         };
     }
 
     int energy() {
-        // Minecraft 1.21.1 sends menu data as signed shorts, but BatBox can hold 40,000 EU.
-        return storage ? Short.toUnsignedInt((short) energy.get()) : energy.get();
+        return (data.get(ENERGY_HIGH) << 16) | (data.get(ENERGY_LOW) & 0xffff);
     }
 
     int work() {
-        return work.get();
+        return (data.get(WORK_HIGH) << 16) | (data.get(WORK_LOW) & 0xffff);
     }
 
     int fluid() {
-        return fluid.get();
+        return data.get(FLUID);
     }
 
     boolean isStorage() {
         return storage;
+    }
+
+    boolean isFabricator() {
+        return getType() == Machines.FABRICATOR_MENU.get();
     }
 
     @Override

@@ -52,6 +52,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int energy;
     private int burnTicks;
     private int progress;
+    private int amplifier;
+    private int amplifierRefillThreshold;
     private long nextPumpAttempt;
     private ItemStack processingInput = ItemStack.EMPTY;
     private final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT) {
@@ -98,6 +100,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case COMPRESSOR -> Machines.COMPRESSOR_ENTITY.get();
             case PUMP -> Machines.PUMP_ENTITY.get();
             case RECYCLER -> Machines.RECYCLER_ENTITY.get();
+            case MASS_FABRICATOR -> Machines.MASS_FABRICATOR_ENTITY.get();
         };
     }
 
@@ -106,8 +109,34 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR -> tickGenerator();
             case SOLAR_PANEL -> tickSolarPanel();
             case PUMP -> tickPump();
+            case MASS_FABRICATOR -> tickMassFabricator();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
             case BATBOX -> tickStorage();
+        }
+    }
+
+    private void tickMassFabricator() {
+        if (energy >= MassFabrication.MATTER_COST) {
+            ItemStack matter = new ItemStack(IC2.UU_MATTER.get());
+            if (canAddOutput(matter)) {
+                energy -= MassFabrication.MATTER_COST;
+                addOutput(matter);
+            }
+        }
+        refillAmplifier();
+    }
+
+    private void refillAmplifier() {
+        if (amplifier != 0 && amplifier >= amplifierRefillThreshold) {
+            return;
+        }
+        ItemStack input = inventory.getStackInSlot(INPUT_SLOT);
+        int value = MassFabrication.amplifierValue(input);
+        if (value > 0) {
+            int count = Math.min(MassFabrication.REFILL_BATCH, input.getCount());
+            amplifier += count * value;
+            amplifierRefillThreshold = MassFabrication.REFILL_BATCH * value;
+            inventory.extractItem(INPUT_SLOT, count, false);
         }
     }
 
@@ -225,6 +254,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case COMPRESSOR -> CompressionRecipes.find(stack) != null;
             case PUMP -> stack.is(Items.BUCKET);
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
+            case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
             case BATBOX, SOLAR_PANEL -> false;
         };
     }
@@ -248,7 +278,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
-            case GENERATOR, BATBOX, SOLAR_PANEL, PUMP -> null;
+            case GENERATOR, BATBOX, SOLAR_PANEL, PUMP, MASS_FABRICATOR -> null;
         };
     }
 
@@ -336,6 +366,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (kind) {
             case GENERATOR, SOLAR_PANEL -> false;
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> true;
+            case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
             case BATBOX -> canChargeStorage && incomingSide != outputSide();
         };
     }
@@ -351,6 +382,13 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
 
     int receiveEnergy(int available) {
         int received = Math.min(available, kind.capacity - energy);
+        if (kind == MachineKind.MASS_FABRICATOR) {
+            received = Math.min(received, MassFabrication.MAX_INPUT);
+            int bonusBudget = (kind.capacity - energy - received) / MassFabrication.BONUS;
+            int boosted = Math.min(Math.min(amplifier, received), bonusBudget);
+            amplifier -= boosted;
+            energy += boosted * MassFabrication.BONUS;
+        }
         energy += received;
         setChanged();
         return received;
@@ -390,7 +428,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return new MachineMenu(id, playerInventory, inventory, ContainerLevelAccess.create(level, worldPosition),
             getBlockState().getBlock(), () -> energy,
             this::menuWork, () -> pumpTank == null ? -1 : pumpTank.getFluidAmount(),
-            this::setChanged, kind == MachineKind.BATBOX);
+            this::setChanged, switch (kind) {
+                case BATBOX -> Machines.BATBOX_MENU.get();
+                case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
+                default -> Machines.MENU.get();
+            });
     }
 
     private int menuWork() {
@@ -398,6 +440,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR -> burnTicks;
             case BATBOX -> outputSide().ordinal();
             case SOLAR_PANEL -> 0;
+            case MASS_FABRICATOR -> amplifier;
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> progress;
         };
     }
@@ -422,6 +465,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         if (kind == MachineKind.GENERATOR) {
             tag.putInt("burn_ticks", burnTicks);
+        } else if (kind == MachineKind.MASS_FABRICATOR) {
+            tag.putInt("amplifier", amplifier);
+            tag.putInt("amplifier_refill", amplifierRefillThreshold);
         } else if (kind.recipeTicks > 0) {
             tag.putInt("progress", progress);
         }
@@ -445,6 +491,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         if (kind == MachineKind.GENERATOR) {
             burnTicks = Math.max(0, tag.getInt("burn_ticks"));
+        } else if (kind == MachineKind.MASS_FABRICATOR) {
+            amplifier = Mth.clamp(tag.getInt("amplifier"), 0, 2_000_000);
+            amplifierRefillThreshold = Mth.clamp(tag.getInt("amplifier_refill"), 0, 1_000_000);
         } else if (kind.recipeTicks > 0) {
             processingInput = inventory.getStackInSlot(INPUT_SLOT).copyWithCount(1);
             int maxProgress = kind == MachineKind.PUMP ? kind.recipeTicks : kind.recipeTicks - 1;

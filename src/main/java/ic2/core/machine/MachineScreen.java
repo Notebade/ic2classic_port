@@ -22,6 +22,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     public static void register(RegisterMenuScreensEvent event) {
         event.register(Machines.MENU.get(), MachineScreen::new);
         event.register(Machines.BATBOX_MENU.get(), MachineScreen::new);
+        event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
     }
 
     @Override
@@ -55,11 +56,19 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             graphics.drawString(font, output, imageWidth - 8 - font.width(output), inventoryLabelY, 0x404040, false);
             return;
         }
-        Component status = menu.fluid() < 0
-            ? Component.translatable("gui.ic2.machine_status", menu.energy(), menu.work())
-            : Component.translatable("gui.ic2.pump_status", menu.energy(), menu.work(), menu.fluid());
-        graphics.drawString(font, status, 8, 21, 0x404040, false);
-        graphics.drawString(font, Component.translatable("gui.ic2.input"), 46, 61, 0x404040, false);
+        if (menu.isFabricator()) {
+            graphics.drawString(font, Component.translatable("gui.ic2.storage_energy", menu.energy(), MassFabrication.MATTER_COST),
+                8, 21, 0x404040, false);
+            graphics.drawString(font, Component.translatable("gui.ic2.amplifier", menu.work()),
+                8, 30, 0x404040, false);
+        } else {
+            Component status = menu.fluid() < 0
+                ? Component.translatable("gui.ic2.machine_status", menu.energy(), menu.work())
+                : Component.translatable("gui.ic2.pump_status", menu.energy(), menu.work(), menu.fluid());
+            graphics.drawString(font, status, 8, 21, 0x404040, false);
+        }
+        Component input = Component.translatable(menu.isFabricator() ? "gui.ic2.amplifier_slot" : "gui.ic2.input");
+        graphics.drawString(font, input, 61 - font.width(input) / 2, 61, 0x404040, false);
         graphics.drawString(font, Component.translatable("gui.ic2.output"), 102, 61, 0x404040, false);
     }
 }

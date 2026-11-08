@@ -32,6 +32,7 @@ public final class IC2 {
     public static final DeferredItem<Item> SCRAP = ITEMS.registerSimpleItem("scrap");
     public static final DeferredItem<Item> SCRAP_METAL = ITEMS.registerSimpleItem("scrap_metal");
     public static final DeferredItem<ScrapBoxItem> SCRAP_BOX = ITEMS.registerItem("scrapbox", ScrapBoxItem::new);
+    public static final DeferredItem<Item> UU_MATTER = ITEMS.registerSimpleItem("uumatter");
 
     public IC2(IEventBus modBus) {
         COMPONENTS.register(modBus);

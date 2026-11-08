@@ -25,6 +25,8 @@ public final class Machines {
         MENUS.register("machine", () -> new MenuType<>(MachineMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> BATBOX_MENU =
         MENUS.register("batbox", () -> new MenuType<>(MachineMenu::batbox, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<MachineMenu>> FABRICATOR_MENU =
+        MENUS.register("mass_fabricator", () -> new MenuType<>(MachineMenu::fabricator, FeatureFlags.DEFAULT_FLAGS));
 
     static final DeferredBlock<MachineBlock> GENERATOR =
         BLOCKS.registerBlock("generator", properties -> new MachineBlock(properties, MachineKind.GENERATOR), machineProperties());
@@ -47,6 +49,9 @@ public final class Machines {
     static final DeferredBlock<MachineBlock> RECYCLER =
         BLOCKS.registerBlock("recycler", properties -> new MachineBlock(properties, MachineKind.RECYCLER),
             machineProperties());
+    static final DeferredBlock<MachineBlock> MASS_FABRICATOR =
+        BLOCKS.registerBlock("mass_fabricator", properties -> new MachineBlock(properties, MachineKind.MASS_FABRICATOR),
+            machineProperties());
     static final DeferredBlock<CopperCableBlock> COPPER_CABLE =
         BLOCKS.registerBlock("copper_cable", CopperCableBlock::new, BlockBehaviour.Properties.of().strength(0.4F).noOcclusion());
 
@@ -68,6 +73,8 @@ public final class Machines {
         ENTITIES.register("pump", () -> entityType(PUMP.get()));
     static final Supplier<BlockEntityType<MachineEntity>> RECYCLER_ENTITY =
         ENTITIES.register("recycler", () -> entityType(RECYCLER.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> MASS_FABRICATOR_ENTITY =
+        ENTITIES.register("mass_fabricator", () -> entityType(MASS_FABRICATOR.get()));
 
     public static void register(IEventBus bus, DeferredRegister.Items items) {
         BLOCKS.register(bus);
@@ -83,6 +90,7 @@ public final class Machines {
         items.registerSimpleBlockItem(COMPRESSOR);
         items.registerSimpleBlockItem(PUMP);
         items.registerSimpleBlockItem(RECYCLER);
+        items.registerSimpleBlockItem(MASS_FABRICATOR);
         var copperCableItem = items.registerSimpleBlockItem("copper_cable_item", COPPER_CABLE);
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) {
@@ -96,6 +104,7 @@ public final class Machines {
                 event.accept(COMPRESSOR.get());
                 event.accept(PUMP.get());
                 event.accept(RECYCLER.get());
+                event.accept(MASS_FABRICATOR.get());
                 event.accept(IC2.SCRAP_BOX.get());
                 event.accept(IC2.RE_BATTERY.get());
             }
@@ -112,6 +121,7 @@ public final class Machines {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PUMP_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, PUMP_ENTITY.get(), MachineEntity::fluidOutput);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, RECYCLER_ENTITY.get(), MachineEntity::automation);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MASS_FABRICATOR_ENTITY.get(), MachineEntity::automation);
     }
 
     private static BlockEntityType<MachineEntity> entityType(Block block) {
