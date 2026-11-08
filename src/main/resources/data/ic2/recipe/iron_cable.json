@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    }
+  },
+  "result": {
+    "id": "ic2:iron_cable_item",
+    "count": 12
+  }
+}

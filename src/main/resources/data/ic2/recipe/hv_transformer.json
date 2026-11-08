@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " C ",
+    "SME",
+    " C "
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:iron_triple_insulated_cable_item"
+    },
+    "S": {
+      "item": "ic2:circuit"
+    },
+    "M": {
+      "item": "ic2:transformer_mv"
+    },
+    "E": {
+      "item": "ic2:energy_crystal"
+    }
+  },
+  "result": {
+    "id": "ic2:transformer_hv",
+    "count": 1
+  }
+}

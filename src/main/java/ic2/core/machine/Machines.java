@@ -90,6 +90,10 @@ public final class Machines {
         BLOCKS.registerBlock("transformer_mv",
             properties -> new TransformerBlock(properties, MachineKind.MV_TRANSFORMER, TransformerBlock.MV_HIGH_PACKET),
             machineProperties());
+    static final DeferredBlock<TransformerBlock> HV_TRANSFORMER =
+        BLOCKS.registerBlock("transformer_hv",
+            properties -> new TransformerBlock(properties, MachineKind.HV_TRANSFORMER, TransformerBlock.HV_HIGH_PACKET),
+            machineProperties());
     static final DeferredBlock<MachineBlock> MACERATOR =
         BLOCKS.registerBlock("macerator", properties -> new MachineBlock(properties, MachineKind.MACERATOR), machineProperties());
     static final DeferredBlock<MachineBlock> ELECTRIC_FURNACE =
@@ -142,6 +146,10 @@ public final class Machines {
     static final DeferredBlock<EnergyCableBlock> INSULATED_GOLD_CABLE = cable("gold_insulated_cable", 450, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_GOLD_CABLE = cable("gold_double_insulated_cable", 400, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> GLASSFIBER_CABLE = cable("glassfiber_cable", 25, 512);
+    static final DeferredBlock<EnergyCableBlock> IRON_CABLE = cable("iron_cable", 1000, 2048, 3);
+    static final DeferredBlock<EnergyCableBlock> INSULATED_IRON_CABLE = cable("iron_insulated_cable", 950, 2048, 4);
+    static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_IRON_CABLE = cable("iron_double_insulated_cable", 900, 2048, 5);
+    static final DeferredBlock<EnergyCableBlock> TRIPLE_INSULATED_IRON_CABLE = cable("iron_triple_insulated_cable", 800, 2048, 6);
 
     static final Supplier<BlockEntityType<MachineEntity>> GENERATOR_ENTITY =
         ENTITIES.register("generator", () -> entityType(GENERATOR.get()));
@@ -154,6 +162,8 @@ public final class Machines {
         ENTITIES.register("transformer_lv", () -> entityType(LV_TRANSFORMER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> MV_TRANSFORMER_ENTITY =
         ENTITIES.register("transformer_mv", () -> entityType(MV_TRANSFORMER.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> HV_TRANSFORMER_ENTITY =
+        ENTITIES.register("transformer_hv", () -> entityType(HV_TRANSFORMER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> MACERATOR_ENTITY =
         ENTITIES.register("macerator", () -> entityType(MACERATOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> ELECTRIC_FURNACE_ENTITY =
@@ -209,6 +219,7 @@ public final class Machines {
         items.registerSimpleBlockItem(COMPRESSED_MV_SOLAR_PANEL);
         items.registerSimpleBlockItem(LV_TRANSFORMER);
         items.registerSimpleBlockItem(MV_TRANSFORMER);
+        items.registerSimpleBlockItem(HV_TRANSFORMER);
         items.registerSimpleBlockItem(MACERATOR);
         items.registerSimpleBlockItem(ELECTRIC_FURNACE);
         items.registerSimpleBlockItem(ELECTRIC_BLAST_FURNACE);
@@ -233,6 +244,10 @@ public final class Machines {
         var insulatedGoldCableItem = items.registerSimpleBlockItem("gold_insulated_cable_item", INSULATED_GOLD_CABLE);
         var doubleInsulatedGoldCableItem = items.registerSimpleBlockItem("gold_double_insulated_cable_item", DOUBLE_INSULATED_GOLD_CABLE);
         var glassfiberCableItem = items.registerSimpleBlockItem("glassfiber_cable_item", GLASSFIBER_CABLE);
+        var ironCableItem = items.registerSimpleBlockItem("iron_cable_item", IRON_CABLE);
+        var insulatedIronCableItem = items.registerSimpleBlockItem("iron_insulated_cable_item", INSULATED_IRON_CABLE);
+        var doubleInsulatedIronCableItem = items.registerSimpleBlockItem("iron_double_insulated_cable_item", DOUBLE_INSULATED_IRON_CABLE);
+        var tripleInsulatedIronCableItem = items.registerSimpleBlockItem("iron_triple_insulated_cable_item", TRIPLE_INSULATED_IRON_CABLE);
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) {
                 event.accept(GENERATOR.get());
@@ -245,12 +260,17 @@ public final class Machines {
                 event.accept(COMPRESSED_MV_SOLAR_PANEL.get());
                 event.accept(LV_TRANSFORMER.get());
                 event.accept(MV_TRANSFORMER.get());
+                event.accept(HV_TRANSFORMER.get());
                 event.accept(copperCableItem.get());
                 event.accept(insulatedCopperCableItem.get());
                 event.accept(goldCableItem.get());
                 event.accept(insulatedGoldCableItem.get());
                 event.accept(doubleInsulatedGoldCableItem.get());
                 event.accept(glassfiberCableItem.get());
+                event.accept(ironCableItem.get());
+                event.accept(insulatedIronCableItem.get());
+                event.accept(doubleInsulatedIronCableItem.get());
+                event.accept(tripleInsulatedIronCableItem.get());
                 event.accept(MACERATOR.get());
                 event.accept(ELECTRIC_FURNACE.get());
                 event.accept(ELECTRIC_BLAST_FURNACE.get());
@@ -313,7 +333,11 @@ public final class Machines {
     }
 
     private static DeferredBlock<EnergyCableBlock> cable(String name, int lossMilliEu, int maxPacket) {
-        return BLOCKS.registerBlock(name, properties -> new EnergyCableBlock(properties, lossMilliEu, maxPacket),
+        return cable(name, lossMilliEu, maxPacket, 2);
+    }
+
+    private static DeferredBlock<EnergyCableBlock> cable(String name, int lossMilliEu, int maxPacket, int radius) {
+        return BLOCKS.registerBlock(name, properties -> new EnergyCableBlock(properties, lossMilliEu, maxPacket, radius),
             BlockBehaviour.Properties.of().strength(0.4F).noOcclusion());
     }
 

@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/electric/transformer/hv/inactive_down",
+    "up": "ic2:block/electric/transformer/hv/inactive_down",
+    "north": "ic2:block/electric/transformer/hv/inactive_south",
+    "south": "ic2:block/electric/transformer/hv/inactive_down",
+    "west": "ic2:block/electric/transformer/hv/inactive_down",
+    "east": "ic2:block/electric/transformer/hv/inactive_down"
+  }
+}
