@@ -55,8 +55,10 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             graphics.drawString(font, output, imageWidth - 8 - font.width(output), inventoryLabelY, 0x404040, false);
             return;
         }
-        graphics.drawString(font, Component.translatable("gui.ic2.machine_status", menu.energy(), menu.work()),
-            8, 21, 0x404040, false);
+        Component status = menu.fluid() < 0
+            ? Component.translatable("gui.ic2.machine_status", menu.energy(), menu.work())
+            : Component.translatable("gui.ic2.pump_status", menu.energy(), menu.work(), menu.fluid());
+        graphics.drawString(font, status, 8, 21, 0x404040, false);
         graphics.drawString(font, Component.translatable("gui.ic2.input"), 46, 61, 0x404040, false);
         graphics.drawString(font, Component.translatable("gui.ic2.output"), 102, 61, 0x404040, false);
     }

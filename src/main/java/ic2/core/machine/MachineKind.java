@@ -7,6 +7,7 @@ enum MachineKind {
     ELECTRIC_FURNACE(3, 130),
     EXTRACTOR(2, 400),
     COMPRESSOR(2, 400),
+    PUMP(200, 1, 120),
     BATBOX(40000, 0, 0);
 
     final int capacity;

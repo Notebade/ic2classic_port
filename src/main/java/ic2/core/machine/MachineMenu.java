@@ -19,6 +19,7 @@ final class MachineMenu extends AbstractContainerMenu {
     private final Block block;
     private final DataSlot energy;
     private final DataSlot work;
+    private final DataSlot fluid;
     private final boolean storage;
 
     MachineMenu(int id, Inventory playerInventory) {
@@ -31,22 +32,25 @@ final class MachineMenu extends AbstractContainerMenu {
 
     private MachineMenu(int id, Inventory playerInventory, boolean storage) {
         this(id, playerInventory, new ItemStackHandler(MachineEntity.SLOT_COUNT),
-            ContainerLevelAccess.NULL, Blocks.AIR, DataSlot.standalone(), DataSlot.standalone(), () -> {}, storage);
+            ContainerLevelAccess.NULL, Blocks.AIR, DataSlot.standalone(), DataSlot.standalone(),
+            DataSlot.standalone(), () -> {}, storage);
+        fluid.set(-1);
     }
 
     MachineMenu(int id, Inventory playerInventory, ItemStackHandler inventory, ContainerLevelAccess access,
-                Block block, IntSupplier energy, IntSupplier work, Runnable changed, boolean storage) {
-        this(id, playerInventory, inventory, access, block, readOnly(energy), readOnly(work), changed, storage);
+                Block block, IntSupplier energy, IntSupplier work, IntSupplier fluid, Runnable changed, boolean storage) {
+        this(id, playerInventory, inventory, access, block, readOnly(energy), readOnly(work), readOnly(fluid), changed, storage);
     }
 
     private MachineMenu(int id, Inventory playerInventory, ItemStackHandler inventory, ContainerLevelAccess access,
-                        Block block, DataSlot energy, DataSlot work, Runnable changed, boolean storage) {
+                        Block block, DataSlot energy, DataSlot work, DataSlot fluid, Runnable changed, boolean storage) {
         super(storage ? Machines.BATBOX_MENU.get() : Machines.MENU.get(), id);
         this.storage = storage;
         this.access = access;
         this.block = block;
         this.energy = addDataSlot(energy);
         this.work = addDataSlot(work);
+        this.fluid = addDataSlot(fluid);
         addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 53, changed);
         addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 107, changed);
         for (int row = 0; row < 3; row++) {
@@ -92,6 +96,10 @@ final class MachineMenu extends AbstractContainerMenu {
 
     int work() {
         return work.get();
+    }
+
+    int fluid() {
+        return fluid.get();
     }
 
     boolean isStorage() {

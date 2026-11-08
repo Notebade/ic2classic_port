@@ -29,6 +29,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
@@ -42,11 +46,13 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private static final int STACK_LIMIT = 64;
 
     private final MachineKind kind;
+    private final PumpTank pumpTank;
     private final RecipeManager.CachedCheck<SingleRecipeInput, SmeltingRecipe> smelting =
         RecipeManager.createCheck(RecipeType.SMELTING);
     private int energy;
     private int burnTicks;
     private int progress;
+    private long nextPumpAttempt;
     private ItemStack processingInput = ItemStack.EMPTY;
     private final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT) {
         @Override
@@ -59,7 +65,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
 
         @Override
         protected void onContentsChanged(int slot) {
-            if (slot == INPUT_SLOT && kind.recipeTicks > 0) {
+            if (slot == INPUT_SLOT && kind.recipeTicks > 0 && kind != MachineKind.PUMP) {
                 trackInput();
             }
             setChanged();
@@ -78,6 +84,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     MachineEntity(BlockPos pos, BlockState state) {
         super(typeFor(state), pos, state);
         kind = ((MachineBlock) state.getBlock()).kind();
+        pumpTank = kind == MachineKind.PUMP ? new PumpTank(this::setChanged) : null;
     }
 
     static BlockEntityType<MachineEntity> typeFor(BlockState state) {
@@ -89,6 +96,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case BATBOX -> Machines.BATBOX_ENTITY.get();
             case EXTRACTOR -> Machines.EXTRACTOR_ENTITY.get();
             case COMPRESSOR -> Machines.COMPRESSOR_ENTITY.get();
+            case PUMP -> Machines.PUMP_ENTITY.get();
         };
     }
 
@@ -96,8 +104,39 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         switch (kind) {
             case GENERATOR -> tickGenerator();
             case SOLAR_PANEL -> tickSolarPanel();
+            case PUMP -> tickPump();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR -> tickProcessor();
             case BATBOX -> tickStorage();
+        }
+    }
+
+    private void tickPump() {
+        if (progress < kind.recipeTicks && energy >= kind.energyPerTick) {
+            energy -= kind.energyPerTick;
+            progress++;
+            setChanged();
+        }
+        if (progress == kind.recipeTicks && level.getGameTime() >= nextPumpAttempt
+            && pumpTank.getFluidAmount() <= pumpTank.getCapacity() - PumpTank.BUCKET) {
+            if (pumpTank.collect(level, worldPosition.below())) {
+                progress = 0;
+                setChanged();
+            } else {
+                nextPumpAttempt = level.getGameTime() + 20;
+            }
+        }
+        fillPumpBucket();
+    }
+
+    private void fillPumpBucket() {
+        if (pumpTank.getFluidAmount() < PumpTank.BUCKET || !inventory.getStackInSlot(INPUT_SLOT).is(Items.BUCKET)) {
+            return;
+        }
+        ItemStack filled = new ItemStack(pumpTank.getFluid().getFluid().getBucket());
+        if (!filled.isEmpty() && canAddOutput(filled)) {
+            pumpTank.drain(PumpTank.BUCKET, FluidAction.EXECUTE);
+            inventory.extractItem(INPUT_SLOT, 1, false);
+            addOutput(filled);
         }
     }
 
@@ -183,6 +222,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ELECTRIC_FURNACE -> furnaceRecipe(new SingleRecipeInput(stack)).isPresent();
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
             case COMPRESSOR -> CompressionRecipes.find(stack) != null;
+            case PUMP -> stack.is(Items.BUCKET);
             case BATBOX, SOLAR_PANEL -> false;
         };
     }
@@ -200,7 +240,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 CompressionRecipes.Recipe recipe = CompressionRecipes.find(stack);
                 yield recipe == null ? null : new Work(recipe.inputCount(), new ItemStack(recipe.output()));
             }
-            case GENERATOR, BATBOX, SOLAR_PANEL -> null;
+            case GENERATOR, BATBOX, SOLAR_PANEL, PUMP -> null;
         };
     }
 
@@ -221,7 +261,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
 
     private void tickProcessor() {
         ItemStack input = inventory.getStackInSlot(INPUT_SLOT);
-        Work work = workFor(input);
+        PumpTank waterSource = kind == MachineKind.COMPRESSOR && input.isEmpty() ? findWaterSource() : null;
+        Work work = waterSource == null ? workFor(input) : new Work(0, new ItemStack(Items.SNOWBALL));
         if (work == null || work.output().isEmpty() || input.getCount() < work.inputCount()) {
             if (progress != 0) {
                 progress = 0;
@@ -235,7 +276,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         energy -= kind.energyPerTick;
         progress++;
         if (progress == kind.recipeTicks) {
-            inventory.extractItem(INPUT_SLOT, work.inputCount(), false);
+            if (waterSource == null) {
+                inventory.extractItem(INPUT_SLOT, work.inputCount(), false);
+            } else {
+                waterSource.drain(new FluidStack(Fluids.WATER, PumpTank.BUCKET), FluidAction.EXECUTE);
+            }
             addOutput(work.output());
             progress = 0;
         }
@@ -243,6 +288,18 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     }
 
     private record Work(int inputCount, ItemStack output) {}
+
+    private PumpTank findWaterSource() {
+        for (Direction direction : Direction.values()) {
+            BlockPos neighbor = worldPosition.relative(direction);
+            if (level.isLoaded(neighbor) && level.getBlockEntity(neighbor) instanceof MachineEntity machine
+                && machine.pumpTank != null && machine.pumpTank.getFluidAmount() >= PumpTank.BUCKET
+                && machine.pumpTank.getFluid().getFluid() == Fluids.WATER) {
+                return machine.pumpTank;
+            }
+        }
+        return null;
+    }
 
     private boolean canAddOutput(ItemStack addition) {
         ItemStack current = inventory.getStackInSlot(OUTPUT_SLOT);
@@ -264,7 +321,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         return switch (kind) {
             case GENERATOR, SOLAR_PANEL -> false;
-            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR -> true;
+            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP -> true;
             case BATBOX -> canChargeStorage && incomingSide != outputSide();
         };
     }
@@ -290,6 +347,12 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     }
 
     IItemHandler automation(Direction side) {
+        if (kind == MachineKind.PUMP) {
+            if (side == Direction.UP) {
+                return automationInput;
+            }
+            return side != null && side.getAxis().isHorizontal() ? automationOutput : null;
+        }
         if (kind == MachineKind.BATBOX) {
             if (side == Direction.UP) {
                 return batteryChargeSlot;
@@ -297,6 +360,10 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             return side == Direction.DOWN ? batteryDischargeSlot : null;
         }
         return side == Direction.DOWN ? automationOutput : automationInput;
+    }
+
+    IFluidHandler fluidOutput(Direction side) {
+        return side == Direction.DOWN ? null : pumpTank;
     }
 
     @Override
@@ -308,7 +375,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player) {
         return new MachineMenu(id, playerInventory, inventory, ContainerLevelAccess.create(level, worldPosition),
             getBlockState().getBlock(), () -> energy,
-            this::menuWork, this::setChanged, kind == MachineKind.BATBOX);
+            this::menuWork, () -> pumpTank == null ? -1 : pumpTank.getFluidAmount(),
+            this::setChanged, kind == MachineKind.BATBOX);
     }
 
     private int menuWork() {
@@ -316,7 +384,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR -> burnTicks;
             case BATBOX -> outputSide().ordinal();
             case SOLAR_PANEL -> 0;
-            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR -> progress;
+            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP -> progress;
         };
     }
 
@@ -335,6 +403,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         tag.putInt("energy", energy);
         tag.put("inventory", inventory.serializeNBT(registries));
+        if (pumpTank != null) {
+            tag.put("tank", pumpTank.writeToNBT(registries, new CompoundTag()));
+        }
         if (kind == MachineKind.GENERATOR) {
             tag.putInt("burn_ticks", burnTicks);
         } else if (kind.recipeTicks > 0) {
@@ -349,6 +420,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             return;
         }
         energy = Mth.clamp(tag.getInt("energy"), 0, kind.capacity);
+        if (pumpTank != null) {
+            pumpTank.readFromNBT(registries, tag.getCompound("tank"));
+        }
         if (tag.contains("inventory", CompoundTag.TAG_COMPOUND)) {
             inventory.deserializeNBT(registries, tag.getCompound("inventory"));
         } else if (kind == MachineKind.MACERATOR) {
@@ -359,7 +433,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             burnTicks = Math.max(0, tag.getInt("burn_ticks"));
         } else if (kind.recipeTicks > 0) {
             processingInput = inventory.getStackInSlot(INPUT_SLOT).copyWithCount(1);
-            progress = Mth.clamp(tag.getInt("progress"), 0, kind.recipeTicks - 1);
+            int maxProgress = kind == MachineKind.PUMP ? kind.recipeTicks : kind.recipeTicks - 1;
+            progress = Mth.clamp(tag.getInt("progress"), 0, maxProgress);
         }
     }
 }
