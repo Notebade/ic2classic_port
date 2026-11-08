@@ -53,6 +53,8 @@ public final class Rubberwood {
         var planks = items.registerSimpleBlockItem(PLANKS);
         var sapling = items.registerSimpleBlockItem(SAPLING);
         var treeTap = items.registerItem("tree_tap", TreeTapItem::new, new Item.Properties().durability(16));
+        var electricTreeTap = items.registerItem("electric_tree_tap", ElectricTreeTapItem::new,
+            new Item.Properties().stacksTo(1));
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTabKey().equals(CreativeModeTabs.BUILDING_BLOCKS)) {
                 event.accept(planks.get());
@@ -64,6 +66,7 @@ public final class Rubberwood {
             }
             if (event.getTabKey().equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) {
                 event.accept(treeTap.get());
+                event.accept(electricTreeTap.get());
             }
         });
     }

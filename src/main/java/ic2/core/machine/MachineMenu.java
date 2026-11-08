@@ -122,7 +122,7 @@ final class MachineMenu extends AbstractContainerMenu {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 if (isStorage()) {
-                    return RechargeableItem.supports(stack, storageKind.storageOutput);
+                    return RechargeableItem.supports(stack, storageKind.storageOutput, index == MachineEntity.INPUT_SLOT);
                 }
                 if (isElectrolyzer()) {
                     return index == MachineEntity.INPUT_SLOT
@@ -223,7 +223,7 @@ final class MachineMenu extends AbstractContainerMenu {
         if (stack.getItem() instanceof RechargeableItem cell) {
             if (isGeothermal()) {
                 input = MachineEntity.GEOTHERMAL_BATTERY_SLOT;
-            } else if (isStorage() && cell.charge(stack) > 0) {
+            } else if (isStorage() && cell.canProvideEnergy() && cell.charge(stack) > 0) {
                 input = MachineEntity.OUTPUT_SLOT;
             }
         } else if (isElectrolyzer() && Electrolysis.discharge(stack) != null) {

@@ -98,7 +98,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 if (kind.isStorage()) {
-                    return RechargeableItem.supports(stack, kind.storageOutput);
+                    return RechargeableItem.supports(stack, kind.storageOutput, slot == INPUT_SLOT);
                 }
                 if (kind == MachineKind.GEOTHERMAL && slot == GEOTHERMAL_BATTERY_SLOT) {
                     return RechargeableItem.supports(stack, MachineKind.BATBOX.storageOutput);
