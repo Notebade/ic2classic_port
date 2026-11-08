@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -258,10 +259,13 @@ public final class Machines {
         var tripleInsulatedIronCableItem = items.registerSimpleBlockItem("iron_triple_insulated_cable_item", TRIPLE_INSULATED_IRON_CABLE);
         var wrench = items.registerItem("wrench", WrenchItem::new, new Item.Properties().durability(160));
         var electricWrench = items.registerItem("electric_wrench", ElectricWrenchItem::new, new Item.Properties().stacksTo(1));
+        var cutter = items.registerItem("cutter", CutterItem::new, new Item.Properties().durability(128).setNoRepair());
+        NeoForge.EVENT_BUS.addListener(CutterItem::onLeftClickBlock);
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTabKey().equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) {
                 event.accept(wrench.get());
                 event.accept(electricWrench.get());
+                event.accept(cutter.get());
             }
             if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) {
                 event.accept(GENERATOR.get());

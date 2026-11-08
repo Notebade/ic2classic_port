@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "A A",
+    " A ",
+    "I I"
+  ],
+  "key": {
+    "A": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "result": {
+    "id": "ic2:cutter",
+    "count": 1
+  }
+}
