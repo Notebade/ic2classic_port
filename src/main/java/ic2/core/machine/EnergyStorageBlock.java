@@ -11,9 +11,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-final class BatBoxBlock extends MachineBlock {
-    BatBoxBlock(Properties properties) {
-        super(properties, MachineKind.BATBOX);
+final class EnergyStorageBlock extends MachineBlock {
+    EnergyStorageBlock(Properties properties, MachineKind kind) {
+        super(properties, kind);
     }
 
     @Override

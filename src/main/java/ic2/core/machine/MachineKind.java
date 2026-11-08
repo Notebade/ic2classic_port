@@ -11,19 +11,30 @@ enum MachineKind {
     PUMP(200, 1, 120),
     RECYCLER(1, 45),
     MASS_FABRICATOR(7_100_000, 0, 0),
-    BATBOX(40000, 0, 0);
+    BATBOX(40_000, 0, 0, 32),
+    MFE(600_000, 0, 0, 128);
 
     final int capacity;
     final int energyPerTick;
     final int recipeTicks;
+    final int storageOutput;
 
     MachineKind(int energyPerTick, int recipeTicks) {
         this(energyPerTick * recipeTicks, energyPerTick, recipeTicks);
     }
 
     MachineKind(int capacity, int energyPerTick, int recipeTicks) {
+        this(capacity, energyPerTick, recipeTicks, 0);
+    }
+
+    MachineKind(int capacity, int energyPerTick, int recipeTicks, int storageOutput) {
         this.capacity = capacity;
         this.energyPerTick = energyPerTick;
         this.recipeTicks = recipeTicks;
+        this.storageOutput = storageOutput;
+    }
+
+    boolean isStorage() {
+        return storageOutput > 0;
     }
 }

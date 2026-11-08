@@ -46,7 +46,6 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     static final int SLOT_COUNT = 2;
     static final int GEOTHERMAL_BATTERY_SLOT = SLOT_COUNT;
     private static final int GENERATOR_OUTPUT = 10;
-    private static final int BATBOX_OUTPUT = 32;
     private static final int STACK_LIMIT = 64;
 
     private final MachineKind kind;
@@ -81,7 +80,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         inventory = new ItemStackHandler(kind == MachineKind.GEOTHERMAL ? SLOT_COUNT + 1 : SLOT_COUNT) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
-                if (kind == MachineKind.BATBOX || slot == GEOTHERMAL_BATTERY_SLOT) {
+                if (kind.isStorage() || slot == GEOTHERMAL_BATTERY_SLOT) {
                     return ReBatteryItem.isBattery(stack);
                 }
                 return slot == INPUT_SLOT && accepts(stack);
@@ -117,6 +116,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MACERATOR -> Machines.MACERATOR_ENTITY.get();
             case ELECTRIC_FURNACE -> Machines.ELECTRIC_FURNACE_ENTITY.get();
             case BATBOX -> Machines.BATBOX_ENTITY.get();
+            case MFE -> Machines.MFE_ENTITY.get();
             case EXTRACTOR -> Machines.EXTRACTOR_ENTITY.get();
             case COMPRESSOR -> Machines.COMPRESSOR_ENTITY.get();
             case PUMP -> Machines.PUMP_ENTITY.get();
@@ -133,7 +133,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> tickPump();
             case MASS_FABRICATOR -> tickMassFabricator();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
-            case BATBOX -> tickStorage();
+            case BATBOX, MFE -> tickStorage();
         }
     }
 
@@ -146,7 +146,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         transferBattery(GEOTHERMAL_BATTERY_SLOT, true);
         if (energy > 0) {
-            sendEnergy(energy, side -> true, true);
+            sendEnergy(energy, side -> true);
         }
         setActive(generated && energy < kind.capacity);
     }
@@ -224,8 +224,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private void tickStorage() {
         transferBattery(INPUT_SLOT, true);
         transferBattery(OUTPUT_SLOT, false);
-        if (energy >= BATBOX_OUTPUT) {
-            sendEnergy(BATBOX_OUTPUT, outputSide()::equals, false);
+        if (energy >= kind.storageOutput) {
+            sendEnergy(kind.storageOutput, outputSide()::equals);
         }
     }
 
@@ -233,7 +233,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         boolean active = SolarPanelBlock.hasSun(level, worldPosition);
         setActive(active);
         if (active) {
-            CopperNetwork.send(level, worldPosition, SolarPanelBlock.OUTPUT, side -> side != Direction.UP, true);
+            CopperNetwork.send(level, worldPosition, SolarPanelBlock.OUTPUT, side -> side != Direction.UP, kind);
         }
     }
 
@@ -273,12 +273,12 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             setChanged();
         }
         if (energy > 0) {
-            sendEnergy(Math.min(GENERATOR_OUTPUT, energy), side -> true, true);
+            sendEnergy(Math.min(GENERATOR_OUTPUT, energy), side -> true);
         }
     }
 
-    private void sendEnergy(int available, Predicate<Direction> emitsTo, boolean canChargeStorage) {
-        int sent = CopperNetwork.send(level, worldPosition, available, emitsTo, canChargeStorage);
+    private void sendEnergy(int available, Predicate<Direction> emitsTo) {
+        int sent = CopperNetwork.send(level, worldPosition, available, emitsTo, kind);
         if (sent > 0) {
             energy -= sent;
             setChanged();
@@ -311,7 +311,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> stack.is(Items.BUCKET);
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
             case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
-            case BATBOX, SOLAR_PANEL -> false;
+            case BATBOX, MFE, SOLAR_PANEL -> false;
         };
     }
 
@@ -334,7 +334,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
-            case GENERATOR, GEOTHERMAL, BATBOX, SOLAR_PANEL, PUMP, MASS_FABRICATOR -> null;
+            case GENERATOR, GEOTHERMAL, BATBOX, MFE, SOLAR_PANEL, PUMP, MASS_FABRICATOR -> null;
         };
     }
 
@@ -415,7 +415,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-    boolean canReceiveEnergy(Direction incomingSide, boolean canChargeStorage) {
+    boolean canReceiveEnergy(Direction incomingSide, MachineKind sourceKind) {
         if (energy >= kind.capacity) {
             return false;
         }
@@ -423,7 +423,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR, GEOTHERMAL, SOLAR_PANEL -> false;
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> true;
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
-            case BATBOX -> canChargeStorage && incomingSide != outputSide();
+            // Only charge up the storage tiers, so a cable loop cannot feed energy back.
+            case BATBOX, MFE -> sourceKind.storageOutput < kind.storageOutput && incomingSide != outputSide();
         };
     }
 
@@ -432,7 +433,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     }
 
     Component storageStatus() {
-        return Component.translatable("message.ic2.batbox_status", energy, kind.capacity, BATBOX_OUTPUT,
+        return Component.translatable("message.ic2.batbox_status", energy, kind.capacity, kind.storageOutput,
             Component.translatable("direction.ic2." + outputSide().getName()));
     }
 
@@ -461,7 +462,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             }
             return side != null && side.getAxis().isHorizontal() ? automationOutput : null;
         }
-        if (kind == MachineKind.BATBOX) {
+        if (kind.isStorage()) {
             if (side == Direction.UP) {
                 return batteryChargeSlot;
             }
@@ -490,6 +491,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             this::menuWork, this::menuFluid,
             this::setChanged, switch (kind) {
                 case BATBOX -> Machines.BATBOX_MENU.get();
+                case MFE -> Machines.MFE_MENU.get();
                 case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
                 case GEOTHERMAL -> Machines.GEOTHERMAL_MENU.get();
                 default -> Machines.MENU.get();
@@ -506,7 +508,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int menuWork() {
         return switch (kind) {
             case GENERATOR -> burnTicks;
-            case BATBOX -> outputSide().ordinal();
+            case BATBOX, MFE -> outputSide().ordinal();
             case SOLAR_PANEL, GEOTHERMAL -> 0;
             case MASS_FABRICATOR -> amplifier;
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> progress;

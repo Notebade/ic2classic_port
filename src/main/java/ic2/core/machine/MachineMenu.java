@@ -26,7 +26,7 @@ final class MachineMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final Block block;
     private final ContainerData data;
-    private final boolean storage;
+    private final MachineKind storageKind;
     private final int machineSlots;
 
     MachineMenu(int id, Inventory playerInventory) {
@@ -35,6 +35,10 @@ final class MachineMenu extends AbstractContainerMenu {
 
     static MachineMenu batbox(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.BATBOX_MENU.get());
+    }
+
+    static MachineMenu mfe(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.MFE_MENU.get());
     }
 
     static MachineMenu fabricator(int id, Inventory playerInventory) {
@@ -61,7 +65,13 @@ final class MachineMenu extends AbstractContainerMenu {
     private MachineMenu(int id, Inventory playerInventory, ItemStackHandler inventory, ContainerLevelAccess access,
                         Block block, ContainerData data, Runnable changed, MenuType<MachineMenu> type) {
         super(type, id);
-        storage = type == Machines.BATBOX_MENU.get();
+        if (type == Machines.BATBOX_MENU.get()) {
+            storageKind = MachineKind.BATBOX;
+        } else if (type == Machines.MFE_MENU.get()) {
+            storageKind = MachineKind.MFE;
+        } else {
+            storageKind = null;
+        }
         this.access = access;
         this.block = block;
         this.data = data;
@@ -89,7 +99,8 @@ final class MachineMenu extends AbstractContainerMenu {
         addSlot(new SlotItemHandler(inventory, index, x, 40) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return storage ? ReBatteryItem.isBattery(stack) : index != MachineEntity.OUTPUT_SLOT && super.mayPlace(stack);
+                return isStorage() ? ReBatteryItem.isBattery(stack)
+                    : index != MachineEntity.OUTPUT_SLOT && super.mayPlace(stack);
             }
 
             @Override
@@ -137,7 +148,11 @@ final class MachineMenu extends AbstractContainerMenu {
     }
 
     boolean isStorage() {
-        return storage;
+        return storageKind != null;
+    }
+
+    int storageCapacity() {
+        return storageKind.capacity;
     }
 
     boolean isFabricator() {
@@ -165,7 +180,7 @@ final class MachineMenu extends AbstractContainerMenu {
         if (ReBatteryItem.isBattery(stack)) {
             if (isGeothermal()) {
                 input = MachineEntity.GEOTHERMAL_BATTERY_SLOT;
-            } else if (storage && ReBatteryItem.charge(stack) > 0) {
+            } else if (isStorage() && ReBatteryItem.charge(stack) > 0) {
                 input = MachineEntity.OUTPUT_SLOT;
             }
         }

@@ -22,6 +22,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     public static void register(RegisterMenuScreensEvent event) {
         event.register(Machines.MENU.get(), MachineScreen::new);
         event.register(Machines.BATBOX_MENU.get(), MachineScreen::new);
+        event.register(Machines.MFE_MENU.get(), MachineScreen::new);
         event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
     }
@@ -47,7 +48,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
         if (menu.isStorage()) {
-            graphics.drawString(font, Component.translatable("gui.ic2.storage_energy", menu.energy(), MachineKind.BATBOX.capacity),
+            graphics.drawString(font, Component.translatable("gui.ic2.storage_energy", menu.energy(), menu.storageCapacity()),
                 8, 21, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.charge"), 43, 61, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.discharge"), 95, 61, 0x404040, false);

@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 final class CopperNetwork {
     private CopperNetwork() {}
 
-    static int send(Level level, BlockPos source, int available, Predicate<Direction> emitsTo, boolean canChargeStorage) {
+    static int send(Level level, BlockPos source, int available, Predicate<Direction> emitsTo, MachineKind sourceKind) {
         var pending = new ArrayDeque<Route>();
         var visited = new HashSet<BlockPos>();
         pending.add(new Route(source, 0));
@@ -35,7 +35,7 @@ final class CopperNetwork {
                     continue;
                 }
                 if (level.getBlockEntity(next) instanceof MachineEntity machine
-                    && machine.canReceiveEnergy(direction.getOpposite(), canChargeStorage)) {
+                    && machine.canReceiveEnergy(direction.getOpposite(), sourceKind)) {
                     remaining -= machine.receiveEnergy(remaining - loss) + loss;
                 }
                 int nextCableCount = route.cables() + 1;
