@@ -19,11 +19,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -53,8 +53,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private final MachineKind kind;
     private final PumpTank pumpTank;
     private final FluidTank geothermalTank;
-    private final RecipeManager.CachedCheck<SingleRecipeInput, SmeltingRecipe> smelting =
-        RecipeManager.createCheck(RecipeType.SMELTING);
+    private final RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> cooking;
     private final RecipeManager.CachedCheck<SingleRecipeInput, MacerationRecipe> macerating =
         RecipeManager.createCheck(Machines.MACERATING.get());
     private int energy;
@@ -77,6 +76,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     MachineEntity(BlockPos pos, BlockState state) {
         super(typeFor(state), pos, state);
         kind = ((MachineBlock) state.getBlock()).kind();
+        cooking = switch (kind) {
+            case ELECTRIC_FURNACE -> RecipeManager.createCheck(RecipeType.SMELTING);
+            case ELECTRIC_BLAST_FURNACE -> RecipeManager.createCheck(RecipeType.BLASTING);
+            default -> null;
+        };
         pumpTank = kind == MachineKind.PUMP ? new PumpTank(this::setChanged) : null;
         geothermalTank = kind == MachineKind.GEOTHERMAL
             ? new FluidTank(GeothermalGeneratorBlock.TANK_CAPACITY, stack -> stack.getFluid() == Fluids.LAVA) {
@@ -147,6 +151,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MV_TRANSFORMER -> Machines.MV_TRANSFORMER_ENTITY.get();
             case MACERATOR -> Machines.MACERATOR_ENTITY.get();
             case ELECTRIC_FURNACE -> Machines.ELECTRIC_FURNACE_ENTITY.get();
+            case ELECTRIC_BLAST_FURNACE -> Machines.ELECTRIC_BLAST_FURNACE_ENTITY.get();
             case BATBOX -> Machines.BATBOX_ENTITY.get();
             case MFE -> Machines.MFE_ENTITY.get();
             case MFSU -> Machines.MFSU_ENTITY.get();
@@ -170,7 +175,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> tickPump();
             case MASS_FABRICATOR -> tickMassFabricator();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
-            case ALLOY_SMELTER -> setActive(tickProcessor());
+            case ALLOY_SMELTER, ELECTRIC_BLAST_FURNACE -> setActive(tickProcessor());
             case RARE_EARTH_EXTRACTOR -> setActive(tickRareEarth());
             case ELECTROLYZER -> setActive(tickElectrolyzer());
             case BATBOX, MFE, MFSU -> tickStorage();
@@ -369,7 +374,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR -> fuelTicks(stack) > 0;
             case GEOTHERMAL -> GeothermalGeneratorBlock.hasLava(stack);
             case MACERATOR -> macerationRecipe(new SingleRecipeInput(stack)).isPresent();
-            case ELECTRIC_FURNACE -> furnaceRecipe(new SingleRecipeInput(stack)).isPresent();
+            case ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE -> furnaceRecipe(new SingleRecipeInput(stack)).isPresent();
             case ALLOY_SMELTER -> AlloyRecipes.accepts(stack, secondInput());
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
             case RARE_EARTH_EXTRACTOR -> RareEarthRecipes.find(stack) != null;
@@ -382,8 +387,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         };
     }
 
-    private Optional<RecipeHolder<SmeltingRecipe>> furnaceRecipe(SingleRecipeInput input) {
-        return level == null || input.isEmpty() ? Optional.empty() : smelting.getRecipeFor(input, level);
+    private Optional<? extends AbstractCookingRecipe> furnaceRecipe(SingleRecipeInput input) {
+        return level == null || input.isEmpty() ? Optional.empty() : cooking.getRecipeFor(input, level).map(RecipeHolder::value);
     }
 
     private Optional<RecipeHolder<MacerationRecipe>> macerationRecipe(SingleRecipeInput input) {
@@ -393,7 +398,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private Work workFor(ItemStack stack) {
         return switch (kind) {
             case MACERATOR -> macerationWork(stack);
-            case ELECTRIC_FURNACE -> new Work(1, smeltingResult(stack));
+            case ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE -> furnaceWork(stack);
             case ALLOY_SMELTER -> {
                 var batch = AlloyRecipes.find(stack, inventory.getStackInSlot(SECOND_INPUT_SLOT));
                 yield batch == null ? null : new Work(batch.firstCount(), batch.secondCount(), batch.output(), 1, 0);
@@ -423,11 +428,14 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }).orElse(null);
     }
 
-    private ItemStack smeltingResult(ItemStack stack) {
+    private Work furnaceWork(ItemStack stack) {
         var input = new SingleRecipeInput(stack);
-        return furnaceRecipe(input)
-            .map(recipe -> recipe.value().assemble(input, level.registryAccess()))
-            .orElse(ItemStack.EMPTY);
+        return furnaceRecipe(input).map(recipe -> {
+            int ticks = kind == MachineKind.ELECTRIC_BLAST_FURNACE
+                ? Math.max(1, (int) Math.round(recipe.getCookingTime() * (kind.recipeTicks / 100.0)))
+                : kind.recipeTicks;
+            return new Work(1, recipe.assemble(input, level.registryAccess()), 1, ticks - kind.recipeTicks);
+        }).orElse(null);
     }
 
     private void trackInput() {
@@ -638,6 +646,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         return switch (kind) {
             case GENERATOR, GEOTHERMAL, SOLAR_PANEL, ELECTROLYZER -> false;
+            case ELECTRIC_BLAST_FURNACE -> packetSize <= MachineKind.BATBOX.storageOutput;
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> true;
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
@@ -760,7 +769,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
             case SOLAR_PANEL, GEOTHERMAL, LV_TRANSFORMER, MV_TRANSFORMER, ELECTROLYZER -> 0;
             case MASS_FABRICATOR -> amplifier;
-            case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
+            case MACERATOR, ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> progress;
         };
     }
@@ -831,7 +840,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             processingInput = inventory.getStackInSlot(INPUT_SLOT).copyWithCount(1);
             processingSecondInput = secondInput().copyWithCount(1);
             int maxProgress = switch (kind) {
-                case MACERATOR -> Integer.MAX_VALUE - 1;
+                case MACERATOR, ELECTRIC_BLAST_FURNACE -> Integer.MAX_VALUE - 1;
                 case PUMP -> kind.recipeTicks;
                 default -> kind.recipeTicks - 1;
             };

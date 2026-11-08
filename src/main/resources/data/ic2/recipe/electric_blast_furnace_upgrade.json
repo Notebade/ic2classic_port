@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " C ",
+    "RFR",
+    " M "
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:circuit"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "F": {
+      "item": "minecraft:blast_furnace"
+    },
+    "M": {
+      "item": "ic2:machine_block"
+    }
+  },
+  "result": {
+    "id": "ic2:electric_blast_furnace",
+    "count": 1
+  }
+}
