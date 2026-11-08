@@ -124,6 +124,10 @@ final class MachineMenu extends AbstractContainerMenu {
                 if (isStorage()) {
                     return RechargeableItem.supports(stack, storageKind.storageOutput);
                 }
+                if (isElectrolyzer()) {
+                    return index == MachineEntity.INPUT_SLOT
+                        ? Electrolysis.charge(stack) != null : Electrolysis.discharge(stack) != null;
+                }
                 if (isGeothermal() && index == MachineEntity.GEOTHERMAL_BATTERY_SLOT) {
                     return RechargeableItem.supports(stack, MachineKind.BATBOX.storageOutput);
                 }
@@ -222,6 +226,8 @@ final class MachineMenu extends AbstractContainerMenu {
             } else if (isStorage() && cell.charge(stack) > 0) {
                 input = MachineEntity.OUTPUT_SLOT;
             }
+        } else if (isElectrolyzer() && Electrolysis.discharge(stack) != null) {
+            input = MachineEntity.OUTPUT_SLOT;
         }
         boolean moved = index < machineSlots
             ? moveItemStackTo(stack, machineSlots, slots.size(), true)

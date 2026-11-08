@@ -1,6 +1,7 @@
 package ic2.core;
 
 import com.mojang.serialization.Codec;
+import ic2.core.item.FluidCellItem;
 import ic2.core.item.RechargeableItem;
 import ic2.core.item.ScrapBoxItem;
 import ic2.core.machine.Machines;
@@ -10,9 +11,12 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -57,6 +61,13 @@ public final class IC2 {
     public static final DeferredItem<Item> RARE_EARTH_CHUNK = ITEMS.registerSimpleItem("rare_earth_chunk");
     public static final DeferredItem<Item> DEAD_MAGNET = ITEMS.registerSimpleItem("dead_magnet");
     public static final DeferredItem<Item> MAGNET = ITEMS.registerSimpleItem("magnet");
+    public static final DeferredItem<FluidCellItem> CELL_EMPTY =
+        ITEMS.registerItem("cell_empty", properties -> new FluidCellItem(properties, Fluids.EMPTY));
+    public static final DeferredItem<FluidCellItem> CELL_WATER =
+        ITEMS.registerItem("cell_water", properties -> new FluidCellItem(properties, Fluids.WATER));
+    public static final DeferredItem<FluidCellItem> CELL_LAVA =
+        ITEMS.registerItem("cell_lava", properties -> new FluidCellItem(properties, Fluids.LAVA));
+    public static final DeferredItem<Item> ELECTROLYZED_WATER = ITEMS.registerSimpleItem("cell_electrolyzed_water");
     public static final DeferredItem<Item> SCRAP = ITEMS.registerSimpleItem("scrap");
     public static final DeferredItem<Item> SCRAP_METAL = ITEMS.registerSimpleItem("scrap_metal");
     public static final DeferredItem<ScrapBoxItem> SCRAP_BOX = ITEMS.registerItem("scrapbox", ScrapBoxItem::new);
@@ -69,6 +80,12 @@ public final class IC2 {
         Machines.register(modBus, ITEMS);
         Rubberwood.register(modBus, ITEMS);
         Materials.register(modBus, ITEMS);
+        modBus.addListener(IC2::registerCapabilities);
         modBus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(ScrapBoxItem::registerDispenser));
+    }
+
+    private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerItem(Capabilities.FluidHandler.ITEM, (stack, ignored) -> new FluidCellItem.Handler(stack),
+            CELL_EMPTY.get(), CELL_WATER.get(), CELL_LAVA.get());
     }
 }

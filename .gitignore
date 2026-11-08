@@ -23,7 +23,7 @@ src/main/resources/assets/ic2/textures/item/dust/rare_earth.png
 src/main/resources/assets/ic2/textures/item/misc/rare_earth_chunk.png
 src/main/resources/assets/ic2/textures/item/misc/dead_magnet.png
 src/main/resources/assets/ic2/textures/item/misc/magnet.png
-src/main/resources/assets/ic2/textures/item/cells/empty.png
+src/main/resources/assets/ic2/textures/item/cells/*.png
 src/main/resources/assets/ic2/textures/item/raw/silver.png
 src/main/resources/assets/ic2/textures/item/dust/silver.png
 src/main/resources/assets/ic2/textures/item/ingots/silver.png

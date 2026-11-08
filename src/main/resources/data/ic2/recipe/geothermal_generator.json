@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XCX",
+    "XCX",
+    "IGI"
+  ],
+  "key": {
+    "X": {
+      "tag": "c:glass_blocks"
+    },
+    "C": {
+      "item": "ic2:cell_empty"
+    },
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "G": {
+      "item": "ic2:generator"
+    }
+  },
+  "result": {
+    "id": "ic2:geothermal_generator",
+    "count": 1
+  }
+}

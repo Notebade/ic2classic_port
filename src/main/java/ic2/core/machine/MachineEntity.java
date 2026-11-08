@@ -1,6 +1,7 @@
 package ic2.core.machine;
 
 import ic2.core.IC2;
+import ic2.core.item.FluidCellItem;
 import ic2.core.item.RechargeableItem;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -57,6 +58,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private final RecipeManager.CachedCheck<SingleRecipeInput, MacerationRecipe> macerating =
         RecipeManager.createCheck(Machines.MACERATING.get());
     private int energy;
+    private boolean electrolysisDischarging;
     private int burnTicks;
     private int progress;
     private int amplifier;
@@ -96,6 +98,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 if (kind == MachineKind.ALLOY_SMELTER && slot == SECOND_INPUT_SLOT) {
                     return AlloyRecipes.accepts(stack, getStackInSlot(INPUT_SLOT));
                 }
+                if (kind == MachineKind.ELECTROLYZER && slot == OUTPUT_SLOT) {
+                    return Electrolysis.discharge(stack) != null;
+                }
                 return slot == INPUT_SLOT && accepts(stack);
             }
 
@@ -111,8 +116,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             }
         };
         var input = inputOnly(INPUT_SLOT);
-        automationInput = kind == MachineKind.ALLOY_SMELTER
-            ? new CombinedInvWrapper(input, inputOnly(SECOND_INPUT_SLOT)) : input;
+        automationInput = switch (kind) {
+            case ALLOY_SMELTER -> new CombinedInvWrapper(input, inputOnly(SECOND_INPUT_SLOT));
+            case ELECTROLYZER -> new RangedWrapper(inventory, INPUT_SLOT, INPUT_SLOT + 1);
+            default -> input;
+        };
         var output = new RangedWrapper(inventory, OUTPUT_SLOT, OUTPUT_SLOT + 1);
         automationOutput = kind == MachineKind.GEOTHERMAL
             ? new CombinedInvWrapper(output, new BatterySlot(inventory, GEOTHERMAL_BATTERY_SLOT, true))
@@ -238,14 +246,23 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 nextPumpAttempt = level.getGameTime() + 20;
             }
         }
-        fillPumpBucket();
+        fillPumpContainer();
     }
 
-    private void fillPumpBucket() {
-        if (pumpTank.getFluidAmount() < PumpTank.BUCKET || !inventory.getStackInSlot(INPUT_SLOT).is(Items.BUCKET)) {
+    private void fillPumpContainer() {
+        if (pumpTank.getFluidAmount() < PumpTank.BUCKET) {
             return;
         }
-        ItemStack filled = new ItemStack(pumpTank.getFluid().getFluid().getBucket());
+        ItemStack input = inventory.getStackInSlot(INPUT_SLOT);
+        var fluid = pumpTank.getFluid().getFluid();
+        ItemStack filled;
+        if (input.is(Items.BUCKET)) {
+            filled = new ItemStack(fluid.getBucket());
+        } else if (input.is(IC2.CELL_EMPTY.get())) {
+            filled = FluidCellItem.filledStack(fluid);
+        } else {
+            return;
+        }
         if (!filled.isEmpty() && canAddOutput(filled)) {
             pumpTank.drain(PumpTank.BUCKET, FluidAction.EXECUTE);
             inventory.extractItem(INPUT_SLOT, 1, false);
@@ -356,9 +373,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ALLOY_SMELTER -> AlloyRecipes.accepts(stack, secondInput());
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
             case RARE_EARTH_EXTRACTOR -> RareEarthRecipes.find(stack) != null;
-            case ELECTROLYZER -> stack.is(IC2.DEAD_MAGNET.get());
+            case ELECTROLYZER -> Electrolysis.charge(stack) != null;
             case COMPRESSOR -> CompressionRecipes.find(stack) != null;
-            case PUMP -> stack.is(Items.BUCKET);
+            case PUMP -> stack.is(Items.BUCKET) || stack.is(IC2.CELL_EMPTY.get());
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
             case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
             case BATBOX, MFE, MFSU, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER -> false;
@@ -496,27 +513,67 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     }
 
     private boolean tickElectrolyzer() {
-        if (!inventory.getStackInSlot(INPUT_SLOT).is(IC2.DEAD_MAGNET.get())) {
-            return false;
-        }
-        ItemStack magnet = new ItemStack(IC2.MAGNET.get());
-        if (!canAddOutput(magnet)) {
-            return false;
-        }
         MachineEntity storage = adjacentStorage();
-        if (storage == null || storage.energy * 10L < storage.kind.capacity * 7L) {
+        if (storage == null) {
+            return false;
+        }
+        int rate = storage.kind.storageOutput / 16;
+        if (storage.energy * 10L < storage.kind.capacity * 3L) {
+            return dischargeElectrolysis(storage, rate);
+        }
+        return !electrolysisDischarging && storage.energy * 10L >= storage.kind.capacity * 7L
+            && chargeElectrolysis(storage, rate);
+    }
+
+    private boolean chargeElectrolysis(MachineEntity storage, int rate) {
+        var recipe = Electrolysis.charge(inventory.getStackInSlot(INPUT_SLOT));
+        if (recipe == null) {
+            return false;
+        }
+        ItemStack result = new ItemStack(recipe.output());
+        if (!canAddOutput(result)) {
             return false;
         }
 
-        int drawn = Math.min(kind.capacity - energy, storage.kind.storageOutput / 16);
+        int drawn = Math.min(recipe.energy() - energy, rate);
         storage.energy -= drawn;
         storage.setChanged();
         energy += drawn;
-        if (energy == kind.capacity) {
+        if (energy == recipe.energy()) {
             inventory.extractItem(INPUT_SLOT, 1, false);
-            addOutput(magnet);
+            addOutput(result);
             energy = 0;
         }
+        setChanged();
+        return true;
+    }
+
+    private boolean dischargeElectrolysis(MachineEntity storage, int rate) {
+        if (energy > 0) {
+            energy -= storage.receiveEnergy(Math.min(energy, rate));
+            electrolysisDischarging = energy > 0;
+            setChanged();
+            return true;
+        }
+
+        var recipe = Electrolysis.discharge(inventory.getStackInSlot(OUTPUT_SLOT));
+        if (recipe == null) {
+            return false;
+        }
+        ItemStack result = new ItemStack(recipe.input());
+        if (!canAddToSlot(INPUT_SLOT, result)) {
+            return false;
+        }
+        int tier = switch (storage.kind) {
+            case BATBOX -> 1;
+            case MFE -> 2;
+            case MFSU -> 3;
+            default -> throw new IllegalStateException("Expected an EU storage block");
+        };
+        inventory.extractItem(OUTPUT_SLOT, 1, false);
+        addToSlot(INPUT_SLOT, result);
+        energy = recipe.energy() / 10 * (6 + tier);
+        electrolysisDischarging = true;
         setChanged();
         return true;
     }
@@ -554,16 +611,24 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     }
 
     private boolean canAddOutput(ItemStack addition) {
-        ItemStack current = inventory.getStackInSlot(OUTPUT_SLOT);
+        return canAddToSlot(OUTPUT_SLOT, addition);
+    }
+
+    private boolean canAddToSlot(int slot, ItemStack addition) {
+        ItemStack current = inventory.getStackInSlot(slot);
         return addition.isEmpty() || (current.isEmpty() && addition.getCount() <= addition.getMaxStackSize())
             || (ItemStack.isSameItemSameComponents(current, addition)
                 && current.getCount() + addition.getCount() <= current.getMaxStackSize());
     }
 
     private void addOutput(ItemStack addition) {
+        addToSlot(OUTPUT_SLOT, addition);
+    }
+
+    private void addToSlot(int slot, ItemStack addition) {
         if (!addition.isEmpty()) {
-            int count = inventory.getStackInSlot(OUTPUT_SLOT).getCount() + addition.getCount();
-            inventory.setStackInSlot(OUTPUT_SLOT, addition.copyWithCount(count));
+            int count = inventory.getStackInSlot(slot).getCount() + addition.getCount();
+            inventory.setStackInSlot(slot, addition.copyWithCount(count));
         }
     }
 
@@ -722,6 +787,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             tag.putInt("burn_ticks", burnTicks);
         } else if (kind == MachineKind.GEOTHERMAL) {
             tag.putInt("lava", geothermalTank.getFluidAmount());
+        } else if (kind == MachineKind.ELECTROLYZER) {
+            tag.putBoolean("electrolysis_discharging", electrolysisDischarging);
         } else if (kind == MachineKind.MASS_FABRICATOR) {
             tag.putInt("amplifier", amplifier);
             tag.putInt("amplifier_refill", amplifierRefillThreshold);
@@ -755,6 +822,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         } else if (kind == MachineKind.GEOTHERMAL) {
             geothermalTank.setFluid(new FluidStack(Fluids.LAVA,
                 Mth.clamp(tag.getInt("lava"), 0, geothermalTank.getCapacity())));
+        } else if (kind == MachineKind.ELECTROLYZER) {
+            electrolysisDischarging = energy > 0 && tag.getBoolean("electrolysis_discharging");
         } else if (kind == MachineKind.MASS_FABRICATOR) {
             amplifier = Mth.clamp(tag.getInt("amplifier"), 0, 2_000_000);
             amplifierRefillThreshold = Mth.clamp(tag.getInt("amplifier_refill"), 0, 1_000_000);

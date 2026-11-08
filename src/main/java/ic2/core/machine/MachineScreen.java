@@ -97,8 +97,10 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             }
             graphics.drawString(font, status, 8, 21, 0x404040, false);
         }
-        Component input = Component.translatable(menu.isFabricator() ? "gui.ic2.amplifier_slot" : "gui.ic2.input");
+        Component input = Component.translatable(menu.isFabricator() ? "gui.ic2.amplifier_slot"
+            : menu.isElectrolyzer() ? "gui.ic2.charge" : "gui.ic2.input");
         graphics.drawString(font, input, 61 - font.width(input) / 2, 61, 0x404040, false);
-        graphics.drawString(font, Component.translatable("gui.ic2.output"), 102, 61, 0x404040, false);
+        graphics.drawString(font, Component.translatable(menu.isElectrolyzer() ? "gui.ic2.discharge" : "gui.ic2.output"),
+            102, 61, 0x404040, false);
     }
 }

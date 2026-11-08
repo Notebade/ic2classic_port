@@ -35,7 +35,6 @@ final class Materials {
         var rawSilver = items.registerSimpleItem("raw_silver");
         var silverDust = items.registerSimpleItem("dust_silver");
         var silver = items.registerSimpleItem("ingot_silver");
-        var emptyCell = items.registerSimpleItem("cell_empty");
         var rawAluminium = items.registerSimpleItem("raw_aluminium");
         var carbonFiber = items.registerSimpleItem("carbon_fiber");
         var ironDust = items.registerSimpleItem("dust_iron");
@@ -75,7 +74,10 @@ final class Materials {
                 event.accept(rawSilver.get());
                 event.accept(silverDust.get());
                 event.accept(silver.get());
-                event.accept(emptyCell.get());
+                event.accept(IC2.CELL_EMPTY.get());
+                event.accept(IC2.CELL_WATER.get());
+                event.accept(IC2.CELL_LAVA.get());
+                event.accept(IC2.ELECTROLYZED_WATER.get());
                 event.accept(ironDust.get());
                 event.accept(goldDust.get());
                 event.accept(coalDust.get());
