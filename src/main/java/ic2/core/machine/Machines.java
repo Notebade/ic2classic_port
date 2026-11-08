@@ -136,11 +136,12 @@ public final class Machines {
     static final DeferredBlock<MachineBlock> MASS_FABRICATOR =
         BLOCKS.registerBlock("mass_fabricator", properties -> new MachineBlock(properties, MachineKind.MASS_FABRICATOR),
             machineProperties());
-    static final DeferredBlock<EnergyCableBlock> COPPER_CABLE = cable("copper_cable", 30);
-    static final DeferredBlock<EnergyCableBlock> INSULATED_COPPER_CABLE = cable("copper_insulated_cable", 20);
-    static final DeferredBlock<EnergyCableBlock> GOLD_CABLE = cable("gold_cable", 50);
-    static final DeferredBlock<EnergyCableBlock> INSULATED_GOLD_CABLE = cable("gold_insulated_cable", 45);
-    static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_GOLD_CABLE = cable("gold_double_insulated_cable", 40);
+    static final DeferredBlock<EnergyCableBlock> COPPER_CABLE = cable("copper_cable", 300, Integer.MAX_VALUE);
+    static final DeferredBlock<EnergyCableBlock> INSULATED_COPPER_CABLE = cable("copper_insulated_cable", 200, Integer.MAX_VALUE);
+    static final DeferredBlock<EnergyCableBlock> GOLD_CABLE = cable("gold_cable", 500, Integer.MAX_VALUE);
+    static final DeferredBlock<EnergyCableBlock> INSULATED_GOLD_CABLE = cable("gold_insulated_cable", 450, Integer.MAX_VALUE);
+    static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_GOLD_CABLE = cable("gold_double_insulated_cable", 400, Integer.MAX_VALUE);
+    static final DeferredBlock<EnergyCableBlock> GLASSFIBER_CABLE = cable("glassfiber_cable", 25, 512);
 
     static final Supplier<BlockEntityType<MachineEntity>> GENERATOR_ENTITY =
         ENTITIES.register("generator", () -> entityType(GENERATOR.get()));
@@ -231,6 +232,7 @@ public final class Machines {
         var goldCableItem = items.registerSimpleBlockItem("gold_cable_item", GOLD_CABLE);
         var insulatedGoldCableItem = items.registerSimpleBlockItem("gold_insulated_cable_item", INSULATED_GOLD_CABLE);
         var doubleInsulatedGoldCableItem = items.registerSimpleBlockItem("gold_double_insulated_cable_item", DOUBLE_INSULATED_GOLD_CABLE);
+        var glassfiberCableItem = items.registerSimpleBlockItem("glassfiber_cable_item", GLASSFIBER_CABLE);
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) {
                 event.accept(GENERATOR.get());
@@ -248,6 +250,7 @@ public final class Machines {
                 event.accept(goldCableItem.get());
                 event.accept(insulatedGoldCableItem.get());
                 event.accept(doubleInsulatedGoldCableItem.get());
+                event.accept(glassfiberCableItem.get());
                 event.accept(MACERATOR.get());
                 event.accept(ELECTRIC_FURNACE.get());
                 event.accept(ELECTRIC_BLAST_FURNACE.get());
@@ -309,8 +312,8 @@ public final class Machines {
         return BlockEntityType.Builder.of(MachineEntity::new, blocks).build(null);
     }
 
-    private static DeferredBlock<EnergyCableBlock> cable(String name, int lossHundredths) {
-        return BLOCKS.registerBlock(name, properties -> new EnergyCableBlock(properties, lossHundredths),
+    private static DeferredBlock<EnergyCableBlock> cable(String name, int lossMilliEu, int maxPacket) {
+        return BLOCKS.registerBlock(name, properties -> new EnergyCableBlock(properties, lossMilliEu, maxPacket),
             BlockBehaviour.Properties.of().strength(0.4F).noOcclusion());
     }
 

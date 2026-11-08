@@ -10,10 +10,12 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.Level;
 
 final class EnergyNetwork {
+    private static final int MILLIEU_PER_EU = 1000;
+
     private EnergyNetwork() {}
 
     static int send(Level level, BlockPos source, int available, Predicate<Direction> emitsTo, MachineKind sourceKind) {
-        var pending = new PriorityQueue<>(Comparator.comparingInt(Route::lossHundredths).thenComparingLong(Route::order));
+        var pending = new PriorityQueue<>(Comparator.comparingInt(Route::lossMilliEu).thenComparingLong(Route::order));
         var visited = new HashSet<BlockPos>();
         long order = 0;
         pending.add(new Route(source, 0, order++));
@@ -24,12 +26,12 @@ final class EnergyNetwork {
             if (!visited.add(route.position())) {
                 continue;
             }
-            int loss = route.lossHundredths() / 100;
+            int loss = route.lossMilliEu() / MILLIEU_PER_EU;
             for (Direction direction : Direction.values()) {
                 if (remaining <= loss) {
                     break;
                 }
-                if (route.lossHundredths() == 0 && !emitsTo.test(direction)) {
+                if (route.position().equals(source) && !emitsTo.test(direction)) {
                     continue;
                 }
                 BlockPos next = route.position().relative(direction);
@@ -42,9 +44,10 @@ final class EnergyNetwork {
                     remaining -= machine.receiveEnergy(remaining - loss) + loss;
                 }
                 var state = level.getBlockState(next);
-                if (state.getBlock() instanceof EnergyCableBlock cable && !visited.contains(next)) {
-                    int nextLoss = route.lossHundredths() + cable.lossHundredths();
-                    if (nextLoss / 100 < remaining) {
+                if (state.getBlock() instanceof EnergyCableBlock cable && available <= cable.maxPacket()
+                    && !visited.contains(next)) {
+                    int nextLoss = route.lossMilliEu() + cable.lossMilliEu();
+                    if (nextLoss / MILLIEU_PER_EU < remaining) {
                         pending.add(new Route(next, nextLoss, order++));
                     }
                 }
@@ -53,5 +56,5 @@ final class EnergyNetwork {
         return available - remaining;
     }
 
-    private record Route(BlockPos position, int lossHundredths, long order) {}
+    private record Route(BlockPos position, int lossMilliEu, long order) {}
 }

@@ -16,13 +16,17 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 final class EnergyCableBlock extends PipeBlock {
     private static final MapCodec<EnergyCableBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         propertiesCodec(),
-        Codec.intRange(1, 100).fieldOf("loss_hundredths").forGetter(EnergyCableBlock::lossHundredths)
+        Codec.intRange(1, 1000).fieldOf("loss_millieu").forGetter(EnergyCableBlock::lossMilliEu),
+        Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("max_packet", Integer.MAX_VALUE)
+            .forGetter(EnergyCableBlock::maxPacket)
     ).apply(instance, EnergyCableBlock::new));
-    private final int lossHundredths;
+    private final int lossMilliEu;
+    private final int maxPacket;
 
-    EnergyCableBlock(Properties properties, int lossHundredths) {
+    EnergyCableBlock(Properties properties, int lossMilliEu, int maxPacket) {
         super(2.0F / 16, properties);
-        this.lossHundredths = lossHundredths;
+        this.lossMilliEu = lossMilliEu;
+        this.maxPacket = maxPacket;
         BlockState state = defaultBlockState();
         for (BooleanProperty property : PROPERTY_BY_DIRECTION.values()) {
             state = state.setValue(property, false);
@@ -35,8 +39,12 @@ final class EnergyCableBlock extends PipeBlock {
         return CODEC;
     }
 
-    int lossHundredths() {
-        return lossHundredths;
+    int lossMilliEu() {
+        return lossMilliEu;
+    }
+
+    int maxPacket() {
+        return maxPacket;
     }
 
     @Override

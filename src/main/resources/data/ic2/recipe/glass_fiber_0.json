@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["GGG", "MDM", "GGG"],
+  "key": {
+    "G": {"tag": "c:glass_blocks"},
+    "M": {"item": "minecraft:redstone"},
+    "D": {"item": "minecraft:diamond"}
+  },
+  "result": {"id": "ic2:glassfiber_cable_item", "count": 4}
+}
