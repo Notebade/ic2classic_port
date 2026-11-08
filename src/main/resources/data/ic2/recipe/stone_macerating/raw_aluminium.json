@@ -1,0 +1,12 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": {
+    "item": "ic2:raw_aluminium"
+  },
+  "result": {
+    "id": "ic2:dust_aluminium",
+    "count": 2
+  },
+  "experience": 1,
+  "cookingtime": 400
+}

@@ -45,6 +45,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     static final int OUTPUT_SLOT = 1;
     static final int SLOT_COUNT = 2;
     static final int GEOTHERMAL_BATTERY_SLOT = SLOT_COUNT;
+    static final int SECOND_INPUT_SLOT = SLOT_COUNT;
     private static final int GENERATOR_OUTPUT = 10;
     private static final int STACK_LIMIT = 64;
 
@@ -62,6 +63,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int amplifierRefillThreshold;
     private long nextPumpAttempt;
     private ItemStack processingInput = ItemStack.EMPTY;
+    private ItemStack processingSecondInput = ItemStack.EMPTY;
     private final ItemStackHandler inventory;
     private final IItemHandler automationInput;
     private final IItemHandler automationOutput;
@@ -79,7 +81,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     setChanged();
                 }
             } : null;
-        inventory = new ItemStackHandler(kind == MachineKind.GEOTHERMAL ? SLOT_COUNT + 1 : SLOT_COUNT) {
+        inventory = new ItemStackHandler(kind == MachineKind.GEOTHERMAL || kind == MachineKind.ALLOY_SMELTER
+                ? SLOT_COUNT + 1 : SLOT_COUNT) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 if (kind.isStorage()) {
@@ -87,6 +90,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 }
                 if (kind == MachineKind.GEOTHERMAL && slot == GEOTHERMAL_BATTERY_SLOT) {
                     return RechargeableItem.supports(stack, MachineKind.BATBOX.storageOutput);
+                }
+                if (kind == MachineKind.ALLOY_SMELTER && slot == SECOND_INPUT_SLOT) {
+                    return AlloyRecipes.accepts(stack, getStackInSlot(INPUT_SLOT));
                 }
                 return slot == INPUT_SLOT && accepts(stack);
             }
@@ -96,21 +102,30 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 if (slot == INPUT_SLOT && kind.recipeTicks > 0 && kind != MachineKind.PUMP) {
                     trackInput();
                 }
+                if (kind == MachineKind.ALLOY_SMELTER && slot == SECOND_INPUT_SLOT) {
+                    trackInput();
+                }
                 setChanged();
             }
         };
-        automationInput = new RangedWrapper(inventory, INPUT_SLOT, INPUT_SLOT + 1) {
-            @Override
-            public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                return ItemStack.EMPTY;
-            }
-        };
+        var input = inputOnly(INPUT_SLOT);
+        automationInput = kind == MachineKind.ALLOY_SMELTER
+            ? new CombinedInvWrapper(input, inputOnly(SECOND_INPUT_SLOT)) : input;
         var output = new RangedWrapper(inventory, OUTPUT_SLOT, OUTPUT_SLOT + 1);
         automationOutput = kind == MachineKind.GEOTHERMAL
             ? new CombinedInvWrapper(output, new BatterySlot(inventory, GEOTHERMAL_BATTERY_SLOT, true))
             : output;
         batteryChargeSlot = new BatterySlot(inventory, INPUT_SLOT, true);
         batteryDischargeSlot = new BatterySlot(inventory, OUTPUT_SLOT, false);
+    }
+
+    private RangedWrapper inputOnly(int slot) {
+        return new RangedWrapper(inventory, slot, slot + 1) {
+            @Override
+            public ItemStack extractItem(int slot, int amount, boolean simulate) {
+                return ItemStack.EMPTY;
+            }
+        };
     }
 
     static BlockEntityType<MachineEntity> typeFor(BlockState state) {
@@ -125,6 +140,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case BATBOX -> Machines.BATBOX_ENTITY.get();
             case MFE -> Machines.MFE_ENTITY.get();
             case MFSU -> Machines.MFSU_ENTITY.get();
+            case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_ENTITY.get();
             case EXTRACTOR -> Machines.EXTRACTOR_ENTITY.get();
             case COMPRESSOR -> Machines.COMPRESSOR_ENTITY.get();
             case PUMP -> Machines.PUMP_ENTITY.get();
@@ -142,6 +158,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> tickPump();
             case MASS_FABRICATOR -> tickMassFabricator();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
+            case ALLOY_SMELTER -> setActive(tickProcessor());
             case BATBOX, MFE, MFSU -> tickStorage();
         }
     }
@@ -330,6 +347,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GEOTHERMAL -> GeothermalGeneratorBlock.hasLava(stack);
             case MACERATOR -> macerationRecipe(new SingleRecipeInput(stack)).isPresent();
             case ELECTRIC_FURNACE -> furnaceRecipe(new SingleRecipeInput(stack)).isPresent();
+            case ALLOY_SMELTER -> AlloyRecipes.accepts(stack, secondInput());
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
             case COMPRESSOR -> CompressionRecipes.find(stack) != null;
             case PUMP -> stack.is(Items.BUCKET);
@@ -351,6 +369,10 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (kind) {
             case MACERATOR -> macerationWork(stack);
             case ELECTRIC_FURNACE -> new Work(1, smeltingResult(stack));
+            case ALLOY_SMELTER -> {
+                var batch = AlloyRecipes.find(stack, inventory.getStackInSlot(SECOND_INPUT_SLOT));
+                yield batch == null ? null : new Work(batch.firstCount(), batch.secondCount(), batch.output(), 1, 0);
+            }
             case EXTRACTOR -> new Work(1, ExtractionRecipes.result(stack));
             case COMPRESSOR -> {
                 CompressionRecipes.Recipe recipe = CompressionRecipes.find(stack);
@@ -384,13 +406,20 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
 
     private void trackInput() {
         ItemStack input = inventory.getStackInSlot(INPUT_SLOT);
-        if (!ItemStack.isSameItemSameComponents(processingInput, input)) {
+        ItemStack second = secondInput();
+        if (!ItemStack.isSameItemSameComponents(processingInput, input)
+                || !ItemStack.isSameItemSameComponents(processingSecondInput, second)) {
             processingInput = input.copyWithCount(1);
+            processingSecondInput = second.copyWithCount(1);
             progress = 0;
         }
     }
 
-    private void tickProcessor() {
+    private ItemStack secondInput() {
+        return kind == MachineKind.ALLOY_SMELTER ? inventory.getStackInSlot(SECOND_INPUT_SLOT) : ItemStack.EMPTY;
+    }
+
+    private boolean tickProcessor() {
         ItemStack input = inventory.getStackInSlot(INPUT_SLOT);
         PumpTank waterSource = kind == MachineKind.COMPRESSOR && input.isEmpty() ? findWaterSource() : null;
         Work work = waterSource == null ? workFor(input) : new Work(0, new ItemStack(Items.SNOWBALL));
@@ -399,16 +428,19 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 progress = 0;
                 setChanged();
             }
-            return;
+            return false;
         }
         if (!canAddOutput(work.output()) || energy < kind.energyPerTick) {
-            return;
+            return false;
         }
         energy -= kind.energyPerTick;
         progress++;
         if (progress >= kind.recipeTicks + work.extraTicks()) {
             if (waterSource == null) {
                 inventory.extractItem(INPUT_SLOT, work.inputCount(), false);
+                if (work.secondInputCount() > 0) {
+                    inventory.extractItem(SECOND_INPUT_SLOT, work.secondInputCount(), false);
+                }
             } else {
                 waterSource.drain(new FluidStack(Fluids.WATER, PumpTank.BUCKET), FluidAction.EXECUTE);
             }
@@ -418,9 +450,14 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             progress = 0;
         }
         setChanged();
+        return true;
     }
 
-    private record Work(int inputCount, ItemStack output, int chanceDenominator, int extraTicks) {
+    private record Work(int inputCount, int secondInputCount, ItemStack output, int chanceDenominator, int extraTicks) {
+        Work(int inputCount, ItemStack output, int chanceDenominator, int extraTicks) {
+            this(inputCount, 0, output, chanceDenominator, extraTicks);
+        }
+
         Work(int inputCount, ItemStack output) {
             this(inputCount, output, 1, 0);
         }
@@ -458,7 +495,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         return switch (kind) {
             case GENERATOR, GEOTHERMAL, SOLAR_PANEL -> false;
-            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> true;
+            case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> true;
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
             case LV_TRANSFORMER, MV_TRANSFORMER -> canReceiveTransformerEnergy(incomingSide, packetSize);
             // Only charge up the storage tiers, so a cable loop cannot feed energy back.
@@ -547,6 +584,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 case BATBOX -> Machines.BATBOX_MENU.get();
                 case MFE -> Machines.MFE_MENU.get();
                 case MFSU -> Machines.MFSU_MENU.get();
+                case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_MENU.get();
                 case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
                 case GEOTHERMAL -> Machines.GEOTHERMAL_MENU.get();
                 default -> Machines.MENU.get();
@@ -566,7 +604,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
             case SOLAR_PANEL, GEOTHERMAL, LV_TRANSFORMER, MV_TRANSFORMER -> 0;
             case MASS_FABRICATOR -> amplifier;
-            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> progress;
+            case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> progress;
         };
     }
 
@@ -626,6 +664,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             amplifierRefillThreshold = Mth.clamp(tag.getInt("amplifier_refill"), 0, 1_000_000);
         } else if (kind.recipeTicks > 0) {
             processingInput = inventory.getStackInSlot(INPUT_SLOT).copyWithCount(1);
+            processingSecondInput = secondInput().copyWithCount(1);
             int maxProgress = switch (kind) {
                 case MACERATOR -> Integer.MAX_VALUE - 1;
                 case PUMP -> kind.recipeTicks;

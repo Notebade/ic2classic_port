@@ -53,8 +53,12 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.GEOTHERMAL_MENU.get());
     }
 
+    static MachineMenu alloySmelter(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.ALLOY_SMELTER_MENU.get());
+    }
+
     private MachineMenu(int id, Inventory playerInventory, MenuType<MachineMenu> type) {
-        this(id, playerInventory, new ItemStackHandler(type == Machines.GEOTHERMAL_MENU.get()
+        this(id, playerInventory, new ItemStackHandler(type == Machines.GEOTHERMAL_MENU.get() || type == Machines.ALLOY_SMELTER_MENU.get()
                 ? MachineEntity.SLOT_COUNT + 1 : MachineEntity.SLOT_COUNT),
             ContainerLevelAccess.NULL, Blocks.AIR, new SimpleContainerData(DATA_COUNT), () -> {}, type);
         data.set(FLUID, -1);
@@ -87,6 +91,10 @@ final class MachineMenu extends AbstractContainerMenu {
             addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 24, changed);
             addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 80, changed);
             addMachineSlot(inventory, MachineEntity.GEOTHERMAL_BATTERY_SLOT, 136, changed);
+        } else if (isAlloySmelter()) {
+            addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 24, changed);
+            addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 136, changed);
+            addMachineSlot(inventory, MachineEntity.SECOND_INPUT_SLOT, 80, changed);
         } else {
             addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 53, changed);
             addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 107, changed);
@@ -174,6 +182,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return getType() == Machines.GEOTHERMAL_MENU.get();
     }
 
+    boolean isAlloySmelter() {
+        return getType() == Machines.ALLOY_SMELTER_MENU.get();
+    }
+
     @Override
     public boolean stillValid(Player player) {
         return stillValid(access, player, block);
@@ -197,7 +209,8 @@ final class MachineMenu extends AbstractContainerMenu {
         }
         boolean moved = index < machineSlots
             ? moveItemStackTo(stack, machineSlots, slots.size(), true)
-            : moveItemStackTo(stack, input, input + 1, false);
+            : moveItemStackTo(stack, input, input + 1, false)
+                || isAlloySmelter() && moveItemStackTo(stack, MachineEntity.SECOND_INPUT_SLOT, machineSlots, false);
         if (!moved) {
             return ItemStack.EMPTY;
         }

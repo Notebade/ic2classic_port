@@ -20,9 +20,13 @@ final class Materials {
             BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_COPPER_ORE)));
         var machineBlock = items.registerSimpleBlockItem(BLOCKS.registerBlock("machine_block", Block::new,
             BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
+        var advancedMachineBlock = items.registerSimpleBlockItem(BLOCKS.registerBlock("advanced_machine_block", Block::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)));
+        var aluminiumOre = items.registerSimpleBlockItem(BLOCKS.registerBlock("aluminium_ore_nether", Block::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.NETHER_QUARTZ_ORE).strength(4.0F, 5.0F).requiresCorrectToolForDrops()));
         var rawTin = items.registerSimpleItem("raw_tin");
-        var tin = items.registerSimpleItem("ingot_tin");
-        var tinDust = items.registerSimpleItem("dust_tin");
+        var rawAluminium = items.registerSimpleItem("raw_aluminium");
+        var carbonFiber = items.registerSimpleItem("carbon_fiber");
         var ironDust = items.registerSimpleItem("dust_iron");
         var goldDust = items.registerSimpleItem("dust_gold");
         var coalDust = items.registerSimpleItem("dust_coal");
@@ -35,11 +39,21 @@ final class Materials {
             if (event.getTabKey().equals(CreativeModeTabs.NATURAL_BLOCKS)) {
                 event.accept(tinOre.get());
                 event.accept(deepslateTinOre.get());
+                event.accept(aluminiumOre.get());
             }
             if (event.getTabKey().equals(CreativeModeTabs.INGREDIENTS)) {
                 event.accept(rawTin.get());
-                event.accept(tin.get());
-                event.accept(tinDust.get());
+                event.accept(IC2.TIN_INGOT.get());
+                event.accept(IC2.TIN_DUST.get());
+                event.accept(rawAluminium.get());
+                event.accept(IC2.ALUMINIUM_DUST.get());
+                event.accept(IC2.ALUMINIUM_INGOT.get());
+                event.accept(IC2.BRONZE_INGOT.get());
+                event.accept(IC2.ADVANCED_ALLOY.get());
+                event.accept(IC2.ADVANCED_ALLOY_PLATE.get());
+                event.accept(carbonFiber.get());
+                event.accept(IC2.CARBON_MESH.get());
+                event.accept(IC2.CARBON_PLATE.get());
                 event.accept(ironDust.get());
                 event.accept(goldDust.get());
                 event.accept(coalDust.get());
@@ -48,6 +62,7 @@ final class Materials {
                 event.accept(circuit.get());
                 event.accept(advancedCircuit.get());
                 event.accept(machineBlock.get());
+                event.accept(advancedMachineBlock.get());
             }
         });
     }

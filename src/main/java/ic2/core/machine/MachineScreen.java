@@ -25,6 +25,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.BATBOX_MENU.get(), MachineScreen::new);
         event.register(Machines.MFE_MENU.get(), MachineScreen::new);
         event.register(Machines.MFSU_MENU.get(), MachineScreen::new);
+        event.register(Machines.ALLOY_SMELTER_MENU.get(), MachineScreen::new);
         event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
     }
@@ -66,6 +67,14 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             graphics.drawString(font, Component.translatable("gui.ic2.input"), 9, 61, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.output"), 69, 61, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.charge"), 120, 61, 0x404040, false);
+            return;
+        }
+        if (menu.isAlloySmelter()) {
+            graphics.drawString(font, Component.translatable("gui.ic2.machine_status", menu.energy(), menu.work()),
+                8, 21, 0x404040, false);
+            graphics.drawString(font, Component.translatable("gui.ic2.input"), 14, 61, 0x404040, false);
+            graphics.drawString(font, Component.translatable("gui.ic2.input"), 70, 61, 0x404040, false);
+            graphics.drawString(font, Component.translatable("gui.ic2.output"), 120, 61, 0x404040, false);
             return;
         }
         if (menu.isFabricator()) {

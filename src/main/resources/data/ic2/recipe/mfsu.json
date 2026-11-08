@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "LCL",
+    "LML",
+    "LAL"
+  ],
+  "key": {
+    "L": {
+      "item": "ic2:lapatron_crystal"
+    },
+    "C": {
+      "item": "ic2:advanced_circuit"
+    },
+    "M": {
+      "item": "ic2:mfe"
+    },
+    "A": {
+      "item": "ic2:advanced_machine_block"
+    }
+  },
+  "result": {
+    "id": "ic2:mfsu",
+    "count": 1
+  }
+}

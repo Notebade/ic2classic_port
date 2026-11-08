@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "III",
+    "BBB",
+    "AAA"
+  ],
+  "key": {
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "B": {
+      "item": "ic2:ingot_bronze"
+    },
+    "A": {
+      "item": "ic2:ingot_aluminium"
+    }
+  },
+  "result": {
+    "id": "ic2:ingot_advanced_alloy",
+    "count": 2
+  }
+}

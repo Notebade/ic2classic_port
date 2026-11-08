@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DD",
+    "DD"
+  ],
+  "key": {
+    "D": {
+      "item": "ic2:dust_coal"
+    }
+  },
+  "result": {
+    "id": "ic2:carbon_fiber",
+    "count": 1
+  }
+}

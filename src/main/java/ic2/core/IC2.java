@@ -44,6 +44,15 @@ public final class IC2 {
     public static final DeferredItem<Item> RUBBER = ITEMS.registerSimpleItem("rubber");
     public static final DeferredItem<Item> STICKY_RESIN = ITEMS.registerSimpleItem("sticky_resin");
     public static final DeferredItem<Item> DENSE_COPPER_PLATE = ITEMS.registerSimpleItem("plate_dense_copper");
+    public static final DeferredItem<Item> TIN_INGOT = ITEMS.registerSimpleItem("ingot_tin");
+    public static final DeferredItem<Item> TIN_DUST = ITEMS.registerSimpleItem("dust_tin");
+    public static final DeferredItem<Item> ALUMINIUM_DUST = ITEMS.registerSimpleItem("dust_aluminium");
+    public static final DeferredItem<Item> ALUMINIUM_INGOT = ITEMS.registerSimpleItem("ingot_aluminium");
+    public static final DeferredItem<Item> BRONZE_INGOT = ITEMS.registerSimpleItem("ingot_bronze");
+    public static final DeferredItem<Item> ADVANCED_ALLOY = ITEMS.registerSimpleItem("ingot_advanced_alloy");
+    public static final DeferredItem<Item> ADVANCED_ALLOY_PLATE = ITEMS.registerSimpleItem("plate_advanced_alloy");
+    public static final DeferredItem<Item> CARBON_MESH = ITEMS.registerSimpleItem("carbon_mesh");
+    public static final DeferredItem<Item> CARBON_PLATE = ITEMS.registerSimpleItem("carbon_plate");
     public static final DeferredItem<Item> SCRAP = ITEMS.registerSimpleItem("scrap");
     public static final DeferredItem<Item> SCRAP_METAL = ITEMS.registerSimpleItem("scrap_metal");
     public static final DeferredItem<ScrapBoxItem> SCRAP_BOX = ITEMS.registerItem("scrapbox", ScrapBoxItem::new);

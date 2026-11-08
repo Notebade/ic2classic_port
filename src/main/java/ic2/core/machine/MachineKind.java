@@ -6,6 +6,7 @@ enum MachineKind {
     SOLAR_PANEL(0, 0, 0),
     MACERATOR(2, 400),
     ELECTRIC_FURNACE(3, 130),
+    ALLOY_SMELTER(16, 250),
     EXTRACTOR(2, 400),
     COMPRESSOR(2, 400),
     PUMP(200, 1, 120),
