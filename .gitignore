@@ -112,3 +112,5 @@ src/main/resources/assets/ic2/textures/item/cable/tin.png
 src/main/resources/assets/ic2/textures/block/electric/cable/aluminium.png
 src/main/resources/assets/ic2/textures/block/electric/cable/*x_insulated_aluminium/
 src/main/resources/assets/ic2/textures/item/cable/*aluminium.png
+src/main/resources/assets/ic2/textures/block/electric/cable/*powered_splitter.png
+src/main/resources/assets/ic2/textures/item/cable/splitter.png

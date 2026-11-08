@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-final class EnergyCableBlock extends PipeBlock {
+class EnergyCableBlock extends PipeBlock {
     private static final MapCodec<EnergyCableBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         propertiesCodec(),
         Codec.intRange(1, 1200).fieldOf("loss_millieu").forGetter(EnergyCableBlock::lossMilliEu),
@@ -38,7 +38,7 @@ final class EnergyCableBlock extends PipeBlock {
     }
 
     @Override
-    protected MapCodec<EnergyCableBlock> codec() {
+    protected MapCodec<? extends EnergyCableBlock> codec() {
         return CODEC;
     }
 
@@ -46,8 +46,12 @@ final class EnergyCableBlock extends PipeBlock {
         return lossMilliEu;
     }
 
-    int maxPacket() {
+    private int maxPacket() {
         return maxPacket;
+    }
+
+    boolean canCarry(BlockState state, int packetSize) {
+        return packetSize <= maxPacket;
     }
 
     @Override

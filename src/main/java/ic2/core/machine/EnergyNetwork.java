@@ -44,7 +44,7 @@ final class EnergyNetwork {
                     remaining -= machine.receiveEnergy(remaining - loss) + loss;
                 }
                 var state = level.getBlockState(next);
-                if (state.getBlock() instanceof EnergyCableBlock cable && available <= cable.maxPacket()
+                if (state.getBlock() instanceof EnergyCableBlock cable && cable.canCarry(state, available)
                     && !visited.contains(next)) {
                     int nextLoss = route.lossMilliEu() + cable.lossMilliEu();
                     if (nextLoss / MILLIEU_PER_EU < remaining) {
