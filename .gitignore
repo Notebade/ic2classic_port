@@ -109,3 +109,6 @@ src/main/resources/assets/ic2/textures/block/electric/cable/*x_insulated_bronze/
 src/main/resources/assets/ic2/textures/item/cable/*bronze.png
 src/main/resources/assets/ic2/textures/block/electric/cable/tin.png
 src/main/resources/assets/ic2/textures/item/cable/tin.png
+src/main/resources/assets/ic2/textures/block/electric/cable/aluminium.png
+src/main/resources/assets/ic2/textures/block/electric/cable/*x_insulated_aluminium/
+src/main/resources/assets/ic2/textures/item/cable/*aluminium.png

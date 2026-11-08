@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 final class EnergyCableBlock extends PipeBlock {
     private static final MapCodec<EnergyCableBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         propertiesCodec(),
-        Codec.intRange(1, 1000).fieldOf("loss_millieu").forGetter(EnergyCableBlock::lossMilliEu),
+        Codec.intRange(1, 1200).fieldOf("loss_millieu").forGetter(EnergyCableBlock::lossMilliEu),
         Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("max_packet", Integer.MAX_VALUE)
             .forGetter(EnergyCableBlock::maxPacket),
         Codec.floatRange(1, 8).optionalFieldOf("radius", 2.0F).forGetter(cable -> cable.radius)

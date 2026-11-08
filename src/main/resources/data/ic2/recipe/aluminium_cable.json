@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:ingots/aluminium"
+    }
+  },
+  "result": {
+    "id": "ic2:aluminium_cable_item",
+    "count": 12
+  }
+}

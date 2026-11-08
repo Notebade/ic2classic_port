@@ -27,6 +27,7 @@ import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 
 public final class Machines {
+    private static final int ALUMINIUM_MAX_PACKET = 8192;
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(IC2.MOD_ID);
     private static final DeferredRegister<BlockEntityType<?>> ENTITIES =
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, IC2.MOD_ID);
@@ -160,6 +161,16 @@ public final class Machines {
     static final DeferredBlock<EnergyCableBlock> INSULATED_IRON_CABLE = cable("iron_insulated_cable", 950, 2048, 4);
     static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_IRON_CABLE = cable("iron_double_insulated_cable", 900, 2048, 5);
     static final DeferredBlock<EnergyCableBlock> TRIPLE_INSULATED_IRON_CABLE = cable("iron_triple_insulated_cable", 800, 2048, 6);
+    static final DeferredBlock<EnergyCableBlock> ALUMINIUM_CABLE =
+        cable("aluminium_cable", 1200, ALUMINIUM_MAX_PACKET, 2.5F);
+    static final DeferredBlock<EnergyCableBlock> INSULATED_ALUMINIUM_CABLE =
+        cable("aluminium_insulated_cable", 1150, ALUMINIUM_MAX_PACKET, 3.5F);
+    static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_ALUMINIUM_CABLE =
+        cable("aluminium_double_insulated_cable", 1100, ALUMINIUM_MAX_PACKET, 4.5F);
+    static final DeferredBlock<EnergyCableBlock> TRIPLE_INSULATED_ALUMINIUM_CABLE =
+        cable("aluminium_triple_insulated_cable", 1050, ALUMINIUM_MAX_PACKET, 5.5F);
+    static final DeferredBlock<EnergyCableBlock> QUADRUPLE_INSULATED_ALUMINIUM_CABLE =
+        cable("aluminium_quadruple_insulated_cable", 1000, ALUMINIUM_MAX_PACKET, 6.5F);
 
     static final Supplier<BlockEntityType<MachineEntity>> GENERATOR_ENTITY =
         ENTITIES.register("generator", () -> entityType(GENERATOR.get()));
@@ -265,6 +276,14 @@ public final class Machines {
         var insulatedIronCableItem = items.registerSimpleBlockItem("iron_insulated_cable_item", INSULATED_IRON_CABLE);
         var doubleInsulatedIronCableItem = items.registerSimpleBlockItem("iron_double_insulated_cable_item", DOUBLE_INSULATED_IRON_CABLE);
         var tripleInsulatedIronCableItem = items.registerSimpleBlockItem("iron_triple_insulated_cable_item", TRIPLE_INSULATED_IRON_CABLE);
+        var aluminiumCableItem = items.registerSimpleBlockItem("aluminium_cable_item", ALUMINIUM_CABLE);
+        var insulatedAluminiumCableItem = items.registerSimpleBlockItem("aluminium_insulated_cable_item", INSULATED_ALUMINIUM_CABLE);
+        var doubleInsulatedAluminiumCableItem =
+            items.registerSimpleBlockItem("aluminium_double_insulated_cable_item", DOUBLE_INSULATED_ALUMINIUM_CABLE);
+        var tripleInsulatedAluminiumCableItem =
+            items.registerSimpleBlockItem("aluminium_triple_insulated_cable_item", TRIPLE_INSULATED_ALUMINIUM_CABLE);
+        var quadrupleInsulatedAluminiumCableItem =
+            items.registerSimpleBlockItem("aluminium_quadruple_insulated_cable_item", QUADRUPLE_INSULATED_ALUMINIUM_CABLE);
         var wrench = items.registerItem("wrench", WrenchItem::new, new Item.Properties().durability(160));
         var electricWrench = items.registerItem("electric_wrench", ElectricWrenchItem::new, new Item.Properties().stacksTo(1));
         var cutter = items.registerItem("cutter", CutterItem::new, new Item.Properties().durability(128).setNoRepair());
@@ -302,6 +321,11 @@ public final class Machines {
                 event.accept(insulatedIronCableItem.get());
                 event.accept(doubleInsulatedIronCableItem.get());
                 event.accept(tripleInsulatedIronCableItem.get());
+                event.accept(aluminiumCableItem.get());
+                event.accept(insulatedAluminiumCableItem.get());
+                event.accept(doubleInsulatedAluminiumCableItem.get());
+                event.accept(tripleInsulatedAluminiumCableItem.get());
+                event.accept(quadrupleInsulatedAluminiumCableItem.get());
                 event.accept(MACERATOR.get());
                 event.accept(ELECTRIC_FURNACE.get());
                 event.accept(ELECTRIC_BLAST_FURNACE.get());

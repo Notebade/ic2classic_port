@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ic2:aluminium_cable_item"
+    },
+    {
+      "item": "ic2:rubber"
+    }
+  ],
+  "result": {
+    "id": "ic2:aluminium_insulated_cable_item",
+    "count": 1
+  }
+}

@@ -18,7 +18,9 @@ final class CutterItem extends Item {
         List.of(Machines.BRONZE_CABLE, Machines.INSULATED_BRONZE_CABLE, Machines.DOUBLE_INSULATED_BRONZE_CABLE),
         List.of(Machines.GOLD_CABLE, Machines.INSULATED_GOLD_CABLE, Machines.DOUBLE_INSULATED_GOLD_CABLE),
         List.of(Machines.IRON_CABLE, Machines.INSULATED_IRON_CABLE,
-            Machines.DOUBLE_INSULATED_IRON_CABLE, Machines.TRIPLE_INSULATED_IRON_CABLE)
+            Machines.DOUBLE_INSULATED_IRON_CABLE, Machines.TRIPLE_INSULATED_IRON_CABLE),
+        List.of(Machines.ALUMINIUM_CABLE, Machines.INSULATED_ALUMINIUM_CABLE, Machines.DOUBLE_INSULATED_ALUMINIUM_CABLE,
+            Machines.TRIPLE_INSULATED_ALUMINIUM_CABLE, Machines.QUADRUPLE_INSULATED_ALUMINIUM_CABLE)
     );
 
     CutterItem(Properties properties) {
