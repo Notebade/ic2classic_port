@@ -47,8 +47,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     static final int SLOT_COUNT = 2;
     static final int GEOTHERMAL_BATTERY_SLOT = SLOT_COUNT;
     static final int SECOND_INPUT_SLOT = SLOT_COUNT;
-    private static final int GENERATOR_OUTPUT = 10;
-    private static final int STANDARD_FAST_COOK_TICKS = 100;
+    static final int GENERATOR_OUTPUT = 10;
     private static final int STACK_LIMIT = 64;
 
     private final MachineKind kind;
@@ -442,8 +441,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private Work furnaceWork(ItemStack stack) {
         var input = new SingleRecipeInput(stack);
         return furnaceRecipe(input).map(recipe -> {
-            int ticks = kind == MachineKind.ELECTRIC_FURNACE ? kind.recipeTicks
-                : Math.max(1, (int) Math.round(recipe.getCookingTime() * (kind.recipeTicks / (double) STANDARD_FAST_COOK_TICKS)));
+            int ticks = kind.cookingTicks(recipe.getCookingTime());
             return new Work(1, recipe.assemble(input, level.registryAccess()), 1, ticks - kind.recipeTicks);
         }).orElse(null);
     }
@@ -590,7 +588,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         };
         inventory.extractItem(OUTPUT_SLOT, 1, false);
         addToSlot(INPUT_SLOT, result);
-        energy = recipe.energy() / 10 * (6 + tier);
+        energy = recipe.dischargeEnergy(tier);
         electrolysisDischarging = true;
         setChanged();
         return true;
@@ -705,7 +703,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return received;
     }
 
-    private static int fuelTicks(ItemStack stack) {
+    static int fuelTicks(ItemStack stack) {
         return stack.getBurnTime(RecipeType.SMELTING) / 4;
     }
 

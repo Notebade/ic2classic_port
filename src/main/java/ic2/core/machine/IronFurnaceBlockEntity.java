@@ -10,6 +10,10 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class IronFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
+    public static int cookingTicks(int vanillaTicks) {
+        return Math.max(1, (int) (vanillaTicks * 4L / 5));
+    }
+
     IronFurnaceBlockEntity(BlockPos pos, BlockState state) {
         super(Machines.IRON_FURNACE_ENTITY.get(), pos, state, RecipeType.SMELTING);
     }

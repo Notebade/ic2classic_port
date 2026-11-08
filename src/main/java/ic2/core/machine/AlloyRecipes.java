@@ -17,6 +17,10 @@ final class AlloyRecipes {
 
     private AlloyRecipes() {}
 
+    static List<Recipe> recipes() {
+        return RECIPES;
+    }
+
     static boolean accepts(ItemStack stack, ItemStack other) {
         return RECIPES.stream().anyMatch(recipe ->
             recipe.first().test(stack) && (other.isEmpty() || recipe.second().test(other))
@@ -35,7 +39,7 @@ final class AlloyRecipes {
         return null;
     }
 
-    private record Recipe(Ingredient first, int firstCount, Ingredient second, Item output, int outputCount) {
+    record Recipe(Ingredient first, int firstCount, Ingredient second, Item output, int outputCount) {
         boolean matches(ItemStack firstStack, ItemStack secondStack) {
             return firstStack.getCount() >= firstCount && first.test(firstStack) && second.test(secondStack);
         }

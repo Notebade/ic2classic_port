@@ -48,4 +48,9 @@ enum MachineKind {
     boolean isStorage() {
         return storageOutput > 0;
     }
+
+    int cookingTicks(int vanillaTicks) {
+        return this == ELECTRIC_FURNACE ? recipeTicks
+            : Math.max(1, (int) Math.round(vanillaTicks * (recipeTicks / 100.0)));
+    }
 }

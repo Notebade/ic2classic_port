@@ -29,5 +29,9 @@ final class Electrolysis {
         return DISCHARGE.get(stack.getItem());
     }
 
-    record Recipe(Item input, Item output, int energy) {}
+    record Recipe(Item input, Item output, int energy) {
+        int dischargeEnergy(int storageTier) {
+            return energy / 10 * (6 + storageTier);
+        }
+    }
 }

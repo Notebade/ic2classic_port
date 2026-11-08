@@ -4,11 +4,19 @@ plugins {
 }
 
 group = 'ic2'
-version = '0.47.0-local'
+version = '0.48.0-local'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 def neoForgeVersion = '21.1.219'
+def jeiVersion = '19.64.0.455'
+
+repositories {
+    maven {
+        url = 'https://maven.blamejared.com/'
+        content { includeGroup 'mezz.jei' }
+    }
+}
 
 tasks.named('processResources', ProcessResources) {
     def metadata = [modVersion: project.version, neoForgeVersion: neoForgeVersion]
@@ -20,6 +28,7 @@ tasks.named('processResources', ProcessResources) {
 
 dependencies {
     implementation "net.neoforged:neoforge:${neoForgeVersion}"
+    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:${jeiVersion}"
 }
 
 runs {

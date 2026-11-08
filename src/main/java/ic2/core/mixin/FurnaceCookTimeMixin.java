@@ -14,7 +14,7 @@ abstract class FurnaceCookTimeMixin {
     private static void ic2$ironCookTime(Level level, AbstractFurnaceBlockEntity furnace,
             CallbackInfoReturnable<Integer> callback) {
         if (furnace instanceof IronFurnaceBlockEntity) {
-            callback.setReturnValue(Math.max(1, (int) (callback.getReturnValueI() * 4L / 5)));
+            callback.setReturnValue(IronFurnaceBlockEntity.cookingTicks(callback.getReturnValueI()));
         }
     }
 }
