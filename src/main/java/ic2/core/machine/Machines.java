@@ -146,6 +146,7 @@ public final class Machines {
     static final DeferredBlock<MachineBlock> MASS_FABRICATOR =
         BLOCKS.registerBlock("mass_fabricator", properties -> new MachineBlock(properties, MachineKind.MASS_FABRICATOR),
             machineProperties());
+    static final DeferredBlock<EnergyCableBlock> TIN_CABLE = cable("tin_cable", 25, 5, 2.5F);
     static final DeferredBlock<EnergyCableBlock> COPPER_CABLE = cable("copper_cable", 300, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> INSULATED_COPPER_CABLE = cable("copper_insulated_cable", 200, Integer.MAX_VALUE);
     static final DeferredBlock<EnergyCableBlock> BRONZE_CABLE = cable("bronze_cable", 700, 128);
@@ -250,6 +251,7 @@ public final class Machines {
         items.registerSimpleBlockItem(PUMP);
         items.registerSimpleBlockItem(RECYCLER);
         items.registerSimpleBlockItem(MASS_FABRICATOR);
+        var tinCableItem = items.registerSimpleBlockItem("tin_cable_item", TIN_CABLE);
         var copperCableItem = items.registerSimpleBlockItem("copper_cable_item", COPPER_CABLE);
         var insulatedCopperCableItem = items.registerSimpleBlockItem("copper_insulated_cable_item", INSULATED_COPPER_CABLE);
         var bronzeCableItem = items.registerSimpleBlockItem("bronze_cable_item", BRONZE_CABLE);
@@ -286,6 +288,7 @@ public final class Machines {
                 event.accept(MV_TRANSFORMER.get());
                 event.accept(HV_TRANSFORMER.get());
                 event.accept(EV_TRANSFORMER.get());
+                event.accept(tinCableItem.get());
                 event.accept(copperCableItem.get());
                 event.accept(insulatedCopperCableItem.get());
                 event.accept(bronzeCableItem.get());
