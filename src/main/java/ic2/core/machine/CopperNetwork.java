@@ -1,7 +1,8 @@
 package ic2.core.machine;
 
-import java.util.ArrayDeque;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.PriorityQueue;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,21 +13,23 @@ final class CopperNetwork {
     private CopperNetwork() {}
 
     static int send(Level level, BlockPos source, int available, Predicate<Direction> emitsTo, MachineKind sourceKind) {
-        var pending = new ArrayDeque<Route>();
+        var pending = new PriorityQueue<>(Comparator.comparingInt(Route::lossTenths).thenComparingLong(Route::order));
         var visited = new HashSet<BlockPos>();
-        pending.add(new Route(source, 0));
-        visited.add(source);
+        long order = 0;
+        pending.add(new Route(source, 0, order++));
         int remaining = available;
 
         while (!pending.isEmpty()) {
-            Route route = pending.removeFirst();
-            // Classic floors the accumulated 0.3 EU loss per uninsulated copper cable.
-            int loss = route.cables() * 3 / 10;
+            Route route = pending.remove();
+            if (!visited.add(route.position())) {
+                continue;
+            }
+            int loss = route.lossTenths() / 10;
             for (Direction direction : Direction.values()) {
                 if (remaining <= loss) {
                     break;
                 }
-                if (route.cables() == 0 && !emitsTo.test(direction)) {
+                if (route.lossTenths() == 0 && !emitsTo.test(direction)) {
                     continue;
                 }
                 BlockPos next = route.position().relative(direction);
@@ -38,15 +41,17 @@ final class CopperNetwork {
                     && machine.canReceiveEnergy(direction.getOpposite(), sourceKind)) {
                     remaining -= machine.receiveEnergy(remaining - loss) + loss;
                 }
-                int nextCableCount = route.cables() + 1;
-                if (nextCableCount * 3 / 10 < remaining && level.getBlockState(next).is(Machines.COPPER_CABLE.get())
-                    && visited.add(next)) {
-                    pending.addLast(new Route(next, nextCableCount));
+                var state = level.getBlockState(next);
+                if (state.getBlock() instanceof CopperCableBlock && !visited.contains(next)) {
+                    int nextLoss = route.lossTenths() + (state.is(Machines.INSULATED_COPPER_CABLE.get()) ? 2 : 3);
+                    if (nextLoss / 10 < remaining) {
+                        pending.add(new Route(next, nextLoss, order++));
+                    }
                 }
             }
         }
         return available - remaining;
     }
 
-    private record Route(BlockPos position, int cables) {}
+    private record Route(BlockPos position, int lossTenths, long order) {}
 }

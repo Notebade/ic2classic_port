@@ -50,6 +50,6 @@ final class CopperCableBlock extends PipeBlock {
     }
 
     private boolean connectsTo(BlockState state) {
-        return state.is(this) || state.getBlock() instanceof MachineBlock;
+        return state.getBlock() instanceof CopperCableBlock || state.getBlock() instanceof MachineBlock;
     }
 }

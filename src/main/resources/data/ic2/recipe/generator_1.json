@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "B",
+    "M",
+    "F"
+  ],
+  "key": {
+    "B": {
+      "item": "ic2:re_battery"
+    },
+    "M": {
+      "item": "ic2:machine_block"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    }
+  },
+  "result": {
+    "id": "ic2:generator",
+    "count": 1
+  }
+}

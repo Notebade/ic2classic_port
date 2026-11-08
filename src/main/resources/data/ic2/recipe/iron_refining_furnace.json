@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "ingredient": {
+    "item": "minecraft:iron_ingot"
+  },
+  "result": {
+    "id": "ic2:ingot_refined_iron"
+  },
+  "experience": 0,
+  "cookingtime": 200
+}

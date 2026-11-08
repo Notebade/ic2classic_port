@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "III",
+    "I I",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    }
+  },
+  "result": {
+    "id": "ic2:machine_block",
+    "count": 1
+  }
+}

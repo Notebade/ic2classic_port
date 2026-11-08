@@ -1,0 +1,7 @@
+{
+  "parent": "ic2:block/copper_cable_arm",
+  "textures": {
+    "particle": "ic2:block/electric/cable/1x_insulated_copper/blank",
+    "copper": "ic2:block/electric/cable/1x_insulated_copper/blank"
+  }
+}

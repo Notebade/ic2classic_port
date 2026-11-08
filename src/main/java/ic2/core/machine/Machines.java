@@ -62,6 +62,8 @@ public final class Machines {
             machineProperties());
     static final DeferredBlock<CopperCableBlock> COPPER_CABLE =
         BLOCKS.registerBlock("copper_cable", CopperCableBlock::new, BlockBehaviour.Properties.of().strength(0.4F).noOcclusion());
+    static final DeferredBlock<CopperCableBlock> INSULATED_COPPER_CABLE =
+        BLOCKS.registerBlock("copper_insulated_cable", CopperCableBlock::new, BlockBehaviour.Properties.of().strength(0.4F).noOcclusion());
 
     static final Supplier<BlockEntityType<MachineEntity>> GENERATOR_ENTITY =
         ENTITIES.register("generator", () -> entityType(GENERATOR.get()));
@@ -106,12 +108,14 @@ public final class Machines {
         items.registerSimpleBlockItem(RECYCLER);
         items.registerSimpleBlockItem(MASS_FABRICATOR);
         var copperCableItem = items.registerSimpleBlockItem("copper_cable_item", COPPER_CABLE);
+        var insulatedCopperCableItem = items.registerSimpleBlockItem("copper_insulated_cable_item", INSULATED_COPPER_CABLE);
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) {
                 event.accept(GENERATOR.get());
                 event.accept(GEOTHERMAL.get());
                 event.accept(SOLAR_PANEL.get());
                 event.accept(copperCableItem.get());
+                event.accept(insulatedCopperCableItem.get());
                 event.accept(MACERATOR.get());
                 event.accept(ELECTRIC_FURNACE.get());
                 event.accept(BATBOX.get());

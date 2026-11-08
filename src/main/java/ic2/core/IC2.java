@@ -47,6 +47,7 @@ public final class IC2 {
         RECIPE_SERIALIZERS.register(modBus);
         Machines.register(modBus, ITEMS);
         Rubberwood.register(modBus, ITEMS);
+        Materials.register(modBus, ITEMS);
         modBus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(ScrapBoxItem::registerDispenser));
     }
 }

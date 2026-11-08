@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "CCC",
+    "RRR"
+  ],
+  "key": {
+    "R": {
+      "item": "ic2:rubber"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "result": {
+    "id": "ic2:copper_insulated_cable_item",
+    "count": 6
+  }
+}

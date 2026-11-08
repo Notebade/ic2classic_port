@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CRC",
+    "CIC",
+    "CRC"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:copper_insulated_cable_item"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    }
+  },
+  "result": {
+    "id": "ic2:circuit",
+    "count": 1
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "FFF",
+    "CMC",
+    " X "
+  ],
+  "key": {
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "C": {
+      "item": "minecraft:cobblestone"
+    },
+    "M": {
+      "item": "ic2:machine_block"
+    },
+    "X": {
+      "item": "ic2:circuit"
+    }
+  },
+  "result": {
+    "id": "ic2:macerator",
+    "count": 1
+  }
+}

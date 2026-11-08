@@ -14,6 +14,10 @@ src/main/resources/assets/ic2/textures/item/misc/resin.png
 src/main/resources/assets/ic2/textures/block/resources/rubberwood/
 src/main/resources/assets/ic2/textures/item/tools/treetap/
 src/main/resources/assets/ic2/textures/block/electric/cable/copper.png
+src/main/resources/assets/ic2/textures/block/electric/cable/1x_insulated_copper/
+src/main/resources/assets/ic2/textures/block/misc/machine_block/
+src/main/resources/assets/ic2/textures/block/resources/ore/tin_ore.png
+src/main/resources/assets/ic2/textures/block/resources/ore/deepslate_tin_ore.png
 src/main/resources/assets/ic2/textures/block/electric/generator/generator/
 src/main/resources/assets/ic2/textures/block/electric/generator/geothermal/
 src/main/resources/assets/ic2/textures/block/electric/generator/solar_panel/
@@ -27,6 +31,11 @@ src/main/resources/assets/ic2/textures/block/machine/hv/mass_fabricator/
 src/main/resources/assets/ic2/textures/block/electric/energy_storage/batbox/
 src/main/resources/assets/ic2/textures/block/electric/energy_storage/mfe/
 src/main/resources/assets/ic2/textures/item/cable/copper.png
+src/main/resources/assets/ic2/textures/item/cable/insulated_copper.png
+src/main/resources/assets/ic2/textures/item/ingots/refined_iron.png
+src/main/resources/assets/ic2/textures/item/ingots/tin.png
+src/main/resources/assets/ic2/textures/item/raw/tin.png
+src/main/resources/assets/ic2/textures/item/misc/circuit.png
 src/main/resources/assets/ic2/textures/item/dust/copper.png
 src/main/resources/assets/ic2/textures/item/battery/reusable_battery_0.png
 src/main/resources/assets/ic2/textures/item/plates/dense_copper.png
