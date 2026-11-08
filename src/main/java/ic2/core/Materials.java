@@ -29,6 +29,7 @@ final class Materials {
         var charcoalDust = items.registerSimpleItem("dust_charcoal");
         var refinedIron = items.registerSimpleItem("ingot_refined_iron");
         var circuit = items.registerSimpleItem("circuit");
+        var advancedCircuit = items.registerSimpleItem("advanced_circuit");
         BLOCKS.register(bus);
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTabKey().equals(CreativeModeTabs.NATURAL_BLOCKS)) {
@@ -45,6 +46,7 @@ final class Materials {
                 event.accept(charcoalDust.get());
                 event.accept(refinedIron.get());
                 event.accept(circuit.get());
+                event.accept(advancedCircuit.get());
                 event.accept(machineBlock.get());
             }
         });

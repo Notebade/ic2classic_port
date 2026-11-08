@@ -20,7 +20,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 @Mod(IC2.MOD_ID)
 public final class IC2 {
     public static final String MOD_ID = "ic2";
-    private static final int ENERGY_CRYSTAL_CAPACITY = 100_000;
+    private static final int LAPOTRON_CAPACITY = 1_000_000;
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
         DeferredRegister.create(Registries.RECIPE_SERIALIZER, MOD_ID);
@@ -30,12 +30,15 @@ public final class IC2 {
         DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BATTERY_CHARGE =
         COMPONENTS.registerComponentType("battery_charge", builder -> builder
-            .persistent(Codec.intRange(0, ENERGY_CRYSTAL_CAPACITY)));
+            .persistent(Codec.intRange(0, LAPOTRON_CAPACITY)));
     public static final DeferredItem<RechargeableItem> RE_BATTERY =
         ITEMS.registerItem("re_battery", properties -> new RechargeableItem(properties, 10_000, 100, 32),
             new Item.Properties().stacksTo(1));
     public static final DeferredItem<RechargeableItem> ENERGY_CRYSTAL =
-        ITEMS.registerItem("energy_crystal", properties -> new RechargeableItem(properties, ENERGY_CRYSTAL_CAPACITY, 250, 128),
+        ITEMS.registerItem("energy_crystal", properties -> new RechargeableItem(properties, 100_000, 250, 128),
+            new Item.Properties().stacksTo(1));
+    public static final DeferredItem<RechargeableItem> LAPOTRON_CRYSTAL =
+        ITEMS.registerItem("lapatron_crystal", properties -> new RechargeableItem(properties, LAPOTRON_CAPACITY, 600, 512),
             new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> COPPER_DUST = ITEMS.registerSimpleItem("dust_copper");
     public static final DeferredItem<Item> RUBBER = ITEMS.registerSimpleItem("rubber");

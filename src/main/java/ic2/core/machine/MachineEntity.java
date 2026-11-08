@@ -124,6 +124,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ELECTRIC_FURNACE -> Machines.ELECTRIC_FURNACE_ENTITY.get();
             case BATBOX -> Machines.BATBOX_ENTITY.get();
             case MFE -> Machines.MFE_ENTITY.get();
+            case MFSU -> Machines.MFSU_ENTITY.get();
             case EXTRACTOR -> Machines.EXTRACTOR_ENTITY.get();
             case COMPRESSOR -> Machines.COMPRESSOR_ENTITY.get();
             case PUMP -> Machines.PUMP_ENTITY.get();
@@ -141,7 +142,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> tickPump();
             case MASS_FABRICATOR -> tickMassFabricator();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
-            case BATBOX, MFE -> tickStorage();
+            case BATBOX, MFE, MFSU -> tickStorage();
         }
     }
 
@@ -334,7 +335,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> stack.is(Items.BUCKET);
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
             case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
-            case BATBOX, MFE, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER -> false;
+            case BATBOX, MFE, MFSU, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER -> false;
         };
     }
 
@@ -361,7 +362,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
-            case GENERATOR, GEOTHERMAL, BATBOX, MFE, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER, PUMP, MASS_FABRICATOR -> null;
+            case GENERATOR, GEOTHERMAL, BATBOX, MFE, MFSU, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER, PUMP, MASS_FABRICATOR -> null;
         };
     }
 
@@ -461,7 +462,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
             case LV_TRANSFORMER, MV_TRANSFORMER -> canReceiveTransformerEnergy(incomingSide, packetSize);
             // Only charge up the storage tiers, so a cable loop cannot feed energy back.
-            case BATBOX, MFE -> sourceKind.storageOutput < kind.storageOutput && incomingSide != outputSide();
+            case BATBOX, MFE, MFSU -> sourceKind.storageOutput < kind.storageOutput && incomingSide != outputSide();
         };
     }
 
@@ -545,6 +546,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             this::setChanged, switch (kind) {
                 case BATBOX -> Machines.BATBOX_MENU.get();
                 case MFE -> Machines.MFE_MENU.get();
+                case MFSU -> Machines.MFSU_MENU.get();
                 case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
                 case GEOTHERMAL -> Machines.GEOTHERMAL_MENU.get();
                 default -> Machines.MENU.get();
@@ -561,7 +563,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int menuWork() {
         return switch (kind) {
             case GENERATOR -> burnTicks;
-            case BATBOX, MFE -> outputSide().ordinal();
+            case BATBOX, MFE, MFSU -> outputSide().ordinal();
             case SOLAR_PANEL, GEOTHERMAL, LV_TRANSFORMER, MV_TRANSFORMER -> 0;
             case MASS_FABRICATOR -> amplifier;
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, PUMP, RECYCLER -> progress;

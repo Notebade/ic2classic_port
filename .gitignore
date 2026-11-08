@@ -47,6 +47,7 @@ src/main/resources/assets/ic2/textures/block/machine/lv/recycler/
 src/main/resources/assets/ic2/textures/block/machine/hv/mass_fabricator/
 src/main/resources/assets/ic2/textures/block/electric/energy_storage/batbox/
 src/main/resources/assets/ic2/textures/block/electric/energy_storage/mfe/
+src/main/resources/assets/ic2/textures/block/electric/energy_storage/mfsu/
 src/main/resources/assets/ic2/textures/item/cable/copper.png
 src/main/resources/assets/ic2/textures/item/cable/insulated_copper.png
 src/main/resources/assets/ic2/textures/item/ingots/refined_iron.png
@@ -56,6 +57,8 @@ src/main/resources/assets/ic2/textures/item/misc/circuit.png
 src/main/resources/assets/ic2/textures/item/dust/copper.png
 src/main/resources/assets/ic2/textures/item/battery/reusable_battery_0.png
 src/main/resources/assets/ic2/textures/item/battery/energy_crystal_0.png
+src/main/resources/assets/ic2/textures/item/battery/lapotron_crystal_0.png
+src/main/resources/assets/ic2/textures/item/misc/advanced_circuit.png
 src/main/resources/assets/ic2/textures/item/plates/dense_copper.png
 src/main/resources/assets/ic2/textures/item/matter/scrap.png
 src/main/resources/assets/ic2/textures/item/matter/scrapmetal.png
