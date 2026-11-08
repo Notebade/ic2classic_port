@@ -1,7 +1,7 @@
 package ic2.core.machine;
 
 import ic2.core.IC2;
-import ic2.core.item.ReBatteryItem;
+import ic2.core.item.RechargeableItem;
 import java.util.Optional;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
@@ -82,8 +82,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         inventory = new ItemStackHandler(kind == MachineKind.GEOTHERMAL ? SLOT_COUNT + 1 : SLOT_COUNT) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
-                if (kind.isStorage() || slot == GEOTHERMAL_BATTERY_SLOT) {
-                    return ReBatteryItem.isBattery(stack);
+                if (kind.isStorage()) {
+                    return RechargeableItem.supports(stack, kind.storageOutput);
+                }
+                if (kind == MachineKind.GEOTHERMAL && slot == GEOTHERMAL_BATTERY_SLOT) {
+                    return RechargeableItem.supports(stack, MachineKind.BATBOX.storageOutput);
                 }
                 return slot == INPUT_SLOT && accepts(stack);
             }
@@ -265,18 +268,18 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
 
     private void transferBattery(int slot, boolean charging) {
         ItemStack battery = inventory.getStackInSlot(slot);
-        if (!ReBatteryItem.isBattery(battery)) {
+        if (!(battery.getItem() instanceof RechargeableItem cell) || !inventory.isItemValid(slot, battery)) {
             return;
         }
-        int charge = ReBatteryItem.charge(battery);
+        int charge = cell.charge(battery);
         int available = charging
-            ? Math.min(energy, ReBatteryItem.CAPACITY - charge)
+            ? Math.min(energy, cell.capacity() - charge)
             : Math.min(kind.capacity - energy, charge);
-        int moved = Math.min(ReBatteryItem.TRANSFER_PER_TICK, available);
+        int moved = Math.min(cell.transferRate(), available);
         if (moved > 0) {
             int batteryGain = charging ? moved : -moved;
             ItemStack updated = battery.copy();
-            ReBatteryItem.setCharge(updated, charge + batteryGain);
+            cell.setCharge(updated, charge + batteryGain);
             energy -= batteryGain;
             inventory.setStackInSlot(slot, updated);
         }

@@ -212,6 +212,7 @@ public final class Machines {
                 event.accept(MASS_FABRICATOR.get());
                 event.accept(IC2.SCRAP_BOX.get());
                 event.accept(IC2.RE_BATTERY.get());
+                event.accept(IC2.ENERGY_CRYSTAL.get());
             }
         });
     }

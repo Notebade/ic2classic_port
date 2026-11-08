@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "WEW",
+    "ECE",
+    "WEW"
+  ],
+  "key": {
+    "W": {
+      "item": "ic2:gold_double_insulated_cable_item"
+    },
+    "E": {
+      "item": "ic2:energy_crystal"
+    },
+    "C": {
+      "item": "ic2:machine_block"
+    }
+  },
+  "result": {
+    "id": "ic2:mfe"
+  }
+}

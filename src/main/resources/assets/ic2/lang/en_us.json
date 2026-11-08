@@ -43,6 +43,7 @@
   "block.ic2.pump": "Pump",
   "block.ic2.geothermal_generator": "Geothermal Generator",
   "block.ic2.mfe": "MFE",
+  "item.ic2.energy_crystal": "Energy Crystal",
   "block.ic2.recycler": "Recycler",
   "block.ic2.mass_fabricator": "Mass Fabricator",
   "block.ic2.batbox": "BatBox",

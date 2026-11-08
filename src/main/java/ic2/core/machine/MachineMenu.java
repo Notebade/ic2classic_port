@@ -1,6 +1,6 @@
 package ic2.core.machine;
 
-import ic2.core.item.ReBatteryItem;
+import ic2.core.item.RechargeableItem;
 import java.util.function.IntSupplier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -99,8 +99,13 @@ final class MachineMenu extends AbstractContainerMenu {
         addSlot(new SlotItemHandler(inventory, index, x, 40) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return isStorage() ? ReBatteryItem.isBattery(stack)
-                    : index != MachineEntity.OUTPUT_SLOT && super.mayPlace(stack);
+                if (isStorage()) {
+                    return RechargeableItem.supports(stack, storageKind.storageOutput);
+                }
+                if (isGeothermal() && index == MachineEntity.GEOTHERMAL_BATTERY_SLOT) {
+                    return RechargeableItem.supports(stack, MachineKind.BATBOX.storageOutput);
+                }
+                return index != MachineEntity.OUTPUT_SLOT && super.mayPlace(stack);
             }
 
             @Override
@@ -177,10 +182,10 @@ final class MachineMenu extends AbstractContainerMenu {
         ItemStack stack = slot.getItem();
         ItemStack before = stack.copy();
         int input = MachineEntity.INPUT_SLOT;
-        if (ReBatteryItem.isBattery(stack)) {
+        if (stack.getItem() instanceof RechargeableItem cell) {
             if (isGeothermal()) {
                 input = MachineEntity.GEOTHERMAL_BATTERY_SLOT;
-            } else if (isStorage() && ReBatteryItem.charge(stack) > 0) {
+            } else if (isStorage() && cell.charge(stack) > 0) {
                 input = MachineEntity.OUTPUT_SLOT;
             }
         }

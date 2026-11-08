@@ -1,7 +1,7 @@
 package ic2.core;
 
 import com.mojang.serialization.Codec;
-import ic2.core.item.ReBatteryItem;
+import ic2.core.item.RechargeableItem;
 import ic2.core.item.ScrapBoxItem;
 import ic2.core.machine.Machines;
 import ic2.core.recipe.UuMatterRecipe;
@@ -20,6 +20,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 @Mod(IC2.MOD_ID)
 public final class IC2 {
     public static final String MOD_ID = "ic2";
+    private static final int ENERGY_CRYSTAL_CAPACITY = 100_000;
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
         DeferredRegister.create(Registries.RECIPE_SERIALIZER, MOD_ID);
@@ -29,9 +30,13 @@ public final class IC2 {
         DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BATTERY_CHARGE =
         COMPONENTS.registerComponentType("battery_charge", builder -> builder
-            .persistent(Codec.intRange(0, ReBatteryItem.CAPACITY)));
-    public static final DeferredItem<ReBatteryItem> RE_BATTERY =
-        ITEMS.registerItem("re_battery", ReBatteryItem::new, new Item.Properties().stacksTo(1));
+            .persistent(Codec.intRange(0, ENERGY_CRYSTAL_CAPACITY)));
+    public static final DeferredItem<RechargeableItem> RE_BATTERY =
+        ITEMS.registerItem("re_battery", properties -> new RechargeableItem(properties, 10_000, 100, 32),
+            new Item.Properties().stacksTo(1));
+    public static final DeferredItem<RechargeableItem> ENERGY_CRYSTAL =
+        ITEMS.registerItem("energy_crystal", properties -> new RechargeableItem(properties, ENERGY_CRYSTAL_CAPACITY, 250, 128),
+            new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> COPPER_DUST = ITEMS.registerSimpleItem("dust_copper");
     public static final DeferredItem<Item> RUBBER = ITEMS.registerSimpleItem("rubber");
     public static final DeferredItem<Item> STICKY_RESIN = ITEMS.registerSimpleItem("sticky_resin");
