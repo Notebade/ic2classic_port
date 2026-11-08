@@ -55,6 +55,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private final PumpTank pumpTank;
     private final FluidTank geothermalTank;
     private final RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> cooking;
+    private final SawmillRecipes sawmill;
     private final RecipeManager.CachedCheck<SingleRecipeInput, MacerationRecipe> macerating =
         RecipeManager.createCheck(Machines.MACERATING.get());
     private int energy;
@@ -77,6 +78,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     MachineEntity(BlockPos pos, BlockState state) {
         super(typeFor(state), pos, state);
         kind = ((MachineBlock) state.getBlock()).kind();
+        sawmill = kind == MachineKind.SAWMILL ? new SawmillRecipes() : null;
         cooking = switch (kind) {
             case ELECTRIC_FURNACE -> RecipeManager.createCheck(RecipeType.SMELTING);
             case ELECTRIC_BLAST_FURNACE -> RecipeManager.createCheck(RecipeType.BLASTING);
@@ -155,6 +157,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ELECTRIC_FURNACE -> Machines.ELECTRIC_FURNACE_ENTITY.get();
             case ELECTRIC_BLAST_FURNACE -> Machines.ELECTRIC_BLAST_FURNACE_ENTITY.get();
             case ELECTRIC_SMOKER -> Machines.ELECTRIC_SMOKER_ENTITY.get();
+            case SAWMILL -> Machines.SAWMILL_ENTITY.get();
             case BATBOX -> Machines.BATBOX_ENTITY.get();
             case MFE -> Machines.MFE_ENTITY.get();
             case MFSU -> Machines.MFSU_ENTITY.get();
@@ -178,7 +181,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> tickPump();
             case MASS_FABRICATOR -> tickMassFabricator();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
-            case ALLOY_SMELTER, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER -> setActive(tickProcessor());
+            case ALLOY_SMELTER, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL -> setActive(tickProcessor());
             case RARE_EARTH_EXTRACTOR -> setActive(tickRareEarth());
             case ELECTROLYZER -> setActive(tickElectrolyzer());
             case BATBOX, MFE, MFSU -> tickStorage();
@@ -379,6 +382,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MACERATOR -> macerationRecipe(new SingleRecipeInput(stack)).isPresent();
             case ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER ->
                 furnaceRecipe(new SingleRecipeInput(stack)).isPresent();
+            case SAWMILL -> !sawmill.result(stack, level).isEmpty();
             case ALLOY_SMELTER -> AlloyRecipes.accepts(stack, secondInput());
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
             case RARE_EARTH_EXTRACTOR -> RareEarthRecipes.find(stack) != null;
@@ -403,6 +407,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (kind) {
             case MACERATOR -> macerationWork(stack);
             case ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER -> furnaceWork(stack);
+            case SAWMILL -> new Work(1, sawmill.result(stack, level));
             case ALLOY_SMELTER -> {
                 var batch = AlloyRecipes.find(stack, inventory.getStackInSlot(SECOND_INPUT_SLOT));
                 yield batch == null ? null : new Work(batch.firstCount(), batch.secondCount(), batch.output(), 1, 0);
@@ -649,7 +654,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         return switch (kind) {
             case GENERATOR, GEOTHERMAL, SOLAR_PANEL, ELECTROLYZER -> false;
-            case ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER -> packetSize <= MachineKind.BATBOX.storageOutput;
+            case ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL -> packetSize <= MachineKind.BATBOX.storageOutput;
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> true;
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
@@ -772,7 +777,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
             case SOLAR_PANEL, GEOTHERMAL, LV_TRANSFORMER, MV_TRANSFORMER, ELECTROLYZER -> 0;
             case MASS_FABRICATOR -> amplifier;
-            case MACERATOR, ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER,
+            case MACERATOR, ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL,
                 ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> progress;
         };

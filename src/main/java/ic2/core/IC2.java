@@ -9,6 +9,7 @@ import ic2.core.recipe.UuMatterRecipe;
 import ic2.core.tree.Rubberwood;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.material.Fluids;
@@ -53,6 +54,10 @@ public final class IC2 {
     public static final DeferredItem<Item> ALUMINIUM_DUST = ITEMS.registerSimpleItem("dust_aluminium");
     public static final DeferredItem<Item> ALUMINIUM_INGOT = ITEMS.registerSimpleItem("ingot_aluminium");
     public static final DeferredItem<Item> BRONZE_INGOT = ITEMS.registerSimpleItem("ingot_bronze");
+    public static final DeferredItem<Item> TURBINE_BLADE = ITEMS.registerSimpleItem("turbine_blade");
+    public static final DeferredItem<Item> POTATO_SLICES = ITEMS.registerSimpleItem("potato_slices");
+    public static final DeferredItem<Item> FRIES = ITEMS.registerSimpleItem("fries", new Item.Properties()
+        .food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.5F).alwaysEdible().build()));
     public static final DeferredItem<Item> ADVANCED_ALLOY = ITEMS.registerSimpleItem("ingot_advanced_alloy");
     public static final DeferredItem<Item> ADVANCED_ALLOY_PLATE = ITEMS.registerSimpleItem("plate_advanced_alloy");
     public static final DeferredItem<Item> CARBON_MESH = ITEMS.registerSimpleItem("carbon_mesh");

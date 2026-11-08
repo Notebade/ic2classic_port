@@ -62,6 +62,7 @@ final class Materials {
                 event.accept(IC2.ALUMINIUM_DUST.get());
                 event.accept(IC2.ALUMINIUM_INGOT.get());
                 event.accept(IC2.BRONZE_INGOT.get());
+                event.accept(IC2.TURBINE_BLADE.get());
                 event.accept(IC2.ADVANCED_ALLOY.get());
                 event.accept(IC2.ADVANCED_ALLOY_PLATE.get());
                 event.accept(carbonFiber.get());
@@ -88,6 +89,10 @@ final class Materials {
                 event.accept(machineBlock.get());
                 event.accept(advancedMachineBlock.get());
                 event.accept(stabilizedMachineBlock.get());
+            }
+            if (event.getTabKey().equals(CreativeModeTabs.FOOD_AND_DRINKS)) {
+                event.accept(IC2.POTATO_SLICES.get());
+                event.accept(IC2.FRIES.get());
             }
         });
     }

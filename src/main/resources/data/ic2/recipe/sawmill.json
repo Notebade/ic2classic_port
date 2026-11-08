@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ATA",
+    "BMB",
+    "BCB"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:stone_axe"
+    },
+    "T": {
+      "item": "ic2:turbine_blade"
+    },
+    "B": {
+      "tag": "c:ingots/bronze"
+    },
+    "M": {
+      "item": "ic2:machine_block"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    }
+  },
+  "result": {
+    "id": "ic2:sawmill",
+    "count": 1
+  }
+}

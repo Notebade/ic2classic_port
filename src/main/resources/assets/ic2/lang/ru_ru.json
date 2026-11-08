@@ -1,6 +1,11 @@
 {
   "block.ic2.electric_blast_furnace": "Электрическая плавильня",
   "block.ic2.electric_smoker": "Электрическая коптильня",
+  "block.ic2.sawmill": "Лесопилка",
+  "block.ic2.rubberwood_planks": "Доски из гевеи",
+  "item.ic2.turbine_blade": "Лопасть турбины",
+  "item.ic2.potato_slices": "Ломтики картофеля",
+  "item.ic2.fries": "Картофель фри",
   "block.ic2.electrolyzer": "Электролизёр",
   "block.ic2.stabilized_machine_block": "Стабилизированный корпус механизма",
   "block.ic2.silver_ore": "Серебряная руда",

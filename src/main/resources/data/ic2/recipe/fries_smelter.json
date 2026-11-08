@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smoking",
+  "category": "food",
+  "ingredient": {
+    "item": "ic2:potato_slices"
+  },
+  "result": {
+    "id": "ic2:fries"
+  },
+  "experience": 0,
+  "cookingtime": 200
+}

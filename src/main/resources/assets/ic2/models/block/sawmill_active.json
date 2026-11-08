@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/machine/lv/saw_mill/active_down",
+    "up": "ic2:block/machine/lv/saw_mill/active_up",
+    "north": "ic2:block/machine/lv/saw_mill/active_south",
+    "south": "ic2:block/machine/lv/saw_mill/active_north",
+    "west": "ic2:block/machine/lv/saw_mill/active_west",
+    "east": "ic2:block/machine/lv/saw_mill/active_east"
+  }
+}

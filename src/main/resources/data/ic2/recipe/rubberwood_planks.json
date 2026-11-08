@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "ic2:rubber_wood"
+    }
+  ],
+  "result": {
+    "id": "ic2:rubberwood_planks",
+    "count": 4
+  }
+}

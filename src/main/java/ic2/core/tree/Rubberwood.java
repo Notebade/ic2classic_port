@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SaplingBlock;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -35,6 +37,8 @@ public final class Rubberwood {
             BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG).strength(1.0F, 5.0F).randomTicks());
     static final DeferredBlock<LeavesBlock> LEAVES =
         BLOCKS.registerBlock("rubber_leaves", LeavesBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES));
+    static final DeferredBlock<Block> PLANKS = BLOCKS.registerSimpleBlock("rubberwood_planks",
+        BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).mapColor(MapColor.COLOR_YELLOW));
     static final DeferredBlock<SaplingBlock> SAPLING =
         BLOCKS.registerBlock("rubber_sapling", properties -> new SaplingBlock(GROWER, properties),
             BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING));
@@ -46,9 +50,13 @@ public final class Rubberwood {
         TRUNKS.register(bus);
         var log = items.registerSimpleBlockItem(LOG);
         var leaves = items.registerSimpleBlockItem(LEAVES);
+        var planks = items.registerSimpleBlockItem(PLANKS);
         var sapling = items.registerSimpleBlockItem(SAPLING);
         var treeTap = items.registerItem("tree_tap", TreeTapItem::new, new Item.Properties().durability(16));
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
+            if (event.getTabKey().equals(CreativeModeTabs.BUILDING_BLOCKS)) {
+                event.accept(planks.get());
+            }
             if (event.getTabKey().equals(CreativeModeTabs.NATURAL_BLOCKS)) {
                 event.accept(log.get());
                 event.accept(leaves.get());
