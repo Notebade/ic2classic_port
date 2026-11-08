@@ -53,6 +53,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private final FluidTank geothermalTank;
     private final RecipeManager.CachedCheck<SingleRecipeInput, SmeltingRecipe> smelting =
         RecipeManager.createCheck(RecipeType.SMELTING);
+    private final RecipeManager.CachedCheck<SingleRecipeInput, MacerationRecipe> macerating =
+        RecipeManager.createCheck(Machines.MACERATING.get());
     private int energy;
     private int burnTicks;
     private int progress;
@@ -304,7 +306,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (kind) {
             case GENERATOR -> fuelTicks(stack) > 0;
             case GEOTHERMAL -> GeothermalGeneratorBlock.hasLava(stack);
-            case MACERATOR -> stack.is(Items.RAW_COPPER);
+            case MACERATOR -> macerationRecipe(new SingleRecipeInput(stack)).isPresent();
             case ELECTRIC_FURNACE -> furnaceRecipe(new SingleRecipeInput(stack)).isPresent();
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
             case COMPRESSOR -> CompressionRecipes.find(stack) != null;
@@ -319,9 +321,13 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return level == null || input.isEmpty() ? Optional.empty() : smelting.getRecipeFor(input, level);
     }
 
+    private Optional<RecipeHolder<MacerationRecipe>> macerationRecipe(SingleRecipeInput input) {
+        return level == null || input.isEmpty() ? Optional.empty() : macerating.getRecipeFor(input, level);
+    }
+
     private Work workFor(ItemStack stack) {
         return switch (kind) {
-            case MACERATOR -> stack.is(Items.RAW_COPPER) ? new Work(1, new ItemStack(IC2.COPPER_DUST.get(), 2)) : null;
+            case MACERATOR -> macerationWork(stack);
             case ELECTRIC_FURNACE -> new Work(1, smeltingResult(stack));
             case EXTRACTOR -> new Work(1, ExtractionRecipes.result(stack));
             case COMPRESSOR -> {
@@ -336,6 +342,15 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             }
             case GENERATOR, GEOTHERMAL, BATBOX, MFE, SOLAR_PANEL, PUMP, MASS_FABRICATOR -> null;
         };
+    }
+
+    private Work macerationWork(ItemStack stack) {
+        var input = new SingleRecipeInput(stack);
+        return macerationRecipe(input).map(holder -> {
+            MacerationRecipe recipe = holder.value();
+            int ticks = Math.max(1, recipe.getCookingTime());
+            return new Work(1, recipe.assemble(input, level.registryAccess()), 1, ticks - kind.recipeTicks);
+        }).orElse(null);
     }
 
     private ItemStack smeltingResult(ItemStack stack) {
@@ -571,7 +586,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             amplifierRefillThreshold = Mth.clamp(tag.getInt("amplifier_refill"), 0, 1_000_000);
         } else if (kind.recipeTicks > 0) {
             processingInput = inventory.getStackInSlot(INPUT_SLOT).copyWithCount(1);
-            int maxProgress = kind == MachineKind.PUMP ? kind.recipeTicks : kind.recipeTicks - 1;
+            int maxProgress = switch (kind) {
+                case MACERATOR -> Integer.MAX_VALUE - 1;
+                case PUMP -> kind.recipeTicks;
+                default -> kind.recipeTicks - 1;
+            };
             if (kind == MachineKind.RECYCLER && processingInput.is(IC2.SCRAP.get())) {
                 maxProgress += RecyclingRecipes.BOX_EXTRA_TICKS;
             }

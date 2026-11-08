@@ -1,0 +1,17 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": [
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "ic2:ingot_refined_iron"
+    }
+  ],
+  "result": {
+    "id": "ic2:dust_iron",
+    "count": 1
+  },
+  "experience": 0.1,
+  "cookingtime": 400
+}

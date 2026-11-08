@@ -1,0 +1,12 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": {
+    "item": "minecraft:blaze_rod"
+  },
+  "result": {
+    "id": "minecraft:blaze_powder",
+    "count": 5
+  },
+  "experience": 0.3,
+  "cookingtime": 400
+}

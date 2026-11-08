@@ -1,0 +1,12 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": {
+    "item": "minecraft:stone"
+  },
+  "result": {
+    "id": "minecraft:gravel",
+    "count": 1
+  },
+  "experience": 0.1,
+  "cookingtime": 400
+}

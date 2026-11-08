@@ -1,0 +1,12 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": {
+    "item": "minecraft:raw_gold_block"
+  },
+  "result": {
+    "id": "ic2:dust_gold",
+    "count": 18
+  },
+  "experience": 9,
+  "cookingtime": 1600
+}

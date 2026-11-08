@@ -33,11 +33,12 @@ public final class Machines {
         DeferredRegister.create(Registries.RECIPE_TYPE, IC2.MOD_ID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
         DeferredRegister.create(Registries.RECIPE_SERIALIZER, IC2.MOD_ID);
-    static final Supplier<RecipeType<StoneMacerationRecipe>> STONE_MACERATING =
+    // Keep the registry ID used by existing stone macerator datapacks.
+    static final Supplier<RecipeType<MacerationRecipe>> MACERATING =
         RECIPE_TYPES.register("stone_macerating",
             () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "stone_macerating")));
-    static final Supplier<RecipeSerializer<StoneMacerationRecipe>> STONE_MACERATING_SERIALIZER =
-        RECIPE_SERIALIZERS.register("stone_macerating", () -> new SimpleCookingSerializer<>(StoneMacerationRecipe::new, 400));
+    static final Supplier<RecipeSerializer<MacerationRecipe>> MACERATING_SERIALIZER =
+        RECIPE_SERIALIZERS.register("stone_macerating", () -> new SimpleCookingSerializer<>(MacerationRecipe::new, 400));
     static final Supplier<MenuType<StoneMaceratorMenu>> STONE_MACERATOR_MENU =
         MENUS.register("stone_macerator", () -> new MenuType<>(StoneMaceratorMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> MENU =

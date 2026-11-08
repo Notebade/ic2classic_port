@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 final class StoneMaceratorBlockEntity extends AbstractFurnaceBlockEntity {
     StoneMaceratorBlockEntity(BlockPos pos, BlockState state) {
-        super(Machines.STONE_MACERATOR_ENTITY.get(), pos, state, Machines.STONE_MACERATING.get());
+        super(Machines.STONE_MACERATOR_ENTITY.get(), pos, state, Machines.MACERATING.get());
     }
 
     @Override

@@ -1,0 +1,20 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": [
+    {
+      "item": "minecraft:gold_ore"
+    },
+    {
+      "item": "minecraft:deepslate_gold_ore"
+    },
+    {
+      "item": "minecraft:nether_gold_ore"
+    }
+  ],
+  "result": {
+    "id": "ic2:dust_gold",
+    "count": 2
+  },
+  "experience": 1,
+  "cookingtime": 400
+}

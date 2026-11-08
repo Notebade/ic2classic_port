@@ -1,0 +1,12 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": {
+    "item": "minecraft:raw_iron_block"
+  },
+  "result": {
+    "id": "ic2:dust_iron",
+    "count": 18
+  },
+  "experience": 6.3,
+  "cookingtime": 1600
+}

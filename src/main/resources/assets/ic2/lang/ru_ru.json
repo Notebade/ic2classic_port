@@ -22,6 +22,8 @@
   "block.ic2.iron_furnace": "Железная печь",
   "block.ic2.stone_macerator": "Каменный дробитель",
   "item.ic2.dust_tin": "Оловянная пыль",
+  "item.ic2.dust_iron": "Железная пыль",
+  "item.ic2.dust_gold": "Золотая пыль",
   "block.ic2.extractor": "Экстрактор",
   "block.ic2.compressor": "Компрессор",
   "block.ic2.pump": "Помпа",

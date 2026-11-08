@@ -23,6 +23,8 @@ final class Materials {
         var rawTin = items.registerSimpleItem("raw_tin");
         var tin = items.registerSimpleItem("ingot_tin");
         var tinDust = items.registerSimpleItem("dust_tin");
+        var ironDust = items.registerSimpleItem("dust_iron");
+        var goldDust = items.registerSimpleItem("dust_gold");
         var refinedIron = items.registerSimpleItem("ingot_refined_iron");
         var circuit = items.registerSimpleItem("circuit");
         BLOCKS.register(bus);
@@ -35,6 +37,8 @@ final class Materials {
                 event.accept(rawTin.get());
                 event.accept(tin.get());
                 event.accept(tinDust.get());
+                event.accept(ironDust.get());
+                event.accept(goldDust.get());
                 event.accept(refinedIron.get());
                 event.accept(circuit.get());
                 event.accept(machineBlock.get());

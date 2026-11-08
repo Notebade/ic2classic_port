@@ -1,0 +1,12 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": {
+    "item": "minecraft:nether_quartz_ore"
+  },
+  "result": {
+    "id": "minecraft:quartz",
+    "count": 2
+  },
+  "experience": 0,
+  "cookingtime": 400
+}
