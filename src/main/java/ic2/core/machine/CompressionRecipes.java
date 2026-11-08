@@ -15,7 +15,8 @@ final class CompressionRecipes {
         Items.ICE, new Recipe(3, Items.PACKED_ICE),
         Items.PACKED_ICE, new Recipe(3, Items.BLUE_ICE),
         Items.BLAZE_POWDER, new Recipe(5, Items.BLAZE_ROD),
-        Items.COPPER_INGOT, new Recipe(8, IC2.DENSE_COPPER_PLATE.get())
+        Items.COPPER_INGOT, new Recipe(8, IC2.DENSE_COPPER_PLATE.get()),
+        Machines.SOLAR_PANEL.get().asItem(), new Recipe(1, Machines.COMPRESSED_SOLAR_PANEL.get().asItem())
     );
 
     private CompressionRecipes() {}

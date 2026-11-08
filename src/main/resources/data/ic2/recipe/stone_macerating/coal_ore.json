@@ -1,0 +1,17 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": [
+    {
+      "item": "minecraft:coal_ore"
+    },
+    {
+      "item": "minecraft:deepslate_coal_ore"
+    }
+  ],
+  "result": {
+    "id": "ic2:dust_coal",
+    "count": 2
+  },
+  "experience": 0.5,
+  "cookingtime": 400
+}

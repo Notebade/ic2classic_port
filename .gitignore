@@ -28,6 +28,8 @@ src/main/resources/assets/ic2/textures/block/machine/stone/macerator/*.png
 src/main/resources/assets/ic2/textures/item/dust/tin.png
 src/main/resources/assets/ic2/textures/item/dust/iron.png
 src/main/resources/assets/ic2/textures/item/dust/gold.png
+src/main/resources/assets/ic2/textures/item/dust/coal.png
+src/main/resources/assets/ic2/textures/item/dust/charcoal.png
 src/main/resources/assets/ic2/textures/block/machine/lv/extractor/
 src/main/resources/assets/ic2/textures/block/machine/lv/compressor/
 src/main/resources/assets/ic2/textures/block/machine/lv/pump/

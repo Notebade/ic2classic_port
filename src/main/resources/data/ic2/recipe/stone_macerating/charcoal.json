@@ -1,0 +1,12 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": {
+    "item": "minecraft:charcoal"
+  },
+  "result": {
+    "id": "ic2:dust_charcoal",
+    "count": 1
+  },
+  "experience": 0.05,
+  "cookingtime": 400
+}

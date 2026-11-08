@@ -235,7 +235,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         boolean active = SolarPanelBlock.hasSun(level, worldPosition);
         setActive(active);
         if (active) {
-            CopperNetwork.send(level, worldPosition, SolarPanelBlock.OUTPUT, side -> side != Direction.UP, kind);
+            var panel = (SolarPanelBlock) getBlockState().getBlock();
+            CopperNetwork.send(level, worldPosition, SolarPanelBlock.OUTPUT, panel::emitsTo, kind);
         }
     }
 

@@ -58,6 +58,8 @@ public final class Machines {
         BLOCKS.registerBlock("geothermal_generator", GeothermalGeneratorBlock::new, machineProperties());
     static final DeferredBlock<SolarPanelBlock> SOLAR_PANEL =
         BLOCKS.registerBlock("solar_panel", SolarPanelBlock::new, machineProperties());
+    static final DeferredBlock<CompressedSolarPanelBlock> COMPRESSED_SOLAR_PANEL =
+        BLOCKS.registerBlock("solar_panel_compressed", CompressedSolarPanelBlock::new, machineProperties().noOcclusion());
     static final DeferredBlock<MachineBlock> MACERATOR =
         BLOCKS.registerBlock("macerator", properties -> new MachineBlock(properties, MachineKind.MACERATOR), machineProperties());
     static final DeferredBlock<MachineBlock> ELECTRIC_FURNACE =
@@ -94,7 +96,7 @@ public final class Machines {
     static final Supplier<BlockEntityType<MachineEntity>> GEOTHERMAL_ENTITY =
         ENTITIES.register("geothermal_generator", () -> entityType(GEOTHERMAL.get()));
     static final Supplier<BlockEntityType<MachineEntity>> SOLAR_PANEL_ENTITY =
-        ENTITIES.register("solar_panel", () -> entityType(SOLAR_PANEL.get()));
+        ENTITIES.register("solar_panel", () -> entityType(SOLAR_PANEL.get(), COMPRESSED_SOLAR_PANEL.get()));
     static final Supplier<BlockEntityType<MachineEntity>> MACERATOR_ENTITY =
         ENTITIES.register("macerator", () -> entityType(MACERATOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> ELECTRIC_FURNACE_ENTITY =
@@ -129,6 +131,7 @@ public final class Machines {
         items.registerSimpleBlockItem(GENERATOR);
         items.registerSimpleBlockItem(GEOTHERMAL);
         items.registerSimpleBlockItem(SOLAR_PANEL);
+        items.registerSimpleBlockItem(COMPRESSED_SOLAR_PANEL);
         items.registerSimpleBlockItem(MACERATOR);
         items.registerSimpleBlockItem(ELECTRIC_FURNACE);
         items.registerSimpleBlockItem(IRON_FURNACE);
@@ -147,6 +150,7 @@ public final class Machines {
                 event.accept(GENERATOR.get());
                 event.accept(GEOTHERMAL.get());
                 event.accept(SOLAR_PANEL.get());
+                event.accept(COMPRESSED_SOLAR_PANEL.get());
                 event.accept(copperCableItem.get());
                 event.accept(insulatedCopperCableItem.get());
                 event.accept(MACERATOR.get());
@@ -190,8 +194,8 @@ public final class Machines {
             (entity, side) -> side == null ? new InvWrapper(entity) : new SidedInvWrapper(entity, side));
     }
 
-    private static BlockEntityType<MachineEntity> entityType(Block block) {
-        return BlockEntityType.Builder.of(MachineEntity::new, block).build(null);
+    private static BlockEntityType<MachineEntity> entityType(Block... blocks) {
+        return BlockEntityType.Builder.of(MachineEntity::new, blocks).build(null);
     }
 
     private static BlockBehaviour.Properties machineProperties() {

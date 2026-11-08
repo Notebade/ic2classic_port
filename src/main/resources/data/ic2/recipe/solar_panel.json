@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DGD",
+    "GDG",
+    "CVC"
+  ],
+  "key": {
+    "D": {
+      "tag": "ic2:coal_dusts"
+    },
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    },
+    "V": {
+      "item": "ic2:generator"
+    }
+  },
+  "result": {
+    "id": "ic2:solar_panel"
+  }
+}
