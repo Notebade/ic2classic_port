@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/machine/lv/electric_smoker/inactive_down",
+    "up": "ic2:block/machine/lv/electric_smoker/inactive_up",
+    "north": "ic2:block/machine/lv/electric_smoker/inactive_south",
+    "south": "ic2:block/machine/lv/electric_smoker/inactive_north",
+    "west": "ic2:block/machine/lv/electric_smoker/inactive_west",
+    "east": "ic2:block/machine/lv/electric_smoker/inactive_east"
+  }
+}

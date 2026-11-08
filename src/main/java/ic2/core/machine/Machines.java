@@ -98,6 +98,9 @@ public final class Machines {
     static final DeferredBlock<ActiveMachineBlock> ELECTRIC_BLAST_FURNACE =
         BLOCKS.registerBlock("electric_blast_furnace",
             properties -> new ActiveMachineBlock(properties, MachineKind.ELECTRIC_BLAST_FURNACE), machineProperties());
+    static final DeferredBlock<ActiveMachineBlock> ELECTRIC_SMOKER =
+        BLOCKS.registerBlock("electric_smoker",
+            properties -> new ActiveMachineBlock(properties, MachineKind.ELECTRIC_SMOKER), machineProperties());
     static final DeferredBlock<IronFurnaceBlock> IRON_FURNACE =
         BLOCKS.registerBlock("iron_furnace", IronFurnaceBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.FURNACE));
     static final DeferredBlock<StoneMaceratorBlock> STONE_MACERATOR =
@@ -153,6 +156,8 @@ public final class Machines {
         ENTITIES.register("electric_furnace", () -> entityType(ELECTRIC_FURNACE.get()));
     static final Supplier<BlockEntityType<MachineEntity>> ELECTRIC_BLAST_FURNACE_ENTITY =
         ENTITIES.register("electric_blast_furnace", () -> entityType(ELECTRIC_BLAST_FURNACE.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> ELECTRIC_SMOKER_ENTITY =
+        ENTITIES.register("electric_smoker", () -> entityType(ELECTRIC_SMOKER.get()));
     static final Supplier<BlockEntityType<IronFurnaceBlockEntity>> IRON_FURNACE_ENTITY =
         ENTITIES.register("iron_furnace", () -> BlockEntityType.Builder.of(IronFurnaceBlockEntity::new, IRON_FURNACE.get()).build(null));
     static final Supplier<BlockEntityType<StoneMaceratorBlockEntity>> STONE_MACERATOR_ENTITY =
@@ -201,6 +206,7 @@ public final class Machines {
         items.registerSimpleBlockItem(MACERATOR);
         items.registerSimpleBlockItem(ELECTRIC_FURNACE);
         items.registerSimpleBlockItem(ELECTRIC_BLAST_FURNACE);
+        items.registerSimpleBlockItem(ELECTRIC_SMOKER);
         items.registerSimpleBlockItem(IRON_FURNACE);
         items.registerSimpleBlockItem(STONE_MACERATOR);
         items.registerSimpleBlockItem(BATBOX);
@@ -239,6 +245,7 @@ public final class Machines {
                 event.accept(MACERATOR.get());
                 event.accept(ELECTRIC_FURNACE.get());
                 event.accept(ELECTRIC_BLAST_FURNACE.get());
+                event.accept(ELECTRIC_SMOKER.get());
                 event.accept(IRON_FURNACE.get());
                 event.accept(STONE_MACERATOR.get());
                 event.accept(BATBOX.get());
@@ -267,6 +274,7 @@ public final class Machines {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACERATOR_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ELECTRIC_FURNACE_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ELECTRIC_BLAST_FURNACE_ENTITY.get(), MachineEntity::automation);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ELECTRIC_SMOKER_ENTITY.get(), MachineEntity::automation);
         registerFuelInventory(event, IRON_FURNACE_ENTITY.get());
         registerFuelInventory(event, STONE_MACERATOR_ENTITY.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BATBOX_ENTITY.get(), MachineEntity::automation);
