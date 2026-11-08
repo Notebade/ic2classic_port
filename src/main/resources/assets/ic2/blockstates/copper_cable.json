@@ -1,0 +1,69 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "ic2:block/copper_cable_center"
+      }
+    },
+    {
+      "apply": {
+        "y": 0,
+        "x": 0,
+        "model": "ic2:block/copper_cable_arm"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 90,
+        "x": 0,
+        "model": "ic2:block/copper_cable_arm"
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 180,
+        "x": 0,
+        "model": "ic2:block/copper_cable_arm"
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 270,
+        "x": 0,
+        "model": "ic2:block/copper_cable_arm"
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 0,
+        "x": 270,
+        "model": "ic2:block/copper_cable_arm"
+      },
+      "when": {
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 0,
+        "x": 90,
+        "model": "ic2:block/copper_cable_arm"
+      },
+      "when": {
+        "down": "true"
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "All Rights Reserved"
+
+[[mods]]
+modId = "ic2"
+version = "${modVersion}"
+displayName = "IC2 Classic (Local Port Prototype)"
+
+[[dependencies.ic2]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${neoForgeVersion},21.2)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ic2]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1]"
+ordering = "NONE"
+side = "BOTH"

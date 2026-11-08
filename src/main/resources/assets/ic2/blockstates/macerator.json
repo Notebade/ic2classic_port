@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "ic2:block/macerator",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "ic2:block/macerator",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "ic2:block/macerator",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "ic2:block/macerator",
+      "y": 270
+    }
+  }
+}

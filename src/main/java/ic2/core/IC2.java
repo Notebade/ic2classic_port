@@ -1,0 +1,36 @@
+package ic2.core;
+
+import com.mojang.serialization.Codec;
+import ic2.core.item.ReBatteryItem;
+import ic2.core.machine.Machines;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.Item;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+@Mod(IC2.MOD_ID)
+public final class IC2 {
+    public static final String MOD_ID = "ic2";
+    private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
+    private static final DeferredRegister.DataComponents COMPONENTS =
+        DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BATTERY_CHARGE =
+        COMPONENTS.registerComponentType("battery_charge", builder -> builder
+            .persistent(Codec.intRange(0, ReBatteryItem.CAPACITY)));
+    public static final DeferredItem<ReBatteryItem> RE_BATTERY =
+        ITEMS.registerItem("re_battery", ReBatteryItem::new, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> COPPER_DUST = ITEMS.registerSimpleItem("dust_copper");
+    public static final DeferredItem<Item> RUBBER = ITEMS.registerSimpleItem("rubber");
+    public static final DeferredItem<Item> STICKY_RESIN = ITEMS.registerSimpleItem("sticky_resin");
+    public static final DeferredItem<Item> DENSE_COPPER_PLATE = ITEMS.registerSimpleItem("plate_dense_copper");
+
+    public IC2(IEventBus modBus) {
+        COMPONENTS.register(modBus);
+        ITEMS.register(modBus);
+        Machines.register(modBus, ITEMS);
+    }
+}

@@ -1,0 +1,365 @@
+package ic2.core.machine;
+
+import ic2.core.IC2;
+import ic2.core.item.ReBatteryItem;
+import java.util.Optional;
+import java.util.function.Predicate;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Containers;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.RangedWrapper;
+
+final class MachineEntity extends BlockEntity implements MenuProvider {
+    static final int INPUT_SLOT = 0;
+    static final int OUTPUT_SLOT = 1;
+    static final int SLOT_COUNT = 2;
+    private static final int GENERATOR_OUTPUT = 10;
+    private static final int BATBOX_OUTPUT = 32;
+    private static final int STACK_LIMIT = 64;
+
+    private final MachineKind kind;
+    private final RecipeManager.CachedCheck<SingleRecipeInput, SmeltingRecipe> smelting =
+        RecipeManager.createCheck(RecipeType.SMELTING);
+    private int energy;
+    private int burnTicks;
+    private int progress;
+    private ItemStack processingInput = ItemStack.EMPTY;
+    private final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT) {
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            if (kind == MachineKind.BATBOX) {
+                return ReBatteryItem.isBattery(stack);
+            }
+            return slot == INPUT_SLOT && accepts(stack);
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            if (slot == INPUT_SLOT && kind.recipeTicks > 0) {
+                trackInput();
+            }
+            setChanged();
+        }
+    };
+    private final IItemHandler automationInput = new RangedWrapper(inventory, INPUT_SLOT, INPUT_SLOT + 1) {
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return ItemStack.EMPTY;
+        }
+    };
+    private final IItemHandler automationOutput = new RangedWrapper(inventory, OUTPUT_SLOT, OUTPUT_SLOT + 1);
+    private final IItemHandler batteryChargeSlot = new BatterySlot(inventory, INPUT_SLOT, true);
+    private final IItemHandler batteryDischargeSlot = new BatterySlot(inventory, OUTPUT_SLOT, false);
+
+    MachineEntity(BlockPos pos, BlockState state) {
+        super(typeFor(state), pos, state);
+        kind = ((MachineBlock) state.getBlock()).kind();
+    }
+
+    static BlockEntityType<MachineEntity> typeFor(BlockState state) {
+        return switch (((MachineBlock) state.getBlock()).kind()) {
+            case GENERATOR -> Machines.GENERATOR_ENTITY.get();
+            case SOLAR_PANEL -> Machines.SOLAR_PANEL_ENTITY.get();
+            case MACERATOR -> Machines.MACERATOR_ENTITY.get();
+            case ELECTRIC_FURNACE -> Machines.ELECTRIC_FURNACE_ENTITY.get();
+            case BATBOX -> Machines.BATBOX_ENTITY.get();
+            case EXTRACTOR -> Machines.EXTRACTOR_ENTITY.get();
+            case COMPRESSOR -> Machines.COMPRESSOR_ENTITY.get();
+        };
+    }
+
+    void tick() {
+        switch (kind) {
+            case GENERATOR -> tickGenerator();
+            case SOLAR_PANEL -> tickSolarPanel();
+            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR -> tickProcessor();
+            case BATBOX -> tickStorage();
+        }
+    }
+
+    private void tickStorage() {
+        transferBattery(INPUT_SLOT, true);
+        transferBattery(OUTPUT_SLOT, false);
+        if (energy >= BATBOX_OUTPUT) {
+            sendEnergy(BATBOX_OUTPUT, outputSide()::equals, false);
+        }
+    }
+
+    private void tickSolarPanel() {
+        boolean active = SolarPanelBlock.hasSun(level, worldPosition);
+        BlockState state = getBlockState();
+        if (state.getValue(BlockStateProperties.LIT) != active) {
+            level.setBlock(worldPosition, state.setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS);
+        }
+        if (active) {
+            CopperNetwork.send(level, worldPosition, SolarPanelBlock.OUTPUT, side -> side != Direction.UP, true);
+        }
+    }
+
+    private void transferBattery(int slot, boolean charging) {
+        ItemStack battery = inventory.getStackInSlot(slot);
+        if (!ReBatteryItem.isBattery(battery)) {
+            return;
+        }
+        int charge = ReBatteryItem.charge(battery);
+        int available = charging
+            ? Math.min(energy, ReBatteryItem.CAPACITY - charge)
+            : Math.min(kind.capacity - energy, charge);
+        int moved = Math.min(ReBatteryItem.TRANSFER_PER_TICK, available);
+        if (moved > 0) {
+            int batteryGain = charging ? moved : -moved;
+            ItemStack updated = battery.copy();
+            ReBatteryItem.setCharge(updated, charge + batteryGain);
+            energy -= batteryGain;
+            inventory.setStackInSlot(slot, updated);
+        }
+    }
+
+    private void tickGenerator() {
+        if (burnTicks == 0 && energy <= kind.capacity - GENERATOR_OUTPUT) {
+            startBurning();
+        }
+        if (burnTicks > 0) {
+            burnTicks--;
+            energy = Math.min(kind.capacity, energy + GENERATOR_OUTPUT);
+            setChanged();
+        }
+        if (energy > 0) {
+            sendEnergy(Math.min(GENERATOR_OUTPUT, energy), side -> true, true);
+        }
+    }
+
+    private void sendEnergy(int available, Predicate<Direction> emitsTo, boolean canChargeStorage) {
+        int sent = CopperNetwork.send(level, worldPosition, available, emitsTo, canChargeStorage);
+        if (sent > 0) {
+            energy -= sent;
+            setChanged();
+        }
+    }
+
+    private void startBurning() {
+        ItemStack fuel = inventory.getStackInSlot(INPUT_SLOT);
+        int ticks = fuelTicks(fuel);
+        if (ticks <= 0) {
+            return;
+        }
+        ItemStack remainder = fuel.copyWithCount(1).getCraftingRemainingItem();
+        if (!canAddOutput(remainder)) {
+            return;
+        }
+        inventory.extractItem(INPUT_SLOT, 1, false);
+        addOutput(remainder);
+        burnTicks = ticks;
+    }
+
+    private boolean accepts(ItemStack stack) {
+        return switch (kind) {
+            case GENERATOR -> fuelTicks(stack) > 0;
+            case MACERATOR -> stack.is(Items.RAW_COPPER);
+            case ELECTRIC_FURNACE -> furnaceRecipe(new SingleRecipeInput(stack)).isPresent();
+            case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
+            case COMPRESSOR -> CompressionRecipes.find(stack) != null;
+            case BATBOX, SOLAR_PANEL -> false;
+        };
+    }
+
+    private Optional<RecipeHolder<SmeltingRecipe>> furnaceRecipe(SingleRecipeInput input) {
+        return level == null || input.isEmpty() ? Optional.empty() : smelting.getRecipeFor(input, level);
+    }
+
+    private Work workFor(ItemStack stack) {
+        return switch (kind) {
+            case MACERATOR -> stack.is(Items.RAW_COPPER) ? new Work(1, new ItemStack(IC2.COPPER_DUST.get(), 2)) : null;
+            case ELECTRIC_FURNACE -> new Work(1, smeltingResult(stack));
+            case EXTRACTOR -> new Work(1, ExtractionRecipes.result(stack));
+            case COMPRESSOR -> {
+                CompressionRecipes.Recipe recipe = CompressionRecipes.find(stack);
+                yield recipe == null ? null : new Work(recipe.inputCount(), new ItemStack(recipe.output()));
+            }
+            case GENERATOR, BATBOX, SOLAR_PANEL -> null;
+        };
+    }
+
+    private ItemStack smeltingResult(ItemStack stack) {
+        var input = new SingleRecipeInput(stack);
+        return furnaceRecipe(input)
+            .map(recipe -> recipe.value().assemble(input, level.registryAccess()))
+            .orElse(ItemStack.EMPTY);
+    }
+
+    private void trackInput() {
+        ItemStack input = inventory.getStackInSlot(INPUT_SLOT);
+        if (!ItemStack.isSameItemSameComponents(processingInput, input)) {
+            processingInput = input.copyWithCount(1);
+            progress = 0;
+        }
+    }
+
+    private void tickProcessor() {
+        ItemStack input = inventory.getStackInSlot(INPUT_SLOT);
+        Work work = workFor(input);
+        if (work == null || work.output().isEmpty() || input.getCount() < work.inputCount()) {
+            if (progress != 0) {
+                progress = 0;
+                setChanged();
+            }
+            return;
+        }
+        if (!canAddOutput(work.output()) || energy < kind.energyPerTick) {
+            return;
+        }
+        energy -= kind.energyPerTick;
+        progress++;
+        if (progress == kind.recipeTicks) {
+            inventory.extractItem(INPUT_SLOT, work.inputCount(), false);
+            addOutput(work.output());
+            progress = 0;
+        }
+        setChanged();
+    }
+
+    private record Work(int inputCount, ItemStack output) {}
+
+    private boolean canAddOutput(ItemStack addition) {
+        ItemStack current = inventory.getStackInSlot(OUTPUT_SLOT);
+        return addition.isEmpty() || (current.isEmpty() && addition.getCount() <= addition.getMaxStackSize())
+            || (ItemStack.isSameItemSameComponents(current, addition)
+                && current.getCount() + addition.getCount() <= current.getMaxStackSize());
+    }
+
+    private void addOutput(ItemStack addition) {
+        if (!addition.isEmpty()) {
+            int count = inventory.getStackInSlot(OUTPUT_SLOT).getCount() + addition.getCount();
+            inventory.setStackInSlot(OUTPUT_SLOT, addition.copyWithCount(count));
+        }
+    }
+
+    boolean canReceiveEnergy(Direction incomingSide, boolean canChargeStorage) {
+        if (energy >= kind.capacity) {
+            return false;
+        }
+        return switch (kind) {
+            case GENERATOR, SOLAR_PANEL -> false;
+            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR -> true;
+            case BATBOX -> canChargeStorage && incomingSide != outputSide();
+        };
+    }
+
+    private Direction outputSide() {
+        return getBlockState().getValue(BlockStateProperties.FACING);
+    }
+
+    Component storageStatus() {
+        return Component.translatable("message.ic2.batbox_status", energy, kind.capacity, BATBOX_OUTPUT,
+            Component.translatable("direction.ic2." + outputSide().getName()));
+    }
+
+    int receiveEnergy(int available) {
+        int received = Math.min(available, kind.capacity - energy);
+        energy += received;
+        setChanged();
+        return received;
+    }
+
+    private static int fuelTicks(ItemStack stack) {
+        return stack.getBurnTime(RecipeType.SMELTING) / 4;
+    }
+
+    IItemHandler automation(Direction side) {
+        if (kind == MachineKind.BATBOX) {
+            if (side == Direction.UP) {
+                return batteryChargeSlot;
+            }
+            return side == Direction.DOWN ? batteryDischargeSlot : null;
+        }
+        return side == Direction.DOWN ? automationOutput : automationInput;
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return getBlockState().getBlock().getName();
+    }
+
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player) {
+        return new MachineMenu(id, playerInventory, inventory, ContainerLevelAccess.create(level, worldPosition),
+            getBlockState().getBlock(), () -> energy,
+            this::menuWork, this::setChanged, kind == MachineKind.BATBOX);
+    }
+
+    private int menuWork() {
+        return switch (kind) {
+            case GENERATOR -> burnTicks;
+            case BATBOX -> outputSide().ordinal();
+            case SOLAR_PANEL -> 0;
+            case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR -> progress;
+        };
+    }
+
+    void dropContents(Level world) {
+        for (int slot = 0; slot < SLOT_COUNT; slot++) {
+            Containers.dropItemStack(world, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
+                inventory.getStackInSlot(slot));
+        }
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        if (kind == MachineKind.SOLAR_PANEL) {
+            return;
+        }
+        tag.putInt("energy", energy);
+        tag.put("inventory", inventory.serializeNBT(registries));
+        if (kind == MachineKind.GENERATOR) {
+            tag.putInt("burn_ticks", burnTicks);
+        } else if (kind.recipeTicks > 0) {
+            tag.putInt("progress", progress);
+        }
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (kind == MachineKind.SOLAR_PANEL) {
+            return;
+        }
+        energy = Mth.clamp(tag.getInt("energy"), 0, kind.capacity);
+        if (tag.contains("inventory", CompoundTag.TAG_COMPOUND)) {
+            inventory.deserializeNBT(registries, tag.getCompound("inventory"));
+        } else if (kind == MachineKind.MACERATOR) {
+            inventory.setStackInSlot(INPUT_SLOT, new ItemStack(Items.RAW_COPPER, Mth.clamp(tag.getInt("input"), 0, STACK_LIMIT)));
+            inventory.setStackInSlot(OUTPUT_SLOT, new ItemStack(IC2.COPPER_DUST.get(), Mth.clamp(tag.getInt("output"), 0, STACK_LIMIT)));
+        }
+        if (kind == MachineKind.GENERATOR) {
+            burnTicks = Math.max(0, tag.getInt("burn_ticks"));
+        } else if (kind.recipeTicks > 0) {
+            processingInput = inventory.getStackInSlot(INPUT_SLOT).copyWithCount(1);
+            progress = Mth.clamp(tag.getInt("progress"), 0, kind.recipeTicks - 1);
+        }
+    }
+}
