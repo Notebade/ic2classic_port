@@ -1,0 +1,24 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " U ",
+    "CCC",
+    " U "
+  ],
+  "key": {
+    "U": {
+      "type": "neoforge:components",
+      "items": "ic2:uranium_rod_ender_pearl_dual",
+      "components": {
+        "minecraft:damage": 0
+      }
+    },
+    "C": {
+      "item": "ic2:plate_dense_copper"
+    }
+  },
+  "result": {
+    "id": "ic2:uranium_rod_ender_pearl_quad"
+  }
+}

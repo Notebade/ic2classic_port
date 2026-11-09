@@ -1,0 +1,15 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "ic2:uranium_rod_re_enriched_blaze"
+    },
+    {
+      "tag": "ic2:coal_dusts"
+    }
+  ],
+  "result": {
+    "id": "ic2:uranium_rod_blaze_single"
+  }
+}

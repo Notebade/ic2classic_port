@@ -57,6 +57,8 @@ public final class Machines {
         MENUS.register("mfsu", () -> new MenuType<>(MachineMenu::mfsu, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> ALLOY_SMELTER_MENU =
         MENUS.register("alloy_smelter", () -> new MenuType<>(MachineMenu::alloySmelter, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<MachineMenu>> URANIUM_ENRICHER_MENU =
+        MENUS.register("uranium_enricher", () -> new MenuType<>(MachineMenu::uraniumEnricher, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> RARE_EARTH_MENU =
         MENUS.register("rare_earth_extractor", () -> new MenuType<>(MachineMenu::rareEarth, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> ELECTROLYZER_MENU =
@@ -173,6 +175,9 @@ public final class Machines {
     static final DeferredBlock<ActiveMachineBlock> RARE_EARTH_EXTRACTOR =
         BLOCKS.registerBlock("rare_earth_extractor",
             properties -> new ActiveMachineBlock(properties, MachineKind.RARE_EARTH_EXTRACTOR), machineProperties());
+    static final DeferredBlock<ActiveMachineBlock> URANIUM_ENRICHER =
+        BLOCKS.registerBlock("uranium_enricher",
+            properties -> new ActiveMachineBlock(properties, MachineKind.URANIUM_ENRICHER), machineProperties());
     static final DeferredBlock<ActiveMachineBlock> ELECTROLYZER =
         BLOCKS.registerBlock("electrolyzer",
             properties -> new ActiveMachineBlock(properties, MachineKind.ELECTROLYZER), machineProperties());
@@ -276,6 +281,8 @@ public final class Machines {
         ENTITIES.register("alloy_smelter", () -> entityType(ALLOY_SMELTER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> RARE_EARTH_ENTITY =
         ENTITIES.register("rare_earth_extractor", () -> entityType(RARE_EARTH_EXTRACTOR.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> URANIUM_ENRICHER_ENTITY =
+        ENTITIES.register("uranium_enricher", () -> entityType(URANIUM_ENRICHER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> ELECTROLYZER_ENTITY =
         ENTITIES.register("electrolyzer", () -> entityType(ELECTROLYZER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> EXTRACTOR_ENTITY =
@@ -330,6 +337,7 @@ public final class Machines {
         items.registerSimpleBlockItem(MFSU);
         items.registerSimpleBlockItem(ALLOY_SMELTER);
         items.registerSimpleBlockItem(RARE_EARTH_EXTRACTOR);
+        items.registerSimpleBlockItem(URANIUM_ENRICHER);
         items.registerSimpleBlockItem(ELECTROLYZER);
         items.registerSimpleBlockItem(EXTRACTOR);
         items.registerSimpleBlockItem(COMPRESSOR);
@@ -428,6 +436,7 @@ public final class Machines {
                 event.accept(MFSU.get());
                 event.accept(ALLOY_SMELTER.get());
                 event.accept(RARE_EARTH_EXTRACTOR.get());
+                event.accept(URANIUM_ENRICHER.get());
                 event.accept(ELECTROLYZER.get());
                 event.accept(EXTRACTOR.get());
                 event.accept(COMPRESSOR.get());
@@ -463,6 +472,7 @@ public final class Machines {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MFSU_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ALLOY_SMELTER_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, RARE_EARTH_ENTITY.get(), MachineEntity::automation);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, URANIUM_ENRICHER_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ELECTROLYZER_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, EXTRACTOR_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, COMPRESSOR_ENTITY.get(), MachineEntity::automation);

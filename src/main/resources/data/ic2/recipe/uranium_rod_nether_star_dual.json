@@ -1,0 +1,22 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "UCU"
+  ],
+  "key": {
+    "U": {
+      "type": "neoforge:components",
+      "items": "ic2:uranium_rod_nether_star_single",
+      "components": {
+        "minecraft:damage": 0
+      }
+    },
+    "C": {
+      "item": "ic2:plate_dense_copper"
+    }
+  },
+  "result": {
+    "id": "ic2:uranium_rod_nether_star_dual"
+  }
+}

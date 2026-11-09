@@ -75,10 +75,9 @@ final class ReactorGrid {
             if (stack.getItem() instanceof ReactorHeatItem.Spreader) {
                 heatTransfer.coolNeighbors(slot, width);
             }
-            int cells = UraniumFuelRod.cellsIn(stack);
-            if (powered) {
-                for (int cell = 0; cell < cells; cell++) {
-                    heat += runFuelCellHeat(slot, width, cells, heat);
+            if (powered && stack.getItem() instanceof UraniumFuelRod rod) {
+                for (int cell = 0; cell < rod.cells(); cell++) {
+                    heat += runFuelCellHeat(slot, width, rod, heat);
                 }
             }
         }
@@ -95,24 +94,28 @@ final class ReactorGrid {
         return heat;
     }
 
-    private int runFuelCellHeat(int slot, int width, int cells, int hullHeat) {
-        var vents = new ArrayList<Integer>(4);
-        int pulseNeighbors = 0;
-        for (int neighbor : ReactorRules.neighbors(slot, width)) {
+    private int runFuelCellHeat(int slot, int width, UraniumFuelRod rod, int hullHeat) {
+        int acceptedPulses = 0;
+        int pulses = rod.type().pulses();
+        for (int neighbor : ReactorRules.pulseTargets(slot, width, rod.type())) {
             if (neighbor < 0) {
                 continue;
             }
             ItemStack adjacent = inventory.getStackInSlot(neighbor);
             if (UraniumFuelRod.cellsIn(adjacent) > 0 || reflects(adjacent)) {
-                pulseNeighbors++;
+                acceptedPulses += pulses;
             } else if (adjacent.getItem() instanceof UraniumIsotopicRod isotope) {
-                breed(neighbor, adjacent, isotope, 1, hullHeat);
-                pulseNeighbors++;
-            } else if (ReactorHeatTransfer.canStore(adjacent)) {
-                vents.add(neighbor);
+                acceptedPulses += breed(neighbor, adjacent, isotope, pulses, hullHeat);
             }
         }
-        return transferHeat(vents, ReactorRules.heatPerCell(cells, pulseNeighbors));
+        var sinks = new ArrayList<Integer>(4);
+        for (int neighbor : ReactorRules.heatTargets(slot, width, rod.type())) {
+            if (neighbor >= 0 && ReactorHeatTransfer.canStore(inventory.getStackInSlot(neighbor))) {
+                sinks.add(neighbor);
+            }
+        }
+        int pulseCount = rod.selfPulsesPerCell() + acceptedPulses * rod.type().connectionPulses();
+        return transferHeat(sinks, rod.type().heatPerCell(pulseCount));
     }
 
     private Cycle runEnergyPass(int width, int heat, int hullCapacity, boolean powered) {
@@ -123,40 +126,42 @@ final class ReactorGrid {
             }
             ItemStack stack = inventory.getStackInSlot(slot);
             heat = processThermalComponent(slot, width, stack, heat, hullCapacity);
-            int cells = UraniumFuelRod.cellsIn(stack);
-            if (powered && cells > 0) {
-                output += runRodEnergy(slot, width, cells, heat);
+            if (powered && stack.getItem() instanceof UraniumFuelRod rod) {
+                output += runRodEnergy(slot, width, rod, heat);
             }
         }
         return new Cycle(output, heat);
     }
 
-    private int runRodEnergy(int slot, int width, int cells, int hullHeat) {
-        int neighboringRods = 0;
-        int reflectedPulses = 0;
-        for (int neighbor : ReactorRules.neighbors(slot, width)) {
+    private int runRodEnergy(int slot, int width, UraniumFuelRod rod, int hullHeat) {
+        int output = rod.cells() * rod.selfPulsesPerCell() * rod.type().energyPerPulse();
+        int pulses = rod.cells() * rod.type().pulses();
+        for (int neighbor : ReactorRules.pulseTargets(slot, width, rod.type())) {
             if (neighbor < 0) {
                 continue;
             }
             ItemStack adjacent = inventory.getStackInSlot(neighbor);
-            if (UraniumFuelRod.cellsIn(adjacent) > 0) {
-                neighboringRods++;
+            if (adjacent.getItem() instanceof UraniumFuelRod target) {
+                output += pulses * target.type().energyPerPulse();
             } else if (adjacent.getItem() instanceof ReactorReflectorItem reflector && reflector.reflects(adjacent)) {
-                reflectedPulses += reflect(neighbor, adjacent, reflector, cells);
+                output += reflect(neighbor, adjacent, reflector, pulses) * ReactorRules.EU_PER_PULSE;
             } else if (adjacent.getItem() instanceof UraniumIsotopicRod isotope) {
-                breed(neighbor, adjacent, isotope, cells, hullHeat);
+                breed(neighbor, adjacent, isotope, pulses, hullHeat);
             }
         }
-        return ReactorRules.energy(cells, neighboringRods) + reflectedPulses * ReactorRules.EU_PER_PULSE;
+        return output;
     }
 
-    private void breed(int slot, ItemStack stack, UraniumIsotopicRod isotope, int pulses, int hullHeat) {
-        int remaining = stack.getDamageValue() - pulses * (1 + hullHeat / 3_000);
+    private int breed(int slot, ItemStack stack, UraniumIsotopicRod isotope, int pulses, int hullHeat) {
+        int progressPerPulse = 1 + hullHeat / 3_000;
+        int remaining = stack.getDamageValue() - pulses * progressPerPulse;
         if (remaining <= 0) {
+            int accepted = Math.max(1, Math.ceilDiv(stack.getDamageValue(), progressPerPulse));
             inventory.setStackInSlot(slot, isotope.reEnrichedRod());
-        } else {
-            stack.setDamageValue(remaining);
+            return accepted;
         }
+        stack.setDamageValue(remaining);
+        return pulses;
     }
 
     private int reflect(int slot, ItemStack reflector, ReactorReflectorItem item, int pulses) {
@@ -172,11 +177,11 @@ final class ReactorGrid {
         return pulses;
     }
 
-    private int transferHeat(List<Integer> vents, int heat) {
-        for (int index = 0; index < vents.size() && heat > 0; index++) {
-            int slot = vents.get(index);
+    private int transferHeat(List<Integer> sinks, int heat) {
+        for (int index = 0; index < sinks.size() && heat > 0; index++) {
+            int slot = sinks.get(index);
             ItemStack stack = inventory.getStackInSlot(slot);
-            int toStore = heat / (vents.size() - index);
+            int toStore = heat / (sinks.size() - index);
             heat -= toStore - heatTransfer.store(slot, stack, toStore);
         }
         return heat;
@@ -185,12 +190,11 @@ final class ReactorGrid {
     private void ageFuel(int width, RandomSource random) {
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
             ItemStack stack = inventory.getStackInSlot(slot);
-            int cells = UraniumFuelRod.cellsIn(stack);
-            if (slot % ReactorRules.COLUMNS < width && cells > 0) {
+            if (slot % ReactorRules.COLUMNS < width && stack.getItem() instanceof UraniumFuelRod rod) {
                 int damage = stack.getDamageValue() + 1;
                 if (damage > stack.getMaxDamage()) {
                     inventory.setStackInSlot(slot, random.nextInt(3) == 0
-                        ? new ItemStack(IC2.DEPLETED_URANIUM_ROD.get(), cells) : ItemStack.EMPTY);
+                        ? rod.depletedRods() : ItemStack.EMPTY);
                 } else {
                     stack.setDamageValue(damage);
                 }

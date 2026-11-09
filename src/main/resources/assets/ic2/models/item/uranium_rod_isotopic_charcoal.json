@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "ic2:item/reactor/cells/uranium/isotopic/charcoal_enriched"
+  }
+}

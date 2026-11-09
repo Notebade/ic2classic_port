@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.52.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.53.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.52.0` |
+| Project version | `0.53.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -96,6 +96,8 @@ At 70% of its heat limit, the reactor irradiates nearby living entities. A meltd
 Fresh rods can be combined with dense copper plates. With no adjacent rods, a dual rod generates 80 EU/t and 24 heat per cycle, and a quad rod generates 240 EU/t and 96 heat per cycle.
 
 Craft eight Near-Depleted Uranium Rods from a uranium ingot surrounded by empty cells. Mix a depleted rod with coal or charcoal dust to make an isotopic rod, then place it next to active fuel. Neutron pulses re-enrich the rod faster as the hull heats up. Mix the re-enriched rod with coal or charcoal dust to craft fresh fuel. Heating Cells warm the hull even when the reactor is off.
+
+The Uranium Enricher accepts up to 512 EU per packet and stores 100,000 EU. Feed uranium ingots and a catalyst into separate slots. Redstone, charcoal, blaze rods, ender pearls, and nether stars produce five fuel families with distinct heat, pulse and durability rules. Each family has single, dual, quad, near-depleted, isotopic and re-enriched rods. Ender Pearl rods pulse along their row and column and can heat components diagonally. The survival recipe uses a Compressor in the Vacuum Canner slot while the Vacuum Canner is pending.
 
 Neutron Reflectors placed next to a fuel rod add one pulse per fuel cell. Both reflector types increase EU output and heat. The regular reflector has 10,000 durability and the thick reflector has 40,000. Each reflected energy pulse wears the reflector by one point.
 

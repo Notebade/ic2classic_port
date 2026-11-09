@@ -1,0 +1,21 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CCC",
+    "CUC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:cell_empty"
+    },
+    "U": {
+      "item": "ic2:ingot_uranium_enriched_charcoal"
+    }
+  },
+  "result": {
+    "id": "ic2:uranium_rod_near_depleted_charcoal",
+    "count": 8
+  }
+}

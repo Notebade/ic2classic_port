@@ -1,0 +1,15 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "ic2:cell_empty"
+    },
+    {
+      "item": "ic2:ingot_uranium_enriched_redstone"
+    }
+  ],
+  "result": {
+    "id": "ic2:uranium_rod_redstone_single"
+  }
+}

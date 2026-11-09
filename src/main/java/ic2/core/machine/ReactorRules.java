@@ -1,5 +1,8 @@
 package ic2.core.machine;
 
+import ic2.core.item.UraniumType;
+import java.util.Arrays;
+
 final class ReactorRules {
     static final int ROWS = 6;
     static final int COLUMNS = 9;
@@ -11,17 +14,44 @@ final class ReactorRules {
 
     private ReactorRules() {}
 
-    static int energy(int cells, int neighboringRods) {
-        return cells * pulsesPerCell(cells, neighboringRods) * EU_PER_PULSE;
+    static int[] pulseTargets(int slot, int width, UraniumType type) {
+        if (type != UraniumType.ENDER_PEARL) {
+            return neighbors(slot, width);
+        }
+        int row = slot / COLUMNS;
+        int column = slot % COLUMNS;
+        int[] targets = new int[width + ROWS - 2];
+        int index = 0;
+        for (int distance = 1; distance < width; distance++) {
+            if (column + distance < width) {
+                targets[index++] = slot + distance;
+            }
+            if (column >= distance) {
+                targets[index++] = slot - distance;
+            }
+        }
+        for (int distance = 1; distance < ROWS; distance++) {
+            if (row + distance < ROWS) {
+                targets[index++] = slot + distance * COLUMNS;
+            }
+            if (row >= distance) {
+                targets[index++] = slot - distance * COLUMNS;
+            }
+        }
+        return targets;
     }
 
-    static int heatPerCell(int cells, int neighboringComponents) {
-        int pulses = pulsesPerCell(cells, neighboringComponents);
-        return pulses * (pulses + 1) * 2;
-    }
-
-    private static int pulsesPerCell(int cells, int neighboringComponents) {
-        return 1 + cells / 2 + neighboringComponents;
+    static int[] heatTargets(int slot, int width, UraniumType type) {
+        int[] adjacent = neighbors(slot, width);
+        if (type != UraniumType.ENDER_PEARL) {
+            return adjacent;
+        }
+        int[] targets = Arrays.copyOf(adjacent, 8);
+        targets[4] = adjacent[0] >= 0 && adjacent[2] >= 0 ? slot - COLUMNS - 1 : -1;
+        targets[5] = adjacent[1] >= 0 && adjacent[2] >= 0 ? slot - COLUMNS + 1 : -1;
+        targets[6] = adjacent[0] >= 0 && adjacent[3] >= 0 ? slot + COLUMNS - 1 : -1;
+        targets[7] = adjacent[1] >= 0 && adjacent[3] >= 0 ? slot + COLUMNS + 1 : -1;
+        return targets;
     }
 
     static int[] neighbors(int slot, int width) {

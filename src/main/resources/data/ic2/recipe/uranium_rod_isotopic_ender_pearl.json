@@ -1,0 +1,15 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "ic2:uranium_rod_near_depleted_ender_pearl"
+    },
+    {
+      "tag": "ic2:coal_dusts"
+    }
+  ],
+  "result": {
+    "id": "ic2:uranium_rod_isotopic_ender_pearl"
+  }
+}

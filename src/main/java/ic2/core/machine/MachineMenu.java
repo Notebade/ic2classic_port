@@ -81,6 +81,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.RARE_EARTH_MENU.get());
     }
 
+    static MachineMenu uraniumEnricher(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.URANIUM_ENRICHER_MENU.get());
+    }
+
     static MachineMenu electrolyzer(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.ELECTROLYZER_MENU.get());
     }
@@ -95,8 +99,12 @@ final class MachineMenu extends AbstractContainerMenu {
         if (type == Machines.WIND_TURBINE_MENU.get()) {
             return 1;
         }
-        return isFluidGenerator(type) || type == Machines.ALLOY_SMELTER_MENU.get()
+        return isFluidGenerator(type) || hasSecondInput(type)
             ? MachineEntity.SLOT_COUNT + 1 : MachineEntity.SLOT_COUNT;
+    }
+
+    private static boolean hasSecondInput(MenuType<?> type) {
+        return type == Machines.ALLOY_SMELTER_MENU.get() || type == Machines.URANIUM_ENRICHER_MENU.get();
     }
 
     MachineMenu(int id, Inventory playerInventory, ItemStackHandler inventory, ContainerLevelAccess access,
@@ -128,7 +136,7 @@ final class MachineMenu extends AbstractContainerMenu {
             addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 24, changed);
             addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 80, changed);
             addMachineSlot(inventory, MachineEntity.FUEL_GENERATOR_BATTERY_SLOT, 136, changed);
-        } else if (isAlloySmelter()) {
+        } else if (hasSecondInput(getType())) {
             addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 24, changed);
             addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 136, changed);
             addMachineSlot(inventory, MachineEntity.SECOND_INPUT_SLOT, 80, changed);
@@ -255,6 +263,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return getType() == Machines.ALLOY_SMELTER_MENU.get();
     }
 
+    boolean isUraniumEnricher() {
+        return getType() == Machines.URANIUM_ENRICHER_MENU.get();
+    }
+
     boolean isRareEarth() {
         return getType() == Machines.RARE_EARTH_MENU.get();
     }
@@ -289,7 +301,7 @@ final class MachineMenu extends AbstractContainerMenu {
         boolean moved = index < machineSlots
             ? moveItemStackTo(stack, machineSlots, slots.size(), true)
             : moveItemStackTo(stack, input, input + 1, false)
-                || isAlloySmelter() && moveItemStackTo(stack, MachineEntity.SECOND_INPUT_SLOT, machineSlots, false);
+                || hasSecondInput(getType()) && moveItemStackTo(stack, MachineEntity.SECOND_INPUT_SLOT, machineSlots, false);
         if (!moved) {
             return ItemStack.EMPTY;
         }

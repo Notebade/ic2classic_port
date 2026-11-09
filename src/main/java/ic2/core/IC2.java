@@ -72,6 +72,7 @@ public final class IC2 {
     public static final DeferredItem<ReactorReflectorItem> THICK_NEUTRON_REFLECTOR = ITEMS.registerItem("reflector_thick",
         properties -> new ReactorReflectorItem(properties, 40_000, false));
     static final ReactorComponents REACTOR_COMPONENTS = new ReactorComponents(ITEMS);
+    public static final EnrichedUranium ENRICHED_URANIUM = new EnrichedUranium(ITEMS);
     public static final DeferredItem<Item> TIN_INGOT = ITEMS.registerSimpleItem("ingot_tin");
     public static final DeferredItem<Item> TIN_DUST = ITEMS.registerSimpleItem("dust_tin");
     public static final DeferredItem<Item> ALUMINIUM_DUST = ITEMS.registerSimpleItem("dust_aluminium");

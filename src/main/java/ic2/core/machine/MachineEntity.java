@@ -64,6 +64,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private final FluidTank fuelTank;
     private final RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> cooking;
     private final SawmillRecipes sawmill;
+    private final UraniumEnrichment enrichment;
     private final RecipeManager.CachedCheck<SingleRecipeInput, MacerationRecipe> macerating =
         RecipeManager.createCheck(Machines.MACERATING.get());
     private int energy;
@@ -99,6 +100,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         super(typeFor(state), pos, state);
         kind = ((MachineBlock) state.getBlock()).kind();
         sawmill = kind == MachineKind.SAWMILL ? new SawmillRecipes() : null;
+        enrichment = kind == MachineKind.URANIUM_ENRICHER ? new UraniumEnrichment() : null;
         cooking = switch (kind) {
             case ELECTRIC_FURNACE -> RecipeManager.createCheck(RecipeType.SMELTING);
             case ELECTRIC_BLAST_FURNACE -> RecipeManager.createCheck(RecipeType.BLASTING);
@@ -126,13 +128,18 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         inventory = new ItemStackHandler(switch (kind) {
             case WIND_TURBINE -> 1;
             case NUCLEAR_REACTOR -> ReactorRules.SLOT_COUNT;
-            case GEOTHERMAL, THERMAL_GENERATOR, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL, ALLOY_SMELTER -> SLOT_COUNT + 1;
+            case GEOTHERMAL, THERMAL_GENERATOR, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL,
+                HV_WATER_MILL, ALLOY_SMELTER, URANIUM_ENRICHER -> SLOT_COUNT + 1;
             default -> SLOT_COUNT;
         }) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 if (kind == MachineKind.NUCLEAR_REACTOR) {
                     return ReactorGrid.accepts(stack);
+                }
+                if (enrichment != null) {
+                    return slot == INPUT_SLOT && stack.is(IC2.URANIUM_INGOT.get())
+                        || slot == SECOND_INPUT_SLOT && enrichment.acceptsCatalyst(stack);
                 }
                 if (kind.isStorage()) {
                     return RechargeableItem.supports(stack, kind.storageOutput, slot == INPUT_SLOT);
@@ -167,7 +174,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         };
         var input = inputOnly(INPUT_SLOT);
         automationInput = switch (kind) {
-            case ALLOY_SMELTER -> new CombinedInvWrapper(input, inputOnly(SECOND_INPUT_SLOT));
+            case ALLOY_SMELTER, URANIUM_ENRICHER -> new CombinedInvWrapper(input, inputOnly(SECOND_INPUT_SLOT));
             case ELECTROLYZER -> new RangedWrapper(inventory, INPUT_SLOT, INPUT_SLOT + 1);
             default -> input;
         };
@@ -199,6 +206,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> Machines.WATER_MILL_ENTITY.get();
             case SOLAR_PANEL -> Machines.SOLAR_PANEL_ENTITY.get();
             case NUCLEAR_REACTOR -> Machines.NUCLEAR_REACTOR_ENTITY.get();
+            case URANIUM_ENRICHER -> Machines.URANIUM_ENRICHER_ENTITY.get();
             case LV_TRANSFORMER -> Machines.LV_TRANSFORMER_ENTITY.get();
             case MV_TRANSFORMER -> Machines.MV_TRANSFORMER_ENTITY.get();
             case HV_TRANSFORMER -> Machines.HV_TRANSFORMER_ENTITY.get();
@@ -233,6 +241,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> tickWaterMill();
             case SOLAR_PANEL -> tickSolarPanel();
             case NUCLEAR_REACTOR -> tickNuclearReactor();
+            case URANIUM_ENRICHER -> tickUraniumEnrichment();
             case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> tickTransformer();
             case PUMP -> tickPump();
             case MASS_FABRICATOR -> tickMassFabricator();
@@ -242,6 +251,15 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ELECTROLYZER -> setActive(tickElectrolyzer());
             case BATBOX, MFE, MFSU -> tickStorage();
         }
+    }
+
+    private void tickUraniumEnrichment() {
+        int spent = enrichment.tick(inventory, energy);
+        if (spent > 0) {
+            energy -= spent;
+            setChanged();
+        }
+        setActive(spent > 0);
     }
 
     private void tickNuclearReactor() {
@@ -315,7 +333,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         float multiplier = containment * containment;
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
             ItemStack stack = inventory.getStackInSlot(slot);
-            power += stack.getItem() instanceof ReactorReflectorItem ? -1 : 2 * UraniumFuelRod.cellsIn(stack);
+            if (stack.getItem() instanceof UraniumFuelRod rod) {
+                power += rod.type().explosionPower() * rod.cells();
+            } else if (stack.getItem() instanceof ReactorReflectorItem) {
+                power--;
+            }
             if (stack.is(IC2.HEAT_PACK.get())) {
                 float influence = stack.getCount() / 10.0F;
                 if (influence < 1) {
@@ -682,7 +704,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> stack.is(Items.BUCKET) || stack.is(IC2.CELL_EMPTY.get());
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
             case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
-            case BATBOX, MFE, MFSU, SOLAR_PANEL, NUCLEAR_REACTOR, WAVE_GENERATOR, OCEAN_GENERATOR,
+            case BATBOX, MFE, MFSU, SOLAR_PANEL, NUCLEAR_REACTOR, URANIUM_ENRICHER, WAVE_GENERATOR, OCEAN_GENERATOR,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> false;
         };
     }
@@ -719,7 +741,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
                 BATBOX, MFE, MFSU, SOLAR_PANEL, NUCLEAR_REACTOR,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER,
-                PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER -> null;
+                PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER, URANIUM_ENRICHER -> null;
         };
     }
 
@@ -951,6 +973,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
                 SOLAR_PANEL, NUCLEAR_REACTOR, ELECTROLYZER -> false;
             case ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL -> packetSize <= MachineKind.BATBOX.storageOutput;
+            case URANIUM_ENRICHER -> packetSize <= UraniumEnrichment.PACKET_LIMIT;
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> true;
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
@@ -1057,6 +1080,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 case MFE -> Machines.MFE_MENU.get();
                 case MFSU -> Machines.MFSU_MENU.get();
                 case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_MENU.get();
+                case URANIUM_ENRICHER -> Machines.URANIUM_ENRICHER_MENU.get();
                 case RARE_EARTH_EXTRACTOR -> Machines.RARE_EARTH_MENU.get();
                 case ELECTROLYZER -> Machines.ELECTROLYZER_MENU.get();
                 case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
@@ -1071,6 +1095,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     }
 
     private int menuFluid() {
+        if (enrichment != null) {
+            return enrichment.points();
+        }
         if (kind == MachineKind.RARE_EARTH_EXTRACTOR) {
             return materialUnits * 100 / RareEarthRecipes.UNITS_PER_OUTPUT;
         }
@@ -1093,6 +1120,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case SOLAR_PANEL, NUCLEAR_REACTOR, GEOTHERMAL, WAVE_GENERATOR, OCEAN_GENERATOR, ELECTROLYZER,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> 0;
             case MASS_FABRICATOR -> amplifier;
+            case URANIUM_ENRICHER -> enrichment.ingotProgress();
             case MACERATOR, ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL,
                 ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> progress;
@@ -1138,6 +1166,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         } else if (kind == MachineKind.MASS_FABRICATOR) {
             tag.putInt("amplifier", amplifier);
             tag.putInt("amplifier_refill", amplifierRefillThreshold);
+        } else if (enrichment != null) {
+            tag.put("enrichment", enrichment.save());
         } else if (kind.recipeTicks > 0) {
             tag.putInt("progress", progress);
             if (kind == MachineKind.RARE_EARTH_EXTRACTOR) {
@@ -1162,6 +1192,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         } else if (kind == MachineKind.MACERATOR) {
             inventory.setStackInSlot(INPUT_SLOT, new ItemStack(Items.RAW_COPPER, Mth.clamp(tag.getInt("input"), 0, STACK_LIMIT)));
             inventory.setStackInSlot(OUTPUT_SLOT, new ItemStack(IC2.COPPER_DUST.get(), Mth.clamp(tag.getInt("output"), 0, STACK_LIMIT)));
+        }
+        if (enrichment != null) {
+            enrichment.load(tag.getCompound("enrichment"));
         }
         if (kind == MachineKind.GENERATOR) {
             burnTicks = Math.max(0, tag.getInt("burn_ticks"));
