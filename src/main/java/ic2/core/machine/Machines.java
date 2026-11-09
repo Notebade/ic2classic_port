@@ -95,6 +95,8 @@ public final class Machines {
         machineProperties());
     static final DeferredBlock<ActiveMachineBlock> WIND_TURBINE = BLOCKS.registerBlock("wind_turbine",
         properties -> new ActiveMachineBlock(properties, MachineKind.WIND_TURBINE), machineProperties());
+    static final DeferredBlock<EnvironmentalGeneratorBlock> WAVE_GENERATOR = BLOCKS.registerBlock("wave_generator",
+        properties -> new EnvironmentalGeneratorBlock(properties, MachineKind.WAVE_GENERATOR), machineProperties());
     static final DeferredBlock<SolarPanelBlock> SOLAR_PANEL =
         BLOCKS.registerBlock("solar_panel", properties -> new SolarPanelBlock(properties, SolarPanelBlock.BASE_OUTPUT),
             machineProperties());
@@ -218,6 +220,8 @@ public final class Machines {
     static final Supplier<BlockEntityType<MachineEntity>> WATER_MILL_ENTITY =
         ENTITIES.register("water_mill",
             () -> entityType(WATER_MILL.get(), LV_WATER_MILL.get(), MV_WATER_MILL.get(), HV_WATER_MILL.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> WAVE_GENERATOR_ENTITY =
+        ENTITIES.register("wave_generator", () -> entityType(WAVE_GENERATOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> SOLAR_PANEL_ENTITY =
         ENTITIES.register("solar_panel", () -> entityType(SOLAR_PANEL.get(), COMPRESSED_SOLAR_PANEL.get(),
             LV_SOLAR_PANEL.get(), COMPRESSED_LV_SOLAR_PANEL.get(), MV_SOLAR_PANEL.get(), COMPRESSED_MV_SOLAR_PANEL.get()));
@@ -277,6 +281,7 @@ public final class Machines {
         items.registerSimpleBlockItem(GENERATOR);
         items.registerSimpleBlockItem(GEOTHERMAL);
         items.registerSimpleBlockItem(WIND_TURBINE);
+        items.registerSimpleBlockItem(WAVE_GENERATOR);
         items.registerSimpleBlockItem(WATER_MILL);
         items.registerSimpleBlockItem(LV_WATER_MILL);
         items.registerSimpleBlockItem(MV_WATER_MILL);
@@ -348,6 +353,7 @@ public final class Machines {
                 event.accept(GENERATOR.get());
                 event.accept(GEOTHERMAL.get());
                 event.accept(WIND_TURBINE.get());
+                event.accept(WAVE_GENERATOR.get());
                 event.accept(WATER_MILL.get());
                 event.accept(LV_WATER_MILL.get());
                 event.accept(MV_WATER_MILL.get());

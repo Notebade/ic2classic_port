@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "IPX",
+    "IBW",
+    "IPX"
+  ],
+  "key": {
+    "I": { "item": "ic2:ingot_refined_iron" },
+    "P": { "item": "ic2:plate_advanced_alloy" },
+    "X": { "item": "ic2:circuit" },
+    "B": { "item": "ic2:turbine_blade" },
+    "W": { "item": "ic2:water_mill" }
+  },
+  "result": { "id": "ic2:wave_generator", "count": 1 }
+}

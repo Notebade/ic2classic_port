@@ -57,6 +57,7 @@ public final class Ic2JeiPlugin implements IModPlugin {
         registration.addIngredientInfo(IC2.CELL_EMPTY.get(), MachineRecipeViews.note("fluid_cells"));
         registration.addIngredientInfo(Machines.STONE_MACERATOR.get(), MachineRecipeViews.note("stone_fuel"));
         registration.addIngredientInfo(Machines.WIND_TURBINE.get(), MachineRecipeViews.note("wind_turbine"));
+        registration.addIngredientInfo(Machines.WAVE_GENERATOR.get(), MachineRecipeViews.note("wave_generator"));
     }
 
     @Override

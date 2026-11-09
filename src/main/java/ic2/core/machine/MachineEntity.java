@@ -64,6 +64,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int burnTicks;
     private int windProduction = -1;
     private int windRemainder;
+    private int environmentalProduction;
+    private int waveTarget = -1;
     private int passiveWaterUnits = -1;
     private int passiveWaterRemainder;
     private int progress;
@@ -161,6 +163,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR -> Machines.GENERATOR_ENTITY.get();
             case GEOTHERMAL -> Machines.GEOTHERMAL_ENTITY.get();
             case WIND_TURBINE -> Machines.WIND_TURBINE_ENTITY.get();
+            case WAVE_GENERATOR -> Machines.WAVE_GENERATOR_ENTITY.get();
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> Machines.WATER_MILL_ENTITY.get();
             case SOLAR_PANEL -> Machines.SOLAR_PANEL_ENTITY.get();
             case LV_TRANSFORMER -> Machines.LV_TRANSFORMER_ENTITY.get();
@@ -191,6 +194,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR -> tickGenerator();
             case GEOTHERMAL -> tickGeothermal();
             case WIND_TURBINE -> tickWindTurbine();
+            case WAVE_GENERATOR -> tickWaveGenerator();
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> tickWaterMill();
             case SOLAR_PANEL -> tickSolarPanel();
             case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> tickTransformer();
@@ -220,6 +224,38 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             sendEnergy(Math.min(energy, WindProduction.OUTPUT_LIMIT), side -> true);
         }
         setActive(generating);
+    }
+
+    private void tickWaveGenerator() {
+        if (waveTarget < 0 || (level.getGameTime() + worldPosition.hashCode()) % WaveProduction.SAMPLE_INTERVAL == 0) {
+            Direction facing = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+            int waterLength = WaveProduction.sourceLength(step -> {
+                BlockPos next = worldPosition.relative(facing, step);
+                return level.isLoaded(next) && level.getFluidState(next).getType() == Fluids.WATER;
+            });
+            var random = level.getRandom();
+            double variation = random.nextInt(3) == 0 ? 1 : 0.1 + random.nextDouble();
+            waveTarget = WaveProduction.target(waterLength, level.isRaining(), level.isThundering(), variation);
+        }
+        int production = environmentalProduction + Integer.compare(waveTarget, environmentalProduction);
+        generateEnvironmentalEnergy(production, WaveProduction.OUTPUT_LIMIT);
+    }
+
+    private void generateEnvironmentalEnergy(int production, int packetLimit) {
+        int stored = Math.min(kind.capacity, energy + production);
+        if (environmentalProduction != production || energy != stored) {
+            environmentalProduction = production;
+            energy = stored;
+            setChanged();
+        }
+        if (energy > 0) {
+            sendEnergy(Math.min(energy, packetLimit), side -> true);
+        }
+        setActive(production > 0);
+    }
+
+    int environmentalProduction() {
+        return environmentalProduction;
     }
 
     private void tickWaterMill() {
@@ -463,7 +499,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> stack.is(Items.BUCKET) || stack.is(IC2.CELL_EMPTY.get());
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
             case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
-            case BATBOX, MFE, MFSU, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> false;
+            case BATBOX, MFE, MFSU, SOLAR_PANEL, WAVE_GENERATOR, LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> false;
         };
     }
 
@@ -495,7 +531,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
-            case GENERATOR, GEOTHERMAL, WIND_TURBINE, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
+            case GENERATOR, GEOTHERMAL, WIND_TURBINE, WAVE_GENERATOR, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
                 BATBOX, MFE, MFSU, SOLAR_PANEL,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER,
                 PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER -> null;
@@ -726,7 +762,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             return false;
         }
         return switch (kind) {
-            case GENERATOR, GEOTHERMAL, WIND_TURBINE, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
+            case GENERATOR, GEOTHERMAL, WIND_TURBINE, WAVE_GENERATOR, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
                 SOLAR_PANEL, ELECTROLYZER -> false;
             case ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL -> packetSize <= MachineKind.BATBOX.storageOutput;
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
@@ -859,7 +895,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> hasWaterFuel()
                 ? kind.waterMillTier.output() * WaterMillTier.UNITS_PER_EU : Math.max(0, passiveWaterUnits);
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
-            case SOLAR_PANEL, GEOTHERMAL, LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, ELECTROLYZER -> 0;
+            case SOLAR_PANEL, GEOTHERMAL, WAVE_GENERATOR, LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, ELECTROLYZER -> 0;
             case MASS_FABRICATOR -> amplifier;
             case MACERATOR, ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL,
                 ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
@@ -894,6 +930,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             tag.putInt("water_remainder", passiveWaterRemainder);
         } else if (kind == MachineKind.WIND_TURBINE) {
             tag.putInt("wind_remainder", windRemainder);
+        } else if (kind == MachineKind.WAVE_GENERATOR) {
+            tag.putInt("environmental_production", environmentalProduction);
         } else if (kind == MachineKind.ELECTROLYZER) {
             tag.putBoolean("electrolysis_discharging", electrolysisDischarging);
         } else if (kind == MachineKind.MASS_FABRICATOR) {
@@ -934,6 +972,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             passiveWaterRemainder = Mth.clamp(tag.getInt("water_remainder"), 0, WaterMillTier.UNITS_PER_EU - 1);
         } else if (kind == MachineKind.WIND_TURBINE) {
             windRemainder = Mth.clamp(tag.getInt("wind_remainder"), 0, WindProduction.UNITS_PER_EU - 1);
+        } else if (kind == MachineKind.WAVE_GENERATOR) {
+            environmentalProduction = Mth.clamp(tag.getInt("environmental_production"), 0, WaveProduction.OUTPUT_LIMIT);
         } else if (kind == MachineKind.ELECTROLYZER) {
             electrolysisDischarging = energy > 0 && tag.getBoolean("electrolysis_discharging");
         } else if (kind == MachineKind.MASS_FABRICATOR) {
