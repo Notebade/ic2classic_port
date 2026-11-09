@@ -308,12 +308,13 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private void meltReactor() {
         float power = 10;
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
-            power += 2 * UraniumFuelRod.cellsIn(inventory.getStackInSlot(slot));
+            ItemStack stack = inventory.getStackInSlot(slot);
+            power += ReactorGrid.isReflector(stack) ? -1 : 2 * UraniumFuelRod.cellsIn(stack);
             inventory.setStackInSlot(slot, ItemStack.EMPTY);
         }
         Vec3 origin = Vec3.atCenterOf(worldPosition);
         level.removeBlock(worldPosition, false);
-        level.explode(null, origin.x, origin.y, origin.z, Math.min(power, 45), Level.ExplosionInteraction.BLOCK);
+        level.explode(null, origin.x, origin.y, origin.z, Math.clamp(power, 0, 45), Level.ExplosionInteraction.BLOCK);
         Radiation.exposeToFallout(level, origin);
     }
 

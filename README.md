@@ -94,7 +94,9 @@ At 7,000 heat, the reactor irradiates nearby living entities. A meltdown causes 
 
 Fresh rods can be combined with dense copper plates. With no adjacent rods, a dual rod generates 80 EU/t and 24 heat per cycle, and a quad rod generates 240 EU/t and 96 heat per cycle.
 
-The reactor supports standard uranium rods and basic heat vents. Steam reactors and advanced reactor components still need porting.
+Neutron Reflectors placed next to a fuel rod add one pulse per fuel cell. Both reflector types increase EU output and heat. The regular reflector has 10,000 durability and the thick reflector has 40,000. Each reflected energy pulse wears the reflector by one point.
+
+Steam reactors and other advanced reactor components still need porting.
 
 ### Thermal Generator
 

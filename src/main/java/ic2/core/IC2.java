@@ -58,6 +58,10 @@ public final class IC2 {
     public static final DeferredItem<UraniumFuelRod> QUAD_URANIUM_ROD =
         ITEMS.registerItem("uranium_rod_quad", properties -> new UraniumFuelRod(properties, 4));
     public static final DeferredItem<Item> DEPLETED_URANIUM_ROD = ITEMS.registerSimpleItem("uranium_rod_near_depleted");
+    public static final DeferredItem<Item> NEUTRON_REFLECTOR = ITEMS.registerSimpleItem("reflector",
+        new Item.Properties().durability(10_000).setNoRepair());
+    public static final DeferredItem<Item> THICK_NEUTRON_REFLECTOR = ITEMS.registerSimpleItem("reflector_thick",
+        new Item.Properties().durability(40_000).setNoRepair());
     public static final DeferredItem<Item> HEAT_VENT = ITEMS.registerSimpleItem("heat_vent",
         new Item.Properties().durability(1_000));
     public static final DeferredItem<Item> TIN_INGOT = ITEMS.registerSimpleItem("ingot_tin");

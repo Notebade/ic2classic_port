@@ -9,20 +9,21 @@ final class ReactorRules {
     static final int RADIATION_HEAT = MAX_HEAT * 7 / 10;
     static final int CYCLE_TICKS = 20;
     static final int VENT_COOLING = 6;
+    static final int EU_PER_PULSE = 20;
 
     private ReactorRules() {}
 
     static int energy(int cells, int neighboringRods) {
-        return cells * pulsesPerCell(cells, neighboringRods) * 20;
+        return cells * pulsesPerCell(cells, neighboringRods) * EU_PER_PULSE;
     }
 
-    static int heatPerCell(int cells, int neighboringRods) {
-        int pulses = pulsesPerCell(cells, neighboringRods);
+    static int heatPerCell(int cells, int neighboringComponents) {
+        int pulses = pulsesPerCell(cells, neighboringComponents);
         return pulses * (pulses + 1) * 2;
     }
 
-    private static int pulsesPerCell(int cells, int neighboringRods) {
-        return 1 + cells / 2 + neighboringRods;
+    private static int pulsesPerCell(int cells, int neighboringComponents) {
+        return 1 + cells / 2 + neighboringComponents;
     }
 
     static int[] neighbors(int slot, int width) {

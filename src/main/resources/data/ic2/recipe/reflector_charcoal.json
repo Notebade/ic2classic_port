@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "ic2:reflector",
+  "pattern": [
+    "TcT",
+    "cDc",
+    "TcT"
+  ],
+  "key": {
+    "T": {
+      "item": "ic2:dust_tin"
+    },
+    "c": {
+      "item": "ic2:dust_charcoal"
+    },
+    "D": {
+      "item": "ic2:plate_dense_copper"
+    }
+  },
+  "result": {
+    "id": "ic2:reflector"
+  }
+}
