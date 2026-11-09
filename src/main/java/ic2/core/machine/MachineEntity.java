@@ -11,6 +11,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -66,6 +67,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int windRemainder;
     private int environmentalProduction;
     private int waveTarget = -1;
+    private boolean surveyedOcean;
     private int passiveWaterUnits = -1;
     private int passiveWaterRemainder;
     private int progress;
@@ -164,6 +166,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GEOTHERMAL -> Machines.GEOTHERMAL_ENTITY.get();
             case WIND_TURBINE -> Machines.WIND_TURBINE_ENTITY.get();
             case WAVE_GENERATOR -> Machines.WAVE_GENERATOR_ENTITY.get();
+            case OCEAN_GENERATOR -> Machines.OCEAN_GENERATOR_ENTITY.get();
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> Machines.WATER_MILL_ENTITY.get();
             case SOLAR_PANEL -> Machines.SOLAR_PANEL_ENTITY.get();
             case LV_TRANSFORMER -> Machines.LV_TRANSFORMER_ENTITY.get();
@@ -195,6 +198,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GEOTHERMAL -> tickGeothermal();
             case WIND_TURBINE -> tickWindTurbine();
             case WAVE_GENERATOR -> tickWaveGenerator();
+            case OCEAN_GENERATOR -> tickOceanGenerator();
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> tickWaterMill();
             case SOLAR_PANEL -> tickSolarPanel();
             case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> tickTransformer();
@@ -239,6 +243,29 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         int production = environmentalProduction + Integer.compare(waveTarget, environmentalProduction);
         generateEnvironmentalEnergy(production, WaveProduction.OUTPUT_LIMIT);
+    }
+
+    private void tickOceanGenerator() {
+        int production = environmentalProduction;
+        if (!surveyedOcean || (level.getGameTime() + worldPosition.hashCode()) % OceanProduction.SAMPLE_INTERVAL == 0) {
+            production = surveyOcean();
+            surveyedOcean = true;
+        }
+        generateEnvironmentalEnergy(production, OceanProduction.OUTPUT_LIMIT);
+    }
+
+    private int surveyOcean() {
+        int radius = OceanProduction.RADIUS;
+        var bounds = BoundingBox.fromCorners(worldPosition.offset(-radius, -radius, -radius),
+            worldPosition.offset(radius, radius, radius));
+        var survey = new OceanProduction();
+        ConnectedSpace.count(level, worldPosition, bounds, Integer.MAX_VALUE, pos -> {
+            BlockState state = level.getBlockState(pos);
+            boolean coral = state.is(BlockTags.CORALS) || state.is(BlockTags.CORAL_BLOCKS) || state.is(BlockTags.WALL_CORALS);
+            return survey.recordAndTraverse(state.getFluidState().getType() == Fluids.WATER, coral,
+                state.is(Machines.OCEAN_GENERATOR.get()));
+        });
+        return survey.output();
     }
 
     private void generateEnvironmentalEnergy(int production, int packetLimit) {
@@ -499,7 +526,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> stack.is(Items.BUCKET) || stack.is(IC2.CELL_EMPTY.get());
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
             case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
-            case BATBOX, MFE, MFSU, SOLAR_PANEL, WAVE_GENERATOR, LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> false;
+            case BATBOX, MFE, MFSU, SOLAR_PANEL, WAVE_GENERATOR, OCEAN_GENERATOR,
+                LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> false;
         };
     }
 
@@ -531,7 +559,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
-            case GENERATOR, GEOTHERMAL, WIND_TURBINE, WAVE_GENERATOR, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
+            case GENERATOR, GEOTHERMAL, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
+                WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
                 BATBOX, MFE, MFSU, SOLAR_PANEL,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER,
                 PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER -> null;
@@ -762,7 +791,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             return false;
         }
         return switch (kind) {
-            case GENERATOR, GEOTHERMAL, WIND_TURBINE, WAVE_GENERATOR, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
+            case GENERATOR, GEOTHERMAL, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
+                WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
                 SOLAR_PANEL, ELECTROLYZER -> false;
             case ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL -> packetSize <= MachineKind.BATBOX.storageOutput;
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
@@ -895,7 +925,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> hasWaterFuel()
                 ? kind.waterMillTier.output() * WaterMillTier.UNITS_PER_EU : Math.max(0, passiveWaterUnits);
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
-            case SOLAR_PANEL, GEOTHERMAL, WAVE_GENERATOR, LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, ELECTROLYZER -> 0;
+            case SOLAR_PANEL, GEOTHERMAL, WAVE_GENERATOR, OCEAN_GENERATOR, ELECTROLYZER,
+                LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> 0;
             case MASS_FABRICATOR -> amplifier;
             case MACERATOR, ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL,
                 ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,

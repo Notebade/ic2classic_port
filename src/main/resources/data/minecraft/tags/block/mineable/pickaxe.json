@@ -5,6 +5,7 @@
     "ic2:machine_block",
     "ic2:wind_turbine",
     "ic2:wave_generator",
+    "ic2:ocean_generator",
     "ic2:water_mill",
     "ic2:water_mill_lv",
     "ic2:water_mill_mv",

@@ -125,6 +125,8 @@
   "block.ic2.geothermal_generator": "Geothermal Generator",
   "block.ic2.wind_turbine": "Wind Turbine",
   "block.ic2.wave_generator": "Wave Generator",
+  "block.ic2.ocean_generator": "Ocean Generator",
+  "jei.ic2.ocean_generator": "Produces up to 100 EU/t from connected source water and living coral within five blocks. Nearby connected generators share the output.",
   "message.ic2.environmental_generator_output": "%s: %s EU/t",
   "jei.ic2.wave_generator": "Face a continuous line of water sources. Up to 50 sources count. Rain and thunderstorms increase generation.",
   "block.ic2.water_mill": "Water Mill",

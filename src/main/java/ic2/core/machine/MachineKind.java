@@ -5,6 +5,7 @@ enum MachineKind {
     GEOTHERMAL(FluidGeneratorBlock.GEOTHERMAL_OUTPUT, 0, 0),
     WIND_TURBINE(32, 0, 0),
     WAVE_GENERATOR(1000, 0, 0),
+    OCEAN_GENERATOR(8000, 0, 0),
     WATER_MILL(2, WaterMillTier.BASE),
     LV_WATER_MILL(32, WaterMillTier.LV),
     MV_WATER_MILL(256, WaterMillTier.MV),

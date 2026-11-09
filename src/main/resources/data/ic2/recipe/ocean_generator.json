@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "IPI",
+    "BWB",
+    "IPI"
+  ],
+  "key": {
+    "I": { "item": "ic2:ingot_refined_iron" },
+    "P": { "item": "ic2:plate_advanced_alloy" },
+    "B": { "item": "ic2:turbine_blade" },
+    "W": { "item": "ic2:water_mill" }
+  },
+  "result": { "id": "ic2:ocean_generator", "count": 1 }
+}
