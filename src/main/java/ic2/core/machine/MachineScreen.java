@@ -78,7 +78,8 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         if (MachineMenu.isFluidGenerator(menu.getType())) {
             Component status = menu.isWaterMill()
                 ? Component.translatable("gui.ic2.water_mill_status",
-                    String.format(Locale.ROOT, "%.2f", menu.work() / 100.0), menu.fluid(), FluidGeneratorBlock.WATER_TANK)
+                    String.format(Locale.ROOT, "%.2f", menu.work() / (double) WaterMillTier.UNITS_PER_EU),
+                    menu.fluid(), FluidGeneratorBlock.WATER_TANK)
                 : Component.translatable("gui.ic2.geothermal_status", menu.energy(), menu.fluid(), FluidGeneratorBlock.GEOTHERMAL_TANK);
             graphics.drawString(font, status, 8, 21, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.input"), 9, 61, 0x404040, false);

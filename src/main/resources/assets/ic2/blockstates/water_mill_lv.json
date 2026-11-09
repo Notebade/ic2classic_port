@@ -1,0 +1,36 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "ic2:block/water_mill_lv",
+      "y": 0
+    },
+    "facing=north,lit=true": {
+      "model": "ic2:block/water_mill_lv_active",
+      "y": 0
+    },
+    "facing=east,lit=false": {
+      "model": "ic2:block/water_mill_lv",
+      "y": 90
+    },
+    "facing=east,lit=true": {
+      "model": "ic2:block/water_mill_lv_active",
+      "y": 90
+    },
+    "facing=south,lit=false": {
+      "model": "ic2:block/water_mill_lv",
+      "y": 180
+    },
+    "facing=south,lit=true": {
+      "model": "ic2:block/water_mill_lv_active",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "ic2:block/water_mill_lv",
+      "y": 270
+    },
+    "facing=west,lit=true": {
+      "model": "ic2:block/water_mill_lv_active",
+      "y": 270
+    }
+  }
+}

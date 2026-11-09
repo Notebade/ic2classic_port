@@ -4,7 +4,8 @@ enum MachineKind {
     GENERATOR(4000, 0, 0),
     GEOTHERMAL(FluidGeneratorBlock.GEOTHERMAL_OUTPUT, 0, 0),
     WIND_TURBINE(32, 0, 0),
-    WATER_MILL(2, 0, 0),
+    WATER_MILL(2, WaterMillTier.BASE),
+    LV_WATER_MILL(32, WaterMillTier.LV),
     SOLAR_PANEL(0, 0, 0),
     MACERATOR(2, 400),
     ELECTRIC_FURNACE(3, 130),
@@ -31,6 +32,7 @@ enum MachineKind {
     final int energyPerTick;
     final int recipeTicks;
     final int storageOutput;
+    final WaterMillTier waterMillTier;
 
     MachineKind(int energyPerTick, int recipeTicks) {
         this(energyPerTick * recipeTicks, energyPerTick, recipeTicks);
@@ -41,10 +43,19 @@ enum MachineKind {
     }
 
     MachineKind(int capacity, int energyPerTick, int recipeTicks, int storageOutput) {
+        this(capacity, energyPerTick, recipeTicks, storageOutput, null);
+    }
+
+    MachineKind(int capacity, WaterMillTier waterMillTier) {
+        this(capacity, 0, 0, 0, waterMillTier);
+    }
+
+    private MachineKind(int capacity, int energyPerTick, int recipeTicks, int storageOutput, WaterMillTier waterMillTier) {
         this.capacity = capacity;
         this.energyPerTick = energyPerTick;
         this.recipeTicks = recipeTicks;
         this.storageOutput = storageOutput;
+        this.waterMillTier = waterMillTier;
     }
 
     boolean isStorage() {
