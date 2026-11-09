@@ -1,4 +1,11 @@
 {
+  "block.ic2.uranium_ore": "Uranium Ore",
+  "block.ic2.deepslate_uranium_ore": "Deepslate Uranium Ore",
+  "item.ic2.ore_uranium": "Raw Uranium",
+  "item.ic2.ingot_uranium": "Uranium Ingot",
+  "item.ic2.uranium_rod_single": "Uranium Fuel Rod",
+  "item.ic2.uranium_rod_near_depleted": "Near-Depleted Uranium Rod",
+  "item.ic2.heat_vent": "Heat Vent",
   "block.ic2.electric_blast_furnace": "Electric Blast Furnace",
   "block.ic2.electric_smoker": "Electric Smoker",
   "block.ic2.sawmill": "Sawmill",

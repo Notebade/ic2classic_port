@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "ingredient": [
+    {
+      "item": "ic2:ore_uranium"
+    },
+    {
+      "item": "ic2:uranium_ore"
+    },
+    {
+      "item": "ic2:deepslate_uranium_ore"
+    }
+  ],
+  "result": {
+    "id": "ic2:ingot_uranium"
+  },
+  "experience": 0.4,
+  "cookingtime": 100
+}

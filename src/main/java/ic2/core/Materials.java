@@ -29,10 +29,13 @@ final class Materials {
         var aluminiumOre = items.registerSimpleBlockItem(BLOCKS.registerBlock("aluminium_ore_nether", Block::new,
             BlockBehaviour.Properties.ofFullCopy(Blocks.NETHER_QUARTZ_ORE).strength(4.0F, 5.0F).requiresCorrectToolForDrops()));
         var rawTin = items.registerSimpleItem("raw_tin");
-        var silverOre = registerSilverOre(items, "silver_ore", Blocks.COPPER_ORE);
-        var deepslateSilverOre = registerSilverOre(items, "deepslate_silver_ore", Blocks.DEEPSLATE_COPPER_ORE);
-        var netherSilverOre = registerSilverOre(items, "silver_ore_nether", Blocks.NETHER_QUARTZ_ORE);
+        var silverOre = registerOre(items, "silver_ore", Blocks.COPPER_ORE, 4.0F);
+        var deepslateSilverOre = registerOre(items, "deepslate_silver_ore", Blocks.DEEPSLATE_COPPER_ORE, 4.0F);
+        var netherSilverOre = registerOre(items, "silver_ore_nether", Blocks.NETHER_QUARTZ_ORE, 4.0F);
         var rawSilver = items.registerSimpleItem("raw_silver");
+        var uraniumOre = registerOre(items, "uranium_ore", Blocks.COPPER_ORE, 6.0F);
+        var deepslateUraniumOre = registerOre(items, "deepslate_uranium_ore", Blocks.DEEPSLATE_COPPER_ORE, 6.0F);
+        var rawUranium = items.registerSimpleItem("ore_uranium");
         var silverDust = items.registerSimpleItem("dust_silver");
         var silver = items.registerSimpleItem("ingot_silver");
         var rawAluminium = items.registerSimpleItem("raw_aluminium");
@@ -53,6 +56,8 @@ final class Materials {
                 event.accept(silverOre.get());
                 event.accept(deepslateSilverOre.get());
                 event.accept(netherSilverOre.get());
+                event.accept(uraniumOre.get());
+                event.accept(deepslateUraniumOre.get());
             }
             if (event.getTabKey().equals(CreativeModeTabs.INGREDIENTS)) {
                 event.accept(rawTin.get());
@@ -75,6 +80,11 @@ final class Materials {
                 event.accept(rawSilver.get());
                 event.accept(silverDust.get());
                 event.accept(silver.get());
+                event.accept(rawUranium.get());
+                event.accept(IC2.URANIUM_INGOT.get());
+                event.accept(IC2.URANIUM_ROD.get());
+                event.accept(IC2.DEPLETED_URANIUM_ROD.get());
+                event.accept(IC2.HEAT_VENT.get());
                 event.accept(IC2.CELL_EMPTY.get());
                 event.accept(IC2.CELL_WATER.get());
                 event.accept(IC2.CELL_LAVA.get());
@@ -97,9 +107,9 @@ final class Materials {
         });
     }
 
-    private static DeferredItem<BlockItem> registerSilverOre(
-            DeferredRegister.Items items, String name, Block template) {
+    private static DeferredItem<BlockItem> registerOre(
+            DeferredRegister.Items items, String name, Block template, float hardness) {
         return items.registerSimpleBlockItem(BLOCKS.registerBlock(name, Block::new,
-            BlockBehaviour.Properties.ofFullCopy(template).strength(4.0F, 5.0F).requiresCorrectToolForDrops()));
+            BlockBehaviour.Properties.ofFullCopy(template).strength(hardness, 5.0F).requiresCorrectToolForDrops()));
     }
 }

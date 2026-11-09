@@ -1,4 +1,11 @@
 {
+  "block.ic2.uranium_ore": "Урановая руда",
+  "block.ic2.deepslate_uranium_ore": "Глубинная урановая руда",
+  "item.ic2.ore_uranium": "Необработанный уран",
+  "item.ic2.ingot_uranium": "Урановый слиток",
+  "item.ic2.uranium_rod_single": "Урановый ТВЭЛ",
+  "item.ic2.uranium_rod_near_depleted": "Почти обеднённый урановый стержень",
+  "item.ic2.heat_vent": "Теплоотвод",
   "block.ic2.electric_blast_furnace": "Электрическая плавильня",
   "block.ic2.electric_smoker": "Электрическая коптильня",
   "block.ic2.sawmill": "Лесопилка",

@@ -27,6 +27,12 @@ src/main/resources/assets/ic2/textures/item/cells/*.png
 src/main/resources/assets/ic2/textures/item/raw/silver.png
 src/main/resources/assets/ic2/textures/item/dust/silver.png
 src/main/resources/assets/ic2/textures/item/ingots/silver.png
+src/main/resources/assets/ic2/textures/block/resources/ore/*uranium_ore.png
+src/main/resources/assets/ic2/textures/item/ore_drops/uranium.png
+src/main/resources/assets/ic2/textures/item/ingots/uranium.png
+src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/single/base.png
+src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/near_depleted/base.png
+src/main/resources/assets/ic2/textures/item/reactor/vents/heat.png
 src/main/resources/assets/ic2/textures/block/resources/ore/*silver_ore*.png
 src/main/resources/assets/ic2/textures/block/misc/stabilized_machine_block/
 src/main/resources/assets/ic2/textures/block/machine/lv/electrolyzer/*.png
