@@ -85,6 +85,14 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.URANIUM_ENRICHER_MENU.get());
     }
 
+    static MachineMenu canner(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.CANNER_MENU.get());
+    }
+
+    static MachineMenu vacuumCanner(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.VACUUM_CANNER_MENU.get());
+    }
+
     static MachineMenu electrolyzer(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.ELECTROLYZER_MENU.get());
     }
@@ -104,7 +112,11 @@ final class MachineMenu extends AbstractContainerMenu {
     }
 
     private static boolean hasSecondInput(MenuType<?> type) {
-        return type == Machines.ALLOY_SMELTER_MENU.get() || type == Machines.URANIUM_ENRICHER_MENU.get();
+        return type == Machines.ALLOY_SMELTER_MENU.get() || type == Machines.URANIUM_ENRICHER_MENU.get() || isCanner(type);
+    }
+
+    static boolean isCanner(MenuType<?> type) {
+        return type == Machines.CANNER_MENU.get() || type == Machines.VACUUM_CANNER_MENU.get();
     }
 
     MachineMenu(int id, Inventory playerInventory, ItemStackHandler inventory, ContainerLevelAccess access,
@@ -265,6 +277,10 @@ final class MachineMenu extends AbstractContainerMenu {
 
     boolean isUraniumEnricher() {
         return getType() == Machines.URANIUM_ENRICHER_MENU.get();
+    }
+
+    boolean isVacuumCanner() {
+        return getType() == Machines.VACUUM_CANNER_MENU.get();
     }
 
     boolean isRareEarth() {

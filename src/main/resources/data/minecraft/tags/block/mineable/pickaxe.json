@@ -27,6 +27,8 @@
     "ic2:aluminium_ore_nether",
     "ic2:rare_earth_extractor",
     "ic2:uranium_enricher",
+    "ic2:canner",
+    "ic2:vacuum_canner",
     "ic2:electrolyzer",
     "ic2:stabilized_machine_block",
     "ic2:uranium_ore",

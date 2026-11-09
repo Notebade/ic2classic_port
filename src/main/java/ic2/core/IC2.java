@@ -92,6 +92,8 @@ public final class IC2 {
     public static final DeferredItem<Item> MAGNET = ITEMS.registerSimpleItem("magnet");
     public static final DeferredItem<FluidCellItem> CELL_EMPTY =
         ITEMS.registerItem("cell_empty", properties -> new FluidCellItem(properties, Fluids.EMPTY));
+    public static final DeferredItem<Item> CELL_AIR =
+        ITEMS.registerItem("cell_air", properties -> new Item(properties.craftRemainder(CELL_EMPTY.get())));
     public static final DeferredItem<FluidCellItem> CELL_WATER =
         ITEMS.registerItem("cell_water", properties -> new FluidCellItem(properties, Fluids.WATER));
     public static final DeferredItem<FluidCellItem> CELL_LAVA =

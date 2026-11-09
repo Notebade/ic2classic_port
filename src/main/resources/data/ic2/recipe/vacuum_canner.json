@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "APA",
+    "ACA",
+    "ABA"
+  ],
+  "key": {
+    "A": {
+      "item": "ic2:cell_air"
+    },
+    "P": {
+      "item": "ic2:pump"
+    },
+    "C": {
+      "item": "ic2:canner"
+    },
+    "B": {
+      "item": "ic2:advanced_machine_block"
+    }
+  },
+  "result": {
+    "id": "ic2:vacuum_canner"
+  }
+}

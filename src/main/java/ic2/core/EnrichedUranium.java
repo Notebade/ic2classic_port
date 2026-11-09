@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -48,6 +49,10 @@ public final class EnrichedUranium {
 
     public Item ingot(UraniumType type) {
         return ingots.get(type).get();
+    }
+
+    public boolean isIngot(ItemStack stack) {
+        return ingots.values().stream().anyMatch(ingot -> stack.is(ingot.get()));
     }
 
     void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {

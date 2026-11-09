@@ -38,6 +38,8 @@ src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/dual/base.png
 src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/quad/base.png
 src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/near_depleted/base.png
 src/main/resources/assets/ic2/textures/item/reactor/vents/heat.png
+src/main/resources/assets/ic2/textures/block/machine/lv/canner/*.png
+src/main/resources/assets/ic2/textures/block/machine/mv/vacuum_canner/*.png
 src/main/resources/assets/ic2/textures/block/machine/hv/uranium_enricher/*.png
 src/main/resources/assets/ic2/textures/item/ingots/blaze_uranium.png
 src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/single/blaze_enriched.png

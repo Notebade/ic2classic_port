@@ -30,6 +30,8 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.ALLOY_SMELTER_MENU.get(), MachineScreen::new);
         event.register(Machines.RARE_EARTH_MENU.get(), MachineScreen::new);
         event.register(Machines.URANIUM_ENRICHER_MENU.get(), MachineScreen::new);
+        event.register(Machines.CANNER_MENU.get(), MachineScreen::new);
+        event.register(Machines.VACUUM_CANNER_MENU.get(), MachineScreen::new);
         event.register(Machines.ELECTROLYZER_MENU.get(), MachineScreen::new);
         event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
@@ -101,13 +103,18 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             graphics.drawString(font, Component.translatable("gui.ic2.charge"), 120, 61, 0x404040, false);
             return;
         }
-        if (menu.isAlloySmelter() || menu.isUraniumEnricher()) {
+        if (menu.isAlloySmelter() || menu.isUraniumEnricher() || MachineMenu.isCanner(menu.getType())) {
             Component status = menu.isUraniumEnricher()
                 ? Component.translatable("gui.ic2.enricher_status", menu.energy(),
                     menu.work() * 100 / UraniumEnrichment.INGOT_TICKS, menu.fluid())
                 : Component.translatable("gui.ic2.machine_status", menu.energy(), menu.work());
+            if (menu.isVacuumCanner()) {
+                status = Component.translatable("gui.ic2.vacuum_canner_status", menu.energy(),
+                    menu.work() * 100 / MachineKind.VACUUM_CANNER.recipeTicks, menu.fluid() * 100 / CanningRecipes.MAX_SPEED);
+            }
             graphics.drawString(font, status, 8, 21, 0x404040, false);
-            graphics.drawString(font, Component.translatable("gui.ic2.input"), 14, 61, 0x404040, false);
+            Component input = Component.translatable(MachineMenu.isCanner(menu.getType()) ? "gui.ic2.container" : "gui.ic2.input");
+            graphics.drawString(font, input, 32 - font.width(input) / 2, 61, 0x404040, false);
             Component catalyst = Component.translatable(menu.isUraniumEnricher() ? "gui.ic2.catalyst" : "gui.ic2.input");
             graphics.drawString(font, catalyst, 88 - font.width(catalyst) / 2, 61, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.output"), 120, 61, 0x404040, false);

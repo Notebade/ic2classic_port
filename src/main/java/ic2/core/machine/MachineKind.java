@@ -14,6 +14,8 @@ enum MachineKind {
     SOLAR_PANEL(0, 0, 0),
     NUCLEAR_REACTOR(0, 0, 0),
     URANIUM_ENRICHER(100_000, 0, 0),
+    CANNER(700, 1, 50),
+    VACUUM_CANNER(4_500, 15, 1_200),
     MACERATOR(2, 400),
     ELECTRIC_FURNACE(3, 130),
     ELECTRIC_BLAST_FURNACE(5, 65),
@@ -67,6 +69,10 @@ enum MachineKind {
 
     boolean isStorage() {
         return storageOutput > 0;
+    }
+
+    boolean isCanner() {
+        return this == CANNER || this == VACUUM_CANNER;
     }
 
     int cookingTicks(int vanillaTicks) {

@@ -59,7 +59,11 @@ public record ReactorComponentRepair(Ingredient component, Ingredient material, 
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        ItemStack result = damagedComponent(input).copyWithCount(1);
+        return repairComponent(damagedComponent(input));
+    }
+
+    public ItemStack repairComponent(ItemStack component) {
+        ItemStack result = component.copyWithCount(1);
         if (!result.isEmpty()) {
             result.setDamageValue(Math.max(0, result.getDamageValue() - repair));
         }

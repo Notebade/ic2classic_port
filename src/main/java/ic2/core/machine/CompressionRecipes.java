@@ -23,6 +23,7 @@ final class CompressionRecipes {
         entry(Machines.MV_SOLAR_PANEL.get().asItem(), new Recipe(1, Machines.COMPRESSED_MV_SOLAR_PANEL.get().asItem())),
         entry(IC2.ADVANCED_ALLOY.get(), new Recipe(1, IC2.ADVANCED_ALLOY_PLATE.get())),
         entry(IC2.CARBON_MESH.get(), new Recipe(1, IC2.CARBON_PLATE.get())),
+        entry(IC2.CELL_EMPTY.get(), new Recipe(1, IC2.CELL_AIR.get())),
         entry(IC2.RARE_EARTH_CHUNK.get(), new Recipe(1, IC2.DEAD_MAGNET.get()))
     );
 

@@ -1,6 +1,11 @@
 {
   "block.ic2.uranium_ore": "Uranium Ore",
   "block.ic2.uranium_enricher": "Uranium Enricher",
+  "block.ic2.canner": "Canning Machine",
+  "block.ic2.vacuum_canner": "Vacuum Canner",
+  "item.ic2.cell_air": "Air Cell",
+  "gui.ic2.container": "Container",
+  "gui.ic2.vacuum_canner_status": "%s EU · %s%% work · %s%% RPM",
   "gui.ic2.enricher_status": "%s EU · %s%% · %s pts",
   "gui.ic2.catalyst": "Catalyst",
   "block.ic2.nuclear_reactor": "Nuclear Reactor",
