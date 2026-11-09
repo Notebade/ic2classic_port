@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " T ",
+    "TWT",
+    " T "
+  ],
+  "key": {
+    "T": {
+      "tag": "c:ingots/tin"
+    },
+    "W": [
+      {
+        "item": "minecraft:water_bucket"
+      },
+      {
+        "item": "ic2:cell_water"
+      }
+    ]
+  },
+  "result": {
+    "id": "ic2:heat_storage_single"
+  }
+}

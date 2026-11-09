@@ -256,9 +256,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         if (level.getGameTime() % ReactorRules.CYCLE_TICKS == 0) {
             int width = ReactorRules.BASE_COLUMNS + chambers.size();
             ejectClosedReactorSlots(width);
-            var cycle = new ReactorGrid(inventory).run(width, powered, level.getRandom());
+            var cycle = new ReactorGrid(inventory).run(width, reactorHeat, powered, level.getRandom());
             reactorOutput = cycle.output();
-            reactorHeat += cycle.heat();
+            reactorHeat = cycle.heat();
             setChanged();
             if (reactorHeat >= ReactorRules.MAX_HEAT) {
                 meltReactor();

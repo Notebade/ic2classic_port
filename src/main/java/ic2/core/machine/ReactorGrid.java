@@ -1,6 +1,7 @@
 package ic2.core.machine;
 
 import ic2.core.IC2;
+import ic2.core.item.ReactorHeatItem;
 import ic2.core.item.UraniumFuelRod;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,33 +17,39 @@ final class ReactorGrid {
     }
 
     static boolean accepts(ItemStack stack) {
-        return UraniumFuelRod.cellsIn(stack) > 0 || stack.is(IC2.HEAT_VENT.get()) || isReflector(stack);
+        return UraniumFuelRod.cellsIn(stack) > 0 || stack.getItem() instanceof ReactorHeatItem || isReflector(stack);
     }
 
     static boolean isReflector(ItemStack stack) {
         return stack.is(IC2.NEUTRON_REFLECTOR.get()) || stack.is(IC2.THICK_NEUTRON_REFLECTOR.get());
     }
 
-    Cycle run(int width, boolean powered, RandomSource random) {
-        int heat = runHeatPass(width, powered);
+    Cycle run(int width, int hullHeat, boolean powered, RandomSource random) {
+        CoolingPass cooling = runHeatPass(width, hullHeat, powered);
         if (!powered) {
-            return new Cycle(0, heat);
+            return new Cycle(0, cooling.hullHeat());
         }
         // Reflectors still affect heat in the cycle when an energy pulse breaks them.
         int output = runEnergyPass(width);
         ageFuel(width, random);
-        return new Cycle(output, heat);
+        int netOutput = Math.max(0, (output * 10 - cooling.costTenths()) / 10);
+        return new Cycle(netOutput, cooling.hullHeat());
     }
 
-    private int runHeatPass(int width, boolean powered) {
-        int heat = 0;
+    private CoolingPass runHeatPass(int width, int heat, boolean powered) {
+        int costTenths = 0;
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
             if (slot % ReactorRules.COLUMNS >= width) {
                 continue;
             }
             ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack.is(IC2.HEAT_VENT.get())) {
-                stack.setDamageValue(Math.max(0, stack.getDamageValue() - ReactorRules.VENT_COOLING));
+            if (stack.getItem() instanceof ReactorHeatItem.Vent vent) {
+                int drained = Math.min(heat, vent.hullCooling(powered));
+                if (storeHeat(slot, stack, drained) == 0) {
+                    heat -= drained;
+                    costTenths += vent.powerCostTenths();
+                    stack.setDamageValue(Math.max(0, stack.getDamageValue() - vent.selfCooling(powered)));
+                }
                 continue;
             }
             int cells = UraniumFuelRod.cellsIn(stack);
@@ -50,7 +57,7 @@ final class ReactorGrid {
                 heat += runRodHeat(slot, width, cells);
             }
         }
-        return heat;
+        return new CoolingPass(heat, costTenths);
     }
 
     private int runRodHeat(int slot, int width, int cells) {
@@ -63,7 +70,7 @@ final class ReactorGrid {
             ItemStack adjacent = inventory.getStackInSlot(neighbor);
             if (UraniumFuelRod.cellsIn(adjacent) > 0 || isReflector(adjacent)) {
                 pulseNeighbors++;
-            } else if (adjacent.is(IC2.HEAT_VENT.get())) {
+            } else if (adjacent.getItem() instanceof ReactorHeatItem) {
                 vents.add(neighbor);
             }
         }
@@ -118,17 +125,25 @@ final class ReactorGrid {
             int slot = vents.get(index);
             ItemStack stack = inventory.getStackInSlot(slot);
             int toStore = heat / (vents.size() - index);
-            int room = stack.getMaxDamage() - stack.getDamageValue();
-            heat -= Math.min(room, toStore);
-            if (toStore > room) {
+            int overflow = storeHeat(slot, stack, toStore);
+            heat -= toStore - overflow;
+            if (overflow > 0) {
                 vents.remove(index);
                 index--;
-                inventory.setStackInSlot(slot, ItemStack.EMPTY);
-            } else {
-                stack.setDamageValue(stack.getDamageValue() + toStore);
             }
         }
         return heat;
+    }
+
+    private int storeHeat(int slot, ItemStack stack, int heat) {
+        int total = stack.getDamageValue() + heat;
+        int overflow = total - stack.getMaxDamage();
+        if (overflow > 0) {
+            inventory.setStackInSlot(slot, ItemStack.EMPTY);
+            return overflow;
+        }
+        stack.setDamageValue(total);
+        return 0;
     }
 
     private void ageFuel(int width, RandomSource random) {
@@ -148,4 +163,6 @@ final class ReactorGrid {
     }
 
     record Cycle(int output, int heat) {}
+
+    private record CoolingPass(int hullHeat, int costTenths) {}
 }

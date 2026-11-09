@@ -62,8 +62,7 @@ public final class IC2 {
         new Item.Properties().durability(10_000).setNoRepair());
     public static final DeferredItem<Item> THICK_NEUTRON_REFLECTOR = ITEMS.registerSimpleItem("reflector_thick",
         new Item.Properties().durability(40_000).setNoRepair());
-    public static final DeferredItem<Item> HEAT_VENT = ITEMS.registerSimpleItem("heat_vent",
-        new Item.Properties().durability(1_000));
+    static final ReactorComponents REACTOR_COMPONENTS = new ReactorComponents(ITEMS);
     public static final DeferredItem<Item> TIN_INGOT = ITEMS.registerSimpleItem("ingot_tin");
     public static final DeferredItem<Item> TIN_DUST = ITEMS.registerSimpleItem("dust_tin");
     public static final DeferredItem<Item> ALUMINIUM_DUST = ITEMS.registerSimpleItem("dust_aluminium");

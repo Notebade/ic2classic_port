@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "C",
+    "V",
+    "C"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:plate_dense_copper"
+    },
+    "V": {
+      "item": "ic2:heat_vent"
+    }
+  },
+  "result": {
+    "id": "ic2:heat_vent_core"
+  }
+}

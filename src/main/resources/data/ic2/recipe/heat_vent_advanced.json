@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BVB",
+    "BDB",
+    "BVB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:iron_bars"
+    },
+    "D": {
+      "tag": "c:gems/diamond"
+    },
+    "V": {
+      "item": "ic2:heat_vent"
+    }
+  },
+  "result": {
+    "id": "ic2:heat_vent_advanced"
+  }
+}

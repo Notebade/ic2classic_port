@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TCT",
+    "TDT",
+    "TCT"
+  ],
+  "key": {
+    "T": {
+      "tag": "c:ingots/tin"
+    },
+    "C": {
+      "item": "ic2:heat_storage_triple"
+    },
+    "D": {
+      "item": "ic2:plate_dense_copper"
+    }
+  },
+  "result": {
+    "id": "ic2:heat_storage_six"
+  }
+}

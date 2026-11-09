@@ -42,6 +42,16 @@ public final class FluidCellItem extends Item {
     }
 
     @Override
+    public boolean hasCraftingRemainingItem(ItemStack stack) {
+        return fluid == Fluids.WATER;
+    }
+
+    @Override
+    public ItemStack getCraftingRemainingItem(ItemStack stack) {
+        return fluid == Fluids.WATER ? new ItemStack(IC2.CELL_EMPTY.get()) : ItemStack.EMPTY;
+    }
+
+    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
         ClipContext.Fluid clip = fluid == Fluids.EMPTY ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE;

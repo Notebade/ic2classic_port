@@ -96,6 +96,10 @@ Fresh rods can be combined with dense copper plates. With no adjacent rods, a du
 
 Neutron Reflectors placed next to a fuel rod add one pulse per fuel cell. Both reflector types increase EU output and heat. The regular reflector has 10,000 durability and the thick reflector has 40,000. Each reflected energy pulse wears the reflector by one point.
 
+Coolant Cells absorb heat from adjacent fuel rods and store 10,000, 30,000, or 60,000 heat. They do not dissipate heat on their own. Craft the smallest cell with tin and a water bucket or water cell, then combine smaller cells to craft the larger versions.
+
+Reactor and overclocked heat vents draw heat from the hull. Advanced vents dissipate heat faster. Electric vents consume some of the reactor's output while it runs and cool at half speed while it is off.
+
 Steam reactors and other advanced reactor components still need porting.
 
 ### Thermal Generator

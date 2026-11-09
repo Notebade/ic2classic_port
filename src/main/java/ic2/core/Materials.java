@@ -88,7 +88,7 @@ final class Materials {
                 event.accept(IC2.DEPLETED_URANIUM_ROD.get());
                 event.accept(IC2.NEUTRON_REFLECTOR.get());
                 event.accept(IC2.THICK_NEUTRON_REFLECTOR.get());
-                event.accept(IC2.HEAT_VENT.get());
+                IC2.REACTOR_COMPONENTS.addToCreativeTab(event);
                 event.accept(IC2.CELL_EMPTY.get());
                 event.accept(IC2.CELL_WATER.get());
                 event.accept(IC2.CELL_LAVA.get());

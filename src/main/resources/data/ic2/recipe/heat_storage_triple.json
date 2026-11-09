@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TTT",
+    "CCC",
+    "TTT"
+  ],
+  "key": {
+    "T": {
+      "tag": "c:ingots/tin"
+    },
+    "C": {
+      "item": "ic2:heat_storage_single"
+    }
+  },
+  "result": {
+    "id": "ic2:heat_storage_triple"
+  }
+}

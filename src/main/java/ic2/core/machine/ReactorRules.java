@@ -8,7 +8,6 @@ final class ReactorRules {
     static final int MAX_HEAT = 10_000;
     static final int RADIATION_HEAT = MAX_HEAT * 7 / 10;
     static final int CYCLE_TICKS = 20;
-    static final int VENT_COOLING = 6;
     static final int EU_PER_PULSE = 20;
 
     private ReactorRules() {}

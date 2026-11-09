@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BCB",
+    " A "
+  ],
+  "key": {
+    "B": {
+      "item": "ic2:advanced_circuit"
+    },
+    "C": {
+      "item": "ic2:heat_vent"
+    },
+    "A": {
+      "item": "ic2:re_battery"
+    }
+  },
+  "result": {
+    "id": "ic2:electric_vent"
+  }
+}
