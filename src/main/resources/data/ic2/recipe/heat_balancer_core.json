@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SES",
+    "ECE",
+    "SES"
+  ],
+  "key": {
+    "S": {
+      "item": "ic2:ingot_silver"
+    },
+    "E": {
+      "item": "ic2:heat_exchanger_core"
+    },
+    "C": {
+      "item": "ic2:plate_dense_copper"
+    }
+  },
+  "result": {
+    "id": "ic2:heat_balancer_core"
+  }
+}

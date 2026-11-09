@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "C",
+    "E",
+    "C"
+  ],
+  "key": {
+    "E": {
+      "item": "ic2:heat_exchanger"
+    },
+    "C": {
+      "item": "ic2:plate_dense_copper"
+    }
+  },
+  "result": {
+    "id": "ic2:heat_exchanger_core"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RRR",
+    "RVR",
+    "RSR"
+  ],
+  "key": {
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "V": {
+      "item": "ic2:heat_vent"
+    },
+    "S": {
+      "item": "ic2:heat_exchanger"
+    }
+  },
+  "result": {
+    "id": "ic2:condensator"
+  }
+}

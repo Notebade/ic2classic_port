@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BTB",
+    "TVT",
+    "BTB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:iron_bars"
+    },
+    "T": {
+      "tag": "c:ingots/tin"
+    },
+    "V": {
+      "item": "ic2:heat_vent"
+    }
+  },
+  "result": {
+    "id": "ic2:heat_spreader"
+  }
+}

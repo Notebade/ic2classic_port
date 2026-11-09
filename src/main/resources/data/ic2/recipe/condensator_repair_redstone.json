@@ -1,0 +1,10 @@
+{
+  "type": "ic2:reactor_component_repair",
+  "component": {
+    "item": "ic2:condensator"
+  },
+  "material": {
+    "item": "minecraft:redstone"
+  },
+  "repair": 10000
+}

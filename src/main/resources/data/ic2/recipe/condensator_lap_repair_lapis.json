@@ -1,0 +1,10 @@
+{
+  "type": "ic2:reactor_component_repair",
+  "component": {
+    "item": "ic2:condensator_lap"
+  },
+  "material": {
+    "item": "minecraft:lapis_lazuli"
+  },
+  "repair": 40000
+}

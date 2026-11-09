@@ -23,12 +23,29 @@ final class ReactorComponents {
         registerVent(registry, "electric_vent_core", 10, 10, true);
         registerVent(registry, "electric_vent_overclocked", 40, 72, true);
         registerVent(registry, "electric_vent_advanced", 24, 0, true);
+        registerExchanger(registry, "heat_exchanger", 2_500, 12, 4, false);
+        registerExchanger(registry, "heat_exchanger_core", 5_000, 0, 72, false);
+        registerExchanger(registry, "heat_exchanger_spread", 5_000, 36, 0, false);
+        registerExchanger(registry, "heat_exchanger_advanced", 10_000, 24, 8, false);
+        registerExchanger(registry, "heat_balancer", 2_500, 18, 12, true);
+        registerExchanger(registry, "heat_balancer_core", 5_000, 0, 108, true);
+        registerExchanger(registry, "heat_balancer_spread", 5_000, 54, 0, true);
+        registerExchanger(registry, "heat_balancer_advanced", 10_000, 36, 24, true);
+        items.add(registry.registerItem("heat_spreader", ReactorHeatItem.Spreader::new));
+        items.add(registry.registerItem("condensator", properties -> new ReactorHeatItem.Condensator(properties, 20_000)));
+        items.add(registry.registerItem("condensator_lap", properties -> new ReactorHeatItem.Condensator(properties, 100_000)));
     }
 
     private void registerVent(DeferredRegister.Items registry, String name, int selfCooling, int hullCooling, boolean electric) {
         int capacity = electric ? 10_000 : 1_000;
         items.add(registry.registerItem(name,
             properties -> new ReactorHeatItem.Vent(properties, capacity, selfCooling, hullCooling, electric)));
+    }
+
+    private void registerExchanger(DeferredRegister.Items registry, String name, int capacity, int componentTransfer,
+                                   int hullTransfer, boolean selective) {
+        items.add(registry.registerItem(name,
+            properties -> new ReactorHeatItem.Exchanger(properties, capacity, componentTransfer, hullTransfer, selective)));
     }
 
     void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {

@@ -100,6 +100,8 @@ Coolant Cells absorb heat from adjacent fuel rods and store 10,000, 30,000, or 6
 
 Reactor and overclocked heat vents draw heat from the hull. Advanced vents dissipate heat faster. Electric vents consume some of the reactor's output while it runs and cool at half speed while it is off.
 
+Heat exchangers redistribute heat between the hull and adjacent components. Heat balancers target components at or below 25% heat or at or above 75% heat. Component Heat Vents remove four heat from each adjacent heat-storing component per cycle. RSH and LZH Condensators absorb heat until saturated and can be restored with redstone or, for LZH, lapis lazuli.
+
 Steam reactors and other advanced reactor components still need porting.
 
 ### Thermal Generator

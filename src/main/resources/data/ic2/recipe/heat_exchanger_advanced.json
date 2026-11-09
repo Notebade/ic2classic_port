@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GEG",
+    "XCX",
+    "GEG"
+  ],
+  "key": {
+    "E": {
+      "item": "ic2:circuit"
+    },
+    "G": {
+      "item": "ic2:glassfiber_cable_item"
+    },
+    "X": {
+      "item": "ic2:heat_exchanger"
+    },
+    "C": {
+      "item": "ic2:plate_dense_copper"
+    }
+  },
+  "result": {
+    "id": "ic2:heat_exchanger_advanced"
+  }
+}

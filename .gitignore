@@ -38,6 +38,17 @@ src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/dual/base.png
 src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/quad/base.png
 src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/near_depleted/base.png
 src/main/resources/assets/ic2/textures/item/reactor/vents/heat.png
+src/main/resources/assets/ic2/textures/item/reactor/exchanger/heat.png
+src/main/resources/assets/ic2/textures/item/reactor/exchanger/core_heat.png
+src/main/resources/assets/ic2/textures/item/reactor/exchanger/component_heat.png
+src/main/resources/assets/ic2/textures/item/reactor/exchanger/advanced_heat.png
+src/main/resources/assets/ic2/textures/item/reactor/balancer/heat.png
+src/main/resources/assets/ic2/textures/item/reactor/balancer/core_heat.png
+src/main/resources/assets/ic2/textures/item/reactor/balancer/component_heat.png
+src/main/resources/assets/ic2/textures/item/reactor/balancer/advanced_heat.png
+src/main/resources/assets/ic2/textures/item/reactor/vents/spreader_heat.png
+src/main/resources/assets/ic2/textures/item/reactor/condensator/rsh.png
+src/main/resources/assets/ic2/textures/item/reactor/condensator/lzh.png
 src/main/resources/assets/ic2/textures/item/reactor/cells/10k_coolant.png
 src/main/resources/assets/ic2/textures/item/reactor/cells/30k_coolant.png
 src/main/resources/assets/ic2/textures/item/reactor/cells/60k_coolant.png

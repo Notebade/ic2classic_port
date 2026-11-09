@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RVR",
+    "CLC",
+    "RSR"
+  ],
+  "key": {
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "V": {
+      "item": "ic2:heat_vent_core"
+    },
+    "S": {
+      "item": "ic2:heat_exchanger_core"
+    },
+    "C": {
+      "item": "ic2:condensator"
+    },
+    "L": {
+      "item": "minecraft:lapis_block"
+    }
+  },
+  "result": {
+    "id": "ic2:condensator_lap"
+  }
+}
