@@ -86,6 +86,9 @@ final class Materials {
                 event.accept(IC2.DUAL_URANIUM_ROD.get());
                 event.accept(IC2.QUAD_URANIUM_ROD.get());
                 event.accept(IC2.DEPLETED_URANIUM_ROD.get());
+                event.accept(IC2.ISOTOPIC_URANIUM_ROD.get());
+                event.accept(IC2.RE_ENRICHED_URANIUM_ROD.get());
+                event.accept(IC2.HEAT_PACK.get());
                 event.accept(IC2.NEUTRON_REFLECTOR.get());
                 event.accept(IC2.THICK_NEUTRON_REFLECTOR.get());
                 IC2.REACTOR_COMPONENTS.addToCreativeTab(event);

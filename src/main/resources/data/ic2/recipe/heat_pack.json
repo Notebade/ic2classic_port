@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "C",
+    "L",
+    "P"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:circuit"
+    },
+    "L": {
+      "item": "ic2:cell_lava"
+    },
+    "P": {
+      "item": "ic2:plate_dense_copper"
+    }
+  },
+  "result": {
+    "id": "ic2:heat_pack"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ic2:uranium_rod_near_depleted"
+    },
+    {
+      "tag": "ic2:coal_dusts"
+    }
+  ],
+  "result": {
+    "id": "ic2:uranium_rod_isotopic"
+  }
+}

@@ -5,7 +5,7 @@ license = "All Rights Reserved"
 [[mods]]
 modId = "ic2"
 version = "${modVersion}"
-displayName = "IC2 Classic (Local Port Prototype)"
+displayName = "IC 2 Classic Re"
 
 [[mixins]]
 config = "ic2.mixins.json"

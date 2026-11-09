@@ -1,13 +1,13 @@
 <div align="center">
 
-# ⚡ IC2 Classic Port
+# ⚡ IC 2 Classic Re
 
 ### IndustrialCraft Classic for Minecraft 1.21.1
 
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
-![NeoForge](https://img.shields.io/badge/NeoForge-21.1.234-F07C32?style=for-the-badge)
+![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Prototype-0.51.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.52.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -59,10 +59,11 @@ Launch the development client:
 |:--|:--|
 | Minecraft | `1.21.1` |
 | Mod loader | `NeoForge` |
-| Tested NeoForge version | `21.1.234` |
+| Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project status | **Prototype 0.51.0** |
+| Project version | `0.52.0` |
+| Project status | In development |
 
 ### Generator Comparison
 
@@ -90,9 +91,11 @@ Launch the development client:
 
 Apply a redstone signal to the reactor or one of its chambers. A single uranium rod generates 20 EU/t and adds four units of heat per cycle. Adjacent rods increase both output and heat. Place a heat vent next to a rod to absorb heat and dissipate up to six units per cycle. Each reactor chamber adds one column to the core grid and can transmit EU. The core explodes at 10,000 heat.
 
-At 7,000 heat, the reactor irradiates nearby living entities. A meltdown causes radiation poisoning within 30 blocks. A complete four-piece hazmat suit blocks radiation damage. Uranium ore generates in new Overworld chunks.
+At 70% of its heat limit, the reactor irradiates nearby living entities. A meltdown causes radiation poisoning within 30 blocks. A complete four-piece hazmat suit blocks radiation damage. Uranium ore generates in new Overworld chunks.
 
 Fresh rods can be combined with dense copper plates. With no adjacent rods, a dual rod generates 80 EU/t and 24 heat per cycle, and a quad rod generates 240 EU/t and 96 heat per cycle.
+
+Craft eight Near-Depleted Uranium Rods from a uranium ingot surrounded by empty cells. Mix a depleted rod with coal or charcoal dust to make an isotopic rod, then place it next to active fuel. Neutron pulses re-enrich the rod faster as the hull heats up. Mix the re-enriched rod with coal or charcoal dust to craft fresh fuel. Heating Cells warm the hull even when the reactor is off.
 
 Neutron Reflectors placed next to a fuel rod add one pulse per fuel cell. Both reflector types increase EU output and heat. The regular reflector has 10,000 durability and the thick reflector has 40,000. Each reflected energy pulse wears the reflector by one point.
 
@@ -271,7 +274,7 @@ The Matter Fabricator produces one UU-Matter for 7,000,000 EU of accumulated pro
 
 ### UU-Matter Recipes
 
-UU-Matter is used in 53 crafting-table and assembler recipes. The position of each piece in the 3×3 grid matters. For example, one piece in the top-left yields 16 cobblestone, one in the center yields 16 stone, and a full grid yields a diamond. Layouts are in `data/ic2/recipe/uu` and can be entered manually in a crafting table.
+UU-Matter is used in 54 crafting-table recipes. The position of each piece in the 3×3 grid matters. For example, one piece in the top-left yields 16 cobblestone, one in the center yields 16 stone, and a full grid yields a diamond. Layouts are in `data/ic2/recipe/uu` and can be entered manually in a crafting table.
 
 
 ---

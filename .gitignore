@@ -38,6 +38,9 @@ src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/dual/base.png
 src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/quad/base.png
 src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/near_depleted/base.png
 src/main/resources/assets/ic2/textures/item/reactor/vents/heat.png
+src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/isotopic/base.png
+src/main/resources/assets/ic2/textures/item/reactor/cells/uranium/re_enriched/base.png
+src/main/resources/assets/ic2/textures/item/reactor/cells/heating.png
 src/main/resources/assets/ic2/textures/item/reactor/plating/reactor.png
 src/main/resources/assets/ic2/textures/item/reactor/plating/heat_capacity_reactor.png
 src/main/resources/assets/ic2/textures/item/reactor/plating/containment_reactor.png

@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'ic2classic-port'
+rootProject.name = 'ic2-classic-re'
