@@ -6,6 +6,7 @@ enum MachineKind {
     WIND_TURBINE(32, 0, 0),
     WATER_MILL(2, WaterMillTier.BASE),
     LV_WATER_MILL(32, WaterMillTier.LV),
+    MV_WATER_MILL(256, WaterMillTier.MV),
     SOLAR_PANEL(0, 0, 0),
     MACERATOR(2, 400),
     ELECTRIC_FURNACE(3, 130),

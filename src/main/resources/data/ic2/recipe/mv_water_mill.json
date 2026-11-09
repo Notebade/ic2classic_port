@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "WWW",
+    "WTW",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "item": "ic2:water_mill_lv"
+    },
+    "T": {
+      "item": "ic2:transformer_mv"
+    }
+  },
+  "result": {
+    "id": "ic2:water_mill_mv",
+    "count": 1
+  }
+}

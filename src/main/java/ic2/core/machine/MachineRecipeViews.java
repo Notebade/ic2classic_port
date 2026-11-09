@@ -51,6 +51,7 @@ final class MachineRecipeViews {
             case GEOTHERMAL_GENERATOR -> fluidFuel(Fluids.LAVA, FluidGeneratorBlock.GEOTHERMAL_OUTPUT, PumpTank.BUCKET);
             case WATER_MILL -> waterMill(MachineKind.WATER_MILL.waterMillTier);
             case LV_WATER_MILL -> waterMill(MachineKind.LV_WATER_MILL.waterMillTier);
+            case MV_WATER_MILL -> waterMill(MachineKind.MV_WATER_MILL.waterMillTier);
         };
     }
 
@@ -192,7 +193,7 @@ final class MachineRecipeViews {
     private static List<MachineRecipeView> waterMill(WaterMillTier tier) {
         var recipes = new ArrayList<>(fluidFuel(Fluids.WATER, tier.output(), PumpTank.BUCKET / FluidGeneratorBlock.WATER_PER_TICK));
         String maxPassive = String.format(Locale.ROOT, "%.2f",
-            tier.passiveUnits(WaterMillTier.MAX_SOURCES) / (double) WaterMillTier.UNITS_PER_EU);
+            tier.passiveUnits(tier.maxSources()) / (double) WaterMillTier.UNITS_PER_EU);
         recipes.add(new MachineRecipeView(List.of(fluid(Fluids.WATER)), List.of(), note("water_mill_passive", maxPassive)));
         return recipes;
     }

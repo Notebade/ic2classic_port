@@ -1,12 +1,18 @@
 package ic2.core.machine;
 
-record WaterMillTier(int output, int passiveNumerator, int passiveDenominator) {
+record WaterMillTier(int output, int radius, int passiveNumerator, int passiveDenominator,
+                     int passiveLimit, int chargePacket) {
     static final int UNITS_PER_EU = 100;
-    static final int MAX_SOURCES = 26;
-    static final WaterMillTier BASE = new WaterMillTier(1, 2, 1);
-    static final WaterMillTier LV = new WaterMillTier(4, 3, 2);
+    static final WaterMillTier BASE = new WaterMillTier(1, 1, 2, 1, 52, 32);
+    static final WaterMillTier LV = new WaterMillTier(4, 1, 3, 2, 39, 32);
+    static final WaterMillTier MV = new WaterMillTier(32, 2, 11, 20, 58, 128);
+
+    int maxSources() {
+        int diameter = 2 * radius + 1;
+        return diameter * diameter * diameter - 1;
+    }
 
     int passiveUnits(int sources) {
-        return (sources * passiveNumerator / passiveDenominator) * output;
+        return Math.min(passiveLimit, sources * passiveNumerator / passiveDenominator) * output;
     }
 }
