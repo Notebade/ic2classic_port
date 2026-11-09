@@ -65,6 +65,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.MV_WATER_MILL_MENU.get());
     }
 
+    static MachineMenu hvWaterMill(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.HV_WATER_MILL_MENU.get());
+    }
+
     static MachineMenu alloySmelter(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.ALLOY_SMELTER_MENU.get());
     }
@@ -150,8 +154,8 @@ final class MachineMenu extends AbstractContainerMenu {
                         ? Electrolysis.charge(stack) != null : Electrolysis.discharge(stack) != null;
                 }
                 if (isWindTurbine() || isFluidGenerator(getType()) && index == MachineEntity.FUEL_GENERATOR_BATTERY_SLOT) {
-                    int chargePacket = getType() == Machines.MV_WATER_MILL_MENU.get()
-                        ? WaterMillTier.MV.chargePacket() : MachineKind.BATBOX.storageOutput;
+                    WaterMillTier tier = waterMillTier(getType());
+                    int chargePacket = tier == null ? MachineKind.BATBOX.storageOutput : tier.chargePacket();
                     return RechargeableItem.supports(stack, chargePacket);
                 }
                 return index != MachineEntity.OUTPUT_SLOT && super.mayPlace(stack);
@@ -214,15 +218,21 @@ final class MachineMenu extends AbstractContainerMenu {
     }
 
     static boolean isFluidGenerator(MenuType<?> type) {
-        return type == Machines.GEOTHERMAL_MENU.get() || isWaterMill(type);
+        return type == Machines.GEOTHERMAL_MENU.get() || waterMillTier(type) != null;
     }
 
     boolean isWaterMill() {
-        return isWaterMill(getType());
+        return waterMillTier(getType()) != null;
     }
 
-    private static boolean isWaterMill(MenuType<?> type) {
-        return type == Machines.WATER_MILL_MENU.get() || type == Machines.MV_WATER_MILL_MENU.get();
+    private static WaterMillTier waterMillTier(MenuType<?> type) {
+        if (type == Machines.HV_WATER_MILL_MENU.get()) {
+            return WaterMillTier.HV;
+        }
+        if (type == Machines.MV_WATER_MILL_MENU.get()) {
+            return WaterMillTier.MV;
+        }
+        return type == Machines.WATER_MILL_MENU.get() ? WaterMillTier.BASE : null;
     }
 
     boolean isWindTurbine() {

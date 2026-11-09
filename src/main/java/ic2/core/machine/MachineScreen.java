@@ -35,6 +35,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.WIND_TURBINE_MENU.get(), MachineScreen::new);
         event.register(Machines.WATER_MILL_MENU.get(), MachineScreen::new);
         event.register(Machines.MV_WATER_MILL_MENU.get(), MachineScreen::new);
+        event.register(Machines.HV_WATER_MILL_MENU.get(), MachineScreen::new);
     }
 
     @Override

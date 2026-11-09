@@ -127,6 +127,7 @@
   "block.ic2.water_mill": "Water Mill",
   "block.ic2.water_mill_lv": "LV Water Mill",
   "block.ic2.water_mill_mv": "MV Water Mill",
+  "block.ic2.water_mill_hv": "HV Water Mill",
   "gui.ic2.water_mill_status": "%s EU/t · Water %s/%s",
   "jei.ic2.water_mill_passive": "Nearby connected sources provide up to %s EU/t without consuming water.",
   "gui.ic2.wind_status": "%s EU/t · %s EU stored",

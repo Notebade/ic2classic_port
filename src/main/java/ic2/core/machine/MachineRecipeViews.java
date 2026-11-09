@@ -52,6 +52,7 @@ final class MachineRecipeViews {
             case WATER_MILL -> waterMill(MachineKind.WATER_MILL.waterMillTier);
             case LV_WATER_MILL -> waterMill(MachineKind.LV_WATER_MILL.waterMillTier);
             case MV_WATER_MILL -> waterMill(MachineKind.MV_WATER_MILL.waterMillTier);
+            case HV_WATER_MILL -> waterMill(MachineKind.HV_WATER_MILL.waterMillTier);
         };
     }
 

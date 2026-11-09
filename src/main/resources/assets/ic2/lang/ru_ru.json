@@ -127,6 +127,7 @@
   "block.ic2.water_mill": "Водяная мельница",
   "block.ic2.water_mill_lv": "Водяная мельница НН",
   "block.ic2.water_mill_mv": "Водяная мельница СН",
+  "block.ic2.water_mill_hv": "Водяная мельница ВН",
   "gui.ic2.water_mill_status": "%s EU/тик · вода %s/%s",
   "jei.ic2.water_mill_passive": "Связанные источники рядом дают до %s EU/тик. Вода при этом сохраняется.",
   "gui.ic2.wind_status": "%s EU/тик · запас %s EU",

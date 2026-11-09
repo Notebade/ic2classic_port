@@ -58,6 +58,7 @@ record MachineRecipeView(ResourceLocation sourceId, List<Slot> inputs, List<Slot
         WATER_MILL(Machines.WATER_MILL),
         LV_WATER_MILL(Machines.LV_WATER_MILL),
         MV_WATER_MILL(Machines.MV_WATER_MILL),
+        HV_WATER_MILL(Machines.HV_WATER_MILL),
         GEOTHERMAL_GENERATOR(Machines.GEOTHERMAL);
 
         final DeferredBlock<?> machine;
