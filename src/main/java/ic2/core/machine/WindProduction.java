@@ -1,11 +1,9 @@
 package ic2.core.machine;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 final class WindProduction {
     static final int OUTPUT_LIMIT = 16;
@@ -17,7 +15,9 @@ final class WindProduction {
     private WindProduction() {}
 
     static int sample(ServerLevel level, BlockPos pos) {
-        return (int) (OUTPUT_LIMIT * windSpeed(level) * freeAir(level, pos) / FULL_AIR_SPACE);
+        var bounds = BoundingBox.fromCorners(pos.offset(-4, -2, -4), pos.offset(4, 4, 4));
+        int freeAir = ConnectedSpace.count(level, pos, bounds, FULL_AIR_SPACE, level::isEmptyBlock);
+        return (int) (OUTPUT_LIMIT * windSpeed(level) * freeAir / FULL_AIR_SPACE);
     }
 
     private static double windSpeed(ServerLevel level) {
@@ -34,28 +34,4 @@ final class WindProduction {
         return RandomSource.create(seed ^ (period * 0x9E3779B97F4A7C15L)).nextDouble() * 200 - 100;
     }
 
-    private static int freeAir(ServerLevel level, BlockPos origin) {
-        var pending = new ArrayDeque<BlockPos>();
-        var visited = new HashSet<BlockPos>();
-        pending.add(origin);
-        visited.add(origin);
-        int free = 0;
-        while (!pending.isEmpty() && free < FULL_AIR_SPACE) {
-            BlockPos current = pending.remove();
-            for (Direction direction : Direction.values()) {
-                BlockPos next = current.relative(direction);
-                if (insideSearchBox(origin, next) && visited.add(next)
-                    && level.isLoaded(next) && level.isEmptyBlock(next)) {
-                    pending.add(next);
-                    free++;
-                }
-            }
-        }
-        return Math.min(free, FULL_AIR_SPACE);
-    }
-
-    private static boolean insideSearchBox(BlockPos origin, BlockPos pos) {
-        return Math.abs(pos.getX() - origin.getX()) <= 4 && Math.abs(pos.getZ() - origin.getZ()) <= 4
-            && pos.getY() >= origin.getY() - 2 && pos.getY() <= origin.getY() + 4;
-    }
 }

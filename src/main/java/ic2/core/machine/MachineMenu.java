@@ -57,6 +57,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.WIND_TURBINE_MENU.get());
     }
 
+    static MachineMenu waterMill(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.WATER_MILL_MENU.get());
+    }
+
     static MachineMenu alloySmelter(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.ALLOY_SMELTER_MENU.get());
     }
@@ -79,7 +83,7 @@ final class MachineMenu extends AbstractContainerMenu {
         if (type == Machines.WIND_TURBINE_MENU.get()) {
             return 1;
         }
-        return type == Machines.GEOTHERMAL_MENU.get() || type == Machines.ALLOY_SMELTER_MENU.get()
+        return isFluidGenerator(type) || type == Machines.ALLOY_SMELTER_MENU.get()
             ? MachineEntity.SLOT_COUNT + 1 : MachineEntity.SLOT_COUNT;
     }
 
@@ -108,10 +112,10 @@ final class MachineMenu extends AbstractContainerMenu {
         addDataSlots(data);
         if (isWindTurbine()) {
             addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 80, changed);
-        } else if (isGeothermal()) {
+        } else if (isFluidGenerator(getType())) {
             addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 24, changed);
             addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 80, changed);
-            addMachineSlot(inventory, MachineEntity.GEOTHERMAL_BATTERY_SLOT, 136, changed);
+            addMachineSlot(inventory, MachineEntity.FUEL_GENERATOR_BATTERY_SLOT, 136, changed);
         } else if (isAlloySmelter()) {
             addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 24, changed);
             addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 136, changed);
@@ -141,7 +145,7 @@ final class MachineMenu extends AbstractContainerMenu {
                     return index == MachineEntity.INPUT_SLOT
                         ? Electrolysis.charge(stack) != null : Electrolysis.discharge(stack) != null;
                 }
-                if (isWindTurbine() || isGeothermal() && index == MachineEntity.GEOTHERMAL_BATTERY_SLOT) {
+                if (isWindTurbine() || isFluidGenerator(getType()) && index == MachineEntity.FUEL_GENERATOR_BATTERY_SLOT) {
                     return RechargeableItem.supports(stack, MachineKind.BATBOX.storageOutput);
                 }
                 return index != MachineEntity.OUTPUT_SLOT && super.mayPlace(stack);
@@ -203,8 +207,12 @@ final class MachineMenu extends AbstractContainerMenu {
         return getType() == Machines.FABRICATOR_MENU.get();
     }
 
-    boolean isGeothermal() {
-        return getType() == Machines.GEOTHERMAL_MENU.get();
+    static boolean isFluidGenerator(MenuType<?> type) {
+        return type == Machines.GEOTHERMAL_MENU.get() || type == Machines.WATER_MILL_MENU.get();
+    }
+
+    boolean isWaterMill() {
+        return getType() == Machines.WATER_MILL_MENU.get();
     }
 
     boolean isWindTurbine() {
@@ -238,8 +246,8 @@ final class MachineMenu extends AbstractContainerMenu {
         ItemStack before = stack.copy();
         int input = MachineEntity.INPUT_SLOT;
         if (stack.getItem() instanceof RechargeableItem cell) {
-            if (isGeothermal()) {
-                input = MachineEntity.GEOTHERMAL_BATTERY_SLOT;
+            if (isFluidGenerator(getType())) {
+                input = MachineEntity.FUEL_GENERATOR_BATTERY_SLOT;
             } else if (isStorage() && cell.canProvideEnergy() && cell.charge(stack) > 0) {
                 input = MachineEntity.OUTPUT_SLOT;
             }

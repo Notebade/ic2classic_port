@@ -47,7 +47,8 @@ final class MachineRecipeViews {
             case PUMP -> pump();
             case MASS_FABRICATOR -> massFabrication();
             case GENERATOR -> registeredItems().map(MachineRecipeViews::fuel).flatMap(Stream::ofNullable).toList();
-            case GEOTHERMAL_GENERATOR -> geothermal();
+            case GEOTHERMAL_GENERATOR -> fluidFuel(Fluids.LAVA, FluidGeneratorBlock.GEOTHERMAL_OUTPUT, PumpTank.BUCKET);
+            case WATER_MILL -> waterMill();
         };
     }
 
@@ -186,12 +187,18 @@ final class MachineRecipeViews {
             note("fuel_output", (long) ticks * MachineEntity.GENERATOR_OUTPUT, ticks));
     }
 
-    private static List<MachineRecipeView> geothermal() {
-        var output = note("fuel_output", PumpTank.BUCKET * GeothermalGeneratorBlock.OUTPUT, PumpTank.BUCKET);
+    private static List<MachineRecipeView> waterMill() {
+        var recipes = new ArrayList<>(fluidFuel(Fluids.WATER, 1, PumpTank.BUCKET / FluidGeneratorBlock.WATER_PER_TICK));
+        recipes.add(new MachineRecipeView(List.of(fluid(Fluids.WATER)), List.of(), note("water_mill_passive")));
+        return recipes;
+    }
+
+    private static List<MachineRecipeView> fluidFuel(Fluid fuel, int euPerTick, int ticks) {
+        var output = note("fuel_output", ticks * euPerTick, ticks);
         return List.of(
-            new MachineRecipeView(List.of(fluid(Fluids.LAVA)), List.of(), output),
-            new MachineRecipeView(List.of(item(Items.LAVA_BUCKET)), List.of(item(Items.BUCKET)), output),
-            new MachineRecipeView(List.of(item(IC2.CELL_LAVA.get())), List.of(item(IC2.CELL_EMPTY.get())), output));
+            new MachineRecipeView(List.of(fluid(fuel)), List.of(), output),
+            new MachineRecipeView(List.of(item(fuel.getBucket())), List.of(item(Items.BUCKET)), output),
+            new MachineRecipeView(List.of(item(FluidCellItem.filledStack(fuel))), List.of(item(IC2.CELL_EMPTY.get())), output));
     }
 
     private static Component cost(int ticks, int euPerTick) {

@@ -33,6 +33,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
         event.register(Machines.WIND_TURBINE_MENU.get(), MachineScreen::new);
+        event.register(Machines.WATER_MILL_MENU.get(), MachineScreen::new);
     }
 
     @Override
@@ -74,9 +75,12 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             graphics.drawString(font, output, imageWidth - 8 - font.width(output), inventoryLabelY, 0x404040, false);
             return;
         }
-        if (menu.isGeothermal()) {
-            graphics.drawString(font, Component.translatable("gui.ic2.geothermal_status", menu.energy(),
-                menu.fluid(), GeothermalGeneratorBlock.TANK_CAPACITY), 8, 21, 0x404040, false);
+        if (MachineMenu.isFluidGenerator(menu.getType())) {
+            Component status = menu.isWaterMill()
+                ? Component.translatable("gui.ic2.water_mill_status",
+                    String.format(Locale.ROOT, "%.2f", menu.work() / 100.0), menu.fluid(), FluidGeneratorBlock.WATER_TANK)
+                : Component.translatable("gui.ic2.geothermal_status", menu.energy(), menu.fluid(), FluidGeneratorBlock.GEOTHERMAL_TANK);
+            graphics.drawString(font, status, 8, 21, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.input"), 9, 61, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.output"), 69, 61, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.charge"), 120, 61, 0x404040, false);

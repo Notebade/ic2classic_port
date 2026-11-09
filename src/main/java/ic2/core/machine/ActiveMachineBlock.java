@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-final class ActiveMachineBlock extends MachineBlock {
+class ActiveMachineBlock extends MachineBlock {
     ActiveMachineBlock(Properties properties, MachineKind kind) {
         super(properties, kind);
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.LIT, false));
