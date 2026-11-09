@@ -13,22 +13,24 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
 final class ReactorMenu extends AbstractContainerMenu {
+    private static final int DATA_COUNT = 7;
     private final ContainerLevelAccess access;
     private final ContainerData data;
 
     ReactorMenu(int id, Inventory player) {
-        this(id, player, new ItemStackHandler(ReactorRules.SLOT_COUNT), ContainerLevelAccess.NULL, new SimpleContainerData(3));
+        this(id, player, new ItemStackHandler(ReactorRules.SLOT_COUNT), ContainerLevelAccess.NULL, new SimpleContainerData(DATA_COUNT));
     }
 
     ReactorMenu(int id, Inventory player, ItemStackHandler inventory, ContainerLevelAccess access,
-                IntSupplier width, IntSupplier heat, IntSupplier output) {
+                IntSupplier width, IntSupplier heat, IntSupplier output, IntSupplier maxHeat) {
         this(id, player, inventory, access, new ContainerData() {
             @Override
             public int get(int index) {
                 return switch (index) {
                     case 0 -> width.getAsInt();
-                    case 1 -> heat.getAsInt();
-                    case 2 -> output.getAsInt();
+                    case 1, 2 -> dataWord(heat.getAsInt(), index - 1);
+                    case 3, 4 -> dataWord(output.getAsInt(), index - 3);
+                    case 5, 6 -> dataWord(maxHeat.getAsInt(), index - 5);
                     default -> 0;
                 };
             }
@@ -38,7 +40,7 @@ final class ReactorMenu extends AbstractContainerMenu {
 
             @Override
             public int getCount() {
-                return 3;
+                return DATA_COUNT;
             }
         });
     }
@@ -79,11 +81,24 @@ final class ReactorMenu extends AbstractContainerMenu {
     }
 
     int heat() {
-        return data.get(1);
+        return dataInt(1);
     }
 
     int output() {
-        return data.get(2);
+        return dataInt(3);
+    }
+
+    int maxHeat() {
+        return Math.max(ReactorRules.MAX_HEAT, dataInt(5));
+    }
+
+    // Vanilla menu packets send signed 16-bit values.
+    private static int dataWord(int value, int word) {
+        return (short) (value >>> (16 * word));
+    }
+
+    private int dataInt(int index) {
+        return (data.get(index) & 0xffff) | (data.get(index + 1) << 16);
     }
 
     @Override

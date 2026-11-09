@@ -3,6 +3,7 @@ package ic2.core;
 import com.mojang.serialization.Codec;
 import ic2.core.item.FluidCellItem;
 import ic2.core.item.RechargeableItem;
+import ic2.core.item.ReactorReflectorItem;
 import ic2.core.item.ScrapBoxItem;
 import ic2.core.item.UraniumFuelRod;
 import ic2.core.machine.Machines;
@@ -61,10 +62,10 @@ public final class IC2 {
     public static final DeferredItem<UraniumFuelRod> QUAD_URANIUM_ROD =
         ITEMS.registerItem("uranium_rod_quad", properties -> new UraniumFuelRod(properties, 4));
     public static final DeferredItem<Item> DEPLETED_URANIUM_ROD = ITEMS.registerSimpleItem("uranium_rod_near_depleted");
-    public static final DeferredItem<Item> NEUTRON_REFLECTOR = ITEMS.registerSimpleItem("reflector",
-        new Item.Properties().durability(10_000).setNoRepair());
-    public static final DeferredItem<Item> THICK_NEUTRON_REFLECTOR = ITEMS.registerSimpleItem("reflector_thick",
-        new Item.Properties().durability(40_000).setNoRepair());
+    public static final DeferredItem<ReactorReflectorItem> NEUTRON_REFLECTOR = ITEMS.registerItem("reflector",
+        properties -> new ReactorReflectorItem(properties, 10_000, false));
+    public static final DeferredItem<ReactorReflectorItem> THICK_NEUTRON_REFLECTOR = ITEMS.registerItem("reflector_thick",
+        properties -> new ReactorReflectorItem(properties, 40_000, false));
     static final ReactorComponents REACTOR_COMPONENTS = new ReactorComponents(ITEMS);
     public static final DeferredItem<Item> TIN_INGOT = ITEMS.registerSimpleItem("ingot_tin");
     public static final DeferredItem<Item> TIN_DUST = ITEMS.registerSimpleItem("dust_tin");

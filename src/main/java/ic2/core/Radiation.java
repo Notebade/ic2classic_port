@@ -34,11 +34,11 @@ public final class Radiation {
         NeoForge.EVENT_BUS.addListener(Radiation::preventProtectedDamage);
     }
 
-    public static void exposeNearReactor(Level level, BlockPos pos) {
+    public static void exposeNearReactor(Level level, BlockPos pos, float containment) {
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(REACTOR_RADIUS))) {
             int damage = level.getRandom().nextInt(4);
             if (damage > 0) {
-                hurt(entity, damage);
+                hurt(entity, damage * containment);
             }
         }
     }
@@ -60,7 +60,7 @@ public final class Radiation {
         }
     }
 
-    private static void hurt(LivingEntity entity, int damage) {
+    private static void hurt(LivingEntity entity, float damage) {
         entity.hurt(entity.damageSources().source(DAMAGE_TYPE), damage);
     }
 

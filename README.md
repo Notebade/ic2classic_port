@@ -102,6 +102,8 @@ Reactor and overclocked heat vents draw heat from the hull. Advanced vents dissi
 
 Heat exchangers redistribute heat between the hull and adjacent components. Heat balancers target components at or below 25% heat or at or above 75% heat. Component Heat Vents remove four heat from each adjacent heat-storing component per cycle. RSH and LZH Condensators absorb heat until saturated and can be restored with redstone or, for LZH, lapis lazuli.
 
+Reactor Plating raises the hull's heat limit by 1,000, 2,000, or 500 depending on the type and reduces radiation and blast damage. The Iridium Neutron Reflector stops reflecting at 320,000 wear and can be repaired with four piles of coal or charcoal dust in separate crafting slots. Iridium ore is made from seven UU-Matter.
+
 Steam reactors and other advanced reactor components still need porting.
 
 ### Thermal Generator

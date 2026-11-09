@@ -4,6 +4,7 @@ import ic2.core.IC2;
 import ic2.core.Radiation;
 import ic2.core.item.FluidCellItem;
 import ic2.core.item.RechargeableItem;
+import ic2.core.item.ReactorReflectorItem;
 import ic2.core.item.UraniumFuelRod;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +79,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int thermalHeat = -1;
     private int thermalRemainder;
     private int reactorHeat;
+    private int reactorMaxHeat = ReactorRules.MAX_HEAT;
     private int reactorOutput;
     private int progress;
     private int amplifier;
@@ -256,16 +258,19 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         if (level.getGameTime() % ReactorRules.CYCLE_TICKS == 0) {
             int width = ReactorRules.BASE_COLUMNS + chambers.size();
             ejectClosedReactorSlots(width);
-            var cycle = new ReactorGrid(inventory).run(width, reactorHeat, powered, level.getRandom());
+            var grid = new ReactorGrid(inventory);
+            var hull = grid.hull(width);
+            reactorMaxHeat = hull.capacity();
+            var cycle = grid.run(width, reactorHeat, reactorMaxHeat, powered, level.getRandom());
             reactorOutput = cycle.output();
             reactorHeat = cycle.heat();
             setChanged();
-            if (reactorHeat >= ReactorRules.MAX_HEAT) {
-                meltReactor();
+            if (reactorHeat >= reactorMaxHeat) {
+                meltReactor(hull.containment());
                 return;
             }
-            if (reactorHeat >= ReactorRules.RADIATION_HEAT) {
-                Radiation.exposeNearReactor(level, worldPosition);
+            if (reactorHeat >= reactorMaxHeat * 7 / 10) {
+                Radiation.exposeNearReactor(level, worldPosition, hull.containment());
             }
             setActive(reactorHeat >= 1000 || reactorOutput > 0);
         }
@@ -305,16 +310,17 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-    private void meltReactor() {
+    private void meltReactor(float containment) {
         float power = 10;
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
             ItemStack stack = inventory.getStackInSlot(slot);
-            power += ReactorGrid.isReflector(stack) ? -1 : 2 * UraniumFuelRod.cellsIn(stack);
+            power += stack.getItem() instanceof ReactorReflectorItem ? -1 : 2 * UraniumFuelRod.cellsIn(stack);
             inventory.setStackInSlot(slot, ItemStack.EMPTY);
         }
         Vec3 origin = Vec3.atCenterOf(worldPosition);
         level.removeBlock(worldPosition, false);
-        level.explode(null, origin.x, origin.y, origin.z, Math.clamp(power, 0, 45), Level.ExplosionInteraction.BLOCK);
+        level.explode(null, origin.x, origin.y, origin.z, Math.clamp(power * containment * containment, 0, 45),
+            Level.ExplosionInteraction.BLOCK);
         Radiation.exposeToFallout(level, origin);
     }
 
@@ -1032,7 +1038,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         if (kind == MachineKind.NUCLEAR_REACTOR) {
             return new ReactorMenu(id, playerInventory, inventory,
                 ContainerLevelAccess.create(level, worldPosition), () -> ReactorRules.BASE_COLUMNS + reactorChambers().size(),
-                () -> reactorHeat, () -> reactorOutput);
+                () -> reactorHeat, () -> reactorOutput, () -> reactorMaxHeat);
         }
         return new MachineMenu(id, playerInventory, inventory, ContainerLevelAccess.create(level, worldPosition),
             getBlockState().getBlock(), () -> energy,
@@ -1151,7 +1157,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         if (kind == MachineKind.GENERATOR) {
             burnTicks = Math.max(0, tag.getInt("burn_ticks"));
         } else if (kind == MachineKind.NUCLEAR_REACTOR) {
-            reactorHeat = Mth.clamp(tag.getInt("reactor_heat"), 0, ReactorRules.MAX_HEAT);
+            reactorHeat = Math.max(0, tag.getInt("reactor_heat"));
         } else if (kind == MachineKind.GEOTHERMAL || kind == MachineKind.THERMAL_GENERATOR) {
             fuelTank.setFluid(new FluidStack(Fluids.LAVA,
                 Mth.clamp(tag.getInt("lava"), 0, fuelTank.getCapacity())));

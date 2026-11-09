@@ -2,6 +2,8 @@ package ic2.core.machine;
 
 import ic2.core.IC2;
 import ic2.core.item.ReactorHeatItem;
+import ic2.core.item.ReactorPlatingItem;
+import ic2.core.item.ReactorReflectorItem;
 import ic2.core.item.UraniumFuelRod;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +22,29 @@ final class ReactorGrid {
 
     static boolean accepts(ItemStack stack) {
         return UraniumFuelRod.cellsIn(stack) > 0 || stack.getItem() instanceof ReactorHeatItem
-            || stack.getItem() instanceof ReactorHeatItem.Spreader || isReflector(stack);
+            || stack.getItem() instanceof ReactorHeatItem.Spreader || stack.getItem() instanceof ReactorReflectorItem
+            || stack.getItem() instanceof ReactorPlatingItem;
     }
 
-    static boolean isReflector(ItemStack stack) {
-        return stack.is(IC2.NEUTRON_REFLECTOR.get()) || stack.is(IC2.THICK_NEUTRON_REFLECTOR.get());
+    private static boolean reflects(ItemStack stack) {
+        return stack.getItem() instanceof ReactorReflectorItem reflector && reflector.reflects(stack);
     }
 
-    Cycle run(int width, int hullHeat, boolean powered, RandomSource random) {
-        CoolingPass cooling = runHeatPass(width, hullHeat, powered);
-        int heat = finishHeatTransfer(width, cooling.hullHeat());
+    Hull hull(int width) {
+        int capacity = ReactorRules.MAX_HEAT;
+        float containment = 1;
+        for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
+            if (slot % ReactorRules.COLUMNS < width && inventory.getStackInSlot(slot).getItem() instanceof ReactorPlatingItem plating) {
+                capacity += plating.additionalHeat();
+                containment *= plating.containment();
+            }
+        }
+        return new Hull(capacity, containment);
+    }
+
+    Cycle run(int width, int hullHeat, int hullCapacity, boolean powered, RandomSource random) {
+        CoolingPass cooling = runHeatPass(width, hullHeat, hullCapacity, powered);
+        int heat = finishHeatTransfer(width, cooling.hullHeat(), hullCapacity);
         if (!powered) {
             return new Cycle(0, heat);
         }
@@ -40,7 +55,7 @@ final class ReactorGrid {
         return new Cycle(netOutput, heat);
     }
 
-    private CoolingPass runHeatPass(int width, int heat, boolean powered) {
+    private CoolingPass runHeatPass(int width, int heat, int hullCapacity, boolean powered) {
         int costTenths = 0;
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
             if (slot % ReactorRules.COLUMNS >= width) {
@@ -57,7 +72,7 @@ final class ReactorGrid {
                 continue;
             }
             if (stack.getItem() instanceof ReactorHeatItem.Exchanger exchanger) {
-                heat = heatTransfer.exchange(slot, width, stack, exchanger, heat);
+                heat = heatTransfer.exchange(slot, width, stack, exchanger, heat, hullCapacity);
             } else if (stack.getItem() instanceof ReactorHeatItem.Spreader) {
                 heatTransfer.coolNeighbors(slot, width);
             }
@@ -69,11 +84,11 @@ final class ReactorGrid {
         return new CoolingPass(heat, costTenths);
     }
 
-    private int finishHeatTransfer(int width, int heat) {
+    private int finishHeatTransfer(int width, int heat, int hullCapacity) {
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
             ItemStack stack = inventory.getStackInSlot(slot);
             if (slot % ReactorRules.COLUMNS < width && stack.getItem() instanceof ReactorHeatItem.Exchanger exchanger) {
-                heat = heatTransfer.exchange(slot, width, stack, exchanger, heat);
+                heat = heatTransfer.exchange(slot, width, stack, exchanger, heat, hullCapacity);
             }
         }
         return heat;
@@ -87,7 +102,7 @@ final class ReactorGrid {
                 continue;
             }
             ItemStack adjacent = inventory.getStackInSlot(neighbor);
-            if (UraniumFuelRod.cellsIn(adjacent) > 0 || isReflector(adjacent)) {
+            if (UraniumFuelRod.cellsIn(adjacent) > 0 || reflects(adjacent)) {
                 pulseNeighbors++;
             } else if (ReactorHeatTransfer.canStore(adjacent)) {
                 vents.add(neighbor);
@@ -122,15 +137,18 @@ final class ReactorGrid {
             ItemStack adjacent = inventory.getStackInSlot(neighbor);
             if (UraniumFuelRod.cellsIn(adjacent) > 0) {
                 neighboringRods++;
-            } else if (isReflector(adjacent)) {
-                reflectedPulses += reflect(neighbor, adjacent, cells);
+            } else if (adjacent.getItem() instanceof ReactorReflectorItem reflector && reflector.reflects(adjacent)) {
+                reflectedPulses += reflect(neighbor, adjacent, reflector, cells);
             }
         }
         return ReactorRules.energy(cells, neighboringRods) + reflectedPulses * ReactorRules.EU_PER_PULSE;
     }
 
-    private int reflect(int slot, ItemStack reflector, int pulses) {
+    private int reflect(int slot, ItemStack reflector, ReactorReflectorItem item, int pulses) {
         int durabilityLeft = reflector.getMaxDamage() - reflector.getDamageValue();
+        if (item.repairable()) {
+            pulses = Math.min(pulses, durabilityLeft);
+        }
         if (pulses > durabilityLeft) {
             inventory.setStackInSlot(slot, ItemStack.EMPTY);
             return durabilityLeft + 1;
@@ -171,6 +189,8 @@ final class ReactorGrid {
     }
 
     record Cycle(int output, int heat) {}
+
+    record Hull(int capacity, float containment) {}
 
     private record CoolingPass(int hullHeat, int costTenths) {}
 }

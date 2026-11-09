@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IAI",
+    "ADA",
+    "IAI"
+  ],
+  "key": {
+    "I": {
+      "item": "ic2:ore_iridium"
+    },
+    "A": {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    "D": {
+      "tag": "c:gems/diamond"
+    }
+  },
+  "result": {
+    "id": "ic2:plate_iridium"
+  }
+}

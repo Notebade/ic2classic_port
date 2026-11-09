@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RMR",
+    "MIM",
+    "RMR"
+  ],
+  "key": {
+    "R": {
+      "item": "ic2:reflector_thick"
+    },
+    "M": {
+      "item": "ic2:magnet"
+    },
+    "I": {
+      "item": "ic2:plate_iridium"
+    }
+  },
+  "result": {
+    "id": "ic2:reflector_iridium"
+  }
+}

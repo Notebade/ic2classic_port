@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ic2:plating"
+    },
+    {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    {
+      "item": "ic2:plate_advanced_alloy"
+    }
+  ],
+  "result": {
+    "id": "ic2:plating_containment"
+  }
+}

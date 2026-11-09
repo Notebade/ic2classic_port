@@ -46,12 +46,12 @@ final class ReactorHeatTransfer {
         }
     }
 
-    int exchange(int slot, int width, ItemStack stack, ReactorHeatItem.Exchanger exchanger, int hullHeat) {
+    int exchange(int slot, int width, ItemStack stack, ReactorHeatItem.Exchanger exchanger, int hullHeat, int hullCapacity) {
         List<Neighbor> neighbors = exchanger.componentTransfer() == 0 ? List.of() : heatNeighbors(slot, width);
         if (!exchanger.selective()) {
-            return apply(slot, stack, exchanger, neighbors, hullHeat, Band.ALL);
+            return apply(slot, stack, exchanger, neighbors, hullHeat, hullCapacity, Band.ALL);
         }
-        return apply(slot, stack, exchanger, neighbors, hullHeat, Band.COLD, Band.HOT);
+        return apply(slot, stack, exchanger, neighbors, hullHeat, hullCapacity, Band.COLD, Band.HOT);
     }
 
     private List<Neighbor> heatNeighbors(int slot, int width) {
@@ -68,11 +68,11 @@ final class ReactorHeatTransfer {
     }
 
     private int apply(int slot, ItemStack stack, ReactorHeatItem.Exchanger exchanger, List<Neighbor> neighbors,
-                      int hullHeat, Band... bands) {
+                      int hullHeat, int hullCapacity, Band... bands) {
         int stored = stack.getDamageValue();
         int delta = 0;
         for (Band band : bands) {
-            Transfer transfer = balance(exchanger, neighbors, (double) stored / stack.getMaxDamage(), hullHeat, band);
+            Transfer transfer = balance(exchanger, neighbors, (double) stored / stack.getMaxDamage(), hullHeat, hullCapacity, band);
             hullHeat += transfer.hull();
             delta += transfer.component();
         }
@@ -81,13 +81,13 @@ final class ReactorHeatTransfer {
     }
 
     private Transfer balance(ReactorHeatItem.Exchanger exchanger, List<Neighbor> neighbors, double ratio,
-                             int hullHeat, Band band) {
+                             int hullHeat, int hullCapacity, Band band) {
         var targets = neighbors.stream().filter(neighbor -> band.includes(neighbor.ratio())).toList();
-        double hullRatio = (double) hullHeat / ReactorRules.MAX_HEAT;
+        double hullRatio = (double) hullHeat / hullCapacity;
         boolean includeHull = exchanger.hullTransfer() > 0 && band.includes(hullRatio);
         double sum = ratio + targets.stream().mapToDouble(Neighbor::ratio).sum();
         double average = (sum + (includeHull ? hullRatio : 0)) / (targets.size() + (includeHull ? 2 : 1));
-        int hullDelta = includeHull ? toward(average, ReactorRules.MAX_HEAT, hullHeat, exchanger.hullTransfer()) : 0;
+        int hullDelta = includeHull ? toward(average, hullCapacity, hullHeat, exchanger.hullTransfer()) : 0;
         int componentDelta = -hullDelta;
         for (Neighbor target : targets) {
             ItemStack stack = target.stack();

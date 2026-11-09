@@ -27,7 +27,7 @@ final class ReactorScreen extends AbstractContainerScreen<ReactorMenu> {
             int y = topPos + slot.y - 1;
             graphics.fill(x, y, x + 18, y + 18, slot.isActive() ? 0xFF8B8B8B : 0xFFAAAAAA);
         }
-        int heatBar = menu.heat() * 160 / ReactorRules.MAX_HEAT;
+        int heatBar = (int) (Math.min(1.0, (double) menu.heat() / menu.maxHeat()) * 160);
         graphics.fill(leftPos + 8, topPos + 30, leftPos + 168, topPos + 34, 0xFF333333);
         graphics.fill(leftPos + 8, topPos + 30, leftPos + 8 + heatBar, topPos + 34, 0xFFC34432);
     }
@@ -36,6 +36,6 @@ final class ReactorScreen extends AbstractContainerScreen<ReactorMenu> {
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
         graphics.drawString(font, Component.translatable("gui.ic2.reactor_status", menu.output(), menu.heat(),
-            ReactorRules.MAX_HEAT), 8, 19, 0x404040, false);
+            menu.maxHeat()), 8, 19, 0x404040, false);
     }
 }

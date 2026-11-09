@@ -1,0 +1,11 @@
+{
+  "type": "ic2:reactor_component_repair",
+  "component": {
+    "item": "ic2:reflector_iridium"
+  },
+  "material": {
+    "item": "ic2:dust_coal"
+  },
+  "material_count": 4,
+  "repair": 10000
+}

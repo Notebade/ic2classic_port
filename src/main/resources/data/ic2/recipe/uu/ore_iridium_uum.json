@@ -1,0 +1,12 @@
+{
+  "type": "ic2:uu_matter",
+  "pattern": [
+    "MMM",
+    " M ",
+    "MMM"
+  ],
+  "result": {
+    "id": "ic2:ore_iridium",
+    "count": 1
+  }
+}

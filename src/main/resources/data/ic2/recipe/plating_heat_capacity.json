@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ic2:plating"
+    },
+    {
+      "item": "ic2:plate_dense_copper"
+    },
+    {
+      "item": "ic2:plate_dense_copper"
+    }
+  ],
+  "result": {
+    "id": "ic2:plating_heat_capacity"
+  }
+}

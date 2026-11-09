@@ -16,10 +16,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
-public record ReactorComponentRepair(Ingredient component, Ingredient material, int repair) implements CraftingRecipe {
+public record ReactorComponentRepair(Ingredient component, Ingredient material, int materialCount, int repair) implements CraftingRecipe {
     private static final MapCodec<ReactorComponentRepair> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
         Ingredient.CODEC_NONEMPTY.fieldOf("component").forGetter(ReactorComponentRepair::component),
         Ingredient.CODEC_NONEMPTY.fieldOf("material").forGetter(ReactorComponentRepair::material),
+        Codec.intRange(1, 8).optionalFieldOf("material_count", 1).forGetter(ReactorComponentRepair::materialCount),
         Codec.intRange(1, Integer.MAX_VALUE).fieldOf("repair").forGetter(ReactorComponentRepair::repair)
     ).apply(instance, ReactorComponentRepair::new));
 
@@ -41,19 +42,19 @@ public record ReactorComponentRepair(Ingredient component, Ingredient material, 
     }
 
     private ItemStack damagedComponent(CraftingInput input) {
-        if (input.ingredientCount() != 2) {
+        if (input.ingredientCount() != materialCount + 1) {
             return ItemStack.EMPTY;
         }
         ItemStack damaged = ItemStack.EMPTY;
-        boolean hasMaterial = false;
+        int materials = 0;
         for (ItemStack stack : input.items()) {
             if (stack.isDamaged() && component.test(stack)) {
                 damaged = stack;
             } else if (material.test(stack)) {
-                hasMaterial = true;
+                materials++;
             }
         }
-        return hasMaterial ? damaged : ItemStack.EMPTY;
+        return materials == materialCount ? damaged : ItemStack.EMPTY;
     }
 
     @Override
@@ -72,7 +73,7 @@ public record ReactorComponentRepair(Ingredient component, Ingredient material, 
 
     @Override
     public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= 2;
+        return width * height >= materialCount + 1;
     }
 
     @Override

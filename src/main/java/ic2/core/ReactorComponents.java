@@ -1,6 +1,8 @@
 package ic2.core;
 
 import ic2.core.item.ReactorHeatItem;
+import ic2.core.item.ReactorPlatingItem;
+import ic2.core.item.ReactorReflectorItem;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.item.Item;
@@ -34,6 +36,12 @@ final class ReactorComponents {
         items.add(registry.registerItem("heat_spreader", ReactorHeatItem.Spreader::new));
         items.add(registry.registerItem("condensator", properties -> new ReactorHeatItem.Condensator(properties, 20_000)));
         items.add(registry.registerItem("condensator_lap", properties -> new ReactorHeatItem.Condensator(properties, 100_000)));
+        items.add(registry.registerItem("plating", properties -> new ReactorPlatingItem(properties, 1_000, 0.95F)));
+        items.add(registry.registerItem("plating_heat_capacity", properties -> new ReactorPlatingItem(properties, 2_000, 0.99F)));
+        items.add(registry.registerItem("plating_containment", properties -> new ReactorPlatingItem(properties, 500, 0.90F)));
+        items.add(registry.registerSimpleItem("ore_iridium"));
+        items.add(registry.registerSimpleItem("plate_iridium"));
+        items.add(registry.registerItem("reflector_iridium", properties -> new ReactorReflectorItem(properties, 320_000, true)));
     }
 
     private void registerVent(DeferredRegister.Items registry, String name, int selfCooling, int hullCooling, boolean electric) {
