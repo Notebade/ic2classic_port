@@ -90,6 +90,8 @@ Launch the development client:
 
 Apply a redstone signal to the reactor or one of its chambers. A single uranium rod generates 20 EU/t and adds four units of heat per cycle. Adjacent rods increase both output and heat. Place a heat vent next to a rod to absorb heat and dissipate up to six units per cycle. Each reactor chamber adds one column to the core grid and can transmit EU. The core explodes at 10,000 heat.
 
+At 7,000 heat, the reactor irradiates nearby living entities. A meltdown causes radiation poisoning within 30 blocks. A complete four-piece hazmat suit blocks radiation damage. Uranium ore generates in new Overworld chunks.
+
 This implementation covers standard single rods and basic heat vents. Steam reactors and advanced reactor components still need porting.
 
 ### Thermal Generator

@@ -17,8 +17,14 @@ $textureNames = foreach ($file in (Get-ChildItem -LiteralPath $models -Recurse -
         }
     }
 }
-$textureNames = @($textureNames | Sort-Object -Unique)
-if ($textureNames.Count -eq 0) { throw 'No original texture references found in the port models.' }
+if (!$textureNames) { throw 'No original texture references found in the port models.' }
+
+$runtimeTextures = @{
+    'assets/ic2/textures/models/armor/hazmat_1.png' = 'assets/ic2/textures/models/armor/hazmat_layer_1.png'
+    'assets/ic2/textures/models/armor/hazmat_2.png' = 'assets/ic2/textures/models/armor/hazmat_layer_2.png'
+    'assets/ic2/textures/mob_effect/radiation.png' = 'assets/ic2/textures/mob_effect/radiation.png'
+}
+$textureNames = @((@($textureNames) + @($runtimeTextures.Keys)) | Sort-Object -Unique)
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [IO.Compression.ZipFile]::OpenRead($jarPath)
@@ -29,7 +35,8 @@ try {
         $entry
     }
     foreach ($entry in $entries) {
-        $path = Join-Path $resources $entry.FullName
+        $destination = if ($runtimeTextures.ContainsKey($entry.FullName)) { $runtimeTextures[$entry.FullName] } else { $entry.FullName }
+        $path = Join-Path $resources $destination
         New-Item -ItemType Directory -Path (Split-Path -Parent $path) -Force | Out-Null
         [IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $path, $true)
     }

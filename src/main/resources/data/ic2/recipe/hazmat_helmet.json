@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " O ",
+    "RGR",
+    "RBR"
+  ],
+  "key": {
+    "R": {
+      "item": "ic2:rubber"
+    },
+    "O": {
+      "item": "minecraft:orange_dye"
+    },
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "B": {
+      "item": "minecraft:iron_bars"
+    }
+  },
+  "result": {
+    "id": "ic2:armor_hazmat_helmet"
+  }
+}

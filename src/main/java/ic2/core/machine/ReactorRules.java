@@ -6,6 +6,7 @@ final class ReactorRules {
     static final int BASE_COLUMNS = 3;
     static final int SLOT_COUNT = ROWS * COLUMNS;
     static final int MAX_HEAT = 10_000;
+    static final int RADIATION_HEAT = MAX_HEAT * 7 / 10;
     static final int CYCLE_TICKS = 20;
     static final int VENT_COOLING = 6;
 

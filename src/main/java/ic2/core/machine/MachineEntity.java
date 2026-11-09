@@ -1,6 +1,7 @@
 package ic2.core.machine;
 
 import ic2.core.IC2;
+import ic2.core.Radiation;
 import ic2.core.item.FluidCellItem;
 import ic2.core.item.RechargeableItem;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -261,6 +263,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 meltReactor();
                 return;
             }
+            if (reactorHeat >= ReactorRules.RADIATION_HEAT) {
+                Radiation.exposeNearReactor(level, worldPosition);
+            }
             setActive(reactorHeat >= 1000 || reactorOutput > 0);
         }
         if (reactorOutput > 0) {
@@ -307,9 +312,10 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             }
             inventory.setStackInSlot(slot, ItemStack.EMPTY);
         }
+        Vec3 origin = Vec3.atCenterOf(worldPosition);
         level.removeBlock(worldPosition, false);
-        level.explode(null, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
-            worldPosition.getZ() + 0.5, Math.min(power, 45), Level.ExplosionInteraction.BLOCK);
+        level.explode(null, origin.x, origin.y, origin.z, Math.min(power, 45), Level.ExplosionInteraction.BLOCK);
+        Radiation.exposeToFallout(level, origin);
     }
 
     private void tickWindTurbine() {

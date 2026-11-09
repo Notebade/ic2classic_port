@@ -91,6 +91,8 @@ public final class IC2 {
         Machines.register(modBus, ITEMS);
         Rubberwood.register(modBus, ITEMS);
         Materials.register(modBus, ITEMS);
+        Hazmat.register(modBus, ITEMS);
+        Radiation.register(modBus);
         modBus.addListener(IC2::registerCapabilities);
         modBus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(ScrapBoxItem::registerDispenser));
     }
