@@ -46,6 +46,52 @@ final class ReactorHeatTransfer {
         }
     }
 
+    void pump(int slot, int width, int pullMask) {
+        if (pullMask == 0 || pullMask == 15) {
+            return;
+        }
+        int[] adjacent = ReactorRules.neighbors(slot, width);
+        int[] directions = {adjacent[2], adjacent[3], adjacent[0], adjacent[1]};
+        var sources = new ArrayList<Integer>(4);
+        var sinks = new ArrayList<Integer>(4);
+        int available = 0;
+        for (int direction = 0; direction < directions.length; direction++) {
+            int neighbor = directions[direction];
+            if (neighbor < 0 || !canStore(inventory.getStackInSlot(neighbor))) {
+                continue;
+            }
+            if ((pullMask & (1 << direction)) == 0) {
+                sinks.add(neighbor);
+            } else {
+                int heat = storedHeat(inventory.getStackInSlot(neighbor));
+                if (heat > 0) {
+                    sources.add(neighbor);
+                    available += Math.min(72, heat);
+                }
+            }
+        }
+        int moved = distributeHeat(sinks, available);
+        for (int sourceSlot : sources) {
+            if (moved == 0) {
+                break;
+            }
+            ItemStack source = inventory.getStackInSlot(sourceSlot);
+            int drained = Math.min(moved, Math.min(72, storedHeat(source)));
+            source.setDamageValue(source.getDamageValue() - drained);
+            moved -= drained;
+        }
+    }
+
+    private int distributeHeat(List<Integer> sinks, int available) {
+        int transferred = 0;
+        for (int index = 0; index < sinks.size(); index++) {
+            int slot = sinks.get(index);
+            int share = (available - transferred) / (sinks.size() - index);
+            transferred += share - store(slot, inventory.getStackInSlot(slot), share);
+        }
+        return transferred;
+    }
+
     int exchange(int slot, int width, ItemStack stack, ReactorHeatItem.Exchanger exchanger, int hullHeat, int hullCapacity) {
         List<Neighbor> neighbors = exchanger.componentTransfer() == 0 ? List.of() : heatNeighbors(slot, width);
         if (!exchanger.selective()) {

@@ -1,7 +1,7 @@
 package ic2.core;
 
 import ic2.core.item.UraniumFuelRod;
-import ic2.core.item.UraniumIsotopicRod;
+import ic2.core.item.ReactorPulseCell;
 import ic2.core.item.UraniumType;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -36,7 +36,7 @@ public final class EnrichedUranium {
         items.add(depleted);
         items.add(recovered);
         items.add(registry.registerItem("uranium_rod_isotopic_" + family,
-            properties -> new UraniumIsotopicRod(properties, type.durability(), recovered)));
+            properties -> new ReactorPulseCell(properties, type.durability(), recovered)));
         registerRod(registry, type, depleted, "single", 1);
         registerRod(registry, type, depleted, "dual", 2);
         registerRod(registry, type, depleted, "quad", 4);

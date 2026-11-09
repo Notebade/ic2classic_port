@@ -61,6 +61,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.WIND_TURBINE_MENU.get());
     }
 
+    static MachineMenu steamTurbine(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.STEAM_TURBINE_MENU.get());
+    }
+
     static MachineMenu waterMill(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.WATER_MILL_MENU.get());
     }
@@ -104,6 +108,9 @@ final class MachineMenu extends AbstractContainerMenu {
     }
 
     private static int slotCount(MenuType<MachineMenu> type) {
+        if (type == Machines.STEAM_TURBINE_MENU.get()) {
+            return 0;
+        }
         if (type == Machines.WIND_TURBINE_MENU.get()) {
             return 1;
         }
@@ -152,7 +159,7 @@ final class MachineMenu extends AbstractContainerMenu {
             addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 24, changed);
             addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 136, changed);
             addMachineSlot(inventory, MachineEntity.SECOND_INPUT_SLOT, 80, changed);
-        } else {
+        } else if (!isSteamTurbine()) {
             addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 53, changed);
             addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 107, changed);
         }
@@ -271,6 +278,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return getType() == Machines.WIND_TURBINE_MENU.get();
     }
 
+    boolean isSteamTurbine() {
+        return getType() == Machines.STEAM_TURBINE_MENU.get();
+    }
+
     boolean isAlloySmelter() {
         return getType() == Machines.ALLOY_SMELTER_MENU.get();
     }
@@ -298,6 +309,9 @@ final class MachineMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
+        if (machineSlots == 0) {
+            return ItemStack.EMPTY;
+        }
         Slot slot = slots.get(index);
         if (!slot.hasItem()) {
             return ItemStack.EMPTY;

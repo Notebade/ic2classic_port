@@ -8,8 +8,8 @@ import net.minecraft.world.entity.player.Inventory;
 final class ReactorScreen extends AbstractContainerScreen<ReactorMenu> {
     ReactorScreen(ReactorMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
-        imageHeight = 238;
-        inventoryLabelY = 145;
+        imageHeight = menu.isSteam() ? 250 : 238;
+        inventoryLabelY = menu.isSteam() ? 157 : 145;
     }
 
     @Override
@@ -35,7 +35,11 @@ final class ReactorScreen extends AbstractContainerScreen<ReactorMenu> {
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
-        graphics.drawString(font, Component.translatable("gui.ic2.reactor_status", menu.output(), menu.heat(),
+        graphics.drawString(font, Component.translatable(menu.isSteam() ? "gui.ic2.steam_reactor_status" : "gui.ic2.reactor_status", menu.output(), menu.heat(),
             menu.maxHeat()), 8, 19, 0x404040, false);
+        if (menu.isSteam()) {
+            graphics.drawString(font, Component.translatable("gui.ic2.steam_reactor_tanks", menu.water(), menu.steam()),
+                8, 147, 0x404040, false);
+        }
     }
 }

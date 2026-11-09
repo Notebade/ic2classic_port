@@ -3,8 +3,11 @@ package ic2.core.machine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -68,6 +71,17 @@ class MachineBlock extends Block implements EntityBlock {
             return null;
         }
         return (world, pos, current, entity) -> ((MachineEntity) entity).tick();
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+            Player player, InteractionHand hand, BlockHitResult hit) {
+        if (stack.getItem() instanceof ReactorCardItem card && (kind.isReactor() || kind == MachineKind.REACTOR_PLANNER)
+                && level.getBlockEntity(pos) instanceof MachineEntity machine) {
+            card.interact(player, stack, machine);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+        return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
 
     @Override

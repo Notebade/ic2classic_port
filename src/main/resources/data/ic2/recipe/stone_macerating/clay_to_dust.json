@@ -1,0 +1,12 @@
+{
+  "type": "ic2:stone_macerating",
+  "ingredient": {
+    "item": "minecraft:clay"
+  },
+  "result": {
+    "id": "ic2:dust_clay",
+    "count": 2
+  },
+  "experience": 0.3,
+  "cookingtime": 400
+}

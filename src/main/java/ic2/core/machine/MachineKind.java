@@ -13,6 +13,9 @@ enum MachineKind {
     HV_WATER_MILL(2048, WaterMillTier.HV),
     SOLAR_PANEL(0, 0, 0),
     NUCLEAR_REACTOR(0, 0, 0),
+    STEAM_REACTOR(0, 0, 0),
+    STEAM_TURBINE(SteamTurbine.BUFFER, 0, 0),
+    REACTOR_PLANNER(100_000, 0, 0),
     URANIUM_ENRICHER(100_000, 0, 0),
     CANNER(700, 1, 50),
     VACUUM_CANNER(4_500, 15, 1_200),
@@ -73,6 +76,10 @@ enum MachineKind {
 
     boolean isCanner() {
         return this == CANNER || this == VACUUM_CANNER;
+    }
+
+    boolean isReactor() {
+        return this == NUCLEAR_REACTOR || this == STEAM_REACTOR;
     }
 
     int cookingTicks(int vanillaTicks) {

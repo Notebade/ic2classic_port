@@ -5,7 +5,7 @@ import ic2.core.item.ReactorHeatItem;
 import ic2.core.item.ReactorPlatingItem;
 import ic2.core.item.ReactorReflectorItem;
 import ic2.core.item.UraniumFuelRod;
-import ic2.core.item.UraniumIsotopicRod;
+import ic2.core.item.ReactorPulseCell;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.util.RandomSource;
@@ -15,17 +15,26 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 final class ReactorGrid {
     private final ItemStackHandler inventory;
     private final ReactorHeatTransfer heatTransfer;
+    private final SteamReactorTanks steam;
 
-    ReactorGrid(ItemStackHandler inventory) {
+    ReactorGrid(ItemStackHandler inventory, SteamReactorTanks steam) {
         this.inventory = inventory;
+        this.steam = steam;
         heatTransfer = new ReactorHeatTransfer(inventory);
     }
 
-    static boolean accepts(ItemStack stack) {
+    static boolean accepts(ItemStack stack, boolean steam) {
+        if (stack.getItem() instanceof ReactorHeatItem.SteamVent) {
+            return steam;
+        }
+        if (stack.getItem() instanceof ReactorHeatItem.Vent vent && vent.electric()) {
+            return !steam;
+        }
         return UraniumFuelRod.cellsIn(stack) > 0 || stack.getItem() instanceof ReactorHeatItem
             || stack.getItem() instanceof ReactorHeatItem.Spreader || stack.getItem() instanceof ReactorReflectorItem
-            || stack.getItem() instanceof ReactorPlatingItem || stack.getItem() instanceof UraniumIsotopicRod
-            || stack.is(IC2.HEAT_PACK.get());
+            || stack.getItem() instanceof ReactorPlatingItem || stack.getItem() instanceof ReactorPulseCell
+            || stack.getItem() instanceof HeatPumpItem
+            || !steam && stack.is(IC2.HEAT_PACK.get());
     }
 
     private static boolean reflects(ItemStack stack) {
@@ -44,24 +53,33 @@ final class ReactorGrid {
         return new Hull(capacity, containment);
     }
 
-    Cycle run(int width, int hullHeat, int hullCapacity, boolean powered, RandomSource random) {
-        CoolingPass cooling = runHeatPass(width, hullHeat, hullCapacity, powered);
+    Cycle run(int width, int hullHeat, int hullCapacity, boolean powered, boolean damageTick, boolean passiveCooling, RandomSource random) {
+        CoolingPass cooling = runHeatPass(width, hullHeat, hullCapacity, powered, passiveCooling);
         // Reflectors still affect heat in the cycle when an energy pulse breaks them.
-        Cycle cycle = runEnergyPass(width, cooling.hullHeat(), hullCapacity, powered);
-        if (powered) {
+        Cycle cycle = runEnergyPass(width, cooling.hullHeat(), hullCapacity, powered && damageTick);
+        if (powered && damageTick) {
             ageFuel(width, random);
         }
-        int netOutput = Math.max(0, (cycle.output() * 10 - cooling.costTenths()) / 10);
+        int netOutput = steam == null ? Math.max(0, (cycle.output() * 10 - cooling.costTenths()) / 10) : cooling.steamOutput();
         return new Cycle(netOutput, cycle.heat());
     }
 
-    private CoolingPass runHeatPass(int width, int heat, int hullCapacity, boolean powered) {
+    private CoolingPass runHeatPass(int width, int heat, int hullCapacity, boolean powered, boolean passiveCooling) {
         int costTenths = 0;
+        int steamOutput = 0;
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
             if (slot % ReactorRules.COLUMNS >= width) {
                 continue;
             }
             ItemStack stack = inventory.getStackInSlot(slot);
+            if (steam != null && stack.getItem() instanceof ReactorHeatItem.SteamVent vent) {
+                int drained = Math.min(heat, vent.hullCooling());
+                if (heatTransfer.store(slot, stack, drained) == 0) {
+                    heat -= drained;
+                    steamOutput += SteamVentCycle.boil(steam, stack, vent, passiveCooling);
+                }
+                continue;
+            }
             if (stack.getItem() instanceof ReactorHeatItem.Vent vent) {
                 int drained = Math.min(heat, vent.hullCooling(powered));
                 if (heatTransfer.store(slot, stack, drained) == 0) {
@@ -81,12 +99,15 @@ final class ReactorGrid {
                 }
             }
         }
-        return new CoolingPass(heat, costTenths);
+        return new CoolingPass(heat, costTenths, steamOutput);
     }
 
     private int processThermalComponent(int slot, int width, ItemStack stack, int heat, int hullCapacity) {
         if (stack.getItem() instanceof ReactorHeatItem.Exchanger exchanger) {
             return heatTransfer.exchange(slot, width, stack, exchanger, heat, hullCapacity);
+        }
+        if (stack.getItem() instanceof HeatPumpItem) {
+            heatTransfer.pump(slot, width, HeatPumpItem.directions(stack));
         }
         if (stack.is(IC2.HEAT_PACK.get()) && heat < 1_000 * stack.getCount()) {
             return heat + stack.getCount();
@@ -104,8 +125,8 @@ final class ReactorGrid {
             ItemStack adjacent = inventory.getStackInSlot(neighbor);
             if (UraniumFuelRod.cellsIn(adjacent) > 0 || reflects(adjacent)) {
                 acceptedPulses += pulses;
-            } else if (adjacent.getItem() instanceof UraniumIsotopicRod isotope) {
-                acceptedPulses += breed(neighbor, adjacent, isotope, pulses, hullHeat);
+            } else if (adjacent.getItem() instanceof ReactorPulseCell isotope) {
+                acceptedPulses += steam == null ? breed(neighbor, adjacent, isotope, pulses, hullHeat) : pulses;
             }
         }
         var sinks = new ArrayList<Integer>(4);
@@ -125,6 +146,9 @@ final class ReactorGrid {
                 continue;
             }
             ItemStack stack = inventory.getStackInSlot(slot);
+            if (steam != null && stack.getItem() instanceof ReactorHeatItem.SteamVent vent) {
+                SteamVentCycle.refill(steam, stack, vent);
+            }
             heat = processThermalComponent(slot, width, stack, heat, hullCapacity);
             if (powered && stack.getItem() instanceof UraniumFuelRod rod) {
                 output += runRodEnergy(slot, width, rod, heat);
@@ -145,19 +169,19 @@ final class ReactorGrid {
                 output += pulses * target.type().energyPerPulse();
             } else if (adjacent.getItem() instanceof ReactorReflectorItem reflector && reflector.reflects(adjacent)) {
                 output += reflect(neighbor, adjacent, reflector, pulses) * ReactorRules.EU_PER_PULSE;
-            } else if (adjacent.getItem() instanceof UraniumIsotopicRod isotope) {
+            } else if (adjacent.getItem() instanceof ReactorPulseCell isotope) {
                 breed(neighbor, adjacent, isotope, pulses, hullHeat);
             }
         }
         return output;
     }
 
-    private int breed(int slot, ItemStack stack, UraniumIsotopicRod isotope, int pulses, int hullHeat) {
-        int progressPerPulse = 1 + hullHeat / 3_000;
+    private int breed(int slot, ItemStack stack, ReactorPulseCell isotope, int pulses, int hullHeat) {
+        int progressPerPulse = isotope.progressPerPulse(hullHeat);
         int remaining = stack.getDamageValue() - pulses * progressPerPulse;
         if (remaining <= 0) {
             int accepted = Math.max(1, Math.ceilDiv(stack.getDamageValue(), progressPerPulse));
-            inventory.setStackInSlot(slot, isotope.reEnrichedRod());
+            inventory.setStackInSlot(slot, isotope.activated());
             return accepted;
         }
         stack.setDamageValue(remaining);
@@ -206,5 +230,5 @@ final class ReactorGrid {
 
     record Hull(int capacity, float containment) {}
 
-    private record CoolingPass(int hullHeat, int costTenths) {}
+    private record CoolingPass(int hullHeat, int costTenths, int steamOutput) {}
 }

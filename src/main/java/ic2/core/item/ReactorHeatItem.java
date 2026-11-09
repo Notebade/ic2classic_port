@@ -44,6 +44,25 @@ public class ReactorHeatItem extends Item {
         }
     }
 
+    public static final class SteamVent extends ReactorHeatItem {
+        private final int selfCooling;
+        private final int hullCooling;
+
+        public SteamVent(Properties properties, int selfCooling, int hullCooling) {
+            super(properties, 1_100);
+            this.selfCooling = selfCooling;
+            this.hullCooling = hullCooling;
+        }
+
+        public int selfCooling() {
+            return selfCooling;
+        }
+
+        public int hullCooling() {
+            return hullCooling;
+        }
+    }
+
     public static final class Vent extends ReactorHeatItem {
         private final int selfCooling;
         private final int hullCooling;
@@ -66,6 +85,10 @@ public class ReactorHeatItem extends Item {
 
         public int powerCostTenths() {
             return electric ? selfCooling : 0;
+        }
+
+        public boolean electric() {
+            return electric;
         }
     }
 }

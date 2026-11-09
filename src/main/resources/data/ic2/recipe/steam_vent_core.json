@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IBI",
+    "BXB",
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:glass_blocks"
+    },
+    "B": {
+      "item": "minecraft:iron_bars"
+    },
+    "X": {
+      "item": "ic2:heat_vent_core"
+    }
+  },
+  "result": {
+    "id": "ic2:steam_vent_core"
+  }
+}

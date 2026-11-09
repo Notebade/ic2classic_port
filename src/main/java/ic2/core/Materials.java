@@ -90,6 +90,11 @@ final class Materials {
                 event.accept(IC2.RE_ENRICHED_URANIUM_ROD.get());
                 event.accept(IC2.HEAT_PACK.get());
                 event.accept(IC2.CELL_AIR.get());
+                event.accept(IC2.CELL_FUEL.get());
+                event.accept(IC2.REACTOR_FUEL_CELL.get());
+                event.accept(IC2.PREPARED_FUEL_CELL.get());
+                event.accept(IC2.CLAY_DUST.get());
+                event.accept(IC2.NETHERRACK_DUST.get());
                 IC2.ENRICHED_URANIUM.addToCreativeTab(event);
                 event.accept(IC2.NEUTRON_REFLECTOR.get());
                 event.accept(IC2.THICK_NEUTRON_REFLECTOR.get());

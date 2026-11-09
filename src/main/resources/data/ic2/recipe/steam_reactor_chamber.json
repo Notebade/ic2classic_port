@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "AGA",
+    "GCG",
+    "AGA"
+  ],
+  "key": {
+    "A": {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    "G": {
+      "item": "ic2:reinforced_glass"
+    },
+    "C": {
+      "item": "ic2:reactor_chamber"
+    }
+  },
+  "result": {
+    "id": "ic2:steam_reactor_chamber"
+  }
+}

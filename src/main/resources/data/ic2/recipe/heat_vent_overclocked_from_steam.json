@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ic2:steam_vent_overclocked"
+    }
+  ],
+  "result": {
+    "id": "ic2:heat_vent_overclocked"
+  }
+}

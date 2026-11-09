@@ -13,16 +13,24 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
 final class ReactorMenu extends AbstractContainerMenu {
-    private static final int DATA_COUNT = 7;
+    private static final int DATA_COUNT = 9;
     private final ContainerLevelAccess access;
     private final ContainerData data;
 
     ReactorMenu(int id, Inventory player) {
-        this(id, player, new ItemStackHandler(ReactorRules.SLOT_COUNT), ContainerLevelAccess.NULL, new SimpleContainerData(DATA_COUNT));
+        this(id, player, false);
+    }
+
+    static ReactorMenu steam(int id, Inventory player) {
+        return new ReactorMenu(id, player, true);
+    }
+
+    private ReactorMenu(int id, Inventory player, boolean steam) {
+        this(id, player, new ItemStackHandler(ReactorRules.SLOT_COUNT), ContainerLevelAccess.NULL, new SimpleContainerData(DATA_COUNT), steam);
     }
 
     ReactorMenu(int id, Inventory player, ItemStackHandler inventory, ContainerLevelAccess access,
-                IntSupplier width, IntSupplier heat, IntSupplier output, IntSupplier maxHeat) {
+                IntSupplier width, IntSupplier heat, IntSupplier output, IntSupplier maxHeat, SteamReactorTanks tanks) {
         this(id, player, inventory, access, new ContainerData() {
             @Override
             public int get(int index) {
@@ -31,6 +39,7 @@ final class ReactorMenu extends AbstractContainerMenu {
                     case 1, 2 -> dataWord(heat.getAsInt(), index - 1);
                     case 3, 4 -> dataWord(output.getAsInt(), index - 3);
                     case 5, 6 -> dataWord(maxHeat.getAsInt(), index - 5);
+                    case 7, 8 -> tanks == null ? 0 : tanks.getFluidInTank(index - 7).getAmount();
                     default -> 0;
                 };
             }
@@ -42,11 +51,11 @@ final class ReactorMenu extends AbstractContainerMenu {
             public int getCount() {
                 return DATA_COUNT;
             }
-        });
+        }, tanks != null);
     }
 
-    private ReactorMenu(int id, Inventory player, ItemStackHandler inventory, ContainerLevelAccess access, ContainerData data) {
-        super(Machines.NUCLEAR_REACTOR_MENU.get(), id);
+    private ReactorMenu(int id, Inventory player, ItemStackHandler inventory, ContainerLevelAccess access, ContainerData data, boolean steam) {
+        super(steam ? Machines.STEAM_REACTOR_MENU.get() : Machines.NUCLEAR_REACTOR_MENU.get(), id);
         this.access = access;
         this.data = data;
         addDataSlots(data);
@@ -61,18 +70,19 @@ final class ReactorMenu extends AbstractContainerMenu {
 
                     @Override
                     public boolean mayPlace(ItemStack stack) {
-                        return isActive() && ReactorGrid.accepts(stack) && super.mayPlace(stack);
+                        return isActive() && ReactorGrid.accepts(stack, steam) && super.mayPlace(stack);
                     }
                 });
             }
         }
+        int inventoryOffset = steam ? 12 : 0;
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-                addSlot(new Slot(player, 9 + row * 9 + column, 8 + column * 18, 156 + row * 18));
+                addSlot(new Slot(player, 9 + row * 9 + column, 8 + column * 18, 156 + inventoryOffset + row * 18));
             }
         }
         for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(player, column, 8 + column * 18, 214));
+            addSlot(new Slot(player, column, 8 + column * 18, 214 + inventoryOffset));
         }
     }
 
@@ -92,6 +102,18 @@ final class ReactorMenu extends AbstractContainerMenu {
         return Math.max(ReactorRules.MAX_HEAT, dataInt(5));
     }
 
+    boolean isSteam() {
+        return getType() == Machines.STEAM_REACTOR_MENU.get();
+    }
+
+    int water() {
+        return data.get(7);
+    }
+
+    int steam() {
+        return data.get(8);
+    }
+
     // Vanilla menu packets send signed 16-bit values.
     private static int dataWord(int value, int word) {
         return (short) (value >>> (16 * word));
@@ -103,7 +125,7 @@ final class ReactorMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return stillValid(access, player, Machines.NUCLEAR_REACTOR.get());
+        return stillValid(access, player, isSteam() ? Machines.STEAM_REACTOR.get() : Machines.NUCLEAR_REACTOR.get());
     }
 
     @Override

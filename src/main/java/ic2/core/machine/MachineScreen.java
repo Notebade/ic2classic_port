@@ -6,17 +6,29 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 
 @EventBusSubscriber(modid = IC2.MOD_ID, value = Dist.CLIENT)
 final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     MachineScreen(MachineMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
+    }
+
+    @SubscribeEvent
+    public static void registerSteamTexture(RegisterClientExtensionsEvent event) {
+        var texture = ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "block/fluids/steam_still");
+        event.registerFluidType(new IClientFluidTypeExtensions() {
+            @Override public ResourceLocation getStillTexture() { return texture; }
+            @Override public ResourceLocation getFlowingTexture() { return texture; }
+        }, SteamFluids.type());
     }
 
     @SubscribeEvent
@@ -37,6 +49,10 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
         event.register(Machines.THERMAL_GENERATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.NUCLEAR_REACTOR_MENU.get(), ReactorScreen::new);
+        event.register(Machines.STEAM_REACTOR_MENU.get(), ReactorScreen::new);
+        event.register(Machines.HEAT_PUMP_MENU.get(), HeatPumpScreen::new);
+        event.register(Machines.REACTOR_PLANNER_MENU.get(), ReactorPlannerScreen::new);
+        event.register(Machines.STEAM_TURBINE_MENU.get(), MachineScreen::new);
         event.register(Machines.WIND_TURBINE_MENU.get(), MachineScreen::new);
         event.register(Machines.WATER_MILL_MENU.get(), MachineScreen::new);
         event.register(Machines.MV_WATER_MILL_MENU.get(), MachineScreen::new);
@@ -63,6 +79,13 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
+        if (menu.isSteamTurbine()) {
+            graphics.drawString(font, Component.translatable("gui.ic2.steam_turbine_status", menu.energy(), menu.work()),
+                8, 21, 0x404040, false);
+            graphics.drawString(font, Component.translatable("gui.ic2.steam_turbine_tank", menu.fluid()),
+                8, 33, 0x404040, false);
+            return;
+        }
         if (menu.isWindTurbine()) {
             String output = String.format(Locale.ROOT, "%.2f", menu.work() / (double) WindProduction.UNITS_PER_EU);
             graphics.drawString(font, Component.translatable("gui.ic2.wind_status", output, menu.energy()),

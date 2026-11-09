@@ -6,7 +6,7 @@ import ic2.core.item.RechargeableItem;
 import ic2.core.item.ReactorReflectorItem;
 import ic2.core.item.ScrapBoxItem;
 import ic2.core.item.UraniumFuelRod;
-import ic2.core.item.UraniumIsotopicRod;
+import ic2.core.item.ReactorPulseCell;
 import ic2.core.machine.Machines;
 import ic2.core.recipe.ReactorComponentRepair;
 import ic2.core.recipe.UuMatterRecipe;
@@ -64,8 +64,14 @@ public final class IC2 {
         ITEMS.registerItem("uranium_rod_quad", properties -> new UraniumFuelRod(properties, 4));
     public static final DeferredItem<Item> DEPLETED_URANIUM_ROD = ITEMS.registerSimpleItem("uranium_rod_near_depleted");
     public static final DeferredItem<Item> RE_ENRICHED_URANIUM_ROD = ITEMS.registerSimpleItem("uranium_rod_re_enriched");
-    public static final DeferredItem<UraniumIsotopicRod> ISOTOPIC_URANIUM_ROD =
-        ITEMS.registerItem("uranium_rod_isotopic", properties -> new UraniumIsotopicRod(properties, 10_000, RE_ENRICHED_URANIUM_ROD));
+    public static final DeferredItem<ReactorPulseCell> ISOTOPIC_URANIUM_ROD =
+        ITEMS.registerItem("uranium_rod_isotopic", properties -> new ReactorPulseCell(properties, 10_000, RE_ENRICHED_URANIUM_ROD));
+    public static final DeferredItem<Item> CELL_FUEL = ITEMS.registerSimpleItem("cell_fuel");
+    public static final DeferredItem<ReactorPulseCell> REACTOR_FUEL_CELL = ITEMS.registerItem("reactor_fuel_cell",
+        properties -> new ReactorPulseCell(properties, 2_500, CELL_FUEL, 1_000));
+    public static final DeferredItem<Item> PREPARED_FUEL_CELL = ITEMS.registerSimpleItem("prepared_fuel_cell");
+    public static final DeferredItem<Item> CLAY_DUST = ITEMS.registerSimpleItem("dust_clay");
+    public static final DeferredItem<Item> NETHERRACK_DUST = ITEMS.registerSimpleItem("dust_netherrack");
     public static final DeferredItem<Item> HEAT_PACK = ITEMS.registerSimpleItem("heat_pack");
     public static final DeferredItem<ReactorReflectorItem> NEUTRON_REFLECTOR = ITEMS.registerItem("reflector",
         properties -> new ReactorReflectorItem(properties, 10_000, false));

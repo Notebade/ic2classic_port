@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/machine/mv/reactor_planner/inactive_down",
+    "up": "ic2:block/machine/mv/reactor_planner/inactive_up",
+    "north": "ic2:block/machine/mv/reactor_planner/inactive_south",
+    "south": "ic2:block/machine/mv/reactor_planner/inactive_north",
+    "west": "ic2:block/machine/mv/reactor_planner/inactive_west",
+    "east": "ic2:block/machine/mv/reactor_planner/inactive_east"
+  }
+}

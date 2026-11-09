@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XCX",
+    "VBV",
+    "XNX"
+  ],
+  "key": {
+    "X": {
+      "item": "ic2:advanced_circuit"
+    },
+    "C": {
+      "tag": "c:chests/wooden"
+    },
+    "V": {
+      "item": "ic2:reactor_chamber"
+    },
+    "B": {
+      "item": "ic2:nuclear_reactor"
+    },
+    "N": {
+      "item": "ic2:advanced_machine_block"
+    }
+  },
+  "result": {
+    "id": "ic2:reactor_planner"
+  }
+}

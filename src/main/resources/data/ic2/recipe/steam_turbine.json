@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " A ",
+    "XYC",
+    " B "
+  ],
+  "key": {
+    "A": {
+      "item": "ic2:circuit"
+    },
+    "X": {
+      "item": "ic2:turbine_blade"
+    },
+    "Y": {
+      "item": "ic2:generator"
+    },
+    "C": {
+      "item": "ic2:water_mill"
+    },
+    "B": [
+      {
+        "item": "ic2:bronze_double_insulated_cable_item"
+      },
+      {
+        "item": "ic2:gold_double_insulated_cable_item"
+      }
+    ]
+  },
+  "result": {
+    "id": "ic2:steam_turbine"
+  }
+}

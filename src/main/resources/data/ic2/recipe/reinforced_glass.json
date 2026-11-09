@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GAG",
+    "GGG",
+    "GAG"
+  ],
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "A": {
+      "item": "ic2:plate_advanced_alloy"
+    }
+  },
+  "result": {
+    "id": "ic2:reinforced_glass",
+    "count": 7
+  }
+}
