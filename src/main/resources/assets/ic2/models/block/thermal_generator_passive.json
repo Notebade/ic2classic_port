@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/electric/generator/thermal/passive_down",
+    "up": "ic2:block/electric/generator/thermal/passive_up",
+    "north": "ic2:block/electric/generator/thermal/passive_north",
+    "south": "ic2:block/electric/generator/thermal/passive_south",
+    "west": "ic2:block/electric/generator/thermal/passive_west",
+    "east": "ic2:block/electric/generator/thermal/passive_east"
+  }
+}

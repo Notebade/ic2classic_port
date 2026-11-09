@@ -49,6 +49,8 @@ final class MachineRecipeViews {
             case MASS_FABRICATOR -> massFabrication();
             case GENERATOR -> registeredItems().map(MachineRecipeViews::fuel).flatMap(Stream::ofNullable).toList();
             case GEOTHERMAL_GENERATOR -> fluidFuel(Fluids.LAVA, FluidGeneratorBlock.GEOTHERMAL_OUTPUT, PumpTank.BUCKET);
+            case THERMAL_GENERATOR -> fluidFuel(Fluids.LAVA, note("thermal_fuel_output",
+                ThermalProduction.ENERGY_PER_MB * PumpTank.BUCKET, ThermalProduction.MAX_OUTPUT), note("thermal_passive"));
             case WATER_MILL -> waterMill(MachineKind.WATER_MILL.waterMillTier);
             case LV_WATER_MILL -> waterMill(MachineKind.LV_WATER_MILL.waterMillTier);
             case MV_WATER_MILL -> waterMill(MachineKind.MV_WATER_MILL.waterMillTier);
@@ -200,7 +202,10 @@ final class MachineRecipeViews {
     }
 
     private static List<MachineRecipeView> fluidFuel(Fluid fuel, int euPerTick, int ticks) {
-        var output = note("fuel_output", ticks * euPerTick, ticks);
+        return fluidFuel(fuel, note("fuel_output", ticks * euPerTick, ticks));
+    }
+
+    private static List<MachineRecipeView> fluidFuel(Fluid fuel, Component... output) {
         return List.of(
             new MachineRecipeView(List.of(fluid(fuel)), List.of(), output),
             new MachineRecipeView(List.of(item(fuel.getBucket())), List.of(item(Items.BUCKET)), output),

@@ -65,6 +65,8 @@ public final class Machines {
         MENUS.register("mass_fabricator", () -> new MenuType<>(MachineMenu::fabricator, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> GEOTHERMAL_MENU =
         MENUS.register("geothermal_generator", () -> new MenuType<>(MachineMenu::geothermal, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<MachineMenu>> THERMAL_GENERATOR_MENU =
+        MENUS.register("thermal_generator", () -> new MenuType<>(MachineMenu::thermalGenerator, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> WIND_TURBINE_MENU =
         MENUS.register("wind_turbine", () -> new MenuType<>(MachineMenu::windTurbine, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> WATER_MILL_MENU =
@@ -81,6 +83,8 @@ public final class Machines {
     static final DeferredBlock<FluidGeneratorBlock> GEOTHERMAL = BLOCKS.registerBlock("geothermal_generator",
         properties -> new FluidGeneratorBlock(properties, MachineKind.GEOTHERMAL, Fluids.LAVA, FluidGeneratorBlock.GEOTHERMAL_TANK),
         machineProperties());
+    static final DeferredBlock<ThermalGeneratorBlock> THERMAL_GENERATOR =
+        BLOCKS.registerBlock("thermal_generator", ThermalGeneratorBlock::new, machineProperties());
     static final DeferredBlock<FluidGeneratorBlock> WATER_MILL = BLOCKS.registerBlock("water_mill",
         properties -> new FluidGeneratorBlock(properties, MachineKind.WATER_MILL, Fluids.WATER, FluidGeneratorBlock.WATER_TANK),
         machineProperties());
@@ -217,6 +221,8 @@ public final class Machines {
             BlockEntityType.Builder.of(ComparingCableEntity::new, COMPARING_CABLE.get()).build(null));
     static final Supplier<BlockEntityType<MachineEntity>> GEOTHERMAL_ENTITY =
         ENTITIES.register("geothermal_generator", () -> entityType(GEOTHERMAL.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> THERMAL_GENERATOR_ENTITY =
+        ENTITIES.register("thermal_generator", () -> entityType(THERMAL_GENERATOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> WIND_TURBINE_ENTITY =
         ENTITIES.register("wind_turbine", () -> entityType(WIND_TURBINE.get()));
     static final Supplier<BlockEntityType<MachineEntity>> WATER_MILL_ENTITY =
@@ -284,6 +290,7 @@ public final class Machines {
         bus.addListener(Machines::registerCapabilities);
         items.registerSimpleBlockItem(GENERATOR);
         items.registerSimpleBlockItem(GEOTHERMAL);
+        items.registerSimpleBlockItem(THERMAL_GENERATOR);
         items.registerSimpleBlockItem(WIND_TURBINE);
         items.registerSimpleBlockItem(WAVE_GENERATOR);
         items.registerSimpleBlockItem(OCEAN_GENERATOR);
@@ -357,6 +364,7 @@ public final class Machines {
             if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) {
                 event.accept(GENERATOR.get());
                 event.accept(GEOTHERMAL.get());
+                event.accept(THERMAL_GENERATOR.get());
                 event.accept(WIND_TURBINE.get());
                 event.accept(WAVE_GENERATOR.get());
                 event.accept(OCEAN_GENERATOR.get());
@@ -426,6 +434,8 @@ public final class Machines {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GENERATOR_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GEOTHERMAL_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GEOTHERMAL_ENTITY.get(), MachineEntity::fuelFluid);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, THERMAL_GENERATOR_ENTITY.get(), MachineEntity::automation);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, THERMAL_GENERATOR_ENTITY.get(), MachineEntity::fuelFluid);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, WIND_TURBINE_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, WATER_MILL_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, WATER_MILL_ENTITY.get(), MachineEntity::fuelFluid);

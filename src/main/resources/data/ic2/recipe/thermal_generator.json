@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "IMI",
+    "MGM",
+    "IAI"
+  ],
+  "key": {
+    "I": { "item": "ic2:ingot_refined_iron" },
+    "M": { "item": "minecraft:magma_block" },
+    "G": { "item": "ic2:geothermal_generator" },
+    "A": { "item": "ic2:advanced_machine_block" }
+  },
+  "result": { "id": "ic2:thermal_generator", "count": 1 }
+}

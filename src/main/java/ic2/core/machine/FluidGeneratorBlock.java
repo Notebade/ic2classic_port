@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
-final class FluidGeneratorBlock extends ActiveMachineBlock {
+class FluidGeneratorBlock extends ActiveMachineBlock {
     static final int GEOTHERMAL_OUTPUT = 20;
     static final int GEOTHERMAL_TANK = 24_000;
     static final int WATER_TANK = 4_000;

@@ -70,6 +70,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private boolean surveyedOcean;
     private int passiveWaterUnits = -1;
     private int passiveWaterRemainder;
+    private int thermalHeat = -1;
+    private int thermalRemainder;
     private int progress;
     private int amplifier;
     private int amplifierRefillThreshold;
@@ -101,10 +103,20 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 protected void onContentsChanged() {
                     setChanged();
                 }
+
+                @Override
+                public FluidStack drain(FluidStack stack, FluidAction action) {
+                    return kind == MachineKind.THERMAL_GENERATOR ? FluidStack.EMPTY : super.drain(stack, action);
+                }
+
+                @Override
+                public FluidStack drain(int amount, FluidAction action) {
+                    return kind == MachineKind.THERMAL_GENERATOR ? FluidStack.EMPTY : super.drain(amount, action);
+                }
             } : null;
         inventory = new ItemStackHandler(switch (kind) {
             case WIND_TURBINE -> 1;
-            case GEOTHERMAL, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL, ALLOY_SMELTER -> SLOT_COUNT + 1;
+            case GEOTHERMAL, THERMAL_GENERATOR, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL, ALLOY_SMELTER -> SLOT_COUNT + 1;
             default -> SLOT_COUNT;
         }) {
             @Override
@@ -113,6 +125,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     return RechargeableItem.supports(stack, kind.storageOutput, slot == INPUT_SLOT);
                 }
                 if (fuelTank != null && slot == FUEL_GENERATOR_BATTERY_SLOT) {
+                    if (kind == MachineKind.THERMAL_GENERATOR) {
+                        return RechargeableItem.supports(stack, ThermalProduction.CHARGE_PACKET);
+                    }
                     int chargePacket = kind.waterMillTier == null
                         ? MachineKind.BATBOX.storageOutput : kind.waterMillTier.chargePacket();
                     return RechargeableItem.supports(stack, chargePacket);
@@ -164,6 +179,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (((MachineBlock) state.getBlock()).kind()) {
             case GENERATOR -> Machines.GENERATOR_ENTITY.get();
             case GEOTHERMAL -> Machines.GEOTHERMAL_ENTITY.get();
+            case THERMAL_GENERATOR -> Machines.THERMAL_GENERATOR_ENTITY.get();
             case WIND_TURBINE -> Machines.WIND_TURBINE_ENTITY.get();
             case WAVE_GENERATOR -> Machines.WAVE_GENERATOR_ENTITY.get();
             case OCEAN_GENERATOR -> Machines.OCEAN_GENERATOR_ENTITY.get();
@@ -196,6 +212,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         switch (kind) {
             case GENERATOR -> tickGenerator();
             case GEOTHERMAL -> tickGeothermal();
+            case THERMAL_GENERATOR -> tickThermalGenerator();
             case WIND_TURBINE -> tickWindTurbine();
             case WAVE_GENERATOR -> tickWaveGenerator();
             case OCEAN_GENERATOR -> tickOceanGenerator();
@@ -333,6 +350,41 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             sendEnergy(energy, side -> true);
         }
         setActive(generated && energy < kind.capacity);
+    }
+
+    private void tickThermalGenerator() {
+        refillFuelTank();
+        int fueledOutput = ThermalProduction.fuelOutput(fuelTank.getFluidAmount());
+        boolean fueled = fueledOutput > 0 && kind.capacity - energy >= ThermalProduction.MAX_OUTPUT;
+        if (fueled) {
+            fuelTank.getFluid().shrink(fueledOutput / ThermalProduction.ENERGY_PER_MB);
+            energy += fueledOutput;
+            setChanged();
+        } else {
+            gatherThermalEnergy();
+        }
+        transferBattery(FUEL_GENERATOR_BATTERY_SLOT, true);
+        if (energy > 0) {
+            sendEnergy(Math.min(energy, ThermalProduction.MAX_OUTPUT), side -> true);
+        }
+        BlockState state = getBlockState();
+        BlockState updated = state.setValue(BlockStateProperties.LIT, fueled)
+            .setValue(ThermalGeneratorBlock.PASSIVE, !fueled && thermalHeat > 0);
+        if (updated != state) {
+            level.setBlock(worldPosition, updated, Block.UPDATE_CLIENTS);
+        }
+    }
+
+    private void gatherThermalEnergy() {
+        if (thermalHeat < 0 || (level.getGameTime() + worldPosition.hashCode()) % ThermalProduction.SAMPLE_INTERVAL == 0) {
+            thermalHeat = ThermalGeneratorBlock.sampleHeat(level, worldPosition);
+        }
+        if (thermalHeat > 0 && energy < kind.capacity) {
+            int accumulated = thermalRemainder + thermalHeat;
+            thermalRemainder = accumulated % ThermalProduction.HEAT_PER_EU;
+            energy = Math.min(kind.capacity, energy + accumulated / ThermalProduction.HEAT_PER_EU);
+            setChanged();
+        }
     }
 
     private void refillFuelTank() {
@@ -511,7 +563,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private boolean accepts(ItemStack stack) {
         return switch (kind) {
             case GENERATOR -> fuelTicks(stack) > 0;
-            case GEOTHERMAL, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL ->
+            case GEOTHERMAL, THERMAL_GENERATOR, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL ->
                 ((FluidGeneratorBlock) getBlockState().getBlock()).acceptsFuel(stack);
             case WIND_TURBINE -> RechargeableItem.supports(stack, MachineKind.BATBOX.storageOutput);
             case MACERATOR -> macerationRecipe(new SingleRecipeInput(stack)).isPresent();
@@ -559,7 +611,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
-            case GENERATOR, GEOTHERMAL, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
+            case GENERATOR, GEOTHERMAL, THERMAL_GENERATOR, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
                 WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
                 BATBOX, MFE, MFSU, SOLAR_PANEL,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER,
@@ -791,7 +843,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             return false;
         }
         return switch (kind) {
-            case GENERATOR, GEOTHERMAL, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
+            case GENERATOR, GEOTHERMAL, THERMAL_GENERATOR, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
                 WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
                 SOLAR_PANEL, ELECTROLYZER -> false;
             case ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL -> packetSize <= MachineKind.BATBOX.storageOutput;
@@ -900,6 +952,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 case ELECTROLYZER -> Machines.ELECTROLYZER_MENU.get();
                 case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
                 case GEOTHERMAL -> Machines.GEOTHERMAL_MENU.get();
+                case THERMAL_GENERATOR -> Machines.THERMAL_GENERATOR_MENU.get();
                 case WIND_TURBINE -> Machines.WIND_TURBINE_MENU.get();
                 case WATER_MILL, LV_WATER_MILL -> Machines.WATER_MILL_MENU.get();
                 case MV_WATER_MILL -> Machines.MV_WATER_MILL_MENU.get();
@@ -922,6 +975,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (kind) {
             case GENERATOR -> burnTicks;
             case WIND_TURBINE -> Math.max(0, windProduction);
+            case THERMAL_GENERATOR -> fuelTank.getFluidAmount() > 0
+                ? ThermalProduction.fuelOutput(fuelTank.getFluidAmount()) * ThermalProduction.DISPLAY_UNITS_PER_EU
+                : Math.max(0, thermalHeat) * ThermalProduction.DISPLAY_UNITS_PER_EU / ThermalProduction.HEAT_PER_EU;
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> hasWaterFuel()
                 ? kind.waterMillTier.output() * WaterMillTier.UNITS_PER_EU : Math.max(0, passiveWaterUnits);
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
@@ -954,8 +1010,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         if (kind == MachineKind.GENERATOR) {
             tag.putInt("burn_ticks", burnTicks);
-        } else if (kind == MachineKind.GEOTHERMAL) {
+        } else if (kind == MachineKind.GEOTHERMAL || kind == MachineKind.THERMAL_GENERATOR) {
             tag.putInt("lava", fuelTank.getFluidAmount());
+            if (kind == MachineKind.THERMAL_GENERATOR) {
+                tag.putInt("thermal_remainder", thermalRemainder);
+            }
         } else if (kind.waterMillTier != null) {
             tag.putInt("water", fuelTank.getFluidAmount());
             tag.putInt("water_remainder", passiveWaterRemainder);
@@ -995,9 +1054,12 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         if (kind == MachineKind.GENERATOR) {
             burnTicks = Math.max(0, tag.getInt("burn_ticks"));
-        } else if (kind == MachineKind.GEOTHERMAL) {
+        } else if (kind == MachineKind.GEOTHERMAL || kind == MachineKind.THERMAL_GENERATOR) {
             fuelTank.setFluid(new FluidStack(Fluids.LAVA,
                 Mth.clamp(tag.getInt("lava"), 0, fuelTank.getCapacity())));
+            if (kind == MachineKind.THERMAL_GENERATOR) {
+                thermalRemainder = Mth.clamp(tag.getInt("thermal_remainder"), 0, ThermalProduction.HEAT_PER_EU - 1);
+            }
         } else if (kind.waterMillTier != null) {
             fuelTank.setFluid(new FluidStack(Fluids.WATER, Mth.clamp(tag.getInt("water"), 0, fuelTank.getCapacity())));
             passiveWaterRemainder = Mth.clamp(tag.getInt("water_remainder"), 0, WaterMillTier.UNITS_PER_EU - 1);

@@ -1,0 +1,68 @@
+{
+  "variants": {
+    "facing=north,lit=false,passive=false": {
+      "model": "ic2:block/thermal_generator",
+      "y": 0
+    },
+    "facing=north,lit=true,passive=false": {
+      "model": "ic2:block/thermal_generator_active",
+      "y": 0
+    },
+    "facing=north,lit=false,passive=true": {
+      "model": "ic2:block/thermal_generator_passive",
+      "y": 0
+    },
+    "facing=north,lit=true,passive=true": {
+      "model": "ic2:block/thermal_generator_active",
+      "y": 0
+    },
+    "facing=east,lit=false,passive=false": {
+      "model": "ic2:block/thermal_generator",
+      "y": 90
+    },
+    "facing=east,lit=true,passive=false": {
+      "model": "ic2:block/thermal_generator_active",
+      "y": 90
+    },
+    "facing=east,lit=false,passive=true": {
+      "model": "ic2:block/thermal_generator_passive",
+      "y": 90
+    },
+    "facing=east,lit=true,passive=true": {
+      "model": "ic2:block/thermal_generator_active",
+      "y": 90
+    },
+    "facing=south,lit=false,passive=false": {
+      "model": "ic2:block/thermal_generator",
+      "y": 180
+    },
+    "facing=south,lit=true,passive=false": {
+      "model": "ic2:block/thermal_generator_active",
+      "y": 180
+    },
+    "facing=south,lit=false,passive=true": {
+      "model": "ic2:block/thermal_generator_passive",
+      "y": 180
+    },
+    "facing=south,lit=true,passive=true": {
+      "model": "ic2:block/thermal_generator_active",
+      "y": 180
+    },
+    "facing=west,lit=false,passive=false": {
+      "model": "ic2:block/thermal_generator",
+      "y": 270
+    },
+    "facing=west,lit=true,passive=false": {
+      "model": "ic2:block/thermal_generator_active",
+      "y": 270
+    },
+    "facing=west,lit=false,passive=true": {
+      "model": "ic2:block/thermal_generator_passive",
+      "y": 270
+    },
+    "facing=west,lit=true,passive=true": {
+      "model": "ic2:block/thermal_generator_active",
+      "y": 270
+    }
+  }
+}

@@ -53,6 +53,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.GEOTHERMAL_MENU.get());
     }
 
+    static MachineMenu thermalGenerator(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.THERMAL_GENERATOR_MENU.get());
+    }
+
     static MachineMenu windTurbine(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.WIND_TURBINE_MENU.get());
     }
@@ -154,6 +158,9 @@ final class MachineMenu extends AbstractContainerMenu {
                         ? Electrolysis.charge(stack) != null : Electrolysis.discharge(stack) != null;
                 }
                 if (isWindTurbine() || isFluidGenerator(getType()) && index == MachineEntity.FUEL_GENERATOR_BATTERY_SLOT) {
+                    if (isThermalGenerator()) {
+                        return RechargeableItem.supports(stack, ThermalProduction.CHARGE_PACKET);
+                    }
                     WaterMillTier tier = waterMillTier(getType());
                     int chargePacket = tier == null ? MachineKind.BATBOX.storageOutput : tier.chargePacket();
                     return RechargeableItem.supports(stack, chargePacket);
@@ -218,7 +225,12 @@ final class MachineMenu extends AbstractContainerMenu {
     }
 
     static boolean isFluidGenerator(MenuType<?> type) {
-        return type == Machines.GEOTHERMAL_MENU.get() || waterMillTier(type) != null;
+        return type == Machines.GEOTHERMAL_MENU.get() || type == Machines.THERMAL_GENERATOR_MENU.get()
+            || waterMillTier(type) != null;
+    }
+
+    boolean isThermalGenerator() {
+        return getType() == Machines.THERMAL_GENERATOR_MENU.get();
     }
 
     boolean isWaterMill() {

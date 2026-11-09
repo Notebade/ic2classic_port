@@ -32,6 +32,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.ELECTROLYZER_MENU.get(), MachineScreen::new);
         event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
+        event.register(Machines.THERMAL_GENERATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.WIND_TURBINE_MENU.get(), MachineScreen::new);
         event.register(Machines.WATER_MILL_MENU.get(), MachineScreen::new);
         event.register(Machines.MV_WATER_MILL_MENU.get(), MachineScreen::new);
@@ -78,11 +79,20 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             return;
         }
         if (MachineMenu.isFluidGenerator(menu.getType())) {
-            Component status = menu.isWaterMill()
-                ? Component.translatable("gui.ic2.water_mill_status",
+            Component status;
+            if (menu.isWaterMill()) {
+                status = Component.translatable("gui.ic2.water_mill_status",
                     String.format(Locale.ROOT, "%.2f", menu.work() / (double) WaterMillTier.UNITS_PER_EU),
-                    menu.fluid(), FluidGeneratorBlock.WATER_TANK)
-                : Component.translatable("gui.ic2.geothermal_status", menu.energy(), menu.fluid(), FluidGeneratorBlock.GEOTHERMAL_TANK);
+                    menu.fluid(), FluidGeneratorBlock.WATER_TANK);
+            } else if (menu.isThermalGenerator()) {
+                status = Component.translatable("gui.ic2.thermal_generator_status",
+                    String.format(Locale.ROOT, "%.2f", menu.work() / (double) ThermalProduction.DISPLAY_UNITS_PER_EU),
+                    menu.fluid(), ThermalProduction.TANK_CAPACITY);
+            } else {
+                status = Component.translatable("gui.ic2.geothermal_status", menu.energy(),
+                    menu.fluid(), FluidGeneratorBlock.GEOTHERMAL_TANK);
+            }
+
             graphics.drawString(font, status, 8, 21, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.input"), 9, 61, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.output"), 69, 61, 0x404040, false);
@@ -113,6 +123,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             } else {
                 status = Component.translatable("gui.ic2.pump_status", menu.energy(), menu.work(), menu.fluid());
             }
+
             graphics.drawString(font, status, 8, 21, 0x404040, false);
         }
         Component input = Component.translatable(menu.isFabricator() ? "gui.ic2.amplifier_slot"
