@@ -5,6 +5,8 @@
     "ic2:machine_block",
     "ic2:wind_turbine",
     "ic2:thermal_generator",
+    "ic2:nuclear_reactor",
+    "ic2:reactor_chamber",
     "ic2:wave_generator",
     "ic2:ocean_generator",
     "ic2:water_mill",

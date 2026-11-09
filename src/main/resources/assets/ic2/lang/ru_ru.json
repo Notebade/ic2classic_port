@@ -1,5 +1,9 @@
 {
   "block.ic2.uranium_ore": "Урановая руда",
+  "block.ic2.nuclear_reactor": "Ядерный реактор",
+  "block.ic2.reactor_chamber": "Реакторная камера",
+  "gui.ic2.reactor_status": "%s EU/тик · Нагрев %s/%s",
+  "jei.ic2.nuclear_reactor": "Подайте сигнал редстоуна. Соседние ТВЭЛы усиливают друг друга, а теплоотводы принимают тепло. Камера добавляет колонку. При 10 000 тепла реактор взрывается.",
   "block.ic2.deepslate_uranium_ore": "Глубинная урановая руда",
   "item.ic2.ore_uranium": "Необработанный уран",
   "item.ic2.ingot_uranium": "Урановый слиток",

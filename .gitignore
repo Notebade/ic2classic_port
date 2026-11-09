@@ -51,6 +51,8 @@ src/main/resources/assets/ic2/textures/block/resources/ore/deepslate_tin_ore.png
 src/main/resources/assets/ic2/textures/block/electric/generator/generator/
 src/main/resources/assets/ic2/textures/block/electric/generator/geothermal/
 src/main/resources/assets/ic2/textures/block/electric/generator/thermal/
+src/main/resources/assets/ic2/textures/block/electric/generator/nuclear_reactor/
+src/main/resources/assets/ic2/textures/block/electric/generator/reactor_chamber/
 src/main/resources/assets/ic2/textures/block/electric/generator/wind_turbine/
 src/main/resources/assets/ic2/textures/block/electric/generator/wave/
 src/main/resources/assets/ic2/textures/block/electric/generator/ocean/

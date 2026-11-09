@@ -65,6 +65,8 @@ public final class Machines {
         MENUS.register("mass_fabricator", () -> new MenuType<>(MachineMenu::fabricator, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> GEOTHERMAL_MENU =
         MENUS.register("geothermal_generator", () -> new MenuType<>(MachineMenu::geothermal, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<ReactorMenu>> NUCLEAR_REACTOR_MENU =
+        MENUS.register("nuclear_reactor", () -> new MenuType<>(ReactorMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> THERMAL_GENERATOR_MENU =
         MENUS.register("thermal_generator", () -> new MenuType<>(MachineMenu::thermalGenerator, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> WIND_TURBINE_MENU =
@@ -103,6 +105,10 @@ public final class Machines {
         properties -> new EnvironmentalGeneratorBlock(properties, MachineKind.WAVE_GENERATOR), machineProperties());
     static final DeferredBlock<EnvironmentalGeneratorBlock> OCEAN_GENERATOR = BLOCKS.registerBlock("ocean_generator",
         properties -> new EnvironmentalGeneratorBlock(properties, MachineKind.OCEAN_GENERATOR), machineProperties());
+    static final DeferredBlock<ActiveMachineBlock> NUCLEAR_REACTOR = BLOCKS.registerBlock("nuclear_reactor",
+        properties -> new ActiveMachineBlock(properties, MachineKind.NUCLEAR_REACTOR), machineProperties());
+    static final DeferredBlock<ReactorChamberBlock> REACTOR_CHAMBER =
+        BLOCKS.registerBlock("reactor_chamber", ReactorChamberBlock::new, machineProperties());
     static final DeferredBlock<SolarPanelBlock> SOLAR_PANEL =
         BLOCKS.registerBlock("solar_panel", properties -> new SolarPanelBlock(properties, SolarPanelBlock.BASE_OUTPUT),
             machineProperties());
@@ -232,6 +238,8 @@ public final class Machines {
         ENTITIES.register("wave_generator", () -> entityType(WAVE_GENERATOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> OCEAN_GENERATOR_ENTITY =
         ENTITIES.register("ocean_generator", () -> entityType(OCEAN_GENERATOR.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> NUCLEAR_REACTOR_ENTITY =
+        ENTITIES.register("nuclear_reactor", () -> entityType(NUCLEAR_REACTOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> SOLAR_PANEL_ENTITY =
         ENTITIES.register("solar_panel", () -> entityType(SOLAR_PANEL.get(), COMPRESSED_SOLAR_PANEL.get(),
             LV_SOLAR_PANEL.get(), COMPRESSED_LV_SOLAR_PANEL.get(), MV_SOLAR_PANEL.get(), COMPRESSED_MV_SOLAR_PANEL.get()));
@@ -291,6 +299,8 @@ public final class Machines {
         items.registerSimpleBlockItem(GENERATOR);
         items.registerSimpleBlockItem(GEOTHERMAL);
         items.registerSimpleBlockItem(THERMAL_GENERATOR);
+        items.registerSimpleBlockItem(NUCLEAR_REACTOR);
+        items.registerSimpleBlockItem(REACTOR_CHAMBER);
         items.registerSimpleBlockItem(WIND_TURBINE);
         items.registerSimpleBlockItem(WAVE_GENERATOR);
         items.registerSimpleBlockItem(OCEAN_GENERATOR);
@@ -365,6 +375,8 @@ public final class Machines {
                 event.accept(GENERATOR.get());
                 event.accept(GEOTHERMAL.get());
                 event.accept(THERMAL_GENERATOR.get());
+                event.accept(NUCLEAR_REACTOR.get());
+                event.accept(REACTOR_CHAMBER.get());
                 event.accept(WIND_TURBINE.get());
                 event.accept(WAVE_GENERATOR.get());
                 event.accept(OCEAN_GENERATOR.get());

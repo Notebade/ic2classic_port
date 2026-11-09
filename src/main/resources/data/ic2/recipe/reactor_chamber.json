@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    " P ",
+    "PMP",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "item": "ic2:plate_dense_copper"
+    },
+    "M": {
+      "item": "ic2:machine_block"
+    }
+  },
+  "result": {
+    "id": "ic2:reactor_chamber"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/electric/generator/nuclear_reactor/active_down",
+    "up": "ic2:block/electric/generator/nuclear_reactor/active_up",
+    "north": "ic2:block/electric/generator/nuclear_reactor/active_north",
+    "south": "ic2:block/electric/generator/nuclear_reactor/active_south",
+    "west": "ic2:block/electric/generator/nuclear_reactor/active_west",
+    "east": "ic2:block/electric/generator/nuclear_reactor/active_east"
+  }
+}

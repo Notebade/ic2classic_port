@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    " C ",
+    "BBB",
+    " G "
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:advanced_circuit"
+    },
+    "B": {
+      "item": "ic2:reactor_chamber"
+    },
+    "G": {
+      "item": "ic2:generator"
+    }
+  },
+  "result": {
+    "id": "ic2:nuclear_reactor"
+  }
+}

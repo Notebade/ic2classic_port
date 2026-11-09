@@ -1,5 +1,9 @@
 {
   "block.ic2.uranium_ore": "Uranium Ore",
+  "block.ic2.nuclear_reactor": "Nuclear Reactor",
+  "block.ic2.reactor_chamber": "Reactor Chamber",
+  "gui.ic2.reactor_status": "%s EU/t · Heat %s/%s",
+  "jei.ic2.nuclear_reactor": "Apply a redstone signal. Fuel rods pulse adjacent rods and heat adjacent vents. Each chamber adds one column. A core at 10000 heat melts down.",
   "block.ic2.deepslate_uranium_ore": "Deepslate Uranium Ore",
   "item.ic2.ore_uranium": "Raw Uranium",
   "item.ic2.ingot_uranium": "Uranium Ingot",

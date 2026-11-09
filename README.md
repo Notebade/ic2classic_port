@@ -86,6 +86,12 @@ Launch the development client:
 
 ## ⚡ Power Generation
 
+### Electric Nuclear Reactor
+
+Apply a redstone signal to the reactor or one of its chambers. A single uranium rod generates 20 EU/t and adds four units of heat per cycle. Adjacent rods increase both output and heat. Place a heat vent next to a rod to absorb heat and dissipate up to six units per cycle. Each reactor chamber adds one column to the core grid and can transmit EU. The core explodes at 10,000 heat.
+
+This implementation covers standard single rods and basic heat vents. Steam reactors and advanced reactor components still need porting.
+
 ### Thermal Generator
 
 The Thermal Generator holds 20,000 mB of lava and outputs up to 90 EU/t. A lava bucket provides 30,000 EU. Without fuel, it calculates heat from hot and cold blocks within a seven-block radius and the biome's base temperature. Its slot can charge an Energy Crystal.

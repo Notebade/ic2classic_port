@@ -12,6 +12,7 @@ enum MachineKind {
     MV_WATER_MILL(256, WaterMillTier.MV),
     HV_WATER_MILL(2048, WaterMillTier.HV),
     SOLAR_PANEL(0, 0, 0),
+    NUCLEAR_REACTOR(0, 0, 0),
     MACERATOR(2, 400),
     ELECTRIC_FURNACE(3, 130),
     ELECTRIC_BLAST_FURNACE(5, 65),

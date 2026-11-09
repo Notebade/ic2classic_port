@@ -3,6 +3,8 @@ package ic2.core.machine;
 import ic2.core.IC2;
 import ic2.core.item.FluidCellItem;
 import ic2.core.item.RechargeableItem;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
@@ -72,6 +74,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int passiveWaterRemainder;
     private int thermalHeat = -1;
     private int thermalRemainder;
+    private int reactorHeat;
+    private int reactorOutput;
     private int progress;
     private int amplifier;
     private int amplifierRefillThreshold;
@@ -116,11 +120,15 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             } : null;
         inventory = new ItemStackHandler(switch (kind) {
             case WIND_TURBINE -> 1;
+            case NUCLEAR_REACTOR -> ReactorRules.SLOT_COUNT;
             case GEOTHERMAL, THERMAL_GENERATOR, WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL, ALLOY_SMELTER -> SLOT_COUNT + 1;
             default -> SLOT_COUNT;
         }) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
+                if (kind == MachineKind.NUCLEAR_REACTOR) {
+                    return ReactorGrid.accepts(stack);
+                }
                 if (kind.isStorage()) {
                     return RechargeableItem.supports(stack, kind.storageOutput, slot == INPUT_SLOT);
                 }
@@ -185,6 +193,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case OCEAN_GENERATOR -> Machines.OCEAN_GENERATOR_ENTITY.get();
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> Machines.WATER_MILL_ENTITY.get();
             case SOLAR_PANEL -> Machines.SOLAR_PANEL_ENTITY.get();
+            case NUCLEAR_REACTOR -> Machines.NUCLEAR_REACTOR_ENTITY.get();
             case LV_TRANSFORMER -> Machines.LV_TRANSFORMER_ENTITY.get();
             case MV_TRANSFORMER -> Machines.MV_TRANSFORMER_ENTITY.get();
             case HV_TRANSFORMER -> Machines.HV_TRANSFORMER_ENTITY.get();
@@ -218,6 +227,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case OCEAN_GENERATOR -> tickOceanGenerator();
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> tickWaterMill();
             case SOLAR_PANEL -> tickSolarPanel();
+            case NUCLEAR_REACTOR -> tickNuclearReactor();
             case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> tickTransformer();
             case PUMP -> tickPump();
             case MASS_FABRICATOR -> tickMassFabricator();
@@ -227,6 +237,79 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ELECTROLYZER -> setActive(tickElectrolyzer());
             case BATBOX, MFE, MFSU -> tickStorage();
         }
+    }
+
+    private void tickNuclearReactor() {
+        if (!level.isLoaded(worldPosition.offset(-1, 0, -1)) || !level.isLoaded(worldPosition.offset(-1, 0, 1))
+                || !level.isLoaded(worldPosition.offset(1, 0, -1)) || !level.isLoaded(worldPosition.offset(1, 0, 1))) {
+            reactorOutput = 0;
+            return;
+        }
+        List<BlockPos> chambers = reactorChambers();
+        boolean powered = level.hasNeighborSignal(worldPosition) || chambers.stream().anyMatch(level::hasNeighborSignal);
+        if (!powered) {
+            reactorOutput = 0;
+        }
+        if (level.getGameTime() % ReactorRules.CYCLE_TICKS == 0) {
+            int width = ReactorRules.BASE_COLUMNS + chambers.size();
+            ejectClosedReactorSlots(width);
+            var cycle = new ReactorGrid(inventory).run(width, powered, level.getRandom());
+            reactorOutput = cycle.output();
+            reactorHeat += cycle.heat();
+            setChanged();
+            if (reactorHeat >= ReactorRules.MAX_HEAT) {
+                meltReactor();
+                return;
+            }
+            setActive(reactorHeat >= 1000 || reactorOutput > 0);
+        }
+        if (reactorOutput > 0) {
+            int remaining = reactorOutput - EnergyNetwork.send(level, worldPosition, reactorOutput, side -> true, kind);
+            for (BlockPos chamber : chambers) {
+                if (remaining <= 0) {
+                    break;
+                }
+                remaining -= EnergyNetwork.send(level, chamber, remaining, side -> true, kind);
+            }
+        }
+    }
+
+    private List<BlockPos> reactorChambers() {
+        var chambers = new ArrayList<BlockPos>(6);
+        for (Direction direction : Direction.values()) {
+            BlockPos next = worldPosition.relative(direction);
+            if (level.isLoaded(next) && level.getBlockState(next).is(Machines.REACTOR_CHAMBER.get())
+                    && ReactorChamberBlock.reactor(level, next) == this) {
+                chambers.add(next);
+            }
+        }
+        return chambers;
+    }
+
+    private void ejectClosedReactorSlots(int width) {
+        for (int row = 0; row < ReactorRules.ROWS; row++) {
+            for (int column = width; column < ReactorRules.COLUMNS; column++) {
+                int slot = row * ReactorRules.COLUMNS + column;
+                ItemStack stack = inventory.getStackInSlot(slot);
+                if (!stack.isEmpty()) {
+                    inventory.setStackInSlot(slot, ItemStack.EMPTY);
+                    Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), stack);
+                }
+            }
+        }
+    }
+
+    private void meltReactor() {
+        float power = 10;
+        for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
+            if (inventory.getStackInSlot(slot).is(IC2.URANIUM_ROD.get())) {
+                power += 2;
+            }
+            inventory.setStackInSlot(slot, ItemStack.EMPTY);
+        }
+        level.removeBlock(worldPosition, false);
+        level.explode(null, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
+            worldPosition.getZ() + 0.5, Math.min(power, 45), Level.ExplosionInteraction.BLOCK);
     }
 
     private void tickWindTurbine() {
@@ -578,7 +661,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> stack.is(Items.BUCKET) || stack.is(IC2.CELL_EMPTY.get());
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
             case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
-            case BATBOX, MFE, MFSU, SOLAR_PANEL, WAVE_GENERATOR, OCEAN_GENERATOR,
+            case BATBOX, MFE, MFSU, SOLAR_PANEL, NUCLEAR_REACTOR, WAVE_GENERATOR, OCEAN_GENERATOR,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> false;
         };
     }
@@ -613,7 +696,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             }
             case GENERATOR, GEOTHERMAL, THERMAL_GENERATOR, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
                 WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
-                BATBOX, MFE, MFSU, SOLAR_PANEL,
+                BATBOX, MFE, MFSU, SOLAR_PANEL, NUCLEAR_REACTOR,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER,
                 PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER -> null;
         };
@@ -845,7 +928,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (kind) {
             case GENERATOR, GEOTHERMAL, THERMAL_GENERATOR, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
                 WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
-                SOLAR_PANEL, ELECTROLYZER -> false;
+                SOLAR_PANEL, NUCLEAR_REACTOR, ELECTROLYZER -> false;
             case ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL -> packetSize <= MachineKind.BATBOX.storageOutput;
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> true;
@@ -940,6 +1023,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
 
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player) {
+        if (kind == MachineKind.NUCLEAR_REACTOR) {
+            return new ReactorMenu(id, playerInventory, inventory,
+                ContainerLevelAccess.create(level, worldPosition), () -> ReactorRules.BASE_COLUMNS + reactorChambers().size(),
+                () -> reactorHeat, () -> reactorOutput);
+        }
         return new MachineMenu(id, playerInventory, inventory, ContainerLevelAccess.create(level, worldPosition),
             getBlockState().getBlock(), () -> energy,
             this::menuWork, this::menuFluid,
@@ -981,7 +1069,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> hasWaterFuel()
                 ? kind.waterMillTier.output() * WaterMillTier.UNITS_PER_EU : Math.max(0, passiveWaterUnits);
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
-            case SOLAR_PANEL, GEOTHERMAL, WAVE_GENERATOR, OCEAN_GENERATOR, ELECTROLYZER,
+            case SOLAR_PANEL, NUCLEAR_REACTOR, GEOTHERMAL, WAVE_GENERATOR, OCEAN_GENERATOR, ELECTROLYZER,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> 0;
             case MASS_FABRICATOR -> amplifier;
             case MACERATOR, ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL,
@@ -1010,6 +1098,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         if (kind == MachineKind.GENERATOR) {
             tag.putInt("burn_ticks", burnTicks);
+        } else if (kind == MachineKind.NUCLEAR_REACTOR) {
+            tag.putInt("reactor_heat", reactorHeat);
         } else if (kind == MachineKind.GEOTHERMAL || kind == MachineKind.THERMAL_GENERATOR) {
             tag.putInt("lava", fuelTank.getFluidAmount());
             if (kind == MachineKind.THERMAL_GENERATOR) {
@@ -1054,6 +1144,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
         if (kind == MachineKind.GENERATOR) {
             burnTicks = Math.max(0, tag.getInt("burn_ticks"));
+        } else if (kind == MachineKind.NUCLEAR_REACTOR) {
+            reactorHeat = Mth.clamp(tag.getInt("reactor_heat"), 0, ReactorRules.MAX_HEAT);
         } else if (kind == MachineKind.GEOTHERMAL || kind == MachineKind.THERMAL_GENERATOR) {
             fuelTank.setFluid(new FluidStack(Fluids.LAVA,
                 Mth.clamp(tag.getInt("lava"), 0, fuelTank.getCapacity())));
