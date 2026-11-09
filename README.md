@@ -92,7 +92,9 @@ Apply a redstone signal to the reactor or one of its chambers. A single uranium 
 
 At 7,000 heat, the reactor irradiates nearby living entities. A meltdown causes radiation poisoning within 30 blocks. A complete four-piece hazmat suit blocks radiation damage. Uranium ore generates in new Overworld chunks.
 
-This implementation covers standard single rods and basic heat vents. Steam reactors and advanced reactor components still need porting.
+Fresh rods can be combined with dense copper plates. With no adjacent rods, a dual rod generates 80 EU/t and 24 heat per cycle, and a quad rod generates 240 EU/t and 96 heat per cycle.
+
+The reactor supports standard uranium rods and basic heat vents. Steam reactors and advanced reactor components still need porting.
 
 ### Thermal Generator
 

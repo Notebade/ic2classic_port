@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import ic2.core.item.FluidCellItem;
 import ic2.core.item.RechargeableItem;
 import ic2.core.item.ScrapBoxItem;
+import ic2.core.item.UraniumFuelRod;
 import ic2.core.machine.Machines;
 import ic2.core.recipe.UuMatterRecipe;
 import ic2.core.tree.Rubberwood;
@@ -50,8 +51,12 @@ public final class IC2 {
     public static final DeferredItem<Item> STICKY_RESIN = ITEMS.registerSimpleItem("sticky_resin");
     public static final DeferredItem<Item> DENSE_COPPER_PLATE = ITEMS.registerSimpleItem("plate_dense_copper");
     public static final DeferredItem<Item> URANIUM_INGOT = ITEMS.registerSimpleItem("ingot_uranium");
-    public static final DeferredItem<Item> URANIUM_ROD = ITEMS.registerSimpleItem("uranium_rod_single",
-        new Item.Properties().durability(10_000));
+    public static final DeferredItem<UraniumFuelRod> URANIUM_ROD =
+        ITEMS.registerItem("uranium_rod_single", properties -> new UraniumFuelRod(properties, 1));
+    public static final DeferredItem<UraniumFuelRod> DUAL_URANIUM_ROD =
+        ITEMS.registerItem("uranium_rod_dual", properties -> new UraniumFuelRod(properties, 2));
+    public static final DeferredItem<UraniumFuelRod> QUAD_URANIUM_ROD =
+        ITEMS.registerItem("uranium_rod_quad", properties -> new UraniumFuelRod(properties, 4));
     public static final DeferredItem<Item> DEPLETED_URANIUM_ROD = ITEMS.registerSimpleItem("uranium_rod_near_depleted");
     public static final DeferredItem<Item> HEAT_VENT = ITEMS.registerSimpleItem("heat_vent",
         new Item.Properties().durability(1_000));

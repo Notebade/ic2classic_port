@@ -83,6 +83,8 @@ final class Materials {
                 event.accept(rawUranium.get());
                 event.accept(IC2.URANIUM_INGOT.get());
                 event.accept(IC2.URANIUM_ROD.get());
+                event.accept(IC2.DUAL_URANIUM_ROD.get());
+                event.accept(IC2.QUAD_URANIUM_ROD.get());
                 event.accept(IC2.DEPLETED_URANIUM_ROD.get());
                 event.accept(IC2.HEAT_VENT.get());
                 event.accept(IC2.CELL_EMPTY.get());

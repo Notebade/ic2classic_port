@@ -12,12 +12,17 @@ final class ReactorRules {
 
     private ReactorRules() {}
 
-    static int energy(int pulses) {
-        return pulses * 20;
+    static int energy(int cells, int neighboringRods) {
+        return cells * pulsesPerCell(cells, neighboringRods) * 20;
     }
 
-    static int heat(int pulses) {
+    static int heatPerCell(int cells, int neighboringRods) {
+        int pulses = pulsesPerCell(cells, neighboringRods);
         return pulses * (pulses + 1) * 2;
+    }
+
+    private static int pulsesPerCell(int cells, int neighboringRods) {
+        return 1 + cells / 2 + neighboringRods;
     }
 
     static int[] neighbors(int slot, int width) {

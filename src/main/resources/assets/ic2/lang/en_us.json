@@ -8,6 +8,8 @@
   "item.ic2.ore_uranium": "Raw Uranium",
   "item.ic2.ingot_uranium": "Uranium Ingot",
   "item.ic2.uranium_rod_single": "Uranium Fuel Rod",
+  "item.ic2.uranium_rod_dual": "Dual Uranium Fuel Rod",
+  "item.ic2.uranium_rod_quad": "Quad Uranium Fuel Rod",
   "item.ic2.uranium_rod_near_depleted": "Near-Depleted Uranium Rod",
   "item.ic2.heat_vent": "Heat Vent",
   "item.ic2.armor_hazmat_helmet": "Scuba Helmet",

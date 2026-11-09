@@ -8,6 +8,8 @@
   "item.ic2.ore_uranium": "Необработанный уран",
   "item.ic2.ingot_uranium": "Урановый слиток",
   "item.ic2.uranium_rod_single": "Урановый ТВЭЛ",
+  "item.ic2.uranium_rod_dual": "Двойной урановый ТВЭЛ",
+  "item.ic2.uranium_rod_quad": "Учетверённый урановый ТВЭЛ",
   "item.ic2.uranium_rod_near_depleted": "Почти обеднённый урановый стержень",
   "item.ic2.heat_vent": "Теплоотвод",
   "item.ic2.armor_hazmat_helmet": "Защитный шлем",

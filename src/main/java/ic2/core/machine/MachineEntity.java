@@ -4,6 +4,7 @@ import ic2.core.IC2;
 import ic2.core.Radiation;
 import ic2.core.item.FluidCellItem;
 import ic2.core.item.RechargeableItem;
+import ic2.core.item.UraniumFuelRod;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -307,9 +308,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private void meltReactor() {
         float power = 10;
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
-            if (inventory.getStackInSlot(slot).is(IC2.URANIUM_ROD.get())) {
-                power += 2;
-            }
+            power += 2 * UraniumFuelRod.cellsIn(inventory.getStackInSlot(slot));
             inventory.setStackInSlot(slot, ItemStack.EMPTY);
         }
         Vec3 origin = Vec3.atCenterOf(worldPosition);
