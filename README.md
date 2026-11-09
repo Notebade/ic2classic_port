@@ -1,116 +1,319 @@
-# IC2 Classic Port Prototype
+<div align="center">
 
-Прототип переноса IC2 Classic 2.1.3.3 с Forge 1.19.2 на **Minecraft 1.21.1 и NeoForge**. В проекте используется Java 21.
+# ⚡ IC2 Classic Port
 
-## Локальная сборка
+### IndustrialCraft Classic for Minecraft 1.21.1
 
-Оригинальные текстуры берутся из локальной копии IC2 Classic 1.19.2-2.1.3.3. Выполни эти команды в PowerShell из корня проекта.
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
+![NeoForge](https://img.shields.io/badge/NeoForge-21.1.234-F07C32?style=for-the-badge)
+![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Prototype-0.51.0-8E78C9?style=for-the-badge)
 
-~~~powershell
+**⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
+
+A prototype port of **IC2 Classic 2.1.3.3** from Forge 1.19.2 to **Minecraft 1.21.1 / NeoForge**.
+
+</div>
+
+> [!IMPORTANT]
+> This is a **work-in-progress prototype**, not a complete port of IC2 Classic. Building requires Java 21 and a local copy of the original mod for texture import.
+
+## 📚 Contents
+
+- [🧰 Build & Run](#-build--run)
+- [📊 Project Overview](#-project-overview)
+- [⚡ Power Generation](#power-generation)
+- [🔌 Cables, Transformers & Storage](#cables-transformers--storage)
+- [🏭 Machines & Processing](#machines--processing)
+- [🧪 UU-Matter & Recycling](#uu-matter--recycling)
+- [🌳 Resources, Tools & Survival](#resources-tools--survival)
+- [📖 Compatibility & Testing](#compatibility--testing)
+- [🚧 Current Limitations](#current-limitations)
+- [📜 License](#-license)
+
+---
+
+## 🧰 Build & Run
+
+Import the original textures from a local copy of **IC2 Classic 1.19.2-2.1.3.3**. From the project root, run in PowerShell:
+
+```powershell
 .\scripts\Import-OriginalTextures.ps1 -OriginalJar 'C:\path\to\ic2classic-1.19.2-2.1.3.3.jar'
 .\gradlew.bat build
-~~~
+```
 
-Клиент разработки запускается через **gradlew.bat runClient**. На этой машине прототип был собран через JDK с подготовленными зависимостями NeoForge, а штатная сборка Gradle упиралась в загрузку файлов Minecraft.
+Launch the development client:
 
-## Состояние 0.51.0
+```powershell
+.\gradlew.bat runClient
+```
 
-Термальный генератор вмещает 20 000 мБ лавы и выдаёт до 90 EU/тик. Ведро даёт 30 000 EU. Без топлива генератор учитывает горячие и холодные блоки в радиусе семи блоков и базовую температуру биома. В слоте можно зарядить энергокристалл.
+> [!NOTE]
+> The prototype was built on the development machine with a JDK and preconfigured NeoForge dependencies. The standard Gradle build encountered issues downloading Minecraft files.
 
-Океанический генератор учитывает связанные источники воды и живые кораллы в радиусе пяти блоков. При 1 000 источниках и 50 кораллах он выдаёт до 100 EU/тик. Генераторы в одной связанной области делят выработку. Буфер хранит 8 000 EU. ПКМ показывает текущую выработку.
+---
 
-Волновой генератор вырабатывает EU, если его передняя грань направлена вдоль непрерывного ряда источников воды. Учитывается до 50 источников. Базовая выработка при полной длине ряда составляет 15 EU/тик, а погода и волны меняют мощность. Буфер хранит 1 000 EU. ПКМ показывает текущую выработку.
+## 📊 Project Overview
 
-Водяная мельница ВН собирается из восьми мельниц СН и трансформатора ВН. Она хранит 2 048 EU, выдаёт 256 EU/тик из бака и получает 128 000 EU из ведра воды. Связанные источники в радиусе двух блоков дают до 115,2 EU/тик. В слоте можно зарядить лапотроновый кристалл.
+| Component | Version / Status |
+|:--|:--|
+| Minecraft | `1.21.1` |
+| Mod loader | `NeoForge` |
+| Tested NeoForge version | `21.1.234` |
+| Java | `21` |
+| Original mod | IC2 Classic `1.19.2-2.1.3.3` |
+| Project status | **Prototype 0.51.0** |
 
-Водяная мельница СН собирается из восьми мельниц НН и трансформатора СН. Она хранит 256 EU, выдаёт 32 EU/тик из бака и получает 16 000 EU из ведра воды. Связанные источники в радиусе двух блоков дают до 18,56 EU/тик. В слоте можно зарядить энергокристалл.
+### Generator Comparison
 
-Водяная мельница НН собирается из восьми обычных мельниц и трансформатора НН. Она хранит 32 EU и выдаёт до 4 EU/тик на воде из бака. Одно ведро даёт 2 000 EU. Пассивная выработка достигает 1,56 EU/тик.
+| Generator | Output | Notes |
+|:--|:--|:--|
+| 🔥 Thermal | Up to **90 EU/t** | Lava, biome temperature, nearby blocks |
+| 🌊 Ocean | Up to **100 EU/t** | Connected water and living coral |
+| 🌊 Wave | **15 EU/t** base at 50 sources | Modified by weather and waves |
+| 💧 Water Mill | Up to **0.52 EU/t** passive; **1 EU/t** tank | Water sources, buckets, cells, pipes |
+| 💧 LV Water Mill | Up to **1.56 EU/t** passive; **4 EU/t** tank | 32 EU buffer |
+| 💧 MV Water Mill | Up to **18.56 EU/t** passive; **32 EU/t** tank | 256 EU buffer |
+| 💧 HV Water Mill | Up to **115.2 EU/t** passive; **256 EU/t** tank | 2,048 EU buffer |
+| 🌬️ Wind | Up to **16 EU/t** | Wind and obstacles |
+| 🌋 Geothermal | Up to **20 EU/t** | 24,000 mB lava tank |
+| ☀️ Basic Solar Panel | **1 EU/t** | Standard and compact versions |
+| ☀️ LV / MV Solar Panel | **8 / 64 EU/t** | Standard and compact versions |
 
-Водяная мельница пассивно вырабатывает 0,02 EU/тик за каждый связанный источник воды вокруг неё, до 0,52 EU/тик. Воду также можно подать из ведра, капсулы или трубы. В этом режиме мельница выдаёт 1 EU/тик и получает 500 EU из ведра воды. Пустые ёмкости возвращаются, а аккумулятор можно зарядить в отдельном слоте. Из генератора, четырёх палок и четырёх досок получаются две мельницы.
+> Outputs refer to the operating conditions described below.
 
-Ветрогенератор собирается из генератора и четырёх слитков очищенного железа. Выработка меняется с ветром и достигает 16 EU/тик. Препятствия уменьшают приток воздуха, а замкнутое пространство останавливает выработку. Ветрогенератор хранит до 32 EU и заряжает аккумулятор в своём слоте.
+---
 
-При установленном JEI клавиша R показывает способы получения предмета, а U — где он используется. JEI показывает рецепты машин IC2, расход EU, время работы и шанс выхода утилизатора. Рецепты UU-материи видны во вкладке верстака с точным расположением в сетке 3×3. Для работы IC2 JEI не требуется.
+## ⚡ Power Generation
 
-В прототипе доступны топливный генератор, медный кабель, BatBox, аккумулятор, дробитель, электропечь, экстрактор, компрессор, базовая солнечная панель, помпа и утилизатор. Механизмы находятся во вкладке редстоуна. В тестовых мирах на NeoForge 21.1.234 проверены передача EU, загрузка через воронки, перенос заряда аккумулятором, остановка солнечной выработки без света, получение снежка из воды и получение утиля и металлолома.
+### Thermal Generator
 
-Исключения для утилизатора задаются через тег предметов **ic2:recycler_blacklist** в датапаке.
+The Thermal Generator holds 20,000 mB of lava and outputs up to 90 EU/t. A lava bucket provides 30,000 EU. Without fuel, it calculates heat from hot and cold blocks within a seven-block radius and the biome's base temperature. Its slot can charge an Energy Crystal.
 
-Девять единиц утиля можно упаковать в коробку на верстаке или в утилизаторе. Коробка открывается ПКМ или раздатчиком. Список наград доступен в таблице добычи **ic2:items/scrapbox**.
+### Ocean Generator
 
-Фабрикатор производит одну UU-материю за 7 000 000 EU накопленного прогресса. Утиль, коробки и металлолом добавляют запас усилителя. Пока он есть, каждый входящий EU даёт до шести единиц прогресса. Сигнал редстоуна блокирует приём энергии.
+The Ocean Generator counts connected water source blocks and living coral within five blocks. With 1,000 sources and 50 coral blocks, it produces up to 100 EU/t. Generators in the same connected area share the output. Its buffer holds 8,000 EU. Right-click to view current production.
 
-UU-материя используется в 53 рецептах на верстаке и в сборщике. Позиция каждой единицы в сетке 3×3 влияет на результат. Например, одна единица в верхнем левом углу даёт 16 булыжника, одна в центре даёт 16 камня, а полная сетка даёт алмаз. Раскладки находятся в `data/ic2/recipe/uu` и вводятся вручную на верстаке.
+### Wave Generator
 
-Геотермальный генератор вмещает 24 000 мБ лавы и выдаёт до 20 EU за тик. Одно ведро даёт 20 000 EU. Лаву можно залить из руки, подать через жидкостную capability NeoForge или загрузить ведром через входной слот. В нижнюю воронку выходят пустые ёмкости и полностью заряженные аккумуляторы.
+The Wave Generator produces EU when its front face points along a continuous line of water source blocks. Up to 50 sources count. A full-length line yields a base 15 EU/t, modified by weather and waves. Its buffer holds 1,000 EU. Right-click to view current output.
 
-МФЭ хранит до 600 000 EU и отдаёт до 128 EU за тик через отмеченную грань. Зарядка и разрядка аккумуляторов работают как в BatBox. Сеть прототипа позволяет BatBox заряжать МФЭ и блокирует передачу между накопителями равного уровня и в обратном направлении. МФЭ доступен во вкладке редстоуна.
+### HV Water Mill
 
-Гевея появляется в новых чанках лесов, джунглей и болот. Саженцы выпадают из листвы и растут с костной мукой. Краник крафтится из пяти досок по схеме `·Д· / ДДД / Д··`. ПКМ по оранжевому пятну на стволе даёт 1–3 латекса. Пятно со временем восстанавливается, а повторный сбор с пустого пятна может уничтожить его. Краник выдерживает 16 применений.
+The HV Water Mill is crafted from eight MV Water Mills and an HV Transformer. It stores 2,048 EU, produces 256 EU/t from its tank, and obtains 128,000 EU from one water bucket. Connected water sources within two blocks provide up to 115.2 EU/t. Its slot can charge a Lapotron Crystal.
 
-Электрический краник собирается из ручного краника, электросхемы и аккумулятора. Он хранит 10 000 EU, заряжается в BatBox со скоростью до 100 EU за тик и тратит 50 EU на сбор. Латекс выпадает рядом со стволом.
+### MV Water Mill
 
-Начать выживание можно с переплавки латекса в резину, а железных слитков — в очищенное железо. Олово генерируется в новых чанках обычного мира в диапазоне от Y −6 до Y 122. Из резины, меди, олова, очищенного железа и редстоуна можно изготовить изолированный провод, аккумулятор, электросхему и корпус, а затем собрать генератор, BatBox, экстрактор, дробитель, электропечь, компрессор и утилизатор. Изолированный медный провод теряет 0,2 EU на блок, неизолированный — 0,3 EU. Сеть округляет суммарную потерю маршрута вниз.
+The MV Water Mill is crafted from eight LV Water Mills and an MV Transformer. It stores 256 EU, produces 32 EU/t from its tank, and obtains 16,000 EU from one water bucket. Connected sources within two blocks provide up to 18.56 EU/t. Its slot can charge an Energy Crystal.
 
-Бронзовый ключ крафтится из шести слитков бронзы. ПКМ по центру грани поворачивает электрическую машину к этой грани, а ПКМ с приседанием — к противоположной. Клик у края выбирает соседнюю грань. Поворот расходует 1 единицу прочности из 160. Клик в текущем направлении снимает машину за 10 единиц прочности. При снятии выпадают блок и содержимое слотов.
+### LV Water Mill
 
-Электрический ключ собирается из бронзового ключа, электросхемы и аккумулятора. Он хранит 12 000 EU и заряжается в BatBox со скоростью до 250 EU за тик. Поворот машины стоит 50 EU, снятие — 500 EU. При снятии действуют обычные правила выпадения прототипа.
+The LV Water Mill is crafted from eight standard Water Mills and an LV Transformer. It stores 32 EU and produces up to 4 EU/t using tank water. A bucket provides 2,000 EU. Passive generation reaches 1.56 EU/t.
 
-Резак для изоляции крафтится из трёх слитков очищенного железа и двух железных слитков. ПКМ по медному, бронзовому, золотому, железному или алюминиевому кабелю добавляет слой изоляции за одну резину из инвентаря. ЛКМ снимает слой и возвращает резину. Каждое изменение расходует одну единицу прочности из 128.
+### Water Mill
 
-Оловянный кабель подходит для базовых солнечных панелей. Он передаёт пакеты до 5 EU с потерей 0,025 EU на блок. Три оловянных слитка дают девять кабелей.
+A standard Water Mill passively produces 0.02 EU/t per connected surrounding water source, up to 0.52 EU/t. Water can also be supplied by bucket, cell, or pipe. In that mode it outputs 1 EU/t and gains 500 EU per water bucket. Empty containers are returned, and a battery can be charged in a separate slot. One generator, four sticks, and four planks craft two Water Mills.
 
-Бронзовый кабель передаёт пакеты до 128 EU. Потери на блок составляют 0,70 EU без изоляции, 0,65 EU с одним слоем и 0,60 EU с двумя. Три бронзовых слитка дают шесть кабелей. Изоляцию можно добавить при крафте или резаком на месте.
+### Wind Generator
 
-Крафт остальных механизмов, полные списки рецептов машин, продвинутые уровни сети и совместимость с сохранениями оригинала требуют дальнейшего переноса.
+The Wind Generator is crafted from a generator and four refined iron ingots. Output varies with wind and reaches 16 EU/t. Obstacles reduce airflow, and a fully enclosed space stops production. It stores up to 32 EU and charges a battery in its slot.
 
-Железная печь плавит обычный рецепт за 160 тиков вместо 200. Она использует топливо и слоты обычной печи и поддерживает воронки. Её можно собрать из восьми железных слитков или улучшить обычную печь пятью слитками. Железная печь также служит ингредиентом в дополнительных рецептах генератора и электропечи.
+### Geothermal Generator
 
-Электрическая плавильня использует рецепты ванильной плавильни, включая рецепты из датапаков. Для стандартного рецепта нужно 65 тиков и 325 EU. Плавильня принимает пакеты до 32 EU, загружается сверху и отдаёт слитки снизу. Для крафта нужны ванильная плавильня, электросхема, две порции красной пыли и корпус механизма.
+The Geothermal Generator holds 24,000 mB of lava and outputs up to 20 EU/t. One bucket provides 20,000 EU. Lava can be poured in by hand, supplied through NeoForge fluid capabilities, or inserted in a bucket through the input slot. A hopper underneath collects empty containers and fully charged batteries.
 
-Электрическая коптильня использует рецепты копчения, включая рецепты из датапаков. Стандартная порция готовится за 65 тиков и стоит 325 EU. Коптильня принимает пакеты до 32 EU, загружается сверху и отдаёт результат снизу. Для крафта нужна ванильная коптильня, электросхема, две порции красной пыли и корпус механизма.
+### Basic Solar Panels
 
-Лесопилка за 400 тиков и 800 EU делает шесть досок из бревна, девять ломтиков из арбуза или восемь ломтиков из картофелины. Тип досок определяется рецептом верстака для бревна. Поддерживаются доски гевеи и воронки. Из картофельных ломтиков можно приготовить фри в коптильне или на костре. Для крафта лесопилки нужны два каменных топора, лопасть турбины, четыре бронзовых слитка, корпус и электросхема.
+A basic Solar Panel is crafted from three coal dust, three glass blocks, two Electronic Circuits, and a generator. Regular and charcoal dust both work. A Compressor converts one basic panel into one compact panel. The compact version occupies half a block, can be waterlogged, and outputs 1 EU/t only through its bottom face. The standard panel outputs the same through its sides and bottom.
 
-Каменный дробитель работает без EU. Для дробления порции нужно 400 тиков, а уголь даёт 800 тиков горения. Сырая медь, сырое олово и их руды дают по две единицы соответствующей пыли. Каменный дробитель можно улучшить до электрического.
+### LV Solar Panels
 
-Каменный и электрический дробители используют общий набор рецептов. В него входят медь, олово, железо, золото, кварцевая и редстоуновая руда, а также переработка камня, шерсти и других ванильных материалов. Электрический дробитель расходует 2 EU за тик и сохраняет прогресс длинных рецептов, например 1 600 тиков для блока сырой меди. Железная и золотая пыль переплавляются в слитки.
+An LV Solar Panel is crafted from eight basic panels and an LV Transformer. Both standard and compact versions produce 8 EU/t. Craft a compact LV panel from eight compact basic panels and a transformer, or compress a standard LV panel.
 
-Базовая солнечная панель крафтится из трёх порций угольной пыли, трёх блоков стекла, двух электросхем и генератора. Подходит пыль обычного и древесного угля. Компрессор превращает одну базовую панель в одну сжатую. Сжатая панель занимает половину блока, допускает заполнение водой и выдаёт 1 EU за тик только через нижнюю грань. Обычная панель выдаёт столько же через боковые и нижнюю грани.
+### HV Transformer and Iron Cable
 
-Трансформатор НН хранит до 256 EU. Без редстоуна отмеченная грань принимает пакеты до 128 EU, а остальные грани отдают до четырёх пакетов по 32 EU за тик. Под сигналом редстоуна пять граней принимают пакеты до 32 EU, а отмеченная грань отдаёт пакеты по 128 EU. ПКМ показывает режим, запас энергии и направление грани 128 EU.
+The HV Transformer stores up to 4,096 EU and splits a 2,048-EU packet into four 512-EU packets. Redstone switches it to step-up mode. Crafting requires an MV Transformer, Electronic Circuit, Energy Crystal, and two triple-insulated iron cables. Iron cable carries packets up to 2,048 EU. Loss is 1 EU/block bare, 0.95 with one layer, 0.9 with two, and 0.8 with three.
 
-Панель НН собирается из восьми базовых панелей и трансформатора НН. Обычная и сжатая версии дают по 8 EU за тик. Сжатую панель НН можно собрать из восьми сжатых базовых панелей и трансформатора или получить в компрессоре из обычной панели НН.
 
-Трансформатор СН хранит до 1 024 EU и преобразует 512 EU в четыре пакета по 128 EU. Редстоун переключает его на повышение. Обычная и сжатая панели СН вырабатывают по 64 EU за тик. Для крафта трансформатора доступны золотые провода. Потеря на блоке составляет 0,50 EU без изоляции, 0,45 EU с одним слоем и 0,40 EU с двумя.
+---
 
-Трансформатор ВН хранит до 4 096 EU и преобразует пакет 2 048 EU в четыре пакета по 512 EU. Сигнал редстоуна переключает его на повышение. Для крафта нужны трансформатор СН, электросхема, энергетический кристалл и два железных провода с тройной изоляцией. Железный провод передаёт пакеты до 2 048 EU. На каждом блоке теряется 1 EU без изоляции, 0,95 EU с одним слоем, 0,9 EU с двумя и 0,8 EU с тремя.
+## 🔌 Cables, Transformers & Storage
 
-Трансформатор сверхвысокого напряжения (EV) хранит до 16 384 EU и преобразует 8 192 EU в четыре пакета по 2 048 EU. Под сигналом редстоуна он работает на повышение. Для крафта нужны трансформатор ВН, продвинутая электросхема, лапотроновый кристалл и два серебряных слитка.
+### MFE Energy Storage
 
-Кабель-размыкатель отключает передачу EU под сигналом редстоуна и восстанавливает её, когда сигнал пропадает. Без сигнала он пропускает пакеты до 2 048 EU с потерей 0,5 EU на блок. Для крафта нужны рычаг, две порции красной пыли и два железных провода с тройной изоляцией.
+The MFE stores up to 600,000 EU and outputs up to 128 EU/t through its marked face. Battery charging and discharging work as in the BatBox. The prototype network allows a BatBox to charge an MFE, while preventing transfer between equal-tier storage blocks or in the reverse direction. The MFE is in the Redstone tab.
 
-Кабель-детектор каждые 20 тиков проверяет, прошла ли через него энергия. Если за этот интервал получатель принял EU, кабель выдаёт сигнал редстоуна силой 15 на всех гранях до следующей проверки. Он передаёт пакеты до 2 048 EU с потерей 0,5 EU на блок. Для крафта нужны электросхема, три порции красной пыли и железный провод с тройной изоляцией.
+### Tin Cable
 
-Кабель-компаратор измеряет средний поток за 20 тиков и преобразует его в сигнал редстоуна от 0 до 15. ПКМ открывает окно с нижним и верхним порогами в EU/тик. По умолчанию это 0 и 1. При потоке до нижнего порога сигнал равен 0, при достижении верхнего — 15, между порогами он растёт линейно. Кабель пропускает пакеты до 2 048 EU и теряет 0,5 EU на блок. Рецепт совпадает с рецептом детектора, где нужна продвинутая электросхема.
+Tin Cable supports basic Solar Panels. It carries packets up to 5 EU with 0.025 EU/block loss. Three tin ingots craft nine cables.
 
-Алюминиевый кабель передаёт пакеты до 8 192 EU. Три алюминиевых слитка дают двенадцать кабелей. Без изоляции кабель теряет 1,20 EU на блок. Каждый из четырёх слоёв изоляции снижает потерю на 0,05 EU.
+### Bronze Cable
 
-Стекловолоконный кабель передаёт пакеты до 512 EU и теряет 0,025 EU на блок. Из шести блоков стекла, алмаза и двух порций красной пыли получается четыре кабеля. С двумя серебряными слитками получается шесть кабелей.
+Bronze Cable carries packets up to 128 EU. Losses are 0.70 EU/block uninsulated, 0.65 with one insulation layer, and 0.60 with two. Three bronze ingots craft six cables. Insulation can be added in crafting or in-world with the cutter.
 
-Энергетический кристалл крафтится из алмаза и восьми единиц редстоуна. Он хранит до 100 000 EU и обменивается энергией с МФЭ со скоростью до 250 EU за тик. МФЭ крафтится из четырёх кристаллов, четырёх золотых проводов с двойной изоляцией и корпуса механизма. Для крафта подходят пустые кристаллы. Заряд компонентов при сборке МФЭ расходуется вместе с ними.
+### LV Transformer
 
-МФСУ хранит до 10 000 000 EU и выдаёт пакеты по 512 EU через отмеченную грань. Лапотроновый кристалл вмещает 1 000 000 EU и обменивается энергией с МФСУ со скоростью до 600 EU за тик. Для крафта МФСУ нужны шесть лапотроновых кристаллов, продвинутая электросхема, МФЭ и продвинутый корпус.
+The LV Transformer stores up to 256 EU. Without redstone, its marked face accepts packets up to 128 EU, while the other faces output up to four 32-EU packets per tick. With redstone, five faces accept packets up to 32 EU and the marked face outputs 128-EU packets. Right-click to inspect mode, stored energy, and the 128-EU face.
 
-Сплавочная печь расходует 4 000 EU за 250 тиков на порцию. Она делает четыре бронзовых слитка из трёх медных и одного оловянного слитка или из соответствующих видов пыли. Алюминий получается из алюминиевой пыли и песка. Алюминиевая руда появляется в новых чанках Нижнего мира, а сырой алюминий можно измельчить в дробителе. Продвинутый сплав собирается из очищенного железа, бронзы и алюминия. Компрессор превращает слиток сплава в пластину, а углеткань — в углепластик. Из этих пластин и обычного корпуса собирается продвинутый корпус.
+### MV Transformer and Solar Panels
 
-Редкоземельный экстрактор перерабатывает один блок или предмет за 35 тиков и 35 EU. Пять блоков песка душ, почвы душ или обсидиана дают две редкоземельные пыли. Две порции глины или терракоты дают две алюминиевые пыли. Накопленный материал сохраняется между циклами и сбрасывается при переходе к другому виду пыли. Четыре редкоземельные пыли и железный слиток дают заготовку для компрессора, который делает незаряженный магнит.
+The MV Transformer stores up to 1,024 EU and splits a 512-EU packet into four 128-EU packets. Redstone switches it to step-up mode. Standard and compact MV Solar Panels produce 64 EU/t. Gold wire is used in transformer crafting. Gold cable losses are 0.50 EU/block bare, 0.45 with one insulation layer, and 0.40 with two.
 
-Электролизёр заряжает незаряженный магнит или капсулу с водой за 20 000 EU. Поставьте его вплотную к BatBox, МФЭ или МФСУ с зарядом от 70%. Левый слот доступен сверху, правый снизу. При заряде накопителя ниже 30% положите электролизованную воду в правый слот. Электролизёр вернёт капсулу с водой в левый слот и отдаст накопителю 14 000, 16 000 или 18 000 EU соответственно. В обратном режиме андезит, диорит и гранит дают кварц и 700, 800 или 900 EU.
+### EV Transformer
 
-Пустую капсулу можно наполнить правым кликом по источнику воды или лавы либо загрузить в помпу. Правый клик полной капсулой выливает воду или лаву в мир и возвращает пустую капсулу в режиме выживания. Геотермальный генератор принимает капсулу с лавой и возвращает пустую. Его рецепт требует стекла, пустых капсул, очищенного железа и топливного генератора.
+The EV Transformer stores up to 16,384 EU and splits an 8,192-EU packet into four 2,048-EU packets. Redstone switches it to step-up mode. Crafting requires an HV Transformer, Advanced Circuit, Lapotron Crystal, and two silver ingots.
 
-Серебро встречается в новых чанках обычного и Нижнего миров. Магниты и серебряные слитки нужны для стабилизированного корпуса, а два таких корпуса входят в рецепт фабрикатора материи.
+### Cable Switch
 
-Оригинальный мод распространяется на условиях All Rights Reserved. В репозитории хранятся реализация прототипа, модели с путями к локальным текстурам и конфигурация сборки. [Лицензия оригинала](https://www.curseforge.com/minecraft/mc-mods/ic2-classic/license)
+The Cable Switch cuts EU transmission while powered by redstone and restores it when the signal disappears. Unpowered, it passes packets up to 2,048 EU with 0.5 EU/block loss. Crafting requires a lever, two redstone dust, and two triple-insulated iron cables.
+
+### Detector Cable
+
+The Detector Cable checks every 20 ticks whether energy has passed through it. If a receiver accepted EU during that interval, the cable emits a level-15 redstone signal on all faces until the next check. It carries packets up to 2,048 EU with 0.5 EU/block loss. Crafting requires an Electronic Circuit, three redstone dust, and triple-insulated iron cable.
+
+### Comparator Cable
+
+The Comparator Cable measures average energy flow over 20 ticks and converts it into redstone strength 0–15. Right-click to open a GUI for lower and upper EU/t thresholds, defaulting to 0 and 1. At or below the lower threshold output is 0; at the upper threshold it is 15; between them it scales linearly. It carries packets up to 2,048 EU with 0.5 EU/block loss. Its recipe replaces the Detector Cable's Electronic Circuit with an Advanced Circuit.
+
+### Aluminum Cable
+
+Aluminum Cable carries packets up to 8,192 EU. Three aluminum ingots craft twelve cables. Bare cable loses 1.20 EU/block, reduced by 0.05 EU for each of up to four insulation layers.
+
+### Glass Fiber Cable
+
+Glass Fiber Cable carries packets up to 512 EU with 0.025 EU/block loss. Six glass blocks, one diamond, and two redstone dust craft four cables; using two silver ingots yields six cables.
+
+### Energy Crystal and MFE Recipe
+
+An Energy Crystal is crafted from a diamond and eight redstone dust. It stores up to 100,000 EU and transfers energy to/from an MFE at up to 250 EU/t. An MFE is crafted from four crystals, four double-insulated gold cables, and Machine Casing. Empty crystals are valid ingredients; any charge stored in them is consumed during crafting.
+
+### MFSU and Lapotron Crystal
+
+The MFSU stores up to 10,000,000 EU and outputs 512-EU packets through its marked face. A Lapotron Crystal stores 1,000,000 EU and exchanges energy with the MFSU at up to 600 EU/t. Crafting an MFSU requires six Lapotron Crystals, an Advanced Circuit, an MFE, and an Advanced Machine Casing.
+
+
+---
+
+## 🏭 Machines & Processing
+
+### Iron Furnace
+
+The Iron Furnace smelts a standard recipe in 160 ticks instead of 200. It uses regular furnace fuel and slots and supports hoppers. Craft it from eight iron ingots or upgrade a furnace with five ingots. It is also an ingredient in alternative generator and Electric Furnace recipes.
+
+### Electric Blast Furnace
+
+The Electric Blast Furnace uses vanilla blast furnace recipes, including data-pack recipes. A standard operation takes 65 ticks and 325 EU. It accepts packets up to 32 EU, receives items from above, and outputs ingots below. Craft it from a vanilla blast furnace, Electronic Circuit, two redstone dust, and Machine Casing.
+
+### Electric Smoker
+
+The Electric Smoker uses smoking recipes, including data-pack recipes. A standard operation takes 65 ticks and 325 EU. It accepts packets up to 32 EU, loads from above, and outputs below. Craft it from a vanilla smoker, Electronic Circuit, two redstone dust, and Machine Casing.
+
+### Sawmill
+
+The Sawmill uses 800 EU over 400 ticks to turn a log into six planks, a melon into nine slices, or a potato into eight slices. The plank type follows the log's crafting recipe. Rubber Tree planks and hoppers are supported. Potato slices can be cooked into fries in a smoker or over a campfire. Crafting requires two stone axes, a turbine blade, four bronze ingots, a casing, and an Electronic Circuit.
+
+### Stone Macerator
+
+The Stone Macerator operates without EU. One batch takes 400 ticks; coal provides 800 burn ticks. Raw copper, raw tin, and their ores produce two corresponding dusts. It can be upgraded to an Electric Macerator.
+
+### Macerator Recipes
+
+Stone and Electric Macerators share a recipe set covering copper, tin, iron, gold, quartz and redstone ores, plus stone, wool, and other vanilla materials. The Electric Macerator consumes 2 EU/t and preserves progress on long recipes, such as 1,600 ticks for a raw copper block. Iron and gold dust can be smelted into ingots.
+
+### Alloy Furnace and Advanced Casings
+
+The Alloy Furnace consumes 4,000 EU over 250 ticks per batch. It makes four bronze ingots from three copper and one tin ingot, or their dust equivalents. Aluminum is made from aluminum dust and sand. Aluminum ore generates in new Nether chunks, and raw aluminum can be macerated. Advanced Alloy combines refined iron, bronze, and aluminum. A Compressor turns alloy ingots into plates and carbon fabric into carbon fiber composite. These plates and a basic casing make an Advanced Machine Casing.
+
+### Rare Earth Extractor
+
+The Rare Earth Extractor processes one item or block in 35 ticks for 35 EU. Five soul sand, soul soil, or obsidian blocks yield two Rare Earth Dust; two clay or terracotta yield two Aluminum Dust. Accumulated input is preserved between cycles and resets when switching dust types. Four Rare Earth Dust and an iron ingot make a blank that a Compressor turns into an uncharged magnet.
+
+### Electrolyzer
+
+The Electrolyzer charges an uncharged magnet or water cell for 20,000 EU. Place it next to a BatBox, MFE, or MFSU with at least 70% charge. The left slot is accessible from above and the right from below. When storage drops below 30%, place electrolyzed water in the right slot: the Electrolyzer returns a water cell to the left slot and supplies 14,000, 16,000, or 18,000 EU to the respective storage tier. In reverse mode, andesite, diorite, and granite yield quartz and 700, 800, or 900 EU.
+
+
+---
+
+## 🧪 UU-Matter & Recycling
+
+### Recycler Blacklist
+
+Recycler exclusions are configured with the **`ic2:recycler_blacklist`** item tag in a data pack.
+
+### Scrap Boxes
+
+Nine pieces of Scrap can be packed into a Scrap Box in a crafting table or Recycler. Open it by right-clicking or using a dispenser. Rewards are defined by the **`ic2:items/scrapbox`** loot table.
+
+### Matter Fabricator
+
+The Matter Fabricator produces one UU-Matter for 7,000,000 EU of accumulated progress. Scrap, Scrap Boxes, and scrap metal supply amplifier reserves. While reserves last, each incoming EU contributes up to six progress units. A redstone signal blocks energy input.
+
+### UU-Matter Recipes
+
+UU-Matter is used in 53 crafting-table and assembler recipes. The position of each piece in the 3×3 grid matters. For example, one piece in the top-left yields 16 cobblestone, one in the center yields 16 stone, and a full grid yields a diamond. Layouts are in `data/ic2/recipe/uu` and can be entered manually in a crafting table.
+
+
+---
+
+## 🌳 Resources, Tools & Survival
+
+### Rubber Trees and Resin
+
+Rubber Trees generate in newly created forest, jungle, and swamp chunks. Saplings drop from leaves and respond to bone meal. Craft a Treetap with five planks in the pattern `·P· / PPP / P··`. Right-click an orange resin spot to collect 1–3 Sticky Resin. The spot regenerates over time; tapping an empty spot again may destroy it. The Treetap lasts 16 uses.
+
+### Electric Treetap
+
+The Electric Treetap is crafted from a manual Treetap, an Electronic Circuit, and a battery. It stores 10,000 EU, charges in a BatBox at up to 100 EU/t, and consumes 50 EU per collection. Resin drops next to the trunk.
+
+### Getting Started in Survival
+
+Start survival by smelting Sticky Resin into Rubber and iron ingots into Refined Iron. Tin generates in new Overworld chunks between Y -6 and Y 122. Rubber, copper, tin, refined iron, and redstone let you craft insulated wire, batteries, circuits, and machine casings, followed by a generator, BatBox, Extractor, Macerator, Electric Furnace, Compressor, and Recycler. Insulated copper cable loses 0.2 EU/block; bare copper loses 0.3 EU/block. The network rounds total route loss down.
+
+### Bronze Wrench
+
+The Bronze Wrench is crafted from six bronze ingots. Right-click the center of a machine face to rotate it toward that face; sneak-right-click to face the opposite way. Clicking near an edge selects the adjacent face. Rotation uses 1 of 160 durability; clicking the current facing removes the machine for 10 durability. The block and slot contents drop when removed.
+
+### Electric Wrench
+
+The Electric Wrench is crafted from a Bronze Wrench, Electronic Circuit, and battery. It stores 12,000 EU and charges in a BatBox at up to 250 EU/t. Rotation costs 50 EU and removal costs 500 EU. Standard prototype drop rules apply.
+
+### Insulation Cutter
+
+The Insulation Cutter is crafted from three refined iron ingots and two iron ingots. Right-click copper, bronze, gold, iron, or aluminum cable to add one insulation layer using one Rubber from your inventory. Left-click to remove a layer and return Rubber. Each change uses 1 of 128 durability.
+
+### Fluid Cells
+
+An empty cell can be filled by right-clicking a water or lava source or placing it in a Pump. Right-clicking with a full cell places the fluid in the world and returns an empty cell in Survival. The Geothermal Generator accepts lava cells and returns empties. Its recipe requires glass, empty cells, refined iron, and a fuel generator.
+
+### Silver and Stabilized Casings
+
+Silver generates in new Overworld and Nether chunks. Magnets and silver ingots are needed for Stabilized Casings; two of these casings are used to craft the Matter Fabricator.
+
+
+---
+
+## 📖 Compatibility & Testing
+
+### JEI Integration
+
+With JEI installed, press R to see how to obtain an item and U to see its uses. JEI displays IC2 machine recipes, EU costs, processing times, and Recycler output chances. UU-Matter recipes appear under crafting with exact 3×3 layouts. JEI is optional.
+
+### Implemented and Tested Features
+
+The prototype includes a fuel generator, copper cable, BatBox, battery, Macerator, Electric Furnace, Extractor, Compressor, basic Solar Panel, Pump, and Recycler. Machines are in the Redstone creative tab. Testing on NeoForge 21.1.234 verified EU transfer, hopper automation, battery charge transfer, solar shutdown without light, snowball production from water, and scrap/scrap metal production.
+
+
+---
+
+## 🚧 Current Limitations
+
+### Porting Limitations
+
+Crafting for other machines, full machine recipe lists, advanced network tiers, and compatibility with original saves still require further porting.
+
+---
+
+## 📜 License
+
+The original mod is distributed under **All Rights Reserved**. This repository contains the prototype implementation, models referencing locally imported textures, and build configuration. [Original mod license](https://www.curseforge.com/minecraft/mc-mods/ic2-classic/license).
