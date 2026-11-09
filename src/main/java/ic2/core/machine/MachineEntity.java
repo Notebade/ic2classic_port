@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -60,6 +61,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int energy;
     private boolean electrolysisDischarging;
     private int burnTicks;
+    private int windProduction = -1;
+    private int windRemainder;
     private int progress;
     private int amplifier;
     private int amplifierRefillThreshold;
@@ -92,8 +95,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     setChanged();
                 }
             } : null;
-        inventory = new ItemStackHandler(kind == MachineKind.GEOTHERMAL || kind == MachineKind.ALLOY_SMELTER
-                ? SLOT_COUNT + 1 : SLOT_COUNT) {
+        inventory = new ItemStackHandler(switch (kind) {
+            case WIND_TURBINE -> 1;
+            case GEOTHERMAL, ALLOY_SMELTER -> SLOT_COUNT + 1;
+            default -> SLOT_COUNT;
+        }) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 if (kind.isStorage()) {
@@ -128,7 +134,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ELECTROLYZER -> new RangedWrapper(inventory, INPUT_SLOT, INPUT_SLOT + 1);
             default -> input;
         };
-        var output = new RangedWrapper(inventory, OUTPUT_SLOT, OUTPUT_SLOT + 1);
+        var output = kind == MachineKind.WIND_TURBINE ? input : new RangedWrapper(inventory, OUTPUT_SLOT, OUTPUT_SLOT + 1);
         automationOutput = kind == MachineKind.GEOTHERMAL
             ? new CombinedInvWrapper(output, new BatterySlot(inventory, GEOTHERMAL_BATTERY_SLOT, true))
             : output;
@@ -149,6 +155,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (((MachineBlock) state.getBlock()).kind()) {
             case GENERATOR -> Machines.GENERATOR_ENTITY.get();
             case GEOTHERMAL -> Machines.GEOTHERMAL_ENTITY.get();
+            case WIND_TURBINE -> Machines.WIND_TURBINE_ENTITY.get();
             case SOLAR_PANEL -> Machines.SOLAR_PANEL_ENTITY.get();
             case LV_TRANSFORMER -> Machines.LV_TRANSFORMER_ENTITY.get();
             case MV_TRANSFORMER -> Machines.MV_TRANSFORMER_ENTITY.get();
@@ -177,6 +184,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         switch (kind) {
             case GENERATOR -> tickGenerator();
             case GEOTHERMAL -> tickGeothermal();
+            case WIND_TURBINE -> tickWindTurbine();
             case SOLAR_PANEL -> tickSolarPanel();
             case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> tickTransformer();
             case PUMP -> tickPump();
@@ -187,6 +195,24 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ELECTROLYZER -> setActive(tickElectrolyzer());
             case BATBOX, MFE, MFSU -> tickStorage();
         }
+    }
+
+    private void tickWindTurbine() {
+        if (windProduction < 0 || (level.getGameTime() + worldPosition.hashCode()) % WindProduction.SAMPLE_INTERVAL == 0) {
+            windProduction = WindProduction.sample((ServerLevel) level, worldPosition);
+        }
+        boolean generating = windProduction > 0 && energy < kind.capacity;
+        if (generating) {
+            int production = windRemainder + windProduction;
+            energy = Math.min(kind.capacity, energy + production / WindProduction.UNITS_PER_EU);
+            windRemainder = production % WindProduction.UNITS_PER_EU;
+            setChanged();
+        }
+        transferBattery(INPUT_SLOT, true);
+        if (energy > 0) {
+            sendEnergy(Math.min(energy, WindProduction.OUTPUT_LIMIT), side -> true);
+        }
+        setActive(generating);
     }
 
     private void tickGeothermal() {
@@ -380,6 +406,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return switch (kind) {
             case GENERATOR -> fuelTicks(stack) > 0;
             case GEOTHERMAL -> GeothermalGeneratorBlock.hasLava(stack);
+            case WIND_TURBINE -> RechargeableItem.supports(stack, MachineKind.BATBOX.storageOutput);
             case MACERATOR -> macerationRecipe(new SingleRecipeInput(stack)).isPresent();
             case ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER ->
                 furnaceRecipe(new SingleRecipeInput(stack)).isPresent();
@@ -424,7 +451,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                     : new Work(recipe.inputCount(), new ItemStack(recipe.output(), recipe.count()),
                         recipe.chanceDenominator(), recipe.extraTicks());
             }
-            case GENERATOR, GEOTHERMAL, BATBOX, MFE, MFSU, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER,
+            case GENERATOR, GEOTHERMAL, WIND_TURBINE, BATBOX, MFE, MFSU, SOLAR_PANEL, LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER,
                 PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER -> null;
         };
     }
@@ -653,7 +680,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             return false;
         }
         return switch (kind) {
-            case GENERATOR, GEOTHERMAL, SOLAR_PANEL, ELECTROLYZER -> false;
+            case GENERATOR, GEOTHERMAL, WIND_TURBINE, SOLAR_PANEL, ELECTROLYZER -> false;
             case ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL -> packetSize <= MachineKind.BATBOX.storageOutput;
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> true;
@@ -708,6 +735,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     }
 
     IItemHandler automation(Direction side) {
+        if (kind == MachineKind.WIND_TURBINE) {
+            return side == Direction.UP ? null : batteryChargeSlot;
+        }
         if (kind == MachineKind.ELECTROLYZER) {
             return switch (side) {
                 case UP -> automationInput;
@@ -757,6 +787,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 case ELECTROLYZER -> Machines.ELECTROLYZER_MENU.get();
                 case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
                 case GEOTHERMAL -> Machines.GEOTHERMAL_MENU.get();
+                case WIND_TURBINE -> Machines.WIND_TURBINE_MENU.get();
                 default -> Machines.MENU.get();
             });
     }
@@ -774,6 +805,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private int menuWork() {
         return switch (kind) {
             case GENERATOR -> burnTicks;
+            case WIND_TURBINE -> Math.max(0, windProduction);
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
             case SOLAR_PANEL, GEOTHERMAL, LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, ELECTROLYZER -> 0;
             case MASS_FABRICATOR -> amplifier;
@@ -805,6 +837,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             tag.putInt("burn_ticks", burnTicks);
         } else if (kind == MachineKind.GEOTHERMAL) {
             tag.putInt("lava", geothermalTank.getFluidAmount());
+        } else if (kind == MachineKind.WIND_TURBINE) {
+            tag.putInt("wind_remainder", windRemainder);
         } else if (kind == MachineKind.ELECTROLYZER) {
             tag.putBoolean("electrolysis_discharging", electrolysisDischarging);
         } else if (kind == MachineKind.MASS_FABRICATOR) {
@@ -840,6 +874,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         } else if (kind == MachineKind.GEOTHERMAL) {
             geothermalTank.setFluid(new FluidStack(Fluids.LAVA,
                 Mth.clamp(tag.getInt("lava"), 0, geothermalTank.getCapacity())));
+        } else if (kind == MachineKind.WIND_TURBINE) {
+            windRemainder = Mth.clamp(tag.getInt("wind_remainder"), 0, WindProduction.UNITS_PER_EU - 1);
         } else if (kind == MachineKind.ELECTROLYZER) {
             electrolysisDischarging = energy > 0 && tag.getBoolean("electrolysis_discharging");
         } else if (kind == MachineKind.MASS_FABRICATOR) {

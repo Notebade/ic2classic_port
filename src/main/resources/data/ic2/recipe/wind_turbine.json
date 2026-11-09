@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "I I",
+    " G ",
+    "I I"
+  ],
+  "key": {
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "G": {
+      "item": "ic2:generator"
+    }
+  },
+  "result": {
+    "id": "ic2:wind_turbine",
+    "count": 1
+  }
+}

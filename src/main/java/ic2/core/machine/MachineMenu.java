@@ -53,6 +53,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.GEOTHERMAL_MENU.get());
     }
 
+    static MachineMenu windTurbine(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.WIND_TURBINE_MENU.get());
+    }
+
     static MachineMenu alloySmelter(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.ALLOY_SMELTER_MENU.get());
     }
@@ -66,10 +70,17 @@ final class MachineMenu extends AbstractContainerMenu {
     }
 
     private MachineMenu(int id, Inventory playerInventory, MenuType<MachineMenu> type) {
-        this(id, playerInventory, new ItemStackHandler(type == Machines.GEOTHERMAL_MENU.get() || type == Machines.ALLOY_SMELTER_MENU.get()
-                ? MachineEntity.SLOT_COUNT + 1 : MachineEntity.SLOT_COUNT),
+        this(id, playerInventory, new ItemStackHandler(slotCount(type)),
             ContainerLevelAccess.NULL, Blocks.AIR, new SimpleContainerData(DATA_COUNT), () -> {}, type);
         data.set(FLUID, -1);
+    }
+
+    private static int slotCount(MenuType<MachineMenu> type) {
+        if (type == Machines.WIND_TURBINE_MENU.get()) {
+            return 1;
+        }
+        return type == Machines.GEOTHERMAL_MENU.get() || type == Machines.ALLOY_SMELTER_MENU.get()
+            ? MachineEntity.SLOT_COUNT + 1 : MachineEntity.SLOT_COUNT;
     }
 
     MachineMenu(int id, Inventory playerInventory, ItemStackHandler inventory, ContainerLevelAccess access,
@@ -95,7 +106,9 @@ final class MachineMenu extends AbstractContainerMenu {
         this.data = data;
         machineSlots = inventory.getSlots();
         addDataSlots(data);
-        if (isGeothermal()) {
+        if (isWindTurbine()) {
+            addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 80, changed);
+        } else if (isGeothermal()) {
             addMachineSlot(inventory, MachineEntity.INPUT_SLOT, 24, changed);
             addMachineSlot(inventory, MachineEntity.OUTPUT_SLOT, 80, changed);
             addMachineSlot(inventory, MachineEntity.GEOTHERMAL_BATTERY_SLOT, 136, changed);
@@ -128,7 +141,7 @@ final class MachineMenu extends AbstractContainerMenu {
                     return index == MachineEntity.INPUT_SLOT
                         ? Electrolysis.charge(stack) != null : Electrolysis.discharge(stack) != null;
                 }
-                if (isGeothermal() && index == MachineEntity.GEOTHERMAL_BATTERY_SLOT) {
+                if (isWindTurbine() || isGeothermal() && index == MachineEntity.GEOTHERMAL_BATTERY_SLOT) {
                     return RechargeableItem.supports(stack, MachineKind.BATBOX.storageOutput);
                 }
                 return index != MachineEntity.OUTPUT_SLOT && super.mayPlace(stack);
@@ -192,6 +205,10 @@ final class MachineMenu extends AbstractContainerMenu {
 
     boolean isGeothermal() {
         return getType() == Machines.GEOTHERMAL_MENU.get();
+    }
+
+    boolean isWindTurbine() {
+        return getType() == Machines.WIND_TURBINE_MENU.get();
     }
 
     boolean isAlloySmelter() {

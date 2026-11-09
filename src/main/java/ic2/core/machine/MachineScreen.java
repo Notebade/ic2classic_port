@@ -1,6 +1,7 @@
 package ic2.core.machine;
 
 import ic2.core.IC2;
+import java.util.Locale;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.Direction;
@@ -31,6 +32,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.ELECTROLYZER_MENU.get(), MachineScreen::new);
         event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
+        event.register(Machines.WIND_TURBINE_MENU.get(), MachineScreen::new);
     }
 
     @Override
@@ -53,6 +55,14 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
+        if (menu.isWindTurbine()) {
+            String output = String.format(Locale.ROOT, "%.2f", menu.work() / (double) WindProduction.UNITS_PER_EU);
+            graphics.drawString(font, Component.translatable("gui.ic2.wind_status", output, menu.energy()),
+                8, 21, 0x404040, false);
+            Component charge = Component.translatable("gui.ic2.charge");
+            graphics.drawString(font, charge, 88 - font.width(charge) / 2, 61, 0x404040, false);
+            return;
+        }
         if (menu.isStorage()) {
             graphics.drawString(font, Component.translatable("gui.ic2.storage_energy", menu.energy(), menu.storageCapacity()),
                 8, 21, 0x404040, false);

@@ -64,11 +64,15 @@ public final class Machines {
         MENUS.register("mass_fabricator", () -> new MenuType<>(MachineMenu::fabricator, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> GEOTHERMAL_MENU =
         MENUS.register("geothermal_generator", () -> new MenuType<>(MachineMenu::geothermal, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<MachineMenu>> WIND_TURBINE_MENU =
+        MENUS.register("wind_turbine", () -> new MenuType<>(MachineMenu::windTurbine, FeatureFlags.DEFAULT_FLAGS));
 
     static final DeferredBlock<MachineBlock> GENERATOR =
         BLOCKS.registerBlock("generator", properties -> new MachineBlock(properties, MachineKind.GENERATOR), machineProperties());
     static final DeferredBlock<GeothermalGeneratorBlock> GEOTHERMAL =
         BLOCKS.registerBlock("geothermal_generator", GeothermalGeneratorBlock::new, machineProperties());
+    static final DeferredBlock<ActiveMachineBlock> WIND_TURBINE = BLOCKS.registerBlock("wind_turbine",
+        properties -> new ActiveMachineBlock(properties, MachineKind.WIND_TURBINE), machineProperties());
     static final DeferredBlock<SolarPanelBlock> SOLAR_PANEL =
         BLOCKS.registerBlock("solar_panel", properties -> new SolarPanelBlock(properties, SolarPanelBlock.BASE_OUTPUT),
             machineProperties());
@@ -187,6 +191,8 @@ public final class Machines {
             BlockEntityType.Builder.of(ComparingCableEntity::new, COMPARING_CABLE.get()).build(null));
     static final Supplier<BlockEntityType<MachineEntity>> GEOTHERMAL_ENTITY =
         ENTITIES.register("geothermal_generator", () -> entityType(GEOTHERMAL.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> WIND_TURBINE_ENTITY =
+        ENTITIES.register("wind_turbine", () -> entityType(WIND_TURBINE.get()));
     static final Supplier<BlockEntityType<MachineEntity>> SOLAR_PANEL_ENTITY =
         ENTITIES.register("solar_panel", () -> entityType(SOLAR_PANEL.get(), COMPRESSED_SOLAR_PANEL.get(),
             LV_SOLAR_PANEL.get(), COMPRESSED_LV_SOLAR_PANEL.get(), MV_SOLAR_PANEL.get(), COMPRESSED_MV_SOLAR_PANEL.get()));
@@ -245,6 +251,7 @@ public final class Machines {
         bus.addListener(Machines::registerCapabilities);
         items.registerSimpleBlockItem(GENERATOR);
         items.registerSimpleBlockItem(GEOTHERMAL);
+        items.registerSimpleBlockItem(WIND_TURBINE);
         items.registerSimpleBlockItem(SOLAR_PANEL);
         items.registerSimpleBlockItem(COMPRESSED_SOLAR_PANEL);
         items.registerSimpleBlockItem(LV_SOLAR_PANEL);
@@ -311,6 +318,7 @@ public final class Machines {
             if (event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)) {
                 event.accept(GENERATOR.get());
                 event.accept(GEOTHERMAL.get());
+                event.accept(WIND_TURBINE.get());
                 event.accept(SOLAR_PANEL.get());
                 event.accept(COMPRESSED_SOLAR_PANEL.get());
                 event.accept(LV_SOLAR_PANEL.get());
@@ -373,6 +381,7 @@ public final class Machines {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GENERATOR_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GEOTHERMAL_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GEOTHERMAL_ENTITY.get(), MachineEntity::geothermalFluid);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, WIND_TURBINE_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACERATOR_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ELECTRIC_FURNACE_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ELECTRIC_BLAST_FURNACE_ENTITY.get(), MachineEntity::automation);
