@@ -9,6 +9,7 @@
 build/
 reference/
 runs/
+/PORTING_PROGRESS.md
 src/main/resources/assets/ic2/textures/item/misc/rubber.png
 src/main/resources/assets/ic2/textures/item/misc/resin.png
 src/main/resources/assets/ic2/textures/block/resources/rubberwood/
