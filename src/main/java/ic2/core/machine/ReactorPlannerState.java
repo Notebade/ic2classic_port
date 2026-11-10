@@ -11,6 +11,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 
 final class ReactorPlannerState {
     static final int EU_PER_STEP = 100;
+    static final int HEAT_STEP = 500;
     private final Runnable changed;
     private final ItemStackHandler layout = new ItemStackHandler(ReactorRules.SLOT_COUNT);
     private ItemStackHandler simulation = new ItemStackHandler(ReactorRules.SLOT_COUNT);
@@ -21,6 +22,7 @@ final class ReactorPlannerState {
     private boolean step;
     private int cycles;
     private int heat;
+    private int startingHeat;
     private int maxHeat = ReactorRules.MAX_HEAT;
     private int output;
 
@@ -55,6 +57,8 @@ final class ReactorPlannerState {
             case 3 -> running = !running && heat < maxHeat;
             case 4 -> reset();
             case 5 -> toggleMode();
+            case 8 -> adjustStartingHeat(HEAT_STEP);
+            case 9 -> adjustStartingHeat(-HEAT_STEP);
             default -> { return false; }
         }
         changed.run();
@@ -76,6 +80,14 @@ final class ReactorPlannerState {
         reset();
     }
 
+    private void adjustStartingHeat(int amount) {
+        int adjusted = Math.clamp(startingHeat + amount, 0, maxHeat - 1);
+        if (adjusted != startingHeat) {
+            startingHeat = adjusted;
+            reset();
+        }
+    }
+
     private void clearInactive() {
         for (int slot = 0; slot < layout.getSlots(); slot++) {
             if (slot % ReactorRules.COLUMNS >= width || !ReactorGrid.accepts(layout.getStackInSlot(slot), steam)) {
@@ -91,7 +103,9 @@ final class ReactorPlannerState {
         }
         tanks = steam ? new SteamReactorTanks(() -> {}) : null;
         maxHeat = new ReactorGrid(simulation, tanks).hull(width).capacity();
-        heat = output = cycles = 0;
+        startingHeat = Math.clamp(startingHeat, 0, maxHeat - 1);
+        heat = startingHeat;
+        output = cycles = 0;
         running = step = false;
         changed.run();
     }
@@ -130,6 +144,8 @@ final class ReactorPlannerState {
             case 8 -> output >>> 16;
             case 9 -> cycles & 0xffff;
             case 10 -> cycles >>> 16;
+            case 11 -> startingHeat & 0xffff;
+            case 12 -> startingHeat >>> 16;
             default -> 0;
         };
     }
@@ -148,6 +164,7 @@ final class ReactorPlannerState {
         tag.put("layout", layout.serializeNBT(registries));
         tag.putInt("width", width);
         tag.putBoolean("steam", steam);
+        tag.putInt("starting_heat", startingHeat);
         return tag;
     }
 
@@ -159,6 +176,7 @@ final class ReactorPlannerState {
         }
         width = Math.clamp(tag.getInt("width"), ReactorRules.BASE_COLUMNS, ReactorRules.COLUMNS);
         steam = tag.getBoolean("steam");
+        startingHeat = tag.getInt("starting_heat");
         clearInactive();
         reset();
     }

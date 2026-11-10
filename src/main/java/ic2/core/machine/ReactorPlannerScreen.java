@@ -2,6 +2,8 @@ package ic2.core.machine;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -30,6 +32,10 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
             .bounds(leftPos + 91, topPos + 165, 19, 16).build());
         addRenderableWidget(Button.builder(Component.literal(">"), b -> send(7))
             .bounds(leftPos + 135, topPos + 165, 19, 16).build());
+        addRenderableWidget(Button.builder(Component.literal("H"), b -> send(Screen.hasShiftDown() ? 9 : 8))
+            .bounds(leftPos + 156, topPos + 165, 12, 16)
+            .tooltip(Tooltip.create(Component.translatable("gui.ic2.reactor_planner.heat_adjust", ReactorPlannerState.HEAT_STEP)))
+            .build());
     }
 
     private Button button(int command, int x, int width, String key) {
@@ -73,6 +79,8 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
             8, 38, 0x404040, false);
         graphics.drawString(font, Component.translatable("gui.ic2.reactor_planner.cycles", menu.cycles()),
             8, 47, 0x404040, false);
+        Component initialHeat = Component.translatable("gui.ic2.reactor_planner.starting_heat", menu.startingHeat());
+        graphics.drawString(font, initialHeat, 168 - font.width(initialHeat), 47, 0x404040, false);
     }
 
     @Override

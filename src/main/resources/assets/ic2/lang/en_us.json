@@ -33,6 +33,8 @@
   "gui.ic2.reactor_planner.steam": "Steam",
   "gui.ic2.reactor_planner.electric": "Electric",
   "gui.ic2.reactor_planner.cycles": "Cycles %s",
+  "gui.ic2.reactor_planner.starting_heat": "Start heat %s",
+  "gui.ic2.reactor_planner.heat_adjust": "Click to add %s starting heat. Hold Shift to subtract.",
   "item.ic2.heat_pump": "Heat Pump",
   "item.ic2.cell_fuel": "Fuel Cell",
   "item.ic2.prepared_fuel_cell": "Prepared Fuel Cell",
