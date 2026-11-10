@@ -1,5 +1,6 @@
 package ic2.core.machine;
 
+import java.util.Arrays;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
@@ -12,6 +13,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 final class ReactorPlannerState {
     static final int EU_PER_STEP = 100;
     static final int HEAT_STEP = 500;
+    private static final int[] CYCLE_LIMITS = {0, 20, 100, 500, 1_000, 5_000, 10_000, 20_000, 100_000};
     private final Runnable changed;
     private final ItemStackHandler layout = new ItemStackHandler(ReactorRules.SLOT_COUNT);
     private ItemStackHandler simulation = new ItemStackHandler(ReactorRules.SLOT_COUNT);
@@ -23,6 +25,7 @@ final class ReactorPlannerState {
     private int cycles;
     private int heat;
     private int startingHeat;
+    private int cycleLimitIndex;
     private int maxHeat = ReactorRules.MAX_HEAT;
     private int output;
 
@@ -35,7 +38,15 @@ final class ReactorPlannerState {
     }
 
     boolean wantsStep() {
-        return (step || running) && heat < maxHeat;
+        return (step || running) && canAdvance();
+    }
+
+    private boolean canAdvance() {
+        return heat < maxHeat && cycles < (cycleLimit() == 0 ? Integer.MAX_VALUE : cycleLimit());
+    }
+
+    private int cycleLimit() {
+        return CYCLE_LIMITS[cycleLimitIndex];
     }
 
     boolean running() {
@@ -53,12 +64,19 @@ final class ReactorPlannerState {
         switch (command) {
             case 0 -> resize(-1);
             case 1 -> resize(1);
-            case 2 -> step = true;
-            case 3 -> running = !running && heat < maxHeat;
+            case 2 -> {
+                if (!canAdvance()) {
+                    return false;
+                }
+                step = true;
+            }
+            case 3 -> running = !running && canAdvance();
             case 4 -> reset();
             case 5 -> toggleMode();
             case 8 -> adjustStartingHeat(HEAT_STEP);
             case 9 -> adjustStartingHeat(-HEAT_STEP);
+            case 10 -> adjustCycleLimit(1);
+            case 11 -> adjustCycleLimit(-1);
             default -> { return false; }
         }
         changed.run();
@@ -85,6 +103,13 @@ final class ReactorPlannerState {
         if (adjusted != startingHeat) {
             startingHeat = adjusted;
             reset();
+        }
+    }
+
+    private void adjustCycleLimit(int amount) {
+        cycleLimitIndex = Math.clamp(cycleLimitIndex + amount, 0, CYCLE_LIMITS.length - 1);
+        if (!canAdvance()) {
+            running = step = false;
         }
     }
 
@@ -125,7 +150,7 @@ final class ReactorPlannerState {
         if (tanks != null) {
             tanks.drain(SteamReactorTanks.STEAM_CAPACITY, FluidAction.EXECUTE);
         }
-        if (heat >= maxHeat) {
+        if (!canAdvance()) {
             running = false;
         }
         changed.run();
@@ -146,6 +171,8 @@ final class ReactorPlannerState {
             case 10 -> cycles >>> 16;
             case 11 -> startingHeat & 0xffff;
             case 12 -> startingHeat >>> 16;
+            case 13 -> cycleLimit() & 0xffff;
+            case 14 -> cycleLimit() >>> 16;
             default -> 0;
         };
     }
@@ -165,6 +192,7 @@ final class ReactorPlannerState {
         tag.putInt("width", width);
         tag.putBoolean("steam", steam);
         tag.putInt("starting_heat", startingHeat);
+        tag.putInt("cycle_limit", cycleLimit());
         return tag;
     }
 
@@ -177,6 +205,7 @@ final class ReactorPlannerState {
         width = Math.clamp(tag.getInt("width"), ReactorRules.BASE_COLUMNS, ReactorRules.COLUMNS);
         steam = tag.getBoolean("steam");
         startingHeat = tag.getInt("starting_heat");
+        cycleLimitIndex = Math.max(0, Arrays.binarySearch(CYCLE_LIMITS, tag.getInt("cycle_limit")));
         clearInactive();
         reset();
     }

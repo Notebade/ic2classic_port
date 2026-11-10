@@ -11,6 +11,8 @@ import net.minecraft.world.entity.player.Inventory;
 final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerMenu> {
     private Button run;
     private Button mode;
+    private Button limit;
+    private int displayedLimit = -1;
 
     ReactorPlannerScreen(ReactorPlannerMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -29,13 +31,17 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
         mode = addRenderableWidget(Button.builder(label("electric"), b -> send(5))
             .bounds(leftPos + 8, topPos + 165, 78, 16).build());
         addRenderableWidget(Button.builder(Component.literal("<"), b -> send(6))
-            .bounds(leftPos + 91, topPos + 165, 19, 16).build());
+            .bounds(leftPos + 87, topPos + 165, 15, 16).build());
         addRenderableWidget(Button.builder(Component.literal(">"), b -> send(7))
-            .bounds(leftPos + 135, topPos + 165, 19, 16).build());
+            .bounds(leftPos + 121, topPos + 165, 15, 16).build());
         addRenderableWidget(Button.builder(Component.literal("H"), b -> send(Screen.hasShiftDown() ? 9 : 8))
-            .bounds(leftPos + 156, topPos + 165, 12, 16)
+            .bounds(leftPos + 138, topPos + 165, 14, 16)
             .tooltip(Tooltip.create(Component.translatable("gui.ic2.reactor_planner.heat_adjust", ReactorPlannerState.HEAT_STEP)))
             .build());
+        limit = addRenderableWidget(Button.builder(Component.literal("T"), b -> send(Screen.hasShiftDown() ? 11 : 10))
+            .bounds(leftPos + 154, topPos + 165, 14, 16).build());
+        displayedLimit = -1;
+        updateLimitTooltip();
     }
 
     private Button button(int command, int x, int width, String key) {
@@ -56,12 +62,22 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
     protected void containerTick() {
         run.setMessage(label(menu.running() ? "pause" : "run"));
         mode.setMessage(label(menu.steam() ? "steam" : "electric"));
+        updateLimitTooltip();
+    }
+
+    private void updateLimitTooltip() {
+        int currentLimit = menu.cycleLimit();
+        if (currentLimit != displayedLimit) {
+            Component value = currentLimit == 0 ? label("unlimited") : Component.literal(Integer.toString(currentLimit));
+            limit.setTooltip(Tooltip.create(Component.translatable("gui.ic2.reactor_planner.cycle_limit", value)));
+            displayedLimit = currentLimit;
+        }
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
-        int x = leftPos + 114;
+        int x = leftPos + 104;
         int y = topPos + 165;
         var part = menu.selectedPart();
         graphics.renderItem(part, x, y);
