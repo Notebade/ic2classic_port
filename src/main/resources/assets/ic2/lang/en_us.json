@@ -33,6 +33,8 @@
   "gui.ic2.reactor_planner.steam": "Steam",
   "gui.ic2.reactor_planner.electric": "Electric",
   "gui.ic2.reactor_planner.cycles": "Cycles %s",
+  "gui.ic2.reactor_planner.total_energy": "Total produced: %s EU",
+  "gui.ic2.reactor_planner.total_steam": "Total produced: %s mB of steam",
   "gui.ic2.reactor_planner.speed": "Cycles per tick: %s. Click to increase, or Shift-click to decrease.",
   "gui.ic2.reactor_planner.unlimited": "Unlimited",
   "gui.ic2.reactor_planner.cycle_limit": "Cycle limit: %s. Click for the next preset, or Shift-click for the previous one.",

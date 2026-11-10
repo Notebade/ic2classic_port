@@ -95,6 +95,11 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
             graphics.renderTooltip(font, part, mouseX, mouseY);
         }
         renderTooltip(graphics, mouseX, mouseY);
+        if (mouseX >= leftPos + 8 && mouseX < leftPos + 168 && mouseY >= topPos + 38 && mouseY < topPos + 47) {
+            graphics.renderTooltip(font, Component.translatable(menu.steam()
+                ? "gui.ic2.reactor_planner.total_steam" : "gui.ic2.reactor_planner.total_energy",
+                menu.totalProduction()), mouseX, mouseY);
+        }
     }
 
     @Override

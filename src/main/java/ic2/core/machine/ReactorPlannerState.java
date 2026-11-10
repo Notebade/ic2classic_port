@@ -30,6 +30,7 @@ final class ReactorPlannerState {
     private int cyclesPerTick = 1;
     private int maxHeat = ReactorRules.MAX_HEAT;
     private int output;
+    private long totalProduction;
 
     ReactorPlannerState(Runnable changed) {
         this.changed = changed;
@@ -135,6 +136,7 @@ final class ReactorPlannerState {
         startingHeat = Math.clamp(startingHeat, 0, maxHeat - 1);
         heat = startingHeat;
         output = cycles = 0;
+        totalProduction = 0;
         running = step = false;
         changed.run();
     }
@@ -161,6 +163,7 @@ final class ReactorPlannerState {
         var cycle = grid.run(width, heat, maxHeat, true, damageTick, cycles % 40 == 0, RandomSource.create(cycles));
         heat = cycle.heat();
         output = cycle.output();
+        totalProduction += (long) output * (steam ? 1 : ReactorRules.CYCLE_TICKS);
         cycles++;
         if (tanks != null) {
             tanks.drain(SteamReactorTanks.STEAM_CAPACITY, FluidAction.EXECUTE);
@@ -185,6 +188,7 @@ final class ReactorPlannerState {
             case 13 -> cycleLimit() & 0xffff;
             case 14 -> cycleLimit() >>> 16;
             case 15 -> cyclesPerTick;
+            case 16, 17, 18, 19 -> (int) (totalProduction >>> ((index - 16) * 16)) & 0xffff;
             default -> 0;
         };
     }
@@ -195,6 +199,7 @@ final class ReactorPlannerState {
         tag.putInt("cycles", cycles);
         tag.putInt("heat", heat);
         tag.putInt("output", output);
+        tag.putLong("total_production", totalProduction);
         return tag;
     }
 
@@ -232,6 +237,7 @@ final class ReactorPlannerState {
         cycles = Math.max(0, tag.getInt("cycles"));
         heat = Math.max(0, tag.getInt("heat"));
         output = Math.max(0, tag.getInt("output"));
+        totalProduction = Math.max(0, tag.getLong("total_production"));
         maxHeat = new ReactorGrid(simulation, tanks).hull(width).capacity();
     }
 }

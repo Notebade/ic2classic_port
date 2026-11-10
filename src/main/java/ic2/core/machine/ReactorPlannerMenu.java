@@ -16,7 +16,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
 final class ReactorPlannerMenu extends AbstractContainerMenu {
-    private static final int DATA_COUNT = 16;
+    private static final int DATA_COUNT = 20;
     private final ReactorPlannerState planner;
     private final ContainerLevelAccess access;
     private final ContainerData data;
@@ -68,6 +68,10 @@ final class ReactorPlannerMenu extends AbstractContainerMenu {
     int startingHeat() { return readInt(11); }
     int cycleLimit() { return readInt(13); }
     int cyclesPerTick() { return Math.max(1, data.get(15)); }
+
+    long totalProduction() {
+        return Integer.toUnsignedLong(readInt(16)) | ((long) readInt(18) << 32);
+    }
 
     ItemStack selectedPart() {
         List<ItemStack> parts = steam() ? steamParts : electricParts;

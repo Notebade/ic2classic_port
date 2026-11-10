@@ -33,6 +33,8 @@
   "gui.ic2.reactor_planner.steam": "Паровой",
   "gui.ic2.reactor_planner.electric": "Электрич.",
   "gui.ic2.reactor_planner.cycles": "Циклы %s",
+  "gui.ic2.reactor_planner.total_energy": "Всего выработано: %s EU",
+  "gui.ic2.reactor_planner.total_steam": "Всего выработано: %s мБ пара",
   "gui.ic2.reactor_planner.speed": "Циклов за тик: %s. Нажми для увеличения, удерживай Shift для уменьшения.",
   "gui.ic2.reactor_planner.unlimited": "Без ограничения",
   "gui.ic2.reactor_planner.cycle_limit": "Лимит циклов: %s. Нажми для увеличения, удерживай Shift для уменьшения.",
