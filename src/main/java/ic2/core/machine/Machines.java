@@ -342,6 +342,7 @@ public final class Machines {
         RECIPE_TYPES.register(bus);
         RECIPE_SERIALIZERS.register(bus);
         bus.addListener(Machines::registerCapabilities);
+        bus.addListener(ReactorPlanPayload::register);
         items.registerSimpleBlockItem(GENERATOR);
         items.registerSimpleBlockItem(GEOTHERMAL);
         items.registerSimpleBlockItem(THERMAL_GENERATOR);

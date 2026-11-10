@@ -22,7 +22,10 @@ public final class HeatPumpItem extends Item {
     }
 
     static void toggle(ItemStack stack, int direction) {
-        int mask = directions(stack) ^ (1 << direction);
+        setDirections(stack, directions(stack) ^ (1 << direction));
+    }
+
+    static void setDirections(ItemStack stack, int mask) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(DIRECTIONS, mask));
     }
 

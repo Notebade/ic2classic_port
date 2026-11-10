@@ -34,6 +34,8 @@ final class ReactorPlannerState {
     private long sampledHeat;
     private int heatSamples;
     private int peakHeat = -1;
+    private String planName = "";
+    private Forecast forecast;
 
     ReactorPlannerState(Runnable changed) {
         this.changed = changed;
@@ -130,6 +132,7 @@ final class ReactorPlannerState {
     }
 
     private void reset() {
+        forecast = null;
         simulation = new ItemStackHandler(ReactorRules.SLOT_COUNT);
         for (int slot = 0; slot < layout.getSlots(); slot++) {
             simulation.setStackInSlot(slot, layout.getStackInSlot(slot).copy());
@@ -200,9 +203,33 @@ final class ReactorPlannerState {
             case 16, 17, 18, 19 -> (int) (totalProduction >>> ((index - 16) * 16)) & 0xffff;
             case 20, 21 -> (averageHeat() >>> ((index - 20) * 16)) & 0xffff;
             case 22, 23 -> (peakHeat >>> ((index - 22) * 16)) & 0xffff;
+            case 24, 25 -> (forecast().output() >>> ((index - 24) * 16)) & 0xffff;
+            case 26, 27 -> (forecast().heatChange() >>> ((index - 26) * 16)) & 0xffff;
+            case 28 -> forecast().blastHundredths();
             default -> 0;
         };
     }
+
+    private Forecast forecast() {
+        if (forecast == null) {
+            var parts = new ItemStackHandler(ReactorRules.SLOT_COUNT);
+            for (int slot = 0; slot < parts.getSlots(); slot++) {
+                parts.setStackInSlot(slot, layout.getStackInSlot(slot).copy());
+            }
+            var water = steam ? new SteamReactorTanks(() -> {}) : null;
+            if (water != null) {
+                water.fill(new FluidStack(Fluids.WATER, SteamReactorTanks.WATER_CAPACITY), FluidAction.EXECUTE);
+            }
+            var grid = new ReactorGrid(parts, water);
+            var hull = grid.hull(width);
+            int blast = Math.round(grid.blastPower(hull.containment()) * 100);
+            var cycle = grid.run(width, startingHeat, hull.capacity(), true, true, true, RandomSource.create(0));
+            forecast = new Forecast(cycle.output(), cycle.heat() - startingHeat, blast);
+        }
+        return forecast;
+    }
+
+    private record Forecast(int output, int heatChange, int blastHundredths) {}
 
     private int averageHeat() {
         return heatSamples == 0 ? -1 : (int) (sampledHeat / heatSamples);
@@ -229,6 +256,7 @@ final class ReactorPlannerState {
         tag.putInt("starting_heat", startingHeat);
         tag.putInt("cycle_limit", cycleLimit());
         tag.putInt("cycles_per_tick", cyclesPerTick);
+        tag.putString("plan_name", planName);
         return tag;
     }
 
@@ -241,9 +269,26 @@ final class ReactorPlannerState {
         width = Math.clamp(tag.getInt("width"), ReactorRules.BASE_COLUMNS, ReactorRules.COLUMNS);
         steam = tag.getBoolean("steam");
         startingHeat = tag.getInt("starting_heat");
+        planName = tag.getString("plan_name");
         cycleLimitIndex = Math.max(0, Arrays.binarySearch(CYCLE_LIMITS, tag.getInt("cycle_limit")));
         cyclesPerTick = Math.clamp(tag.getInt("cycles_per_tick"), 1, MAX_CYCLES_PER_TICK);
         clearInactive();
+        reset();
+    }
+
+    String exportCode(ReactorPlanCode.Format format) {
+        return ReactorPlanCode.encode(format, width, steam, startingHeat, planName, layout::getStackInSlot);
+    }
+
+    void importCode(String code) {
+        var plan = ReactorPlanCode.decode(code);
+        width = plan.width();
+        steam = plan.steam();
+        startingHeat = plan.heat();
+        planName = plan.name();
+        for (int slot = 0; slot < layout.getSlots(); slot++) {
+            layout.setStackInSlot(slot, plan.items()[slot]);
+        }
         reset();
     }
 

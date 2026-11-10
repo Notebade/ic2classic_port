@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.55.6-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.56.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.55.6` |
+| Project version | `0.56.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -115,7 +115,7 @@ The steam reactor stores 2,000 mB of water and 20,000 mB of steam. Add matching 
 
 Right-click a Heat Pump to choose the sides that pull heat. Other sides push heat into adjacent components. The crafting recipe uses Reinforced Glass in the High Pressure Pipe slot until the pipe network is ported.
 
-An inactive reactor fuel cell becomes a Fuel Cell after absorbing enough neutron pulses. Craft a prepared cell from clay dust and an empty cell, then surround it with eight netherrack dust. This uses the original material quantities across two crafting steps.
+An inactive reactor fuel cell becomes a Fuel Cell after absorbing enough neutron pulses. On a crafting table, combine an empty cell, a clay dust, and eight netherrack dust stacked in one slot. The two-step recipe through a prepared cell also works.
 
 Connect a Steam Turbine directly to the reactor or a chamber. It consumes up to 128 mB of steam per tick, produces up to 64 EU/t at full speed, and stores up to 4,000 EU. Its EU output is sent in packets of up to 128 EU.
 
@@ -127,7 +127,9 @@ Click T to raise the cycle limit to the next preset or Shift-click to lower it. 
 
 Click S or Shift-click S to adjust automatic simulation speed from 1 to 100 cycles per tick. Each running tick costs 100 EU. A manual Step advances one cycle. The speed is saved with the layout and copied by the Reactor Card.
 
-Hover over the output line to see total EU or steam produced, average hull heat, and peak hull heat. Heat is sampled after each simulated cycle. Existing runs start tracking the peak when upgraded.
+Hover over the output line to see total EU or steam produced, average and peak hull heat, the first cycle forecast, and the initial layout's blast strength. Heat is sampled after each simulated cycle.
+
+Select V2, V1, NBT, or Talon above the inventory, then click ↔ to copy a plan code. Shift-click ↔ to import any of those formats from the clipboard.
 
 The Reactor Planner runs either core mode with the same component rules as the live reactor. Select a component from the palette or carry an item with the cursor, then click a grid slot to copy it into the plan. Right-click a grid slot to clear it. Adjust the chamber count, step or run the simulation for 100 EU per step, and reset to the saved layout. Steam simulations assume continuous water supply and steam extraction.
 

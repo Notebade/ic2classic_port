@@ -1,13 +1,16 @@
 package ic2.core.machine;
 
 import java.util.ArrayList;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerMenu> {
     private Button run;
@@ -16,6 +19,7 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
     private Button speed;
     private int displayedSpeed = -1;
     private int displayedLimit = -1;
+    private ReactorPlanCode.Format exportFormat = ReactorPlanCode.Format.V2;
 
     ReactorPlannerScreen(ReactorPlannerMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -26,6 +30,9 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
     @Override
     protected void init() {
         super.init();
+        addRenderableWidget(Button.builder(Component.literal("↔"), b -> exchangeCode())
+            .bounds(leftPos + 151, topPos + 3, 17, 13)
+            .tooltip(Tooltip.create(label("code_help"))).build());
         button(0, 8, 20, "-");
         button(1, 30, 20, "+");
         button(2, 52, 32, "step");
@@ -45,6 +52,10 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
             .bounds(leftPos + 139, topPos + 165, 14, 16).build());
         speed = addRenderableWidget(Button.builder(Component.literal("S"), b -> send(Screen.hasShiftDown() ? 13 : 12))
             .bounds(leftPos + 155, topPos + 165, 14, 16).build());
+        addRenderableWidget(CycleButton.<ReactorPlanCode.Format>builder(format -> Component.literal(format.name()))
+            .withValues(ReactorPlanCode.Format.values()).withInitialValue(exportFormat).displayOnlyValue()
+            .withTooltip(format -> Tooltip.create(label("code_format")))
+            .create(leftPos + 119, topPos + 182, 50, 13, label("code_format"), (button, format) -> exportFormat = format));
         displayedLimit = -1;
         displayedSpeed = -1;
         updateTooltips();
@@ -58,6 +69,22 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
 
     private void send(int command) {
         minecraft.gameMode.handleInventoryButtonClick(menu.containerId, command);
+    }
+
+    private void exchangeCode() {
+        boolean importing = Screen.hasShiftDown();
+        String code = importing ? minecraft.keyboardHandler.getClipboard().strip() : "";
+        if (importing && (code.isEmpty() || code.length() > ReactorPlanCode.MAX_LENGTH)) {
+            minecraft.player.displayClientMessage(label("code_invalid"), true);
+            return;
+        }
+        PacketDistributor.sendToServer(new ReactorPlanPayload(menu.containerId, exportFormat.ordinal(), code));
+    }
+
+    static void copyCode(String code) {
+        var client = Minecraft.getInstance();
+        client.keyboardHandler.setClipboard(code);
+        client.player.displayClientMessage(label("code_copied"), true);
     }
 
     private static Component label(String key) {
@@ -101,7 +128,7 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
                 ? "gui.ic2.reactor_planner.total_steam" : "gui.ic2.reactor_planner.total_energy",
                 menu.totalProduction());
             int average = menu.averageHeat();
-            var lines = new ArrayList<Component>(3);
+            var lines = new ArrayList<Component>(6);
             lines.add(total);
             if (average >= 0) {
                 lines.add(Component.translatable("gui.ic2.reactor_planner.average_heat", average));
@@ -109,6 +136,11 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
             if (menu.peakHeat() >= 0) {
                 lines.add(Component.translatable("gui.ic2.reactor_planner.peak_heat", menu.peakHeat()));
             }
+            lines.add(Component.translatable(menu.steam() ? "gui.ic2.reactor_planner.forecast_steam"
+                : "gui.ic2.reactor_planner.forecast_energy", menu.forecastOutput()));
+            lines.add(Component.translatable("gui.ic2.reactor_planner.forecast_heat", menu.forecastHeatChange()));
+            lines.add(Component.translatable("gui.ic2.reactor_planner.forecast_blast",
+                java.math.BigDecimal.valueOf(menu.forecastBlast(), 2).toPlainString()));
             graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
         }
     }

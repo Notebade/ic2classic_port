@@ -9,6 +9,7 @@ import ic2.core.item.UraniumFuelRod;
 import ic2.core.item.ReactorPulseCell;
 import ic2.core.machine.Machines;
 import ic2.core.recipe.ReactorComponentRepair;
+import ic2.core.recipe.ReactorFuelCellRecipe;
 import ic2.core.recipe.UuMatterRecipe;
 import ic2.core.tree.Rubberwood;
 import net.minecraft.core.component.DataComponentType;
@@ -37,6 +38,8 @@ public final class IC2 {
         RECIPE_SERIALIZERS.register("uu_matter", () -> UuMatterRecipe.SERIALIZER);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ReactorComponentRepair>> REACTOR_COMPONENT_REPAIR =
         RECIPE_SERIALIZERS.register("reactor_component_repair", () -> ReactorComponentRepair.SERIALIZER);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ReactorFuelCellRecipe>> REACTOR_FUEL_CELL_RECIPE =
+        RECIPE_SERIALIZERS.register("reactor_fuel_cell", () -> ReactorFuelCellRecipe.SERIALIZER);
     private static final DeferredRegister.DataComponents COMPONENTS =
         DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BATTERY_CHARGE =

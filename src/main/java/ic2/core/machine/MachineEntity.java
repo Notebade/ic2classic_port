@@ -4,8 +4,6 @@ import ic2.core.IC2;
 import ic2.core.Radiation;
 import ic2.core.item.FluidCellItem;
 import ic2.core.item.RechargeableItem;
-import ic2.core.item.ReactorReflectorItem;
-import ic2.core.item.UraniumFuelRod;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -364,7 +362,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             reactorHeat = cycle.heat();
             setChanged();
             if (reactorHeat >= reactorMaxHeat) {
-                meltReactor(hull.containment());
+                meltReactor(grid.blastPower(hull.containment()));
                 return;
             }
             ReactorHeatEffects.apply(level, worldPosition, reactorHeat, reactorMaxHeat, hull.containment());
@@ -446,29 +444,13 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-    private void meltReactor(float containment) {
-        float power = 10;
-        float multiplier = containment * containment;
+    private void meltReactor(float power) {
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
-            ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack.getItem() instanceof UraniumFuelRod rod) {
-                power += rod.type().explosionPower() * rod.cells();
-            } else if (stack.getItem() instanceof ReactorReflectorItem) {
-                power--;
-            }
-            if (stack.is(IC2.HEAT_PACK.get())) {
-                float influence = stack.getCount() / 10.0F;
-                if (influence < 1) {
-                    multiplier *= influence;
-                } else {
-                    power += influence;
-                }
-            }
             inventory.setStackInSlot(slot, ItemStack.EMPTY);
         }
         Vec3 origin = Vec3.atCenterOf(worldPosition);
         level.removeBlock(worldPosition, false);
-        level.explode(null, origin.x, origin.y, origin.z, Math.clamp(power * multiplier, 0, 45),
+        level.explode(null, origin.x, origin.y, origin.z, power,
             Level.ExplosionInteraction.BLOCK);
         Radiation.exposeToFallout(level, origin);
     }

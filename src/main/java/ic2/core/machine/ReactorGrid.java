@@ -53,6 +53,28 @@ final class ReactorGrid {
         return new Hull(capacity, containment);
     }
 
+    float blastPower(float containment) {
+        float power = 10;
+        float multiplier = containment * containment;
+        for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
+            ItemStack stack = inventory.getStackInSlot(slot);
+            if (stack.getItem() instanceof UraniumFuelRod rod) {
+                power += rod.type().explosionPower() * rod.cells();
+            } else if (stack.getItem() instanceof ReactorReflectorItem) {
+                power--;
+            }
+            if (stack.is(IC2.HEAT_PACK.get())) {
+                float influence = stack.getCount() / 10.0F;
+                if (influence < 1) {
+                    multiplier *= influence;
+                } else {
+                    power += influence;
+                }
+            }
+        }
+        return Math.clamp(power * multiplier, 0, 45);
+    }
+
     Cycle run(int width, int hullHeat, int hullCapacity, boolean powered, boolean damageTick, boolean passiveCooling, RandomSource random) {
         CoolingPass cooling = runHeatPass(width, hullHeat, hullCapacity, powered, passiveCooling);
         // Reflectors still affect heat in the cycle when an energy pulse breaks them.
