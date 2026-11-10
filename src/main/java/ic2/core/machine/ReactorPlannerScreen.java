@@ -1,5 +1,6 @@
 package ic2.core.machine;
 
+import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
@@ -96,9 +97,13 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
         }
         renderTooltip(graphics, mouseX, mouseY);
         if (mouseX >= leftPos + 8 && mouseX < leftPos + 168 && mouseY >= topPos + 38 && mouseY < topPos + 47) {
-            graphics.renderTooltip(font, Component.translatable(menu.steam()
+            Component total = Component.translatable(menu.steam()
                 ? "gui.ic2.reactor_planner.total_steam" : "gui.ic2.reactor_planner.total_energy",
-                menu.totalProduction()), mouseX, mouseY);
+                menu.totalProduction());
+            int average = menu.averageHeat();
+            List<Component> lines = average < 0 ? List.of(total)
+                : List.of(total, Component.translatable("gui.ic2.reactor_planner.average_heat", average));
+            graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
         }
     }
 
