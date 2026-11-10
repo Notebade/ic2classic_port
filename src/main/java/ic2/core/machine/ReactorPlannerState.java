@@ -33,6 +33,7 @@ final class ReactorPlannerState {
     private long totalProduction;
     private long sampledHeat;
     private int heatSamples;
+    private int peakHeat = -1;
 
     ReactorPlannerState(Runnable changed) {
         this.changed = changed;
@@ -141,6 +142,7 @@ final class ReactorPlannerState {
         totalProduction = 0;
         sampledHeat = 0;
         heatSamples = 0;
+        peakHeat = -1;
         running = step = false;
         changed.run();
     }
@@ -168,6 +170,7 @@ final class ReactorPlannerState {
         heat = cycle.heat();
         sampledHeat += heat;
         heatSamples++;
+        peakHeat = Math.max(peakHeat, heat);
         output = cycle.output();
         totalProduction += (long) output * (steam ? 1 : ReactorRules.CYCLE_TICKS);
         cycles++;
@@ -196,6 +199,7 @@ final class ReactorPlannerState {
             case 15 -> cyclesPerTick;
             case 16, 17, 18, 19 -> (int) (totalProduction >>> ((index - 16) * 16)) & 0xffff;
             case 20, 21 -> (averageHeat() >>> ((index - 20) * 16)) & 0xffff;
+            case 22, 23 -> (peakHeat >>> ((index - 22) * 16)) & 0xffff;
             default -> 0;
         };
     }
@@ -213,6 +217,7 @@ final class ReactorPlannerState {
         tag.putLong("total_production", totalProduction);
         tag.putLong("sampled_heat", sampledHeat);
         tag.putInt("heat_samples", heatSamples);
+        tag.putInt("peak_heat", peakHeat);
         return tag;
     }
 
@@ -253,6 +258,7 @@ final class ReactorPlannerState {
         totalProduction = Math.max(0, tag.getLong("total_production"));
         heatSamples = Math.clamp(tag.getInt("heat_samples"), 0, cycles);
         sampledHeat = Math.clamp(tag.getLong("sampled_heat"), 0, (long) heatSamples * Integer.MAX_VALUE);
+        peakHeat = tag.contains("peak_heat") ? Math.max(-1, tag.getInt("peak_heat")) : -1;
         maxHeat = new ReactorGrid(simulation, tanks).hull(width).capacity();
     }
 }

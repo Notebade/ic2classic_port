@@ -1,6 +1,6 @@
 package ic2.core.machine;
 
-import java.util.List;
+import java.util.ArrayList;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
@@ -101,8 +101,14 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
                 ? "gui.ic2.reactor_planner.total_steam" : "gui.ic2.reactor_planner.total_energy",
                 menu.totalProduction());
             int average = menu.averageHeat();
-            List<Component> lines = average < 0 ? List.of(total)
-                : List.of(total, Component.translatable("gui.ic2.reactor_planner.average_heat", average));
+            var lines = new ArrayList<Component>(3);
+            lines.add(total);
+            if (average >= 0) {
+                lines.add(Component.translatable("gui.ic2.reactor_planner.average_heat", average));
+            }
+            if (menu.peakHeat() >= 0) {
+                lines.add(Component.translatable("gui.ic2.reactor_planner.peak_heat", menu.peakHeat()));
+            }
             graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
         }
     }
