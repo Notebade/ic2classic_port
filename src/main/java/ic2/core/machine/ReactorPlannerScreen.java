@@ -12,6 +12,8 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
     private Button run;
     private Button mode;
     private Button limit;
+    private Button speed;
+    private int displayedSpeed = -1;
     private int displayedLimit = -1;
 
     ReactorPlannerScreen(ReactorPlannerMenu menu, Inventory inventory, Component title) {
@@ -29,19 +31,22 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
         run = button(3, 86, 42, "run");
         button(4, 130, 38, "reset");
         mode = addRenderableWidget(Button.builder(label("electric"), b -> send(5))
-            .bounds(leftPos + 8, topPos + 165, 78, 16).build());
+            .bounds(leftPos + 8, topPos + 165, 64, 16).build());
         addRenderableWidget(Button.builder(Component.literal("<"), b -> send(6))
-            .bounds(leftPos + 87, topPos + 165, 15, 16).build());
+            .bounds(leftPos + 74, topPos + 165, 14, 16).build());
         addRenderableWidget(Button.builder(Component.literal(">"), b -> send(7))
-            .bounds(leftPos + 121, topPos + 165, 15, 16).build());
+            .bounds(leftPos + 107, topPos + 165, 14, 16).build());
         addRenderableWidget(Button.builder(Component.literal("H"), b -> send(Screen.hasShiftDown() ? 9 : 8))
-            .bounds(leftPos + 138, topPos + 165, 14, 16)
+            .bounds(leftPos + 123, topPos + 165, 14, 16)
             .tooltip(Tooltip.create(Component.translatable("gui.ic2.reactor_planner.heat_adjust", ReactorPlannerState.HEAT_STEP)))
             .build());
         limit = addRenderableWidget(Button.builder(Component.literal("T"), b -> send(Screen.hasShiftDown() ? 11 : 10))
-            .bounds(leftPos + 154, topPos + 165, 14, 16).build());
+            .bounds(leftPos + 139, topPos + 165, 14, 16).build());
+        speed = addRenderableWidget(Button.builder(Component.literal("S"), b -> send(Screen.hasShiftDown() ? 13 : 12))
+            .bounds(leftPos + 155, topPos + 165, 14, 16).build());
         displayedLimit = -1;
-        updateLimitTooltip();
+        displayedSpeed = -1;
+        updateTooltips();
     }
 
     private Button button(int command, int x, int width, String key) {
@@ -62,22 +67,27 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
     protected void containerTick() {
         run.setMessage(label(menu.running() ? "pause" : "run"));
         mode.setMessage(label(menu.steam() ? "steam" : "electric"));
-        updateLimitTooltip();
+        updateTooltips();
     }
 
-    private void updateLimitTooltip() {
+    private void updateTooltips() {
         int currentLimit = menu.cycleLimit();
         if (currentLimit != displayedLimit) {
             Component value = currentLimit == 0 ? label("unlimited") : Component.literal(Integer.toString(currentLimit));
             limit.setTooltip(Tooltip.create(Component.translatable("gui.ic2.reactor_planner.cycle_limit", value)));
             displayedLimit = currentLimit;
         }
+        int currentSpeed = menu.cyclesPerTick();
+        if (currentSpeed != displayedSpeed) {
+            speed.setTooltip(Tooltip.create(Component.translatable("gui.ic2.reactor_planner.speed", currentSpeed)));
+            displayedSpeed = currentSpeed;
+        }
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
-        int x = leftPos + 104;
+        int x = leftPos + 90;
         int y = topPos + 165;
         var part = menu.selectedPart();
         graphics.renderItem(part, x, y);

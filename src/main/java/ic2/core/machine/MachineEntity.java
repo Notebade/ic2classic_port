@@ -395,10 +395,10 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     }
 
     private void tickReactorPlanner() {
-        boolean working = reactorPlanner.wantsStep() && energy >= ReactorPlannerState.EU_PER_STEP;
+        boolean working = reactorPlanner.wantsStep() && energy >= ReactorPlannerState.EU_PER_BATCH;
         if (working) {
-            energy -= ReactorPlannerState.EU_PER_STEP;
-            reactorPlanner.advance();
+            energy -= ReactorPlannerState.EU_PER_BATCH;
+            reactorPlanner.advanceBatch();
         }
         setActive(working);
     }

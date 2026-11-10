@@ -11,7 +11,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 final class ReactorPlannerState {
-    static final int EU_PER_STEP = 100;
+    static final int EU_PER_BATCH = 100;
+    private static final int MAX_CYCLES_PER_TICK = 100;
     static final int HEAT_STEP = 500;
     private static final int[] CYCLE_LIMITS = {0, 20, 100, 500, 1_000, 5_000, 10_000, 20_000, 100_000};
     private final Runnable changed;
@@ -26,6 +27,7 @@ final class ReactorPlannerState {
     private int heat;
     private int startingHeat;
     private int cycleLimitIndex;
+    private int cyclesPerTick = 1;
     private int maxHeat = ReactorRules.MAX_HEAT;
     private int output;
 
@@ -77,6 +79,8 @@ final class ReactorPlannerState {
             case 9 -> adjustStartingHeat(-HEAT_STEP);
             case 10 -> adjustCycleLimit(1);
             case 11 -> adjustCycleLimit(-1);
+            case 12 -> cyclesPerTick = Math.min(MAX_CYCLES_PER_TICK, cyclesPerTick + 1);
+            case 13 -> cyclesPerTick = Math.max(1, cyclesPerTick - 1);
             default -> { return false; }
         }
         changed.run();
@@ -135,7 +139,19 @@ final class ReactorPlannerState {
         changed.run();
     }
 
-    void advance() {
+    void advanceBatch() {
+        int batchSize = running ? cyclesPerTick : 1;
+        for (int index = 0; index < batchSize && canAdvance(); index++) {
+            advanceCycle();
+        }
+        step = false;
+        if (!canAdvance()) {
+            running = false;
+        }
+        changed.run();
+    }
+
+    private void advanceCycle() {
         if (tanks != null) {
             tanks.fill(new FluidStack(Fluids.WATER, SteamReactorTanks.WATER_CAPACITY), FluidAction.EXECUTE);
         }
@@ -146,14 +162,9 @@ final class ReactorPlannerState {
         heat = cycle.heat();
         output = cycle.output();
         cycles++;
-        step = false;
         if (tanks != null) {
             tanks.drain(SteamReactorTanks.STEAM_CAPACITY, FluidAction.EXECUTE);
         }
-        if (!canAdvance()) {
-            running = false;
-        }
-        changed.run();
     }
 
     int data(int index) {
@@ -173,6 +184,7 @@ final class ReactorPlannerState {
             case 12 -> startingHeat >>> 16;
             case 13 -> cycleLimit() & 0xffff;
             case 14 -> cycleLimit() >>> 16;
+            case 15 -> cyclesPerTick;
             default -> 0;
         };
     }
@@ -193,6 +205,7 @@ final class ReactorPlannerState {
         tag.putBoolean("steam", steam);
         tag.putInt("starting_heat", startingHeat);
         tag.putInt("cycle_limit", cycleLimit());
+        tag.putInt("cycles_per_tick", cyclesPerTick);
         return tag;
     }
 
@@ -206,6 +219,7 @@ final class ReactorPlannerState {
         steam = tag.getBoolean("steam");
         startingHeat = tag.getInt("starting_heat");
         cycleLimitIndex = Math.max(0, Arrays.binarySearch(CYCLE_LIMITS, tag.getInt("cycle_limit")));
+        cyclesPerTick = Math.clamp(tag.getInt("cycles_per_tick"), 1, MAX_CYCLES_PER_TICK);
         clearInactive();
         reset();
     }
