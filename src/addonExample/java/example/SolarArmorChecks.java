@@ -46,7 +46,7 @@ final class SolarArmorChecks {
         }
     }
     private static void tick(net.minecraft.world.entity.player.Player player) { net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player)); }
-    private static void settleLighting(ServerLevel level, BlockPos pos) {
+    static void settleLighting(ServerLevel level, BlockPos pos) {
         var engine = level.getChunkSource().getLightEngine();
         var completed = engine.lightChunk(level.getChunkAt(pos), false).orTimeout(10, java.util.concurrent.TimeUnit.SECONDS);
         level.getServer().managedBlock(() -> { engine.tryScheduleUpdate(); return completed.isDone(); });

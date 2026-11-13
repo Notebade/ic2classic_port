@@ -1,0 +1,24 @@
+{
+  "result": {
+    "id": "ic2:static_boots",
+    "count": 1
+  },
+  "pattern": [
+    "I I",
+    "ISI",
+    "CCC"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "tag": "minecraft:wool"
+    },
+    "C": {
+      "item": "ic2:copper_insulated_cable_item"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "category": "equipment"
+}

@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "ic2:armor_bronze_boots",
-    "ic2:armor_composite_boots"
+    "ic2:armor_composite_boots",
+    "ic2:static_boots"
   ]
 }

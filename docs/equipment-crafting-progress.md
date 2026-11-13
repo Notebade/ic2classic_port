@@ -65,3 +65,11 @@ First unit verified: .tools/equipment-first-unit-check.log (full server/addon su
 - Global crafting-ingredient validation discovered missing c:ingots/refined_iron and c:rubber leaves in four newly added recipes. equipment-empty-tags-red.log reproduces an unusable chainsaw recipe; both native tags are now present and every loaded IC2 crafting ingredient is checked for nonempty resolution.
 - equipment-solar-armor-check.log exposed Gradle's default heap exhaustion. Isolated 2 GB compilation succeeded; gradle.properties now sets that heap for reproducible builds without stopping other processes.
 - Full green: equipment-solar-recipes-complete-check.log. Source module-install behavior and remaining equipment are still part of the open row 8 audit.
+
+## Static boots and ordered armor callbacks
+
+- Added static_boots, both original recipes, one armor point, walking/carpet generation and ten-tick transfer to worn stores. Generation stops at the source threshold 20; its final increment may reach 22. This private generation buffer is not an externally chargeable battery.
+- GeneratedArmor exposes that buffer without inventing ElectricItem compatibility. ArmorTickItem provides the original server-worn callback order feet/legs/chest/head to native and addon items.
+- Fixed the source stale-local-charge bug: simultaneous transfer and movement no longer recreate already transferred EU. Airborne/riding/water state resets the anchor, including while the buffer is full.
+- Combined boots/solar test reproduced wrong independently registered callback order at a nearly full store. Central ordered callbacks restore source priority and avoid discarding solar production while unnecessarily retaining old static charge.
+- Red: equipment-static-boots-red.log and equipment-armor-tick-order-red.log. Green: equipment-static-order-check.log covers actual movement, carpet, airborne reset, source 22-EU ceiling, detached copies, same-tick conservation and combined generation plus all prior suites.

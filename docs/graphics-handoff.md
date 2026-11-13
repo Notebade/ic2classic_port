@@ -71,3 +71,5 @@ mowing_tool added with off/on ConfigurableTool mode, normal right-click toggle, 
 Wearable batteries added: batpack, lappack, quantum_pack (chest), industrial_belt (legs), source rarity and per-item armor-layer IDs. Physical defense is zero; EU charging and original recipes work. Names/models/armor textures/creative grouping remain graphics. Existing electric-output recipes now use electric_shaped (standard shape plus dynamic retained EU); backend type keeps native ShapedRecipe behavior. No client screen/layout changed.
 
 solar_helmet and advanced_solar_helmet added with native head armor layers named after their IDs, one armor point and source daytime generation/recipes. Rendering/names remain graphics. No screen/client layout changed.
+
+static_boots added with native foot layer static_boots, one armor point and both recipes. Walking/carpet generation, source soft buffer ceiling and ordered armor ticks are implemented. Names/model/texture/creative grouping remain graphics; no screen/client layout changed.
