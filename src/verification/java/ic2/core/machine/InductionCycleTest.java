@@ -13,6 +13,8 @@ public final class InductionCycleTest {
         check(cycles(15, 120000) == 12, "hot ordinary furnace completes in 12 ticks");
         check(cycles(29, 60000) == 6, "hot blast furnace and smoker complete in 6 ticks");
         check(cycles(15, 29700) == 3, "rare-earth centrifuge completes in 3 ticks at full speed");
+        check(cycles(10, RecyclerControl.compactDuration(false)) == 1, "hot compacting recycler processes ordinary input in one tick");
+        check(cycles(10, RecyclerControl.compactDuration(true)) == 72, "hot scrap-box compaction takes 72 ticks");
         var full = InductionCycle.step(10000, 119999, 16, true, false, 15, 120000);
         check(full.finished() && full.progress() == 0, "completed batches reset progress");
         check(InductionCycle.step(2, 0, 0, false, false, 15, 120000).heat() == 0, "cooling clamps at zero");
@@ -23,7 +25,7 @@ public final class InductionCycleTest {
 
     private static int cycles(int cost, int units) {
         int progress = 0;
-        for (int ticks = 1; ticks <= 20; ticks++) {
+        for (int ticks = 1; ticks <= 100; ticks++) {
             var next = InductionCycle.step(10000, progress, 10000, true, false, cost, units);
             check(next.spent() == cost + 1, "processing includes heater cost");
             if (next.finished()) return ticks;

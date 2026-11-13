@@ -31,6 +31,8 @@ final class MachineRecipeViews {
 
     static List<MachineRecipeView> forProcess(Process process, Level level) {
         return switch (process) {
+            case COMPACTING_RECYCLER -> advancedRecycling(false);
+            case SLOW_GRINDER -> advancedRecycling(true);
             case CHARGED_ELECTROLYZER -> forProcess(Process.ELECTROLYZER, level);
             case CENTRIFUGAL_RARE_EARTH_EXTRACTOR -> forProcess(Process.RARE_EARTH_EXTRACTOR, level).stream()
                 .map(recipe -> new MachineRecipeView(recipe.sourceId(), recipe.inputs(), recipe.outputs(),
@@ -63,6 +65,17 @@ final class MachineRecipeViews {
             case MV_WATER_MILL -> waterMill(MachineKind.MV_WATER_MILL.waterMillTier);
             case HV_WATER_MILL -> waterMill(MachineKind.HV_WATER_MILL.waterMillTier);
         };
+    }
+
+    private static List<MachineRecipeView> advancedRecycling(boolean slow) {
+        return recycling().stream().map(view -> {
+            var recipe = RecyclingRecipes.find(view.inputs().getFirst().items().getFirst());
+            int hotTicks = (RecyclerControl.compactDuration(recipe.inputCount() == 9) + 9999) / 10000;
+            List<Component> notes = slow ? List.of(note("grinder_duration", 100 + recipe.extraTicks()),
+                recipe.chanceDenominator() == 1 ? note("chance", 1) : note("grinder_chances"))
+                : List.of(note("compacting_hot", hotTicks, hotTicks * 11), view.notes().getLast());
+            return new MachineRecipeView(view.sourceId(), view.inputs(), view.outputs(), notes);
+        }).toList();
     }
 
     private static List<MachineRecipeView> advanced(List<MachineRecipeView> recipes) {

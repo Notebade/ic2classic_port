@@ -1,0 +1,41 @@
+{
+  "elements": [
+    {
+      "to": [
+        10,
+        16,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#pipe"
+        },
+        "east": {
+          "texture": "#pipe"
+        },
+        "south": {
+          "texture": "#pipe"
+        },
+        "west": {
+          "texture": "#pipe"
+        },
+        "down": {
+          "texture": "#pipe"
+        },
+        "up": {
+          "texture": "#pipe"
+        }
+      },
+      "from": [
+        6,
+        0,
+        6
+      ]
+    }
+  ],
+  "textures": {
+    "particle": "ic2:block/misc/mining_pipe_shaft",
+    "pipe": "ic2:block/misc/mining_pipe_shaft"
+  },
+  "parent": "minecraft:block/block"
+}

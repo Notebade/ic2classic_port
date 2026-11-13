@@ -1,0 +1,27 @@
+{
+  "result": {
+    "id": "ic2:slow_grinder",
+    "count": 1
+  },
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " X ",
+    "YCY",
+    " V "
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:recycler"
+    },
+    "V": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "X": {
+      "item": "ic2:efficient_sawblade"
+    },
+    "Y": {
+      "item": "ic2:advanced_circuit"
+    }
+  }
+}

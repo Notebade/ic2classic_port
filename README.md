@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.60.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.61.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.60.0` |
+| Project version | `0.61.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -434,3 +434,13 @@ The Centrifugal Rare Earth Extractor has one input, one dust output and a batter
 Craft it with a Rare Earth Extractor, an Advanced Machine Casing and seven Electrolyzed Water Cells. The Charged Electrolyzer uses an Electrolyzer, an Advanced Machine Casing and seven LV Transformers. It processes every adjacent storage block each tick, with the original 70% charging and below-30% recovery thresholds and tier-based rates. The basic Electrolyzer continues to use one adjacent storage block. Existing electrolysis recipes, sided item automation and saved partial charge apply to both. Their persistent buffer now holds 24,000 EU so recovering energy beside a PESU cannot lose 4,000 EU on reload.
 
 Both machines include original textures, crafting, translations, mining tags and JEI support. Original upgrade slots, sounds and additional recipe lists remain pending; in-game verification is still required. Gradle check now executes five standalone suites, including exact rare-earth accumulation and electrolyzer thresholds at billion-EU capacities. No JAR is required for these checks.
+
+### Slow Grinder and Compacting Recycler (0.61.0)
+
+The Slow Grinder is a recycler, not an ore macerator. Its nine input slots feed one active processing slot through an automatic rotation every ten ticks. It has one output slot, a battery discharge slot, a 1,000 EU buffer and a 128 EU packet limit. The mode button cycles speeds 1-5: each working tick costs 10/20/30/40/50 EU and advances work by 1/2/3/4/5. An ordinary recipe requires 100 work, so it takes 100/50/34/25/20 ticks. Original chance overrides are 100/84/71/59/50 percent for chance-based recycling recipes, including scrap metal. Guaranteed recipes remain guaranteed. Scrap-box crafting consumes nine scrap and requires 168 work. Mode, queue, inventory, EU and operation progress are saved. Adding items to waiting slots does not reset the active operation.
+
+The Compacting Recycler stores 10,000 EU and accepts packets up to 128 EU. Its speed rises by one per tick to 10,000 for 1 EU/t, and processing costs another 10 EU/t. Redstone maintains the speed without input; without power it falls by four. At full speed ordinary recycling takes one tick with the original recycling chances. Packing nine scrap uses the original additive recipe-time modifier and takes 72 ticks at full speed. Both machines respect the recycler blacklist, support batteries and sided automation, and appear in JEI with their own costs and chances.
+
+Primary original crafting chains are included: seven pistons upgrade a Recycler and Advanced Machine Casing into a Compacting Recycler. The Slow Grinder uses an Efficient Sawblade, two Advanced Circuits, a Recycler and an Advanced Machine Casing. Six refined iron and a Treetap make eight Mining Pipes; pipes, circuits and insulated wire produce Upgrade Bases in copper (three) or silver (five) variants. Sticks, a Scrap Metal Blade, pistons and an Upgrade Base make an Efficient Sawblade. Mining Pipes cannot be placed by hand, matching the original; Miner placement/retraction is not ported. The Efficient Sawblade currently serves as a crafting component: installing it as a Sawmill upgrade and its repair recipe remain pending.
+
+All assets, mining tags, localization and saved-state fields are included. Six standalone suites run through Gradle check, including queued inventory layouts, rotation limits, mode probabilities, EU costs and both compacting durations. In-game verification, original sounds and installed machine upgrades remain pending.

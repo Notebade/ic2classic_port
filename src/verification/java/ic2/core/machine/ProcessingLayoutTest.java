@@ -6,6 +6,7 @@ public final class ProcessingLayoutTest {
         verify(new ProcessingLayout(1, 2), 4, 2, 3);
         verify(new ProcessingLayout(1, 3), 5, 2, 4);
         verify(new ProcessingLayout(1, 1), 3, 2, 2);
+        verify(new ProcessingLayout(9, 1), 11, 10, 10);
         var single = new ProcessingLayout(1, 3);
         check(!single.supportsSplit(), "single-input machines never process a second input");
         check(single.firstOutput(1, true) == 2 && single.lastOutput(1, true) == 4,

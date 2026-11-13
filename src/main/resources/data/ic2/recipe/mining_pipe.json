@@ -1,0 +1,21 @@
+{
+  "result": {
+    "id": "ic2:miningpipe_slim",
+    "count": 8
+  },
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I I",
+    "I I",
+    "ITI"
+  ],
+  "key": {
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "T": {
+      "item": "ic2:tree_tap"
+    }
+  }
+}

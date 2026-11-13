@@ -22,7 +22,7 @@ final class AdvancedMachineMenu extends AbstractContainerMenu {
     }
 
     AdvancedMachineMenu(int id, Inventory player, AdvancedMachines.Variant variant) {
-        this(id, player, new ItemStackHandler(variant.layout.slots()), new SimpleContainerData(6), ContainerLevelAccess.NULL, null, variant);
+        this(id, player, new ItemStackHandler(variant.layout.slots()), new SimpleContainerData(7), ContainerLevelAccess.NULL, null, variant);
     }
 
     AdvancedMachineMenu(int id, Inventory player, ItemStackHandler inventory, ContainerData data,
@@ -33,12 +33,16 @@ final class AdvancedMachineMenu extends AbstractContainerMenu {
         this.access = access;
         this.machine = machine;
         addDataSlots(data);
-        addSlot(new SlotItemHandler(inventory, 0, 26, 53));
-        addSlot(new SlotItemHandler(inventory, 1, 47, 17));
-        if (variant.layout.supportsSplit()) addSlot(new SlotItemHandler(inventory, 2, 65, 17));
+        boolean queued = variant == AdvancedMachines.Variant.SLOW;
+        addSlot(new SlotItemHandler(inventory, 0, queued ? 80 : 26, 53));
+        for (int input = 1; input <= variant.layout.inputs(); input++) {
+            int x = queued ? 8 + (input - 1) % 3 * 18 : 47 + (input - 1) * 18;
+            int y = queued ? 17 + (input - 1) / 3 * 18 : 17;
+            addSlot(new SlotItemHandler(inventory, input, x, y));
+        }
         int firstOutput = variant.layout.inputs() + 1;
         for (int index = firstOutput; index < variant.layout.slots(); index++) {
-            addSlot(new SlotItemHandler(inventory, index, 95 + (index - firstOutput) * 18, 35) {
+            addSlot(new SlotItemHandler(inventory, index, (queued ? 129 : 95) + (index - firstOutput) * 18, 35) {
                 @Override public boolean mayPlace(ItemStack stack) { return false; }
                 @Override public void onTake(Player owner, ItemStack stack) {
                     if (machine != null) machine.awardExperience(owner.position());
@@ -58,10 +62,14 @@ final class AdvancedMachineMenu extends AbstractContainerMenu {
     int progress() { return data.get(2); }
     boolean split() { return data.get(3) != 0; }
     int materialProgress() { return data.get(5); }
+    int grinderMode() { return Math.max(1, data.get(6)); }
 
     @Override public boolean clickMenuButton(Player player, int id) {
-        if (id != 0 || !variant.layout.supportsSplit() || !stillValid(player)) return false;
-        if (machine != null) machine.toggleSplit();
+        if (id != 0 || !(variant.layout.supportsSplit() || variant == AdvancedMachines.Variant.SLOW) || !stillValid(player)) return false;
+        if (machine != null) {
+            if (variant == AdvancedMachines.Variant.SLOW) machine.cycleGrinderMode();
+            else machine.toggleSplit();
+        }
         return true;
     }
 

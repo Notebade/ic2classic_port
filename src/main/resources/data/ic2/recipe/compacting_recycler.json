@@ -1,0 +1,24 @@
+{
+  "result": {
+    "id": "ic2:compacting_recycler",
+    "count": 1
+  },
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XCX"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "X": {
+      "item": "minecraft:piston"
+    },
+    "Y": {
+      "item": "ic2:recycler"
+    }
+  }
+}

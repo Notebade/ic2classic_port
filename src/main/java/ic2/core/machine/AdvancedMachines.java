@@ -28,15 +28,19 @@ public final class AdvancedMachines {
     static final DeferredBlock<AdvancedMachineBlock> CENTRIFUGAL = block("centrifugal_extractor", Variant.CENTRIFUGAL);
     static final DeferredBlock<AdvancedMachineBlock> SINGULARITY = block("singularity_compressor", Variant.SINGULARITY);
     static final DeferredBlock<AdvancedMachineBlock> RARE_EARTH = block("centrifugal_rare_earth_extractor", Variant.RARE_EARTH);
+    static final DeferredBlock<AdvancedMachineBlock> COMPACTING = block("compacting_recycler", Variant.COMPACTING);
+    static final DeferredBlock<AdvancedMachineBlock> SLOW = block("slow_grinder", Variant.SLOW);
     static final Supplier<BlockEntityType<AdvancedMachineEntity>> ENTITY = ENTITIES.register("induction_furnace",
         () -> BlockEntityType.Builder.of(AdvancedMachineEntity::new, FURNACE.get(), BLAST.get(), SMOKER.get(),
-            ROTARY.get(), CENTRIFUGAL.get(), SINGULARITY.get(), RARE_EARTH.get()).build(null));
+            ROTARY.get(), CENTRIFUGAL.get(), SINGULARITY.get(), RARE_EARTH.get(), COMPACTING.get(), SLOW.get()).build(null));
     static final Supplier<MenuType<AdvancedMachineMenu>> MENU = MENUS.register("induction_furnace",
         () -> new MenuType<>(AdvancedMachineMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<AdvancedMachineMenu>> ROTARY_MENU = menu("rotary_macerator", Variant.ROTARY);
     static final Supplier<MenuType<AdvancedMachineMenu>> CENTRIFUGAL_MENU = menu("centrifugal_extractor", Variant.CENTRIFUGAL);
     static final Supplier<MenuType<AdvancedMachineMenu>> SINGULARITY_MENU = menu("singularity_compressor", Variant.SINGULARITY);
     static final Supplier<MenuType<AdvancedMachineMenu>> RARE_EARTH_MENU = menu("centrifugal_rare_earth_extractor", Variant.RARE_EARTH);
+    static final Supplier<MenuType<AdvancedMachineMenu>> COMPACTING_MENU = menu("compacting_recycler", Variant.COMPACTING);
+    static final Supplier<MenuType<AdvancedMachineMenu>> SLOW_MENU = menu("slow_grinder", Variant.SLOW);
 
     private AdvancedMachines() {}
 
@@ -51,6 +55,8 @@ public final class AdvancedMachines {
         items.registerSimpleBlockItem(CENTRIFUGAL);
         items.registerSimpleBlockItem(SINGULARITY);
         items.registerSimpleBlockItem(RARE_EARTH);
+        items.registerSimpleBlockItem(COMPACTING);
+        items.registerSimpleBlockItem(SLOW);
         bus.addListener(AdvancedMachines::capabilities);
     }
 
@@ -70,7 +76,8 @@ public final class AdvancedMachines {
 
     enum Variant {
         FURNACE(RecipeType.SMELTING, 15), BLAST(RecipeType.BLASTING, 29), SMOKER(RecipeType.SMOKING, 29),
-        ROTARY(2), CENTRIFUGAL(3), SINGULARITY(1), RARE_EARTH(1);
+        ROTARY(2), CENTRIFUGAL(3), SINGULARITY(1), RARE_EARTH(1),
+        COMPACTING(new ProcessingLayout(1, 1), 10), SLOW(new ProcessingLayout(9, 1), 10);
 
         final RecipeType<? extends AbstractCookingRecipe> recipes;
         final int cost;
@@ -83,9 +90,13 @@ public final class AdvancedMachines {
         }
 
         Variant(int outputs) {
+            this(new ProcessingLayout(1, outputs), 15);
+        }
+
+        Variant(ProcessingLayout layout, int cost) {
             recipes = null;
-            cost = 15;
-            layout = new ProcessingLayout(1, outputs);
+            this.cost = cost;
+            this.layout = layout;
         }
 
         MenuType<AdvancedMachineMenu> menu() {
@@ -94,10 +105,12 @@ public final class AdvancedMachines {
                 case CENTRIFUGAL -> CENTRIFUGAL_MENU.get();
                 case SINGULARITY -> SINGULARITY_MENU.get();
                 case RARE_EARTH -> RARE_EARTH_MENU.get();
+                case COMPACTING -> COMPACTING_MENU.get();
+                case SLOW -> SLOW_MENU.get();
                 default -> MENU.get();
             };
         }
 
-        int capacity() { return this == RARE_EARTH ? 5120 : 10000; }
+        int capacity() { return this == RARE_EARTH ? 5120 : this == SLOW ? 1000 : 10000; }
     }
 }

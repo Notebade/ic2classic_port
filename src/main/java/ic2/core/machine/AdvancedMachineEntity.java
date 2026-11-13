@@ -39,7 +39,9 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     private boolean processing;
     private float experience;
     private RareEarthProgress rareEarth = new RareEarthProgress("", 0);
-    private final ItemStack[] trackedInputs = {ItemStack.EMPTY, ItemStack.EMPTY};
+    private int grinderMode = 1;
+    private int queueTick;
+    private final ItemStack[] trackedInputs = emptyInputs(variant.layout.inputs());
     final ItemStackHandler inventory = new ItemStackHandler(variant.layout.slots()) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
@@ -51,7 +53,8 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         protected void onContentsChanged(int slot) {
             if (variant.layout.isInput(slot)) {
                 ItemStack next = getStackInSlot(slot);
-                if (!ItemStack.isSameItemSameComponents(trackedInputs[slot - 1], next)) progress = 0;
+                if ((variant != AdvancedMachines.Variant.SLOW || slot == 1)
+                        && !ItemStack.isSameItemSameComponents(trackedInputs[slot - 1], next)) progress = 0;
                 trackedInputs[slot - 1] = next.copyWithCount(1);
             }
             setChanged();
@@ -65,7 +68,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     private final IItemHandler bottom = new CombinedInvWrapper(output, battery);
     private final IItemHandler sides = new CombinedInvWrapper(battery, input, output);
     final ContainerData data = new ContainerData() {
-        @Override public int getCount() { return 6; }
+        @Override public int getCount() { return 7; }
         @Override public void set(int index, int value) {}
         @Override public int get(int index) {
             return switch (index) {
@@ -75,6 +78,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
                 case 3 -> split ? 1 : 0;
                 case 4 -> processing ? 1 : 0;
                 case 5 -> rareEarth.units() * 1000 / RareEarthProgress.UNITS_PER_OUTPUT;
+                case 6 -> grinderMode;
                 default -> throw new IndexOutOfBoundsException(index);
             };
         }
@@ -86,6 +90,10 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
 
     void tick() {
         dischargeBattery();
+        if (variant == AdvancedMachines.Variant.SLOW) {
+            tickSlowGrinder();
+            return;
+        }
         if (variant == AdvancedMachines.Variant.RARE_EARTH) {
             tickRareEarth();
             return;
@@ -101,13 +109,53 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         progress = step.progress();
         processing = step.processing();
         if (step.finished()) {
-            for (int pass = 0; pass < variant.layout.inputs(); pass++) {
+            for (int pass = 0; pass < variant.layout.processingPasses(); pass++) {
                 process(variant.layout.inputForPass(pass, split, inventory.getStackInSlot(1).isEmpty(),
                     variant.layout.supportsSplit() && inventory.getStackInSlot(2).isEmpty()));
             }
         }
         updateLit(step.heating());
         if (changed) setChanged();
+    }
+
+    private static ItemStack[] emptyInputs(int count) {
+        ItemStack[] values = new ItemStack[count];
+        java.util.Arrays.fill(values, ItemStack.EMPTY);
+        return values;
+    }
+
+    private void tickSlowGrinder() {
+        if (++queueTick % 10 == 0) rotateQueue();
+        ProcessingRecipe recipe = availableRecipe(1);
+        if (recipe != null) duration = recipe.duration();
+        var step = RecyclerControl.slowStep(progress, energy, grinderMode, duration, recipe != null);
+        boolean changed = step.spent() > 0 || progress != step.progress();
+        progress = step.progress();
+        energy -= step.spent();
+        processing = step.processing();
+        if (step.finished()) process(1);
+        updateLit(processing);
+        if (changed) setChanged();
+    }
+
+    private void rotateQueue() {
+        for (int slot = 2; slot <= 9; slot++) {
+            ItemStack from = inventory.getStackInSlot(slot);
+            if (from.isEmpty()) continue;
+            int target = RecyclerControl.nextQueueSlot(slot);
+            ItemStack to = inventory.getStackInSlot(target);
+            int moved = RecyclerControl.queueMove(from.getCount(), to.getCount(), from.getMaxStackSize(),
+                to.isEmpty() || ItemStack.isSameItemSameComponents(from, to));
+            if (moved > 0) {
+                inventory.setStackInSlot(target, from.copyWithCount(to.getCount() + moved));
+                inventory.setStackInSlot(slot, from.copyWithCount(from.getCount() - moved));
+            }
+        }
+    }
+
+    void cycleGrinderMode() {
+        grinderMode = grinderMode % 5 + 1;
+        setChanged();
     }
 
     private void tickRareEarth() {
@@ -155,6 +203,13 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
             return pump == null ? null : new ProcessingRecipe(new ItemStack(net.minecraft.world.item.Items.SNOWBALL), 120000, 0, 0, pump);
         }
         return switch (variant) {
+            case COMPACTING, SLOW -> {
+                var recipe = RecyclingRecipes.find(stack);
+                int time = variant == AdvancedMachines.Variant.SLOW ? 100 + (recipe == null ? 0 : recipe.extraTicks())
+                    : RecyclerControl.compactDuration(recipe != null && recipe.inputCount() == 9);
+                yield recipe == null ? null : new ProcessingRecipe(new ItemStack(recipe.output(), recipe.count()), time, 0,
+                    recipe.inputCount(), null, recipe.chanceDenominator());
+            }
             case RARE_EARTH -> {
                 var entry = RareEarthRecipes.find(stack);
                 yield entry == null ? null : new ProcessingRecipe(entry.material().output(), 99 * 300, 0);
@@ -208,8 +263,11 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     private void process(int inputSlot) {
         ProcessingRecipe recipe = availableRecipe(inputSlot);
         if (recipe == null) return;
-        ItemStack result = recipe.output().copy();
-        for (int slot = variant.layout.firstOutput(inputSlot, split); slot <= variant.layout.lastOutput(inputSlot, split); slot++) {
+        boolean success = recipe.chanceDenominator() == 1 || (variant == AdvancedMachines.Variant.SLOW
+            ? level.random.nextInt(100) < RecyclerControl.chancePercent(grinderMode, recipe.chanceDenominator())
+            : level.random.nextInt(recipe.chanceDenominator()) == 0);
+        ItemStack result = success ? recipe.output().copy() : ItemStack.EMPTY;
+        for (int slot = variant.layout.firstOutput(inputSlot, split); slot <= variant.layout.lastOutput(inputSlot, split) && !result.isEmpty(); slot++) {
             ItemStack current = inventory.getStackInSlot(slot);
             if (!current.isEmpty() && !ItemStack.isSameItemSameComponents(current, result)) continue;
             int moved = Math.min(result.getCount(), Math.min(inventory.getSlotLimit(slot), result.getMaxStackSize()) - current.getCount());
@@ -289,6 +347,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         tag.putInt("duration", duration);
         tag.putBoolean("split", split);
         tag.putFloat("experience", experience);
+        if (variant == AdvancedMachines.Variant.SLOW) tag.putInt("grinder_mode", grinderMode);
         if (variant == AdvancedMachines.Variant.RARE_EARTH) {
             tag.putString("rare_material", rareEarth.material());
             tag.putInt("rare_units", rareEarth.units());
@@ -306,13 +365,17 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         progress = Mth.clamp(tag.getInt("progress"), 0, duration - 1);
         split = !tag.contains("split") || tag.getBoolean("split");
         experience = Math.max(0, tag.getFloat("experience"));
+        grinderMode = Mth.clamp(tag.getInt("grinder_mode"), 1, 5);
         String material = tag.getString("rare_material");
         if (RareEarthRecipes.Material.byId(material) != null) {
             rareEarth = new RareEarthProgress(material, Mth.clamp(tag.getInt("rare_units"), 0, RareEarthProgress.UNITS_PER_OUTPUT - 1));
         }
     }
 
-    private record ProcessingRecipe(ItemStack output, int duration, float experience, int inputCount, PumpTank pump) {
+    private record ProcessingRecipe(ItemStack output, int duration, float experience, int inputCount, PumpTank pump, int chanceDenominator) {
+        ProcessingRecipe(ItemStack output, int duration, float experience, int inputCount, PumpTank pump) {
+            this(output, duration, experience, inputCount, pump, 1);
+        }
         ProcessingRecipe(ItemStack output, int duration, float experience) { this(output, duration, experience, 1, null); }
     }
 }

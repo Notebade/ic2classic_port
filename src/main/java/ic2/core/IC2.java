@@ -120,6 +120,8 @@ public final class IC2 {
     public static final DeferredItem<Item> SCRAP_METAL = ITEMS.registerSimpleItem("scrap_metal");
     public static final DeferredItem<Item> SCRAP_METAL_CHUNK = ITEMS.registerSimpleItem("scrap_metal_chunk");
     public static final DeferredItem<Item> SCRAP_METAL_BLADE = ITEMS.registerSimpleItem("scrap_metal_blade");
+    public static final DeferredItem<Item> UPGRADE_BASE = ITEMS.registerSimpleItem("upgrade_base");
+    public static final DeferredItem<Item> EFFICIENT_SAWBLADE = ITEMS.registerSimpleItem("efficient_sawblade", new Item.Properties().durability(1000));
     public static final DeferredItem<ScrapBoxItem> SCRAP_BOX = ITEMS.registerItem("scrapbox", ScrapBoxItem::new);
     public static final DeferredItem<Item> UU_MATTER = ITEMS.registerSimpleItem("uumatter");
 

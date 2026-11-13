@@ -248,3 +248,8 @@ src/main/resources/assets/ic2/textures/item/blades/scrapmetal_chunk.png
 src/main/resources/assets/ic2/textures/item/blades/scrapmetal_blade.png
 src/main/resources/assets/ic2/textures/block/machine/mv/charged_electrolyzer/
 src/main/resources/assets/ic2/textures/block/machine/mv/centrifugal_rare_earth_extractor/
+src/main/resources/assets/ic2/textures/block/machine/mv/slow_grinder/
+src/main/resources/assets/ic2/textures/block/machine/mv/compacting_recycler/
+src/main/resources/assets/ic2/textures/item/upgrades/machines/base.png
+src/main/resources/assets/ic2/textures/item/upgrades/machines/efficient_sawblade.png
+src/main/resources/assets/ic2/textures/block/misc/mining_pipe_shaft.png

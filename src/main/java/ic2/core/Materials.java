@@ -1,5 +1,7 @@
 package ic2.core;
 
+import ic2.core.machine.MiningPipeBlock;
+
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
@@ -16,6 +18,8 @@ final class Materials {
     private Materials() {}
 
     static void register(IEventBus bus, DeferredRegister.Items items) {
+        items.registerSimpleBlockItem(BLOCKS.registerBlock("miningpipe_slim", MiningPipeBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(6, 10).noOcclusion()));
         var tinOre = items.registerSimpleBlockItem(BLOCKS.registerBlock("tin_ore", Block::new,
             BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_ORE)));
         var deepslateTinOre = items.registerSimpleBlockItem(BLOCKS.registerBlock("deepslate_tin_ore", Block::new,

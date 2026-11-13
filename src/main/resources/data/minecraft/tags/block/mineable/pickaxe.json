@@ -57,6 +57,9 @@
     "ic2:centrifugal_extractor",
     "ic2:singularity_compressor",
     "ic2:charged_electrolyzer",
-    "ic2:centrifugal_rare_earth_extractor"
+    "ic2:centrifugal_rare_earth_extractor",
+    "ic2:slow_grinder",
+    "ic2:compacting_recycler",
+    "ic2:miningpipe_slim"
   ]
 }
