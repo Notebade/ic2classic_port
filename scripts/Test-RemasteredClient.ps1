@@ -43,8 +43,6 @@ try {
             if ($currentLog -and $currentLog.Contains('IC2 Remastered checks passed:')) {
                 $leaveRunning = $true
                 Write-Output "Remastered verification passed; Minecraft left running (PID $($process.Id))."
-                # Keep the launcher session alive so its child is not reaped by the host.
-                $process.WaitForExit()
                 return
             }
         }

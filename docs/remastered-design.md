@@ -17,8 +17,8 @@ earlier generation notes below describe the superseded first prototype only.
 An additional real-client assertion reproduced the vanilla-button problem before
 the rendering change. The suite now checks styled buttons and actual inventory
 slot bounds as well as tabs and shift-click. `Test-RemasteredClient.ps1 -KeepOpen`
-reports successful verification, leaving the client and alloy screen open while
-its launcher session waits for the user's manual exit.
+returns after successful verification, leaving the client and alloy screen open
+until the user's manual exit.
 The opt-in test addon stops automated actions after verification and supplies
 copper/tin in the player's creative inventory for manual checks. Normal test runs
 still exit the client automatically. Production gameplay has no test behavior.
@@ -30,8 +30,9 @@ existing checks passed. The first keep-open launch exposed an empty startup-log
 race in the test script; added a null check before reading its success marker.
 Real-client checks passed for styled tabs, all 36 inventory cell bounds, recipe
 paging and bidirectional shift-click. Inspected the actual game screenshots.
-Kept the launcher session alive after success so the host cannot reap the client
-when the command exits. No changes were made in the original project.
+Confirmed the retained Minecraft process is responding outside the sandbox.
+Sandbox process enumeration cannot see that elevated game process; use the same
+execution context as the launcher to check it. No changes in the original project.
 
 ## Existing architecture
 
