@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 final class MovementArmorModule extends Item implements ArmorModule {
-    private enum Kind { JUMP, SPEED, STEP, PARACHUTE }
+    private enum Kind { JUMP, SPEED, STEP, PARACHUTE, WATER }
     private static final ResourceLocation STEP = ArmorModule.id("step_assist");
     private final Kind kind;
     private MovementArmorModule(Properties properties, Kind kind) { super(properties); this.kind = kind; }
@@ -26,10 +26,11 @@ final class MovementArmorModule extends Item implements ArmorModule {
         items.registerItem("speed_boost_module", p -> new MovementArmorModule(p, Kind.SPEED));
         items.registerItem("step_assist_module", p -> new MovementArmorModule(p, Kind.STEP));
         items.registerItem("parachute_module", p -> new MovementArmorModule(p, Kind.PARACHUTE));
+        items.registerItem("water_walker_module", p -> new MovementArmorModule(p, Kind.WATER));
     }
     @Override public ResourceLocation category(ItemStack module) { return kind == Kind.PARACHUTE ? BACK : MOVEMENT; }
     @Override public boolean supportsArmor(ItemStack module, ItemStack armor, EquipmentSlot slot) {
-        return switch (kind) { case JUMP -> slot == EquipmentSlot.FEET; case SPEED -> slot == EquipmentSlot.LEGS; case STEP -> slot == EquipmentSlot.LEGS || slot == EquipmentSlot.FEET; case PARACHUTE -> true; };
+        return switch (kind) { case JUMP, WATER -> slot == EquipmentSlot.FEET; case SPEED -> slot == EquipmentSlot.LEGS; case STEP -> slot == EquipmentSlot.LEGS || slot == EquipmentSlot.FEET; case PARACHUTE -> true; };
     }
     @Override public Set<ResourceLocation> features(ItemStack module, ItemStack armor) { return kind == Kind.STEP ? Set.of(STEP) : Set.of(); }
     @Override public void tickModule(ItemStack module, ItemStack armor, Player player) {
@@ -39,6 +40,7 @@ final class MovementArmorModule extends Item implements ArmorModule {
             case SPEED -> speed(armor, player, data);
             case STEP -> step(armor, player, data);
             case PARACHUTE -> parachute(player, data);
+            case WATER -> water(armor, player);
         }
         module.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
     }
@@ -83,6 +85,14 @@ final class MovementArmorModule extends Item implements ArmorModule {
     }
     static void resetFlight(Player player) {
         if (player instanceof ServerPlayer server && server.connection instanceof FlightTimeAccess access) access.ic2$resetFlightTime();
+    }
+    private static void water(ItemStack armor, Player player) {
+        var pos = player.blockPosition(); var level = player.level();
+        if (player.isShiftKeyDown() || player.getDeltaMovement().y >= 0 || !canSpend(armor, 100) || !level.isEmptyBlock(pos)
+            || Math.abs(player.getY() - pos.getY()) >= .1 || !level.containsAnyLiquid(new net.minecraft.world.phys.AABB(pos.below()))) return;
+        if (level.getGameTime() % 10 == 0) spend(armor, 100);
+        var velocity = player.getDeltaMovement(); player.setDeltaMovement(velocity.x, 0, velocity.z); player.setOnGround(true); player.hurtMarked = true; resetFlight(player);
+        if (level instanceof net.minecraft.server.level.ServerLevel server) server.sendParticles(net.minecraft.core.particles.ParticleTypes.BUBBLE_COLUMN_UP, player.getX(), player.getY() - .2, player.getZ(), 2, .2, 0, .2, .04);
     }
     static void refreshStep(Player player) {
         boolean enabled = false;

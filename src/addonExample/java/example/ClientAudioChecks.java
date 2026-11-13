@@ -28,6 +28,7 @@ public final class ClientAudioChecks {
         var client = Minecraft.getInstance(); var server = client.getSingleplayerServer();
         if (client.player == null || client.level == null || server == null) return;
         age++;
+        ClientEquipmentChecks.tick(client, age);
         if (age == 1) server.execute(() -> {
             var level = server.overworld(); var player = server.getPlayerList().getPlayer(client.player.getUUID());
             player.setGameMode(GameType.CREATIVE);

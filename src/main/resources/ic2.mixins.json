@@ -3,6 +3,6 @@
   "minVersion": "0.8",
   "package": "ic2.core.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["CraftingInputMixin", "RecipeCacheMixin", "FurnaceCookTimeMixin", "ResultSlotMixin", "CrafterBlockMixin", "ChainsawLootMixin", "ProtectiveArmorMixin", "BatchCraftingMixin", "EquipmentFlightMixin"],
+  "mixins": ["CraftingInputMixin", "RecipeCacheMixin", "FurnaceCookTimeMixin", "ResultSlotMixin", "CrafterBlockMixin", "ChainsawLootMixin", "ProtectiveArmorMixin", "BatchCraftingMixin", "EquipmentFlightMixin", "CarbonBoatAccess"],
   "injectors": { "defaultRequire": 1 }
 }

@@ -1,0 +1,43 @@
+{
+  "requirements": [
+    [
+      "has_material_1",
+      "has_material_0",
+      "has_the_recipe"
+    ]
+  ],
+  "criteria": {
+    "has_material_1": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:carbon_plate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_material_0": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#minecraft:boats"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ic2:carbon_boat"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "ic2:carbon_boat"
+    ]
+  }
+}

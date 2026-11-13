@@ -17,6 +17,7 @@ public final class Equipment {
         PassiveArmorModule.register(items);
         NightVisionGoggles.register(items);
         MovementArmorModule.register(items);
+        CarbonBoats.register(bus, items);
         EquipmentMaterials.register(bus);
         ConventionalShield.register(items);
         items.registerItem("nano_shield", NanoShield::new);

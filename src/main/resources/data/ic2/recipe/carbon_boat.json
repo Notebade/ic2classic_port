@@ -1,0 +1,20 @@
+{
+  "key": {
+    "Y": {
+      "tag": "minecraft:boats"
+    },
+    "X": {
+      "item": "ic2:carbon_plate"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "XXX"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "result": {
+    "count": 1,
+    "id": "ic2:carbon_boat"
+  }
+}
