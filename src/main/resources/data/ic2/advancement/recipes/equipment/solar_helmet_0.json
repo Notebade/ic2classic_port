@@ -1,0 +1,54 @@
+{
+  "requirements": [
+    [
+      "has_material_0",
+      "has_material_2",
+      "has_material_1",
+      "has_the_recipe"
+    ]
+  ],
+  "criteria": {
+    "has_material_0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:solar_panel"
+          }
+        ]
+      }
+    },
+    "has_material_2": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:copper_insulated_cable_item"
+          }
+        ]
+      }
+    },
+    "has_material_1": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:iron_ingot"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "ic2:solar_helmet_0"
+      }
+    }
+  },
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "ic2:solar_helmet_0"
+    ]
+  }
+}

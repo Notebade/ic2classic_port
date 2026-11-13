@@ -1,0 +1,24 @@
+{
+  "result": {
+    "id": "ic2:solar_helmet",
+    "count": 1
+  },
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "ic2:solar_panel"
+    },
+    "H": {
+      "item": "minecraft:iron_helmet"
+    },
+    "C": {
+      "item": "ic2:copper_insulated_cable_item"
+    }
+  },
+  "pattern": [
+    " H ",
+    " S ",
+    "CCC"
+  ]
+}

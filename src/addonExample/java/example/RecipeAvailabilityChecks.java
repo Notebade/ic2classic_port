@@ -13,6 +13,11 @@ public final class RecipeAvailabilityChecks {
     private RecipeAvailabilityChecks() {}
 
     public static void run(ServerLevel level) throws Exception {
+        for (var recipe : level.getRecipeManager().getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING)) {
+            if (!recipe.id().getNamespace().equals("ic2")) continue;
+            for (var ingredient : recipe.value().getIngredients())
+                if (!ingredient.isEmpty() && ingredient.hasNoItems()) throw new AssertionError("Crafting recipe references an empty ingredient/tag: " + recipe.id());
+        }
         var processType = Class.forName("ic2.core.machine.MachineRecipeView$Process");
         var process = java.util.Arrays.stream(processType.getEnumConstants())
             .filter(value -> value.toString().equals("URANIUM_ENRICHER")).findFirst().orElseThrow();

@@ -56,3 +56,12 @@ First unit verified: .tools/equipment-first-unit-check.log (full server/addon su
 - Integrated native drills, saws, hoes, mower, wrench, tap and scanner use. Nano shield preserves partial-debit semantics while applying source enchantment cost. EuCharge centralizes the native component storage used by batteries, armor and shield.
 - Source ShapedIC2Recipe inspection found automatic ingredient-EU transfer. Added ic2:electric_shaped, reused transfer for counted shapes, restored four wearable recipes and belt recovery, and converted existing electric-result source recipes. Transfer is capped by result capacity; a multi-item recovery result stays uncharged as in the source.
 - Red: equipment-packs-red.log, equipment-native-energy-red.log, equipment-charge-crafting-red.log. Green: equipment-packs-complete-check.log checks worn use/refill conservation, real charged recipe take, ingredient consumption, enchantment costs and every previous addon scenario. Optional crapper/dryer/mutator tools were searched and are unavailable.
+
+## Solar helmets and recipe ingredient audit
+
+- Added solar_helmet/advanced_solar_helmet: one armor point, original 1/5 EU per player tick, source sky/day/biome-weather rules and original three recipes. They generate into worn stores rather than acting as batteries.
+- Added public ElectricEquipment.offerToArmor, returning accepted EU and respecting per-store transfer rate/capacity. Shared EquipmentMaterials removes duplicate battery/solar material construction.
+- Initial fixture roof assertion observed stale skylight before the light thread propagated a newly placed roof. The test now fences native light updates with a bounded future, preserving the actual source visibility check. Day, roof, night, precipitation and full-store checks pass.
+- Global crafting-ingredient validation discovered missing c:ingots/refined_iron and c:rubber leaves in four newly added recipes. equipment-empty-tags-red.log reproduces an unusable chainsaw recipe; both native tags are now present and every loaded IC2 crafting ingredient is checked for nonempty resolution.
+- equipment-solar-armor-check.log exposed Gradle's default heap exhaustion. Isolated 2 GB compilation succeeded; gradle.properties now sets that heap for reproducible builds without stopping other processes.
+- Full green: equipment-solar-recipes-complete-check.log. Source module-install behavior and remaining equipment are still part of the open row 8 audit.

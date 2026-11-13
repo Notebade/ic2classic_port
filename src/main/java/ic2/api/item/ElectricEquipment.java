@@ -58,4 +58,20 @@ public final class ElectricEquipment {
         }
         return transferred;
     }
+    /** Offers generated EU to worn stores in armor order, respecting each item's transfer rate. Returns accepted EU. */
+    public static int offerToArmor(LivingEntity wearer, int offered) {
+        if (offered < 0) throw new IllegalArgumentException("Negative energy offer");
+        if (wearer.level().isClientSide) return 0;
+        int remaining = offered;
+        for (var stack : wearer.getArmorSlots()) {
+            if (remaining <= 0) break;
+            if (!ElectricItem.supports(stack, Integer.MAX_VALUE, true)) continue;
+            var item = (ElectricItem) stack.getItem();
+            int amount = Math.min(remaining, Math.min(item.transferRate(), item.capacity() - item.charge(stack)));
+            if (amount <= 0) continue;
+            item.setCharge(stack, item.charge(stack) + amount); remaining -= amount;
+        }
+        if (remaining < offered && wearer instanceof Player player) player.getInventory().setChanged();
+        return offered - remaining;
+    }
 }
