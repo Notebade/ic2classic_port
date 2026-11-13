@@ -1,0 +1,18 @@
+{
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "ic2:ingot_refined_iron"
+    }
+  },
+  "pattern": [
+    "XXX",
+    "XXX",
+    "XXX"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:refined_iron_block",
+    "count": 1
+  }
+}

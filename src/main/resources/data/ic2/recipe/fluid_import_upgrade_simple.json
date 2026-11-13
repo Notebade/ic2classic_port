@@ -1,0 +1,30 @@
+{
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:sticky_piston"
+    },
+    "X": {
+      "item": "minecraft:copper_ingot"
+    },
+    "B": {
+      "item": "minecraft:redstone_torch"
+    },
+    "Y": {
+      "item": "ic2:circuit"
+    },
+    "V": {
+      "item": "minecraft:bucket"
+    }
+  },
+  "pattern": [
+    "XCX",
+    "YVY",
+    "XBX"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:fluid_import_upgrade_simple",
+    "count": 1
+  }
+}

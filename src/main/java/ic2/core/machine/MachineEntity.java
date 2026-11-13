@@ -53,6 +53,7 @@ import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 final class MachineEntity extends BlockEntity implements MenuProvider, EnergySink, MachineSnapshot.Provider {
     @Override public MachineSnapshot machineInfo() {
         var values = new java.util.HashMap<String, Long>();
+        if(reactorPlanner!=null)reactorPlanner.telemetry(values);
         values.put("progress_units", (long) progress);
         values.put("progress_target", (long) kind.recipeTicks);
         values.put("fuel_ticks", (long) burnTicks);

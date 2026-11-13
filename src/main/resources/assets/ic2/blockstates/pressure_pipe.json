@@ -1,0 +1,62 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "ic2:block/pressure_pipe"
+      }
+    },
+    {
+      "apply": {
+        "x": 90,
+        "model": "ic2:block/pressure_pipe_arm"
+      },
+      "when": {
+        "down": "true"
+      }
+    },
+    {
+      "apply": {
+        "x": 270,
+        "model": "ic2:block/pressure_pipe_arm"
+      },
+      "when": {
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "ic2:block/pressure_pipe_arm"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 180,
+        "model": "ic2:block/pressure_pipe_arm"
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 90,
+        "model": "ic2:block/pressure_pipe_arm"
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 270,
+        "model": "ic2:block/pressure_pipe_arm"
+      },
+      "when": {
+        "west": "true"
+      }
+    }
+  ]
+}

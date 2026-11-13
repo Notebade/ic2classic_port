@@ -30,6 +30,14 @@ $runtimeTextures = @{
     'assets/ic2/textures/block/fluids/base_fluid_still.png' = 'assets/ic2/textures/block/fluids/base_fluid_still.png'
     'assets/ic2/textures/block/fluids/base_fluid_still.png.mcmeta' = 'assets/ic2/textures/block/fluids/base_fluid_still.png.mcmeta'
 }
+foreach ($rotor in @('wood','wool','iron','carbon','alloy','iridium')) {
+    $path = "assets/ic2/textures/models/windmill/${rotor}_rotor.png"
+    $runtimeTextures[$path] = $path
+}
+foreach ($sound in @('generators/generator_operating','generators/windmill_operating','generators/reactor/nuclear_reactor_operating')) {
+    $path = "assets/ic2/sounds/$sound.ogg"
+    $runtimeTextures[$path] = $path
+}
 $textureNames = @((@($textureNames) + @($runtimeTextures.Keys)) | Sort-Object -Unique)
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem

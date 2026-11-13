@@ -1,0 +1,13 @@
+{
+  "ingredients": [
+    {
+      "item": "ic2:refined_iron_block"
+    }
+  ],
+  "category": "misc",
+  "result": {
+    "id": "ic2:ingot_refined_iron",
+    "count": 9
+  },
+  "type": "minecraft:crafting_shapeless"
+}

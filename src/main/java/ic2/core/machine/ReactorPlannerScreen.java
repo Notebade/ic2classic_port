@@ -30,6 +30,8 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
     @Override
     protected void init() {
         super.init();
+        addRenderableWidget(Button.builder(Component.literal("F"), b -> send(14))
+            .bounds(leftPos + 134, topPos + 3, 14, 13).tooltip(Tooltip.create(label("full_run"))).build());
         addRenderableWidget(Button.builder(Component.literal("↔"), b -> exchangeCode())
             .bounds(leftPos + 151, topPos + 3, 17, 13)
             .tooltip(Tooltip.create(label("code_help"))).build());
@@ -130,6 +132,9 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
             int average = menu.averageHeat();
             var lines = new ArrayList<Component>(6);
             lines.add(total);
+            lines.add(Component.translatable("gui.ic2.reactor_planner.fuel_runtime", menu.fuelTicks(), menu.remainingFuelTicks()));
+            if (menu.efficiencyPermille() >= 0) lines.add(Component.translatable("gui.ic2.reactor_planner.efficiency", java.math.BigDecimal.valueOf(menu.efficiencyPermille(), 3).toPlainString()));
+            if (menu.fullRunState() > 0) lines.add(label("full_run_state_" + menu.fullRunState()));
             if (average >= 0) {
                 lines.add(Component.translatable("gui.ic2.reactor_planner.average_heat", average));
             }

@@ -1,0 +1,23 @@
+{
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:bucket"
+    },
+    "X": {
+      "item": "ic2:ingot_tin"
+    },
+    "Y": {
+      "tag": "c:glass_blocks"
+    }
+  },
+  "pattern": [
+    " C ",
+    "XYX"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:pipe",
+    "count": 8
+  }
+}

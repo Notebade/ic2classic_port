@@ -89,4 +89,10 @@ public final class ReactorCardItem extends Item {
         }
         return level.getBlockEntity(pos) instanceof MachineEntity machine && machine.isReactor() ? machine : null;
     }
+    static Component linkedStatus(Level level, ItemStack card) {
+        var tag = card.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        var reactor = tag.getString("reactor_dimension").equals(level.dimension().location().toString()) && tag.contains("reactor_position")
+            ? findReactor(level, BlockPos.of(tag.getLong("reactor_position"))) : null;
+        return reactor == null ? Component.translatable("gui.ic2.reactor_card.unavailable") : reactor.reactorStatus();
+    }
 }

@@ -1,0 +1,30 @@
+{
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "ic2:batbox"
+    },
+    "X": {
+      "item": "ic2:copper_insulated_cable_item"
+    },
+    "B": {
+      "item": "ic2:refined_iron_block"
+    },
+    "Y": {
+      "item": "ic2:circuit"
+    },
+    "V": {
+      "item": "ic2:adjustable_luminator"
+    }
+  },
+  "pattern": [
+    "XXX",
+    "YCV",
+    "YBV"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:monitor",
+    "count": 6
+  }
+}

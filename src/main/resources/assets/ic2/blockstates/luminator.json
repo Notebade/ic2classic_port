@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "light=0": {
+      "model": "ic2:block/luminator_off"
+    },
+    "light=1": {
+      "model": "ic2:block/luminator"
+    },
+    "light=2": {
+      "model": "ic2:block/luminator"
+    },
+    "light=3": {
+      "model": "ic2:block/luminator"
+    },
+    "light=4": {
+      "model": "ic2:block/luminator"
+    },
+    "light=5": {
+      "model": "ic2:block/luminator"
+    },
+    "light=6": {
+      "model": "ic2:block/luminator"
+    },
+    "light=7": {
+      "model": "ic2:block/luminator"
+    },
+    "light=8": {
+      "model": "ic2:block/luminator"
+    },
+    "light=9": {
+      "model": "ic2:block/luminator"
+    },
+    "light=10": {
+      "model": "ic2:block/luminator"
+    },
+    "light=11": {
+      "model": "ic2:block/luminator"
+    },
+    "light=12": {
+      "model": "ic2:block/luminator"
+    },
+    "light=13": {
+      "model": "ic2:block/luminator"
+    },
+    "light=14": {
+      "model": "ic2:block/luminator"
+    },
+    "light=15": {
+      "model": "ic2:block/luminator"
+    }
+  }
+}

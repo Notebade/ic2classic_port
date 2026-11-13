@@ -1,0 +1,26 @@
+{
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "ic2:advanced_circuit"
+    },
+    "X": {
+      "item": "ic2:fluid_import_upgrade_simple"
+    },
+    "Y": {
+      "item": "ic2:pipe"
+    },
+    "V": {
+      "item": "ic2:fluid_export_upgrade_simple"
+    }
+  },
+  "pattern": [
+    " C ",
+    "XYV"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:pressure_pipe",
+    "count": 1
+  }
+}

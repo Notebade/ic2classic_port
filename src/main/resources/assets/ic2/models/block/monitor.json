@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "north": "ic2:block/electric/monitor/inactive_front/full",
+    "south": "ic2:block/electric/monitor/inactive_back",
+    "east": "ic2:block/electric/monitor/inactive_side",
+    "west": "ic2:block/electric/monitor/inactive_side",
+    "up": "ic2:block/electric/monitor/inactive_side",
+    "down": "ic2:block/electric/monitor/inactive_side",
+    "particle": "ic2:block/electric/monitor/inactive_side"
+  }
+}

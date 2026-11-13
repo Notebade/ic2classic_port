@@ -61,7 +61,7 @@ final class CreativeTabs {
         if (GENERATORS.contains(name) || name.endsWith("_rotor") || name.startsWith("solar_panel") || name.startsWith("water_mill")) {
             return "generators";
         }
-        if (MACHINES.contains(name)) {
+        if (MACHINES.contains(name) || name.equals("monitor") || name.equals("pipe") || name.equals("pressure_pipe") || name.equals("valve")) {
             return "machines";
         }
         if (ENERGY.contains(name) || name.endsWith("_cable_item") || name.startsWith("transformer_")

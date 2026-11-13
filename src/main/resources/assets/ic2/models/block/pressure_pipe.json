@@ -1,0 +1,40 @@
+{
+  "elements": [
+    {
+      "to": [
+        12,
+        12,
+        12
+      ],
+      "faces": {
+        "up": {
+          "texture": "#pipe"
+        },
+        "down": {
+          "texture": "#pipe"
+        },
+        "west": {
+          "texture": "#pipe"
+        },
+        "north": {
+          "texture": "#pipe"
+        },
+        "east": {
+          "texture": "#pipe"
+        },
+        "south": {
+          "texture": "#pipe"
+        }
+      },
+      "from": [
+        4,
+        4,
+        4
+      ]
+    }
+  ],
+  "textures": {
+    "pipe": "ic2:block/transport/pipes/pressure_pipe",
+    "particle": "ic2:block/transport/pipes/pressure_pipe"
+  }
+}

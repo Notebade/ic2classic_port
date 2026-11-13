@@ -1,23 +1,24 @@
 {
-  "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "pattern": [
-    "TXT",
-    "XGX",
-    "TXT"
-  ],
   "key": {
-    "T": {
-      "item": "minecraft:redstone_torch"
+    "C": {
+      "item": "ic2:pressure_pipe"
     },
     "X": {
-      "item": "ic2:heat_exchanger_spread"
+      "item": "minecraft:redstone_torch"
     },
-    "G": {
-      "item": "ic2:reinforced_glass"
+    "Y": {
+      "item": "ic2:heat_exchanger_spread"
     }
   },
+  "pattern": [
+    "XYX",
+    "YCY",
+    "XYX"
+  ],
+  "type": "minecraft:crafting_shaped",
   "result": {
-    "id": "ic2:heat_pump"
+    "id": "ic2:heat_pump",
+    "count": 1
   }
 }

@@ -1,0 +1,16 @@
+{
+  "ingredients": [
+    {
+      "item": "ic2:circuit"
+    },
+    {
+      "item": "ic2:copper_insulated_cable_item"
+    }
+  ],
+  "category": "misc",
+  "result": {
+    "id": "ic2:frequency_transmitter",
+    "count": 1
+  },
+  "type": "minecraft:crafting_shapeless"
+}

@@ -1,0 +1,25 @@
+{
+  "ingredients": [
+    {
+      "item": "ic2:luminator"
+    },
+    {
+      "item": "ic2:luminator"
+    },
+    {
+      "item": "ic2:luminator"
+    },
+    {
+      "item": "ic2:luminator"
+    },
+    {
+      "item": "ic2:circuit"
+    }
+  ],
+  "category": "misc",
+  "result": {
+    "id": "ic2:adjustable_luminator",
+    "count": 4
+  },
+  "type": "minecraft:crafting_shapeless"
+}

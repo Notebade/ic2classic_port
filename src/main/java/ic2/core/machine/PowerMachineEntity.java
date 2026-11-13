@@ -357,11 +357,11 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
     private boolean matches(BlockState state, PowerStructure.Part part) {
         return switch (part) {
             case AIR -> state.isAir();
-            case STONE -> state.is(PowerMachines.REINFORCED_STONE.get()) || state.is(PowerMachines.FUSION_VALVE.get());
-            case GLASS -> state.is(Machines.REINFORCED_GLASS.get()) || state.is(PowerMachines.FUSION_VALVE.get());
+            case STONE -> state.is(PowerMachines.REINFORCED_STONE.get()) || state.is(PowerMachines.FUSION_VALVE.get()) || state.is(PowerMachines.VALVE.get());
+            case GLASS -> state.is(Machines.REINFORCED_GLASS.get()) || state.is(PowerMachines.FUSION_VALVE.get()) || state.is(PowerMachines.VALVE.get());
             case BOILER -> state.is(PowerMachines.BOILER_CASING.get());
             case TUNNEL -> state.is(PowerMachines.TUNNEL_CASING.get());
-            case TUNNEL_VALVE -> state.is(PowerMachines.TUNNEL_CASING.get()) || state.is(PowerMachines.TUNNEL_VALVE.get());
+            case TUNNEL_VALVE -> state.is(PowerMachines.TUNNEL_CASING.get()) || state.is(PowerMachines.TUNNEL_VALVE.get()) || state.is(PowerMachines.VALVE.get());
         };
     }
     boolean formed() {

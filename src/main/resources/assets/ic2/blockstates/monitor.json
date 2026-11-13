@@ -1,0 +1,36 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "y": 0,
+      "model": "ic2:block/monitor"
+    },
+    "facing=east,lit=false": {
+      "y": 90,
+      "model": "ic2:block/monitor"
+    },
+    "facing=south,lit=false": {
+      "y": 180,
+      "model": "ic2:block/monitor"
+    },
+    "facing=west,lit=false": {
+      "y": 270,
+      "model": "ic2:block/monitor"
+    },
+    "facing=north,lit=true": {
+      "y": 0,
+      "model": "ic2:block/monitor_active"
+    },
+    "facing=east,lit=true": {
+      "y": 90,
+      "model": "ic2:block/monitor_active"
+    },
+    "facing=south,lit=true": {
+      "y": 180,
+      "model": "ic2:block/monitor_active"
+    },
+    "facing=west,lit=true": {
+      "y": 270,
+      "model": "ic2:block/monitor_active"
+    }
+  }
+}

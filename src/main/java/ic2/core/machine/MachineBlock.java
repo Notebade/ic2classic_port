@@ -67,6 +67,8 @@ class MachineBlock extends Block implements EntityBlock {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if(level.isClientSide&&type==MachineEntity.typeFor(state)&&kind.isReactor())
+            return (world,pos,current,entity)->MachineSoundLoop.clientTick(entity,"reactor_operating");
         if (level.isClientSide || type != MachineEntity.typeFor(state)) {
             return null;
         }

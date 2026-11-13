@@ -55,6 +55,7 @@ public final class ApiSmokeChecks {
             verifyGenerators(level, pos);
             ChemistrySmokeChecks.verify(level, pos);
             ChargingSmokeChecks.verify(level, pos);
+            NuclearGenerationSmokeChecks.verify(level);
             LOGGER.info("IC2 API runtime smoke checks passed");
         } catch (Throwable error) {
             LOGGER.error("IC2 API runtime smoke checks FAILED", error);

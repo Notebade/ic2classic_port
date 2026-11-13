@@ -1,0 +1,16 @@
+{
+  "ingredients": [
+    {
+      "item": "ic2:frequency_transmitter"
+    },
+    {
+      "item": "minecraft:ender_pearl"
+    }
+  ],
+  "category": "misc",
+  "result": {
+    "id": "ic2:monitor_card",
+    "count": 6
+  },
+  "type": "minecraft:crafting_shapeless"
+}

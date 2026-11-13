@@ -104,6 +104,13 @@
     "ic2:chargepad_hv",
     "ic2:chargepad_fission",
     "ic2:redirector_master",
-    "ic2:redirector_slave"
+    "ic2:redirector_slave",
+    "ic2:monitor",
+    "ic2:pipe",
+    "ic2:pressure_pipe",
+    "ic2:luminator",
+    "ic2:adjustable_luminator",
+    "ic2:valve",
+    "ic2:refined_iron_block"
   ]
 }

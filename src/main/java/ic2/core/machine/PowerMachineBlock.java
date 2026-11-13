@@ -56,6 +56,8 @@ final class PowerMachineBlock extends Block implements EntityBlock {
     }
 
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
+        if(level.isClientSide&&entityType==PowerMachines.ENTITY.get()&&(kind==PowerMachines.Kind.WINDMILL||kind==PowerMachines.Kind.LIQUID_FUEL))
+            return (world,pos,current,entity)->MachineSoundLoop.clientTick(entity,kind==PowerMachines.Kind.WINDMILL?"windmill_operating":"generator_operating");
         return !level.isClientSide && entityType == PowerMachines.ENTITY.get()
             ? (world, pos, current, entity) -> ((PowerMachineEntity) entity).tick() : null;
     }

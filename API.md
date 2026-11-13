@@ -10,8 +10,8 @@
 
 ```groovy
 dependencies {
-    compileOnly files('libs/ic2-classic-re-0.68.0.jar')
-    runtimeOnly files('libs/ic2-classic-re-0.68.0.jar')
+    compileOnly files('libs/ic2-classic-re-0.69.0.jar')
+    runtimeOnly files('libs/ic2-classic-re-0.69.0.jar')
 }
 ```
 
@@ -23,7 +23,7 @@ dependencies {
 [[dependencies.exampleaddon]]
 modId = "ic2"
 type = "required"
-versionRange = "[0.65.0,0.69.0)"
+versionRange = "[0.65.0,0.70.0)"
 ordering = "AFTER"
 side = "BOTH"
 ```
@@ -216,3 +216,5 @@ var fe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side);
 В 0.67.0 через тот же API v1 читаются газификаторы, рефайнер и бочка. Дополнительные ключи: gas_mb, input_1_mb, input_2_mb, output_mb (объёмы в мВ); age_ticks (прогресс текущего года), age_stage (годы), whisky_grade (0/1/2/3/4/5 для молодого/10/12/15/25/50-летнего), grist_units и opened (0/1). Каталог рефайнера пока не является открытым программным реестром API.
 
 В 0.68.0 тот же API v1 видит зарядные столы, батарейные станции, площадки и перенаправители. Новые ключи: packet_eu, sorted (0/1), packets_per_tick (станции: 4), active_ticks, cooldown_ticks, pending_packets, connected_sides и share_down/up/north/south/west/east (проценты). connected_sides — битовая маска D/U/N/S/W/E с битами 0–5; имеет смысл у главного узла. energyStored ведомого включает очередь и остаток; у главного это остаток до 5 EU. Столы и площадки реализуют публичный EnergySink, станции и ведомые не принимают EU из сети. Дополнительных точек регистрации рецептов или изменяемого доступа к инвентарям в API v1 не вводится. [Правила работы устройств](docs/energy-redirectors-and-charging.md).
+
+В 0.69.0 API v1 дополнен телеметрией планировщика: simulation_cycles, total_production (EU либо мВ пара по режиму), fuel_runtime_ticks, fuel_remaining_ticks (верхняя оценка), efficiency_permille (электрический КПД ×1000; −1 для парового режима/нет базовой выработки), full_run_state (0 — обычный, 1 — полный в работе/паузе, 2 — топливо закончилось, 3 — перегрев). Монитор публикует cards и requires_redstone; светильники — brightness. Трубы публикуют fluid_mb, capacity_mb и transfer_mb (мВ/тик трубы-источника), с EnergyUnit.NONE. Обычный valve перенаправляет capabilities сформированного контроллера, как прежние специализированные клапаны. Контракт и версия API не изменены. [Поведение и границы реализации](docs/nuclear-and-generation-followup.md).

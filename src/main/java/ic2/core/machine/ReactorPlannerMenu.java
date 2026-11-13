@@ -16,7 +16,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
 final class ReactorPlannerMenu extends AbstractContainerMenu {
-    private static final int DATA_COUNT = 29;
+    private static final int DATA_COUNT = 36;
     private final ReactorPlannerState planner;
     private final ContainerLevelAccess access;
     private final ContainerData data;
@@ -78,6 +78,10 @@ final class ReactorPlannerMenu extends AbstractContainerMenu {
     int forecastOutput() { return readInt(24); }
     int forecastHeatChange() { return readInt(26); }
     int forecastBlast() { return data.get(28); }
+    int fuelTicks() { return readInt(29); }
+    int remainingFuelTicks() { return readInt(31); }
+    int efficiencyPermille() { return readInt(33); }
+    int fullRunState() { return data.get(35); }
 
     ItemStack selectedPart() {
         List<ItemStack> parts = steam() ? steamParts : electricParts;

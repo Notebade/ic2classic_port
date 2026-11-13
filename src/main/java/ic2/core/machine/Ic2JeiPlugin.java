@@ -68,6 +68,9 @@ public final class Ic2JeiPlugin implements IModPlugin {
         registration.addIngredientInfo(AdvancedMachines.PRESSURE.get(), MachineRecipeViews.note("pressure_build"));
         registration.addIngredientInfo(ExtraGenerators.SOLAR.get(), MachineRecipeViews.note("solar_turbine_info"));
         registration.addIngredientInfo(ExtraGenerators.SLAG.get(), MachineRecipeViews.note("slag_generator_info"));
+        registration.addIngredientInfo(NuclearInfrastructure.MONITOR.get(),MachineRecipeViews.note("monitor"));
+        registration.addIngredientInfo(NuclearInfrastructure.PIPE.get(),MachineRecipeViews.note("fluid_pipe"));
+        registration.addIngredientInfo(NuclearInfrastructure.PRESSURE_PIPE.get(),MachineRecipeViews.note("fluid_pipe"));
         for (var kind : PowerMachines.Kind.values()) registration.addIngredientInfo(kind.block(), MachineRecipeViews.note("power_" + kind.id));
         for (var kind : ChargingDevices.Kind.values()) registration.addIngredientInfo(kind.block(), MachineRecipeViews.note("charging_" + kind.family.name().toLowerCase(java.util.Locale.ROOT)));
         registration.addIngredientInfo(PowerMachines.PLASMA_CORE.get(), MachineRecipeViews.note("power_core_counts"));

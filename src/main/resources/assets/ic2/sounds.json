@@ -1,0 +1,26 @@
+{
+  "windmill_operating": {
+    "sounds": [
+      {
+        "stream": false,
+        "name": "ic2:generators/windmill_operating"
+      }
+    ]
+  },
+  "generator_operating": {
+    "sounds": [
+      {
+        "stream": false,
+        "name": "ic2:generators/generator_operating"
+      }
+    ]
+  },
+  "reactor_operating": {
+    "sounds": [
+      {
+        "stream": false,
+        "name": "ic2:generators/reactor/nuclear_reactor_operating"
+      }
+    ]
+  }
+}

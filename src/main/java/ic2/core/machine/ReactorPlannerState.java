@@ -36,6 +36,8 @@ final class ReactorPlannerState {
     private int peakHeat = -1;
     private String planName = "";
     private Forecast forecast;
+    private ReactorRunTotals totals = new ReactorRunTotals();
+    private boolean fullRun;
 
     ReactorPlannerState(Runnable changed) {
         this.changed = changed;
@@ -87,6 +89,7 @@ final class ReactorPlannerState {
             case 11 -> adjustCycleLimit(-1);
             case 12 -> cyclesPerTick = Math.min(MAX_CYCLES_PER_TICK, cyclesPerTick + 1);
             case 13 -> cyclesPerTick = Math.max(1, cyclesPerTick - 1);
+            case 14 -> { reset(); cycleLimitIndex = 0; cyclesPerTick = MAX_CYCLES_PER_TICK; fullRun = true; running = fuelCells() > 0; }
             default -> { return false; }
         }
         changed.run();
@@ -133,6 +136,7 @@ final class ReactorPlannerState {
 
     private void reset() {
         forecast = null;
+        totals = new ReactorRunTotals(); fullRun = false;
         simulation = new ItemStackHandler(ReactorRules.SLOT_COUNT);
         for (int slot = 0; slot < layout.getSlots(); slot++) {
             simulation.setStackInSlot(slot, layout.getStackInSlot(slot).copy());
@@ -154,6 +158,7 @@ final class ReactorPlannerState {
         int batchSize = running ? cyclesPerTick : 1;
         for (int index = 0; index < batchSize && canAdvance(); index++) {
             advanceCycle();
+            if (fullRun && fuelCells() == 0) { running = false; break; }
         }
         step = false;
         if (!canAdvance()) {
@@ -163,6 +168,11 @@ final class ReactorPlannerState {
     }
 
     private void advanceCycle() {
+        int cells = fuelCells(); long baseline = 0;
+        for (int slot = 0; slot < simulation.getSlots(); slot++) {
+            if (simulation.getStackInSlot(slot).getItem() instanceof ic2.core.item.UraniumFuelRod rod)
+                baseline += (long) rod.cells() * rod.type().energyPerPulse() * (steam ? 1 : ReactorRules.CYCLE_TICKS);
+        }
         if (tanks != null) {
             tanks.fill(new FluidStack(Fluids.WATER, SteamReactorTanks.WATER_CAPACITY), FluidAction.EXECUTE);
         }
@@ -176,10 +186,31 @@ final class ReactorPlannerState {
         peakHeat = Math.max(peakHeat, heat);
         output = cycle.output();
         totalProduction += (long) output * (steam ? 1 : ReactorRules.CYCLE_TICKS);
+        totals.record((long) output * (steam ? 1 : ReactorRules.CYCLE_TICKS), baseline, cells, steam ? 1 : ReactorRules.CYCLE_TICKS);
         cycles++;
         if (tanks != null) {
             tanks.drain(SteamReactorTanks.STEAM_CAPACITY, FluidAction.EXECUTE);
         }
+    }
+    private int fuelCells() {
+        int cells = 0;
+        for (int slot = 0; slot < simulation.getSlots(); slot++) cells += ic2.core.item.UraniumFuelRod.cellsIn(simulation.getStackInSlot(slot));
+        return cells;
+    }
+    private int remainingFuelTicks() {
+        int remaining = 0;
+        for (int slot = 0; slot < simulation.getSlots(); slot++) {
+            var stack = simulation.getStackInSlot(slot);
+            if (stack.getItem() instanceof ic2.core.item.UraniumFuelRod) remaining = Math.max(remaining,
+                ReactorRunTotals.remainingTicks(stack.getMaxDamage(), stack.getDamageValue()));
+        }
+        return remaining;
+    }
+    void telemetry(java.util.Map<String,Long> values) {
+        values.put("simulation_cycles",(long)cycles); values.put("total_production",totalProduction);
+        values.put("fuel_runtime_ticks",totals.fuelTicks()); values.put("fuel_remaining_ticks",(long)remainingFuelTicks());
+        values.put("efficiency_permille",(long)(steam?-1:totals.efficiencyPermille()));
+        values.put("full_run_state",fullRun?fuelCells()==0?2L:heat>=maxHeat?3L:1L:0L);
     }
 
     int data(int index) {
@@ -206,6 +237,10 @@ final class ReactorPlannerState {
             case 24, 25 -> (forecast().output() >>> ((index - 24) * 16)) & 0xffff;
             case 26, 27 -> (forecast().heatChange() >>> ((index - 26) * 16)) & 0xffff;
             case 28 -> forecast().blastHundredths();
+            case 29, 30 -> (int) (totals.fuelTicks() >>> ((index - 29) * 16)) & 0xffff;
+            case 31, 32 -> (remainingFuelTicks() >>> ((index - 31) * 16)) & 0xffff;
+            case 33, 34 -> ((steam ? -1 : totals.efficiencyPermille()) >>> ((index - 33) * 16)) & 0xffff;
+            case 35 -> fullRun ? fuelCells() == 0 ? 2 : heat >= maxHeat ? 3 : 1 : 0;
             default -> 0;
         };
     }
@@ -245,6 +280,8 @@ final class ReactorPlannerState {
         tag.putLong("sampled_heat", sampledHeat);
         tag.putInt("heat_samples", heatSamples);
         tag.putInt("peak_heat", peakHeat);
+        tag.putLong("baseline_production", totals.baseline()); tag.putLong("fuel_ticks", totals.fuelTicks());
+        tag.putInt("fuel_cells", totals.fuelCells()); tag.putBoolean("full_run", fullRun);
         return tag;
     }
 
@@ -305,5 +342,7 @@ final class ReactorPlannerState {
         sampledHeat = Math.clamp(tag.getLong("sampled_heat"), 0, (long) heatSamples * Integer.MAX_VALUE);
         peakHeat = tag.contains("peak_heat") ? Math.max(-1, tag.getInt("peak_heat")) : -1;
         maxHeat = new ReactorGrid(simulation, tanks).hull(width).capacity();
+        totals.restore(totalProduction, tag.getLong("baseline_production"), tag.getLong("fuel_ticks"), tag.getInt("fuel_cells"));
+        fullRun = tag.getBoolean("full_run");
     }
 }

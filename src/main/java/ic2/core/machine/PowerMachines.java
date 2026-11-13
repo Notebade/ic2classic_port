@@ -37,6 +37,7 @@ public final class PowerMachines {
     static final DeferredBlock<net.minecraft.world.level.block.IronBarsBlock> IRON_FENCE = BLOCKS.registerBlock("iron_fence",
         net.minecraft.world.level.block.IronBarsBlock::new, properties().noOcclusion());
     static final DeferredBlock<PowerPartBlock> FUSION_VALVE = part("fusion_reactor_valve");
+    static final DeferredBlock<PowerPartBlock> VALVE = part("valve");
     static final DeferredBlock<PowerPartBlock> TUNNEL_CASING = part("steam_tunnel_structure");
     static final DeferredBlock<PowerPartBlock> TUNNEL_VALVE = part("steam_tunnel_valve");
     static final DeferredBlock<PowerPartBlock> BOILER_CASING = part("fuel_boiler_structure");
@@ -49,7 +50,7 @@ public final class PowerMachines {
     static final Supplier<BlockEntityType<PowerMachineEntity>> ENTITY = ENTITIES.register("power_machine", () ->
         BlockEntityType.Builder.of(PowerMachineEntity::new, MACHINES.values().stream().map(Supplier::get).toArray(Block[]::new)).build(null));
     static final Supplier<BlockEntityType<PowerPartEntity>> PART_ENTITY = ENTITIES.register("power_part", () ->
-        BlockEntityType.Builder.of(PowerPartEntity::new, FUSION_VALVE.get(), TUNNEL_CASING.get(), TUNNEL_VALVE.get(), BOILER_CASING.get()).build(null));
+        BlockEntityType.Builder.of(PowerPartEntity::new, VALVE.get(), FUSION_VALVE.get(), TUNNEL_CASING.get(), TUNNEL_VALVE.get(), BOILER_CASING.get()).build(null));
     public static DeferredItem<Item> PLASMA_CELL;
     public static DeferredItem<Item> PLASMA_CORE;
     public static DeferredItem<Item> UNCOMPRESSED_SUPER;
@@ -66,6 +67,7 @@ public final class PowerMachines {
     public static void register(IEventBus bus, DeferredRegister.Items items) {
         BLOCKS.register(bus); ENTITIES.register(bus); MENUS.register(bus);
         MACHINES.values().forEach(items::registerSimpleBlockItem);
+        items.registerSimpleBlockItem(VALVE);
         for (var block : new DeferredBlock<?>[]{REINFORCED_STONE, IRIDIUM_STONE, FUSION_VALVE, TUNNEL_CASING, TUNNEL_VALVE, BOILER_CASING, MACHINE_TANK, PERSONAL_TANK, IRON_FENCE}) items.registerSimpleBlockItem(block);
         items.registerSimpleBlockItem("super_cable_item", SUPER_CABLE);
         items.registerSimpleBlockItem("plasma_cable_item", PLASMA_CABLE);

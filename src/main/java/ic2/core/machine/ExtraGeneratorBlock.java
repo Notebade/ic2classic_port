@@ -49,6 +49,8 @@ final class ExtraGeneratorBlock extends Block implements EntityBlock {
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new ExtraGeneratorEntity(pos, state); }
 
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
+        if(level.isClientSide&&entityType==ExtraGenerators.ENTITY.get()&&type==ExtraGenerators.Type.SLAG)
+            return (world,pos,current,entity)->MachineSoundLoop.clientTick(entity,"generator_operating");
         return !level.isClientSide && entityType == ExtraGenerators.ENTITY.get()
             ? (world, pos, current, entity) -> ((ExtraGeneratorEntity) entity).tick() : null;
     }

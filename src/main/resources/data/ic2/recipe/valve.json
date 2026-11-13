@@ -1,0 +1,21 @@
+{
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "ic2:pipe"
+    },
+    "Y": {
+      "item": "ic2:machine_block"
+    }
+  },
+  "pattern": [
+    " X ",
+    "XYX",
+    " X "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:valve",
+    "count": 1
+  }
+}
