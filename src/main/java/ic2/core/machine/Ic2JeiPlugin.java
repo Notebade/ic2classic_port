@@ -41,6 +41,9 @@ public final class Ic2JeiPlugin implements IModPlugin {
             registration.addRecipeCatalyst(process.machine.get(), MachineRecipeCategory.type(process));
         }
         registration.addRecipeCatalyst(Machines.IRON_FURNACE.get(), RecipeTypes.FUELING);
+        registration.addRecipeCatalyst(InductionMachines.FURNACE.get(), RecipeTypes.SMELTING);
+        registration.addRecipeCatalyst(InductionMachines.BLAST.get(), RecipeTypes.BLASTING);
+        registration.addRecipeCatalyst(InductionMachines.SMOKER.get(), RecipeTypes.SMOKING);
     }
 
     @Override

@@ -1,4 +1,11 @@
 {
+  "gui.ic2.induction_energy": "%s / 10000 EU",
+  "gui.ic2.induction_split": "Раздельный выход",
+  "block.ic2.induction_smoker": "Индукционная коптильня",
+  "block.ic2.induction_furnace": "Индукционная печь",
+  "block.ic2.induction_blast_furnace": "Индукционная доменная печь",
+  "gui.ic2.induction_shared": "Общий выход",
+  "gui.ic2.induction_heat": "Нагрев: %s%%",
   "item.ic2.quantum_accumulator_big": "Большой квантовый аккумулятор",
   "item.ic2.uesc": "Сверхёмкий энергетический кристалл",
   "item.ic2.complex_circuit": "Сложная электросхема",

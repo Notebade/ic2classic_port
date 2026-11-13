@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/machine/mv/induction_furnace/inactive_down",
+    "up": "ic2:block/machine/mv/induction_furnace/inactive_up",
+    "north": "ic2:block/machine/mv/induction_furnace/inactive_south",
+    "south": "ic2:block/machine/mv/induction_furnace/inactive_north",
+    "west": "ic2:block/machine/mv/induction_furnace/inactive_west",
+    "east": "ic2:block/machine/mv/induction_furnace/inactive_east"
+  }
+}

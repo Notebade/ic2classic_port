@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/machine/mv/smoker_induction_furnace/active_down",
+    "up": "ic2:block/machine/mv/smoker_induction_furnace/active_up",
+    "north": "ic2:block/machine/mv/smoker_induction_furnace/active_south",
+    "south": "ic2:block/machine/mv/smoker_induction_furnace/active_north",
+    "west": "ic2:block/machine/mv/smoker_induction_furnace/active_west",
+    "east": "ic2:block/machine/mv/smoker_induction_furnace/active_east"
+  }
+}

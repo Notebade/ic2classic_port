@@ -9,6 +9,7 @@ import ic2.core.item.ScrapBoxItem;
 import ic2.core.item.UraniumFuelRod;
 import ic2.core.item.ReactorPulseCell;
 import ic2.core.machine.Machines;
+import ic2.core.machine.InductionMachines;
 import ic2.core.recipe.ReactorComponentRepair;
 import ic2.core.recipe.ReactorFuelCellRecipe;
 import ic2.core.recipe.UuMatterRecipe;
@@ -125,6 +126,7 @@ public final class IC2 {
         ITEMS.register(modBus);
         RECIPE_SERIALIZERS.register(modBus);
         Machines.register(modBus, ITEMS);
+        InductionMachines.register(modBus, ITEMS);
         Rubberwood.register(modBus, ITEMS);
         Materials.register(modBus, ITEMS);
         Hazmat.register(modBus, ITEMS);

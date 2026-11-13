@@ -30,14 +30,15 @@ final class WrenchItem extends Item {
         var player = context.getPlayer();
         var pos = context.getClickedPos();
         var state = level.getBlockState(pos);
-        if (!(state.getBlock() instanceof MachineBlock machine) || player == null || !player.mayBuild()
+        if (!(state.getBlock() instanceof MachineBlock || state.getBlock() instanceof InductionBlock) || player == null || !player.mayBuild()
             || !level.mayInteract(player, pos)) {
             return InteractionResult.PASS;
         }
 
-        var facing = machine.facingProperty();
+        var facing = state.getBlock() instanceof MachineBlock machine ? machine.facingProperty()
+            : net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
         Direction target = selectedFace(context, player.isShiftKeyDown());
-        boolean hasFacing = !(machine instanceof SolarPanelBlock);
+        boolean hasFacing = !(state.getBlock() instanceof SolarPanelBlock);
         if (hasFacing && !facing.getPossibleValues().contains(target)) {
             return InteractionResult.PASS;
         }

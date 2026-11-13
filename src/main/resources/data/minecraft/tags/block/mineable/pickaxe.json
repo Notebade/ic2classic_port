@@ -40,6 +40,18 @@
     "ic2:deepslate_uranium_ore",
     "ic2:silver_ore",
     "ic2:deepslate_silver_ore",
-    "ic2:silver_ore_nether"
+    "ic2:silver_ore_nether",
+    "ic2:induction_furnace",
+    "ic2:induction_blast_furnace",
+    "ic2:induction_smoker",
+    "ic2:batbox",
+    "ic2:mfe",
+    "ic2:mfsu",
+    "ic2:esu",
+    "ic2:isu",
+    "ic2:pesu",
+    "ic2:solar_panel_hv",
+    "ic2:solar_panel_hv_compressed",
+    "ic2:transformer_iv"
   ]
 }

@@ -1,4 +1,11 @@
 {
+  "gui.ic2.induction_energy": "%s / 10000 EU",
+  "gui.ic2.induction_split": "Separate outputs",
+  "block.ic2.induction_smoker": "Induction Smoker",
+  "block.ic2.induction_furnace": "Induction Furnace",
+  "block.ic2.induction_blast_furnace": "Induction Blast Furnace",
+  "gui.ic2.induction_shared": "Shared outputs",
+  "gui.ic2.induction_heat": "Heat: %s%%",
   "item.ic2.quantum_accumulator_big": "Large Quantum Accumulator",
   "item.ic2.uesc": "Ultimate Energy Storage Crystal",
   "item.ic2.complex_circuit": "Complex Circuit",

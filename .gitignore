@@ -238,3 +238,6 @@ src/main/resources/assets/ic2/textures/item/battery/quantum_accumulator.png
 src/main/resources/assets/ic2/textures/item/battery/big_quantum_accumulator.png
 src/main/resources/assets/ic2/textures/item/misc/complex_circuit.png
 src/main/resources/assets/ic2/textures/item/misc/pulsating_quartz.png*
+src/main/resources/assets/ic2/textures/block/machine/mv/induction_furnace/
+src/main/resources/assets/ic2/textures/block/machine/mv/blast_induction_furnace/
+src/main/resources/assets/ic2/textures/block/machine/mv/smoker_induction_furnace/

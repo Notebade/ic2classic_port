@@ -48,7 +48,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
-final class MachineEntity extends BlockEntity implements MenuProvider {
+final class MachineEntity extends BlockEntity implements MenuProvider, EnergySink {
     static final int INPUT_SLOT = 0;
     static final int OUTPUT_SLOT = 1;
     static final int SLOT_COUNT = 2;
@@ -1084,7 +1084,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-    boolean canReceiveEnergy(Direction incomingSide, MachineKind sourceKind, int packetSize) {
+    public boolean canReceiveEnergy(Direction incomingSide, MachineKind sourceKind, int packetSize) {
         if (energy >= kind.capacity) {
             return false;
         }
@@ -1141,7 +1141,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             Component.translatable("direction.ic2." + outputSide().getName()));
     }
 
-    int receiveEnergy(int available) {
+    public int receiveEnergy(int available) {
         int received = Math.min(available, kind.capacity - energy);
         if (kind == MachineKind.MASS_FABRICATOR) {
             received = Math.min(received, MassFabrication.MAX_INPUT);

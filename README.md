@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.57.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.58.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.57.0` |
+| Project version | `0.58.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -396,3 +396,15 @@ Run the standalone storage boundary tests without building a mod JAR:
 ```
 
 If an IDE client shows new items with missing models or untranslated names, run `.\scripts\Sync-DevResources.ps1` and press F3+T. The IDE launch reads `build/resources/main`; compiling Java alone does not refresh these assets. The script validates JSON and expands mod metadata without building a JAR.
+
+### Induction furnaces (0.58.0)
+
+Induction Furnace, Induction Blast Furnace and Induction Smoker process smelting, blasting and smoking recipes, including data-pack recipes. Craft each with seven copper ingots, its electric predecessor and an Advanced Machine Casing. Each stores 10,000 EU and accepts packets up to 128 EU. A discharge slot accepts compatible batteries; automation supplies ingredients from above, extracts products and empty batteries below, and accesses both inputs and the battery from the sides.
+
+Heat rises by one per tick to 10,000 while processing or maintained by redstone, costing 1 EU/t. Without heating it falls by four per tick. Processing adds 15 EU/t for the ordinary furnace or 29 EU/t for the other two. At full heat a standard batch takes 12 or 6 ticks respectively and can process two inputs. Custom cooking times scale the operation length. The interface shows charge, heat and progress; its button switches between separate and shared output slots. Shared mode can process two items from one occupied input. Changing mode or input type resets progress. Inventory, EU, heat, progress and pending experience survive reloads. Manual product collection or breaking the machine awards accumulated XP.
+
+JEI lists the machines alongside vanilla cooking recipes. Wrenches rotate and dismantle them. Original upgrade slots, processing sounds and recipe-unlock statistics remain unported. The GUI uses the prototype style rather than the original artwork. These machines require a client restart and Java recompilation; F3+T alone only refreshes resources.
+
+```powershell
+.\scripts\Test-InductionCycle.ps1
+```

@@ -39,7 +39,7 @@ final class EnergyNetwork {
                     SectionPos.blockToSectionCoord(next.getX()), SectionPos.blockToSectionCoord(next.getZ()))) {
                     continue;
                 }
-                if (!next.equals(source) && level.getBlockEntity(next) instanceof MachineEntity machine
+                if (!next.equals(source) && level.getBlockEntity(next) instanceof EnergySink machine
                     && machine.canReceiveEnergy(direction.getOpposite(), sourceKind, available)) {
                     int accepted = machine.receiveEnergy(remaining - loss);
                     remaining -= accepted + loss;

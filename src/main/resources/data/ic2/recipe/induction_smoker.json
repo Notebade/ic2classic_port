@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XCX"
+  ],
+  "key": {
+    "Y": {
+      "item": "ic2:electric_smoker"
+    },
+    "C": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "X": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "result": {
+    "id": "ic2:induction_smoker",
+    "count": 1
+  }
+}
