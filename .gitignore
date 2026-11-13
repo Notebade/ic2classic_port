@@ -224,3 +224,6 @@ src/main/resources/assets/ic2/textures/block/electric/cable/*powered_detector.pn
 src/main/resources/assets/ic2/textures/item/cable/detector.png
 src/main/resources/assets/ic2/textures/block/electric/cable/*powered_comparing.png
 src/main/resources/assets/ic2/textures/item/cable/comparing.png
+
+# Imported original HV solar textures
+src/main/resources/assets/ic2/textures/block/electric/generator/hv_solar_panel/
