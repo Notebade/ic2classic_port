@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "result": {
+    "count": 1,
+    "id": "ic2:charged_electrolyzer"
+  },
+  "key": {
+    "C": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "Y": {
+      "item": "ic2:electrolyzer"
+    },
+    "X": {
+      "item": "ic2:transformer_lv"
+    }
+  },
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XCX"
+  ]
+}

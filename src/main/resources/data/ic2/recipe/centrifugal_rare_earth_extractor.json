@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "result": {
+    "count": 1,
+    "id": "ic2:centrifugal_rare_earth_extractor"
+  },
+  "key": {
+    "C": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "Y": {
+      "item": "ic2:rare_earth_extractor"
+    },
+    "X": {
+      "item": "ic2:cell_electrolyzed_water"
+    }
+  },
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XCX"
+  ]
+}

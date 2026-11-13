@@ -25,6 +25,7 @@ final class AdvancedMachineScreen extends AbstractContainerScreen<AdvancedMachin
         event.register(AdvancedMachines.ROTARY_MENU.get(), AdvancedMachineScreen::new);
         event.register(AdvancedMachines.CENTRIFUGAL_MENU.get(), AdvancedMachineScreen::new);
         event.register(AdvancedMachines.SINGULARITY_MENU.get(), AdvancedMachineScreen::new);
+        event.register(AdvancedMachines.RARE_EARTH_MENU.get(), AdvancedMachineScreen::new);
     }
 
     @Override protected void init() {
@@ -61,13 +62,20 @@ final class AdvancedMachineScreen extends AbstractContainerScreen<AdvancedMachin
     }
 
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        graphics.drawString(font, title, 8, 6, 0x404040, false);
+        float titleScale = Math.min(1F, (imageWidth - 16F) / Math.max(1, font.width(title)));
+        graphics.pose().pushPose();
+        graphics.pose().scale(titleScale, titleScale, 1F);
+        graphics.drawString(font, title, (int) (8 / titleScale), (int) (6 / titleScale), 0x404040, false);
+        graphics.pose().popPose();
         String metric = switch (menu.variant) {
-            case ROTARY, CENTRIFUGAL -> "gui.ic2.advanced_speed";
+            case ROTARY, CENTRIFUGAL, RARE_EARTH -> "gui.ic2.advanced_speed";
             case SINGULARITY -> "gui.ic2.advanced_pressure";
             default -> "gui.ic2.induction_heat";
         };
         graphics.drawString(font, Component.translatable(metric, menu.heat() / 100), 88, 19, 0x404040, false);
-        graphics.drawString(font, Component.translatable("gui.ic2.induction_energy", menu.energy()), 8, 73, 0x404040, false);
+        graphics.drawString(font, Component.translatable("gui.ic2.storage_energy", menu.energy(), menu.variant.capacity()), 8, 73, 0x404040, false);
+        if (menu.variant == AdvancedMachines.Variant.RARE_EARTH) {
+            graphics.drawString(font, Component.translatable("gui.ic2.rare_material", menu.materialProgress() / 10), 64, 59, 0x404040, false);
+        }
     }
 }

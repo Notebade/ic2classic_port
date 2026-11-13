@@ -31,6 +31,10 @@ final class MachineRecipeViews {
 
     static List<MachineRecipeView> forProcess(Process process, Level level) {
         return switch (process) {
+            case CHARGED_ELECTROLYZER -> forProcess(Process.ELECTROLYZER, level);
+            case CENTRIFUGAL_RARE_EARTH_EXTRACTOR -> forProcess(Process.RARE_EARTH_EXTRACTOR, level).stream()
+                .map(recipe -> new MachineRecipeView(recipe.sourceId(), recipe.inputs(), recipe.outputs(),
+                    List.of(recipe.notes().getFirst(), note("advanced_energy"), note("advanced_speed")))).toList();
             case ROTARY_MACERATOR -> advanced(forProcess(Process.MACERATOR, level));
             case CENTRIFUGAL_EXTRACTOR -> advanced(forProcess(Process.EXTRACTOR, level));
             case SINGULARITY_COMPRESSOR -> advanced(forProcess(Process.COMPRESSOR, level));

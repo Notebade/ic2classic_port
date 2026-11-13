@@ -31,7 +31,7 @@ final class Electrolysis {
 
     record Recipe(Item input, Item output, int energy) {
         int dischargeEnergy(int storageTier) {
-            return energy / 10 * (6 + storageTier);
+            return ElectrolyzerControl.returnedEnergy(energy, storageTier);
         }
     }
 }

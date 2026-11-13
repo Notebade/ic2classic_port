@@ -110,6 +110,10 @@ final class MachineMenu extends AbstractContainerMenu {
         return new MachineMenu(id, playerInventory, Machines.ELECTROLYZER_MENU.get());
     }
 
+    static MachineMenu chargedElectrolyzer(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.CHARGED_ELECTROLYZER_MENU.get());
+    }
+
     private MachineMenu(int id, Inventory playerInventory, MenuType<MachineMenu> type) {
         this(id, playerInventory, new ItemStackHandler(slotCount(type)),
             ContainerLevelAccess.NULL, Blocks.AIR, new SimpleContainerData(DATA_COUNT), () -> {}, type);
@@ -314,7 +318,7 @@ final class MachineMenu extends AbstractContainerMenu {
     }
 
     boolean isElectrolyzer() {
-        return getType() == Machines.ELECTROLYZER_MENU.get();
+        return getType() == Machines.ELECTROLYZER_MENU.get() || getType() == Machines.CHARGED_ELECTROLYZER_MENU.get();
     }
 
     @Override

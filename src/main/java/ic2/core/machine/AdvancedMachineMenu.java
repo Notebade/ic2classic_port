@@ -22,7 +22,7 @@ final class AdvancedMachineMenu extends AbstractContainerMenu {
     }
 
     AdvancedMachineMenu(int id, Inventory player, AdvancedMachines.Variant variant) {
-        this(id, player, new ItemStackHandler(variant.layout.slots()), new SimpleContainerData(5), ContainerLevelAccess.NULL, null, variant);
+        this(id, player, new ItemStackHandler(variant.layout.slots()), new SimpleContainerData(6), ContainerLevelAccess.NULL, null, variant);
     }
 
     AdvancedMachineMenu(int id, Inventory player, ItemStackHandler inventory, ContainerData data,
@@ -57,6 +57,7 @@ final class AdvancedMachineMenu extends AbstractContainerMenu {
     int heat() { return data.get(1); }
     int progress() { return data.get(2); }
     boolean split() { return data.get(3) != 0; }
+    int materialProgress() { return data.get(5); }
 
     @Override public boolean clickMenuButton(Player player, int id) {
         if (id != 0 || !variant.layout.supportsSplit() || !stillValid(player)) return false;

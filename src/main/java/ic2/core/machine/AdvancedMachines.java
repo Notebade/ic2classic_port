@@ -27,14 +27,16 @@ public final class AdvancedMachines {
     static final DeferredBlock<AdvancedMachineBlock> ROTARY = block("rotary_macerator", Variant.ROTARY);
     static final DeferredBlock<AdvancedMachineBlock> CENTRIFUGAL = block("centrifugal_extractor", Variant.CENTRIFUGAL);
     static final DeferredBlock<AdvancedMachineBlock> SINGULARITY = block("singularity_compressor", Variant.SINGULARITY);
+    static final DeferredBlock<AdvancedMachineBlock> RARE_EARTH = block("centrifugal_rare_earth_extractor", Variant.RARE_EARTH);
     static final Supplier<BlockEntityType<AdvancedMachineEntity>> ENTITY = ENTITIES.register("induction_furnace",
         () -> BlockEntityType.Builder.of(AdvancedMachineEntity::new, FURNACE.get(), BLAST.get(), SMOKER.get(),
-            ROTARY.get(), CENTRIFUGAL.get(), SINGULARITY.get()).build(null));
+            ROTARY.get(), CENTRIFUGAL.get(), SINGULARITY.get(), RARE_EARTH.get()).build(null));
     static final Supplier<MenuType<AdvancedMachineMenu>> MENU = MENUS.register("induction_furnace",
         () -> new MenuType<>(AdvancedMachineMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<AdvancedMachineMenu>> ROTARY_MENU = menu("rotary_macerator", Variant.ROTARY);
     static final Supplier<MenuType<AdvancedMachineMenu>> CENTRIFUGAL_MENU = menu("centrifugal_extractor", Variant.CENTRIFUGAL);
     static final Supplier<MenuType<AdvancedMachineMenu>> SINGULARITY_MENU = menu("singularity_compressor", Variant.SINGULARITY);
+    static final Supplier<MenuType<AdvancedMachineMenu>> RARE_EARTH_MENU = menu("centrifugal_rare_earth_extractor", Variant.RARE_EARTH);
 
     private AdvancedMachines() {}
 
@@ -48,6 +50,7 @@ public final class AdvancedMachines {
         items.registerSimpleBlockItem(ROTARY);
         items.registerSimpleBlockItem(CENTRIFUGAL);
         items.registerSimpleBlockItem(SINGULARITY);
+        items.registerSimpleBlockItem(RARE_EARTH);
         bus.addListener(AdvancedMachines::capabilities);
     }
 
@@ -67,7 +70,7 @@ public final class AdvancedMachines {
 
     enum Variant {
         FURNACE(RecipeType.SMELTING, 15), BLAST(RecipeType.BLASTING, 29), SMOKER(RecipeType.SMOKING, 29),
-        ROTARY(2), CENTRIFUGAL(3), SINGULARITY(1);
+        ROTARY(2), CENTRIFUGAL(3), SINGULARITY(1), RARE_EARTH(1);
 
         final RecipeType<? extends AbstractCookingRecipe> recipes;
         final int cost;
@@ -90,8 +93,11 @@ public final class AdvancedMachines {
                 case ROTARY -> ROTARY_MENU.get();
                 case CENTRIFUGAL -> CENTRIFUGAL_MENU.get();
                 case SINGULARITY -> SINGULARITY_MENU.get();
+                case RARE_EARTH -> RARE_EARTH_MENU.get();
                 default -> MENU.get();
             };
         }
+
+        int capacity() { return this == RARE_EARTH ? 5120 : 10000; }
     }
 }

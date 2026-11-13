@@ -12,6 +12,7 @@ public final class InductionCycleTest {
         check(cold.heat() == 1 && cold.progress() == 1 && cold.spent() == 16, "cold startup spends 16 EU");
         check(cycles(15, 120000) == 12, "hot ordinary furnace completes in 12 ticks");
         check(cycles(29, 60000) == 6, "hot blast furnace and smoker complete in 6 ticks");
+        check(cycles(15, 29700) == 3, "rare-earth centrifuge completes in 3 ticks at full speed");
         var full = InductionCycle.step(10000, 119999, 16, true, false, 15, 120000);
         check(full.finished() && full.progress() == 0, "completed batches reset progress");
         check(InductionCycle.step(2, 0, 0, false, false, 15, 120000).heat() == 0, "cooling clamps at zero");

@@ -10,7 +10,7 @@ import net.minecraft.world.item.Items;
 
 final class RareEarthRecipes {
     // The original yields are exact multiples of 1/64, including netherrack's 7.8125.
-    static final int UNITS_PER_OUTPUT = 1000 * 64;
+    static final int UNITS_PER_OUTPUT = RareEarthProgress.UNITS_PER_OUTPUT;
     private static final Entry STONE = new Entry(Material.RARE_EARTH, 200);
     private static final Entry IGNEOUS = new Entry(Material.RARE_EARTH, 4000);
     private static final Entry RICH = new Entry(Material.RARE_EARTH, 12800);

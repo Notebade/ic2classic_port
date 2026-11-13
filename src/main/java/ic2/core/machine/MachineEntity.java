@@ -172,7 +172,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
                 if (kind == MachineKind.ALLOY_SMELTER && slot == SECOND_INPUT_SLOT) {
                     return AlloyRecipes.accepts(stack, getStackInSlot(INPUT_SLOT));
                 }
-                if (kind == MachineKind.ELECTROLYZER && slot == OUTPUT_SLOT) {
+                if (kind.isElectrolyzer() && slot == OUTPUT_SLOT) {
                     return Electrolysis.discharge(stack) != null;
                 }
                 return slot == INPUT_SLOT && accepts(stack);
@@ -192,7 +192,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         var input = inputOnly(INPUT_SLOT);
         automationInput = switch (kind) {
             case ALLOY_SMELTER, URANIUM_ENRICHER, CANNER, VACUUM_CANNER -> new CombinedInvWrapper(input, inputOnly(SECOND_INPUT_SLOT));
-            case ELECTROLYZER -> new RangedWrapper(inventory, INPUT_SLOT, INPUT_SLOT + 1);
+            case ELECTROLYZER, CHARGED_ELECTROLYZER -> new RangedWrapper(inventory, INPUT_SLOT, INPUT_SLOT + 1);
             default -> input;
         };
         var output = kind == MachineKind.WIND_TURBINE ? input : new RangedWrapper(inventory, OUTPUT_SLOT, OUTPUT_SLOT + 1);
@@ -249,6 +249,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
             case EXTRACTOR -> Machines.EXTRACTOR_ENTITY.get();
             case RARE_EARTH_EXTRACTOR -> Machines.RARE_EARTH_ENTITY.get();
             case ELECTROLYZER -> Machines.ELECTROLYZER_ENTITY.get();
+            case CHARGED_ELECTROLYZER -> Machines.CHARGED_ELECTROLYZER_ENTITY.get();
             case COMPRESSOR -> Machines.COMPRESSOR_ENTITY.get();
             case PUMP -> Machines.PUMP_ENTITY.get();
             case RECYCLER -> Machines.RECYCLER_ENTITY.get();
@@ -277,7 +278,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
             case ALLOY_SMELTER, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL -> setActive(tickProcessor());
             case RARE_EARTH_EXTRACTOR -> setActive(tickRareEarth());
-            case ELECTROLYZER -> setActive(tickElectrolyzer());
+            case ELECTROLYZER, CHARGED_ELECTROLYZER -> setActive(tickElectrolyzer());
             case BATBOX, MFE, MFSU, ESU, ISU, PESU -> tickStorage();
         }
     }
@@ -815,7 +816,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
             case ALLOY_SMELTER -> AlloyRecipes.accepts(stack, secondInput());
             case EXTRACTOR -> ExtractionRecipes.find(stack) != null;
             case RARE_EARTH_EXTRACTOR -> RareEarthRecipes.find(stack) != null;
-            case ELECTROLYZER -> Electrolysis.charge(stack) != null;
+            case ELECTROLYZER, CHARGED_ELECTROLYZER -> Electrolysis.charge(stack) != null;
             case COMPRESSOR -> CompressionRecipes.find(stack) != null;
             case PUMP -> stack.is(Items.BUCKET) || stack.is(IC2.CELL_EMPTY.get());
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
@@ -858,7 +859,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
                 WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
                 BATBOX, MFE, MFSU, ESU, ISU, PESU, SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, STEAM_TURBINE, REACTOR_PLANNER,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER,
-                PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER, URANIUM_ENRICHER, CANNER, VACUUM_CANNER -> null;
+                PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER, CHARGED_ELECTROLYZER, URANIUM_ENRICHER, CANNER, VACUUM_CANNER -> null;
         };
     }
 
@@ -962,16 +963,30 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
     }
 
     private boolean tickElectrolyzer() {
+        if (kind == MachineKind.CHARGED_ELECTROLYZER) {
+            boolean active = false;
+            for (Direction side : Direction.values()) {
+                BlockPos pos = worldPosition.relative(side);
+                if (level.isLoaded(pos) && level.getBlockEntity(pos) instanceof MachineEntity storage && storage.kind.isStorage()) {
+                    active |= tickElectrolyzer(storage);
+                }
+            }
+            return active;
+        }
         MachineEntity storage = adjacentStorage();
         if (storage == null) {
             return false;
         }
+        return tickElectrolyzer(storage);
+    }
+
+    private boolean tickElectrolyzer(MachineEntity storage) {
         int rate = storage.kind.storageOutput / 16;
-        if (storage.energy * 10L < storage.kind.capacity * 3L) {
-            return dischargeElectrolysis(storage, rate);
-        }
-        return !electrolysisDischarging && storage.energy * 10L >= storage.kind.capacity * 7L
-            && chargeElectrolysis(storage, rate);
+        return switch (ElectrolyzerControl.mode(storage.energy, storage.kind.capacity)) {
+            case DISCHARGE -> dischargeElectrolysis(storage, rate);
+            case CHARGE -> !electrolysisDischarging && chargeElectrolysis(storage, rate);
+            case IDLE -> false;
+        };
     }
 
     private boolean chargeElectrolysis(MachineEntity storage, int rate) {
@@ -1091,7 +1106,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         return switch (kind) {
             case GENERATOR, GEOTHERMAL, THERMAL_GENERATOR, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
                 WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
-                SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, STEAM_TURBINE, ELECTROLYZER -> false;
+                SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, STEAM_TURBINE, ELECTROLYZER, CHARGED_ELECTROLYZER -> false;
             case ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL, CANNER -> packetSize <= MachineKind.BATBOX.storageOutput;
             case VACUUM_CANNER, REACTOR_PLANNER -> packetSize <= MachineKind.MFE.storageOutput;
             case URANIUM_ENRICHER -> packetSize <= UraniumEnrichment.PACKET_LIMIT;
@@ -1163,7 +1178,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         if (kind == MachineKind.WIND_TURBINE) {
             return side == Direction.UP ? null : batteryChargeSlot;
         }
-        if (kind == MachineKind.ELECTROLYZER) {
+        if (kind.isElectrolyzer()) {
             return switch (side) {
                 case UP -> automationInput;
                 case DOWN -> automationOutput;
@@ -1225,6 +1240,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
                 case VACUUM_CANNER -> Machines.VACUUM_CANNER_MENU.get();
                 case RARE_EARTH_EXTRACTOR -> Machines.RARE_EARTH_MENU.get();
                 case ELECTROLYZER -> Machines.ELECTROLYZER_MENU.get();
+                case CHARGED_ELECTROLYZER -> Machines.CHARGED_ELECTROLYZER_MENU.get();
                 case MASS_FABRICATOR -> Machines.FABRICATOR_MENU.get();
                 case GEOTHERMAL -> Machines.GEOTHERMAL_MENU.get();
                 case THERMAL_GENERATOR -> Machines.THERMAL_GENERATOR_MENU.get();
@@ -1266,7 +1282,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> hasWaterFuel()
                 ? kind.waterMillTier.output() * WaterMillTier.UNITS_PER_EU : Math.max(0, passiveWaterUnits);
             case BATBOX, MFE, MFSU, ESU, ISU, PESU -> outputSide().ordinal();
-            case SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, REACTOR_PLANNER, GEOTHERMAL, WAVE_GENERATOR, OCEAN_GENERATOR, ELECTROLYZER,
+            case SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, REACTOR_PLANNER, GEOTHERMAL, WAVE_GENERATOR, OCEAN_GENERATOR, ELECTROLYZER, CHARGED_ELECTROLYZER,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> 0;
             case MASS_FABRICATOR -> amplifier;
             case URANIUM_ENRICHER -> enrichment.ingotProgress();
@@ -1321,7 +1337,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
             tag.putInt("wind_remainder", windRemainder);
         } else if (kind == MachineKind.WAVE_GENERATOR) {
             tag.putInt("environmental_production", environmentalProduction);
-        } else if (kind == MachineKind.ELECTROLYZER) {
+        } else if (kind.isElectrolyzer()) {
             tag.putBoolean("electrolysis_discharging", electrolysisDischarging);
         } else if (kind == MachineKind.MASS_FABRICATOR) {
             tag.putInt("amplifier", amplifier);
@@ -1387,7 +1403,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
             windRemainder = Mth.clamp(tag.getInt("wind_remainder"), 0, WindProduction.UNITS_PER_EU - 1);
         } else if (kind == MachineKind.WAVE_GENERATOR) {
             environmentalProduction = Mth.clamp(tag.getInt("environmental_production"), 0, WaveProduction.OUTPUT_LIMIT);
-        } else if (kind == MachineKind.ELECTROLYZER) {
+        } else if (kind.isElectrolyzer()) {
             electrolysisDischarging = energy > 0 && tag.getBoolean("electrolysis_discharging");
         } else if (kind == MachineKind.MASS_FABRICATOR) {
             amplifier = Mth.clamp(tag.getInt("amplifier"), 0, 2_000_000);

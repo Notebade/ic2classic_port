@@ -246,3 +246,5 @@ src/main/resources/assets/ic2/textures/block/machine/mv/centrifugal_extractor/
 src/main/resources/assets/ic2/textures/block/machine/mv/singularity_compressor/
 src/main/resources/assets/ic2/textures/item/blades/scrapmetal_chunk.png
 src/main/resources/assets/ic2/textures/item/blades/scrapmetal_blade.png
+src/main/resources/assets/ic2/textures/block/machine/mv/charged_electrolyzer/
+src/main/resources/assets/ic2/textures/block/machine/mv/centrifugal_rare_earth_extractor/

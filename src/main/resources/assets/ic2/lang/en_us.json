@@ -1,4 +1,8 @@
 {
+  "jei.ic2.charged_electrolyzer": "Processes all adjacent EU storage blocks each tick. Charges items at 70% storage charge or above; returns energy below 30%. Transfer rates follow each storage tier.",
+  "block.ic2.centrifugal_rare_earth_extractor": "Centrifugal Rare Earth Extractor",
+  "gui.ic2.rare_material": "Material: %s%%",
+  "block.ic2.charged_electrolyzer": "Charged Electrolyzer",
   "gui.ic2.advanced_speed": "Speed: %s%%",
   "jei.ic2.advanced_energy": "Processing: 16 EU/t",
   "gui.ic2.advanced_pressure": "Pressure: %s%%",

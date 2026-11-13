@@ -27,7 +27,8 @@ enum MachineKind {
     ALLOY_SMELTER(16, 250),
     EXTRACTOR(2, 400),
     RARE_EARTH_EXTRACTOR(1120, 1, 35),
-    ELECTROLYZER(20_000, 0, 0),
+    ELECTROLYZER(ElectrolyzerControl.MAX_BUFFER, 0, 0),
+    CHARGED_ELECTROLYZER(ElectrolyzerControl.MAX_BUFFER, 0, 0),
     COMPRESSOR(2, 400),
     PUMP(200, 1, 120),
     RECYCLER(1, 45),
@@ -80,6 +81,10 @@ enum MachineKind {
 
     boolean isCanner() {
         return this == CANNER || this == VACUUM_CANNER;
+    }
+
+    boolean isElectrolyzer() {
+        return this == ELECTROLYZER || this == CHARGED_ELECTROLYZER;
     }
 
     boolean isReactor() {

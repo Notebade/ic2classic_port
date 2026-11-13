@@ -55,6 +55,8 @@
     "ic2:transformer_iv",
     "ic2:rotary_macerator",
     "ic2:centrifugal_extractor",
-    "ic2:singularity_compressor"
+    "ic2:singularity_compressor",
+    "ic2:charged_electrolyzer",
+    "ic2:centrifugal_rare_earth_extractor"
   ]
 }

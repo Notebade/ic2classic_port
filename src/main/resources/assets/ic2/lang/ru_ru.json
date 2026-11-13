@@ -1,4 +1,8 @@
 {
+  "jei.ic2.charged_electrolyzer": "Каждый тик работает со всеми соседними накопителями EU. Заряжает предметы при запасе от 70%; возвращает энергию ниже 30%. Скорость зависит от уровня накопителя.",
+  "block.ic2.centrifugal_rare_earth_extractor": "Центрифужный редкоземельный экстрактор",
+  "gui.ic2.rare_material": "Материал: %s%%",
+  "block.ic2.charged_electrolyzer": "Заряженный электролизёр",
   "gui.ic2.advanced_speed": "Скорость: %s%%",
   "jei.ic2.advanced_energy": "Обработка: 16 EU/т",
   "gui.ic2.advanced_pressure": "Давление: %s%%",

@@ -29,7 +29,6 @@ import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
 final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, EnergySink {
-    static final int CAPACITY = 10000;
     static final int PACKET = 128;
     final AdvancedMachines.Variant variant = ((AdvancedMachineBlock) getBlockState().getBlock()).variant;
     private int energy;
@@ -39,6 +38,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     private boolean split = true;
     private boolean processing;
     private float experience;
+    private RareEarthProgress rareEarth = new RareEarthProgress("", 0);
     private final ItemStack[] trackedInputs = {ItemStack.EMPTY, ItemStack.EMPTY};
     final ItemStackHandler inventory = new ItemStackHandler(variant.layout.slots()) {
         @Override
@@ -65,7 +65,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     private final IItemHandler bottom = new CombinedInvWrapper(output, battery);
     private final IItemHandler sides = new CombinedInvWrapper(battery, input, output);
     final ContainerData data = new ContainerData() {
-        @Override public int getCount() { return 5; }
+        @Override public int getCount() { return 6; }
         @Override public void set(int index, int value) {}
         @Override public int get(int index) {
             return switch (index) {
@@ -74,6 +74,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
                 case 2 -> (int) (1000L * progress / duration);
                 case 3 -> split ? 1 : 0;
                 case 4 -> processing ? 1 : 0;
+                case 5 -> rareEarth.units() * 1000 / RareEarthProgress.UNITS_PER_OUTPUT;
                 default -> throw new IndexOutOfBoundsException(index);
             };
         }
@@ -85,6 +86,10 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
 
     void tick() {
         dischargeBattery();
+        if (variant == AdvancedMachines.Variant.RARE_EARTH) {
+            tickRareEarth();
+            return;
+        }
         ProcessingRecipe first = availableRecipe(1);
         ProcessingRecipe second = variant.layout.supportsSplit() ? availableRecipe(2) : null;
         boolean work = first != null || second != null;
@@ -101,11 +106,45 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
                     variant.layout.supportsSplit() && inventory.getStackInSlot(2).isEmpty()));
             }
         }
-        BlockState state = getBlockState();
-        if (state.getValue(BlockStateProperties.LIT) != step.heating()) {
-            level.setBlock(worldPosition, state.setValue(BlockStateProperties.LIT, step.heating()), Block.UPDATE_CLIENTS);
-        }
+        updateLit(step.heating());
         if (changed) setChanged();
+    }
+
+    private void tickRareEarth() {
+        ItemStack input = inventory.getStackInSlot(1);
+        var entry = RareEarthRecipes.find(input);
+        RareEarthProgress selected = entry == null ? rareEarth : rareEarth.select(entry.material().id);
+        var batch = entry == null ? null : selected.add(entry.units());
+        ItemStack output = entry == null ? ItemStack.EMPTY : entry.material().output();
+        boolean work = batch != null && (batch.batches() == 0 || room(1, output) >= output.getCount());
+        duration = 99 * 300;
+        var step = InductionCycle.step(heat, progress, energy, work,
+            !input.isEmpty() || level.hasNeighborSignal(worldPosition), variant.cost, duration);
+        int nextProgress = work ? step.progress() : 0;
+        if (!step.processing() && work) nextProgress = Math.max(0, progress - 300);
+        boolean changed = step.spent() > 0 || heat != step.heat() || progress != nextProgress;
+        energy -= step.spent();
+        heat = step.heat();
+        progress = nextProgress;
+        processing = step.processing();
+        if (processing) rareEarth = selected;
+        if (step.finished()) {
+            rareEarth = batch.next();
+            inventory.extractItem(1, 1, false);
+            if (batch.batches() > 0) {
+                ItemStack current = inventory.getStackInSlot(2);
+                inventory.setStackInSlot(2, output.copyWithCount(current.getCount() + output.getCount()));
+            }
+        }
+        updateLit(step.heating());
+        if (changed) setChanged();
+    }
+
+    private void updateLit(boolean lit) {
+        BlockState state = getBlockState();
+        if (state.getValue(BlockStateProperties.LIT) != lit) {
+            level.setBlock(worldPosition, state.setValue(BlockStateProperties.LIT, lit), Block.UPDATE_CLIENTS);
+        }
     }
 
     private ProcessingRecipe recipe(ItemStack stack) {
@@ -116,6 +155,10 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
             return pump == null ? null : new ProcessingRecipe(new ItemStack(net.minecraft.world.item.Items.SNOWBALL), 120000, 0, 0, pump);
         }
         return switch (variant) {
+            case RARE_EARTH -> {
+                var entry = RareEarthRecipes.find(stack);
+                yield entry == null ? null : new ProcessingRecipe(entry.material().output(), 99 * 300, 0);
+            }
             case ROTARY -> level.getRecipeManager().getRecipeFor(Machines.MACERATING.get(), new SingleRecipeInput(stack), level)
                 .map(holder -> new ProcessingRecipe(holder.value().assemble(new SingleRecipeInput(stack), level.registryAccess()),
                     recipeDuration(holder.value().getCookingTime(), 300), holder.value().getExperience())).orElse(null);
@@ -185,7 +228,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         if (!RechargeableItem.supports(stack, PACKET, false)) return;
         RechargeableItem cell = (RechargeableItem) stack.getItem();
         int stored = cell.charge(stack);
-        int moved = Math.min(Math.min(stored, cell.transferRate()), CAPACITY - energy);
+        int moved = Math.min(Math.min(stored, cell.transferRate()), variant.capacity() - energy);
         if (moved > 0) {
             ItemStack updated = stack.copy();
             cell.setCharge(updated, stored - moved);
@@ -222,11 +265,11 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     }
 
     @Override public boolean canReceiveEnergy(Direction side, MachineKind source, int packet) {
-        return packet <= PACKET && energy < CAPACITY;
+        return packet <= PACKET && energy < variant.capacity();
     }
 
     @Override public int receiveEnergy(int available) {
-        int received = Math.min(available, CAPACITY - energy);
+        int received = Math.min(available, variant.capacity() - energy);
         energy += received;
         if (received > 0) setChanged();
         return received;
@@ -246,6 +289,10 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         tag.putInt("duration", duration);
         tag.putBoolean("split", split);
         tag.putFloat("experience", experience);
+        if (variant == AdvancedMachines.Variant.RARE_EARTH) {
+            tag.putString("rare_material", rareEarth.material());
+            tag.putInt("rare_units", rareEarth.units());
+        }
         tag.put("inventory", inventory.serializeNBT(registries));
     }
 
@@ -253,12 +300,16 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         super.loadAdditional(tag, registries);
         inventory.deserializeNBT(registries, tag.getCompound("inventory"));
         for (int i = 0; i < variant.layout.inputs(); i++) trackedInputs[i] = inventory.getStackInSlot(i + 1).copyWithCount(1);
-        energy = Mth.clamp(tag.getInt("energy"), 0, CAPACITY);
+        energy = Mth.clamp(tag.getInt("energy"), 0, variant.capacity());
         heat = Mth.clamp(tag.getInt("heat"), 0, InductionCycle.MAX_HEAT);
         duration = Math.max(1, tag.getInt("duration"));
         progress = Mth.clamp(tag.getInt("progress"), 0, duration - 1);
         split = !tag.contains("split") || tag.getBoolean("split");
         experience = Math.max(0, tag.getFloat("experience"));
+        String material = tag.getString("rare_material");
+        if (RareEarthRecipes.Material.byId(material) != null) {
+            rareEarth = new RareEarthProgress(material, Mth.clamp(tag.getInt("rare_units"), 0, RareEarthProgress.UNITS_PER_OUTPUT - 1));
+        }
     }
 
     private record ProcessingRecipe(ItemStack output, int duration, float experience, int inputCount, PumpTank pump) {

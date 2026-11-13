@@ -55,6 +55,8 @@ record MachineRecipeView(ResourceLocation sourceId, List<Slot> inputs, List<Slot
         SAWMILL(Machines.SAWMILL),
         RECYCLER(Machines.RECYCLER),
         ELECTROLYZER(Machines.ELECTROLYZER),
+        CHARGED_ELECTROLYZER(Machines.CHARGED_ELECTROLYZER),
+        CENTRIFUGAL_RARE_EARTH_EXTRACTOR(AdvancedMachines.RARE_EARTH),
         PUMP(Machines.PUMP),
         MASS_FABRICATOR(Machines.MASS_FABRICATOR),
         GENERATOR(Machines.GENERATOR),

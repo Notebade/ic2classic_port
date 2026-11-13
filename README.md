@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.59.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.60.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.59.0` |
+| Project version | `0.60.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -426,3 +426,11 @@ Check compilation and all three standalone suites without packaging a JAR:
 ```powershell
 .\gradlew.bat check --offline
 ```
+
+### Rare-earth centrifuge and Charged Electrolyzer (0.60.0)
+
+The Centrifugal Rare Earth Extractor has one input, one dust output and a battery discharge slot, a 5,120 EU buffer and a 128 EU packet limit. Speed increases by one per tick to 10,000 for 1 EU/t and decreases by four when unpowered; processing costs an additional 15 EU/t. Redstone maintains speed without input. The original 99-unit operation advances by speed / 300 each tick: one input takes three ticks at full speed. With insufficient EU, unfinished operation progress decays; accumulated material yield remains stored. Changing the dust type clears its partial material yield. Exact integer fractions preserve outputs such as two dusts from five soul sand or two clay balls, and survive save/reload. The GUI shows both speed and accumulated material.
+
+Craft it with a Rare Earth Extractor, an Advanced Machine Casing and seven Electrolyzed Water Cells. The Charged Electrolyzer uses an Electrolyzer, an Advanced Machine Casing and seven LV Transformers. It processes every adjacent storage block each tick, with the original 70% charging and below-30% recovery thresholds and tier-based rates. The basic Electrolyzer continues to use one adjacent storage block. Existing electrolysis recipes, sided item automation and saved partial charge apply to both. Their persistent buffer now holds 24,000 EU so recovering energy beside a PESU cannot lose 4,000 EU on reload.
+
+Both machines include original textures, crafting, translations, mining tags and JEI support. Original upgrade slots, sounds and additional recipe lists remain pending; in-game verification is still required. Gradle check now executes five standalone suites, including exact rare-earth accumulation and electrolyzer thresholds at billion-EU capacities. No JAR is required for these checks.
