@@ -1,0 +1,23 @@
+{
+  "key": {
+    "C": {
+      "item": "minecraft:string"
+    },
+    "Y": {
+      "item": "ic2:upgrade_muffler"
+    },
+    "X": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "YCY",
+    "XYX"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:upgrade_mute"
+  }
+}

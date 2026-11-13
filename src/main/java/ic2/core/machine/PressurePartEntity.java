@@ -29,24 +29,16 @@ final class PressurePartEntity extends BlockEntity implements EnergySink, ic2.ap
         }
     }
 
+    boolean ownedBy(BlockPos controller) { return controller.equals(owner); }
+
     AdvancedMachineEntity controller() {
         if (level == null || level.isClientSide || isRemoved() || !level.hasChunkAt(worldPosition) || level.getBlockEntity(worldPosition) != this) return null;
-        if (owner != null && level.isLoaded(owner)) {
-            AdvancedMachineEntity found = candidate(owner);
-            if (found != null) return found;
-        }
-        for (BlockPos pos : BlockPos.betweenClosed(worldPosition.offset(-1, -1, -1), worldPosition.offset(1, 1, 1))) {
-            if (level.isLoaded(pos)) {
-                AdvancedMachineEntity found = candidate(pos);
-                if (found != null) return found;
-            }
-        }
-        return null;
+        return owner != null && level.isLoaded(owner) ? candidate(owner) : null;
     }
 
     private AdvancedMachineEntity candidate(BlockPos pos) {
         return level.getBlockEntity(pos) instanceof AdvancedMachineEntity machine
-            && machine.pressureContains(worldPosition) && machine.pressureFormed() ? machine : null;
+            && machine.pressureContains(worldPosition) && machine.pressureLive() ? machine : null;
     }
     @Override public java.util.Optional<ic2.api.machine.MachineSnapshot> resolveMachineInfo() {
         return java.util.Optional.ofNullable(controller()).map(AdvancedMachineEntity::machineInfo);

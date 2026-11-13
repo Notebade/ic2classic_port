@@ -19,6 +19,7 @@ public final class ExampleAddon {
     private static final net.neoforged.neoforge.registries.DeferredRegister.Items ITEMS = net.neoforged.neoforge.registries.DeferredRegister.createItems(MOD_ID);
     static final net.neoforged.neoforge.registries.DeferredItem<TestElectricItem> ELECTRIC_TEST_ITEM = ITEMS.registerItem("electric_test_item", p -> new TestElectricItem(p.stacksTo(1)));
     static final net.neoforged.neoforge.registries.DeferredItem<TestPassiveUpgrade> PASSIVE_TEST_UPGRADE = ITEMS.registerItem("passive_test_upgrade", TestPassiveUpgrade::new);
+    static final net.neoforged.neoforge.registries.DeferredItem<TestHookUpgrade> HOOK_TEST_UPGRADE = ITEMS.registerItem("hook_test_upgrade", TestHookUpgrade::new);
     public ExampleAddon(IEventBus modBus) {
         if (Ic2Api.version() != 1) throw new IllegalStateException("This addon needs IC2 API v1");
         ITEMS.register(modBus);
@@ -51,5 +52,21 @@ public final class ExampleAddon {
     static final class TestPassiveUpgrade extends net.minecraft.world.item.Item implements ic2.api.machine.MachineUpgrade {
         TestPassiveUpgrade(Properties properties) { super(properties); }
         @Override public int extraEnergyStorage(net.minecraft.world.item.ItemStack stack) { return 2500; }
+    }
+    static final class TestHookUpgrade extends net.minecraft.world.item.Item implements ic2.api.machine.MachineUpgrade {
+        TestHookUpgrade(Properties properties) { super(properties); }
+        @Override public Category category(net.minecraft.world.item.ItemStack stack) { return Category.CUSTOM; }
+        @Override public boolean tickUpgrade(net.minecraft.world.item.ItemStack stack, ic2.api.machine.UpgradeContext context) {
+            net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack,
+                tag -> tag.putInt("upgrade_ticks", tag.getInt("upgrade_ticks") + 1));
+            return true;
+        }
+        @Override public void recipeFinished(net.minecraft.world.item.ItemStack stack, ic2.api.machine.UpgradeContext context,
+                net.minecraft.world.item.ItemStack result, float experience) {
+            net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, tag -> {
+                tag.putInt("upgrade_recipes", tag.getInt("upgrade_recipes") + 1);
+                tag.putString("last_result", net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(result.getItem()).toString());
+            });
+        }
     }
 }

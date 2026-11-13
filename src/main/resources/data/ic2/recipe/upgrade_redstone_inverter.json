@@ -1,0 +1,19 @@
+{
+  "key": {
+    "C": {
+      "item": "minecraft:redstone_torch"
+    },
+    "X": {
+      "item": "ic2:upgrade_base"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "X",
+    "C"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:upgrade_redstone_inverter"
+  }
+}

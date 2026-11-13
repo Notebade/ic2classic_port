@@ -1,0 +1,28 @@
+{
+  "key": {
+    "D": {
+      "item": "ic2:upgrade_base"
+    },
+    "Y": {
+      "item": "ic2:rubber"
+    },
+    "C": {
+      "item": "minecraft:redstone_torch"
+    },
+    "A": {
+      "item": "minecraft:repeater"
+    },
+    "V": {
+      "item": "minecraft:comparator"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "YCY",
+    "ADV"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:upgrade_redstone_sensitivity"
+  }
+}

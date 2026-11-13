@@ -51,5 +51,35 @@
     "sounds": [
       "ic2:machines/magnetizer_operating"
     ]
+  },
+  "machine_compressor_operating": {
+    "sounds": [
+      "ic2:machines/base/compressor_operating"
+    ]
+  },
+  "machine_furnace_operating": {
+    "sounds": [
+      "ic2:machines/base/electric_furnace_operating"
+    ]
+  },
+  "machine_macerator_operating": {
+    "sounds": [
+      "ic2:machines/base/macerator_operating"
+    ]
+  },
+  "machine_recycler_operating": {
+    "sounds": [
+      "ic2:machines/base/recycler_operating"
+    ]
+  },
+  "machine_extractor_operating": {
+    "sounds": [
+      "ic2:machines/base/extractor_operating"
+    ]
+  },
+  "machine_interruption": {
+    "sounds": [
+      "ic2:machines/base/interruption"
+    ]
   }
 }

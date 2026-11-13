@@ -8,7 +8,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 final class MachineUpgradeItem extends Item implements MachineUpgrade {
     enum Kind {
         OVERCLOCKER(1.3, 1.6), QUANTUM_OVERCLOCKER(1.6, 1.3), TRANSFORMER(1, 1),
-        ENERGY_STORAGE(1, 1), EFFICIENCY(1, .95), ENERGY_STORAGE_MULTIPLIER(1, 1), SLOWNESS(.5, .6);
+        ENERGY_STORAGE(1, 1), EFFICIENCY(1, .95), ENERGY_STORAGE_MULTIPLIER(1, 1), SLOWNESS(.5, .6),
+        REDSTONE_INVERTER(1, 1), REDSTONE_SENSITIVITY(1, 1), LOUDNESS(1, 1), MUFFLER(1, 1), MUTE(1, 1);
         final double speed, demand;
         Kind(double speed, double demand) { this.speed = speed; this.demand = demand; }
     }
@@ -26,4 +27,15 @@ final class MachineUpgradeItem extends Item implements MachineUpgrade {
     @Override public int extraEnergyStorage(ItemStack stack) { return kind == Kind.ENERGY_STORAGE ? 10000 : 0; }
     @Override public double storageMultiplier(ItemStack stack) { return kind == Kind.ENERGY_STORAGE_MULTIPLIER ? 2 : 1; }
     @Override public int extraTier(ItemStack stack) { return kind == Kind.TRANSFORMER ? 1 : 0; }
+    @Override public Category category(ItemStack stack) {
+        return switch (kind) {
+            case OVERCLOCKER, QUANTUM_OVERCLOCKER, EFFICIENCY, SLOWNESS -> Category.RECIPE;
+            case REDSTONE_INVERTER, REDSTONE_SENSITIVITY -> Category.REDSTONE;
+            case LOUDNESS, MUFFLER, MUTE -> Category.AUDIO;
+            default -> Category.MACHINE;
+        };
+    }
+    @Override public boolean invertsRedstone(ItemStack stack) { return kind == Kind.REDSTONE_INVERTER; }
+    @Override public boolean togglesRedstoneSensitivity(ItemStack stack) { return kind == Kind.REDSTONE_SENSITIVITY; }
+    @Override public double soundMultiplier(ItemStack stack) { return switch (kind) { case LOUDNESS -> 1.35; case MUFFLER -> .8; case MUTE -> 0; default -> 1; }; }
 }

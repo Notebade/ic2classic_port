@@ -636,3 +636,9 @@ src/main/resources/assets/ic2/textures/item/food_and_drink/whisky_grist.png
 /src/main/resources/assets/ic2/textures/block/machine/mv/chunkloader/inactive_up.png
 /src/main/resources/assets/ic2/textures/block/machine/mv/chunkloader/inactive_west.png
 /src/main/resources/assets/ic2/sounds/machines/magnetizer_operating.ogg
+/src/main/resources/assets/ic2/sounds/machines/base/compressor_operating.ogg
+/src/main/resources/assets/ic2/sounds/machines/base/electric_furnace_operating.ogg
+/src/main/resources/assets/ic2/sounds/machines/base/macerator_operating.ogg
+/src/main/resources/assets/ic2/sounds/machines/base/recycler_operating.ogg
+/src/main/resources/assets/ic2/sounds/machines/base/extractor_operating.ogg
+/src/main/resources/assets/ic2/sounds/machines/base/interruption.ogg

@@ -55,8 +55,9 @@ final class AdvancedMachineBlock extends Block implements EntityBlock {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return !level.isClientSide && type == AdvancedMachines.ENTITY.get()
-            ? (world, pos, current, entity) -> ((AdvancedMachineEntity) entity).tick() : null;
+        if (type != AdvancedMachines.ENTITY.get()) return null;
+        if (level.isClientSide) return variant.sound() == null ? null : (world, pos, current, entity) -> MachineSoundLoop.clientTick(entity, variant.sound());
+        return (world, pos, current, entity) -> ((AdvancedMachineEntity) entity).tick();
     }
 
     @Override

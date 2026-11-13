@@ -25,7 +25,7 @@ public final class BoilerFuel {
         COMPRESSED_COAL = items.registerSimpleItem("hydrated_coal_compressed");
         PLANT_BALL = items.registerSimpleItem("plant_ball");
         COMPRESSED_PLANT = items.registerSimpleItem("plant_ball_compressed");
-        FLUID_EXPORT = items.registerSimpleItem("fluid_export_upgrade_simple");
+        FLUID_EXPORT = items.registerItem("fluid_export_upgrade_simple", p -> new TransportUpgradeItem(p, TransportUpgradeItem.Kind.FLUID_EXPORT));
     }
     public static int amount(ItemStack stack) {
         return stack.is(CAN.get()) ? Math.max(0, stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getInt("fuel")) : 0;

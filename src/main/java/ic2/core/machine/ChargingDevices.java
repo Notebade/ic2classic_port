@@ -37,6 +37,8 @@ public final class ChargingDevices {
     public static void register(IEventBus bus, DeferredRegister.Items items) {
         PadUpgradeItem.register(items);
         MachineUpgradeItem.register(items);
+        items.registerItem("upgrade_simple_import", p -> new TransportUpgradeItem(p, TransportUpgradeItem.Kind.ITEM_IMPORT));
+        items.registerItem("upgrade_simple_export", p -> new TransportUpgradeItem(p, TransportUpgradeItem.Kind.ITEM_EXPORT));
         BLOCKS.register(bus); ENTITIES.register(bus); MENUS.register(bus); BLOCK.values().forEach(items::registerSimpleBlockItem);
         items.registerSimpleItem("tfbp"); items.registerSimpleItem("tfbp_irrigation");
         bus.addListener(ChargingDevices::capabilities);

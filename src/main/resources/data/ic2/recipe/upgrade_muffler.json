@@ -1,0 +1,20 @@
+{
+  "key": {
+    "Y": {
+      "item": "ic2:upgrade_base"
+    },
+    "X": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XXX"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:upgrade_muffler"
+  }
+}

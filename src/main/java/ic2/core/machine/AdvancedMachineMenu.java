@@ -22,7 +22,7 @@ final class AdvancedMachineMenu extends AbstractContainerMenu {
     }
 
     AdvancedMachineMenu(int id, Inventory player, AdvancedMachines.Variant variant) {
-        this(id, player, new ItemStackHandler(variant.layout.slots()), new SimpleContainerData(7), ContainerLevelAccess.NULL, null, variant);
+        this(id, player, new ItemStackHandler(variant.layout.slots() + 2), new SimpleContainerData(13), ContainerLevelAccess.NULL, null, variant);
     }
 
     AdvancedMachineMenu(int id, Inventory player, ItemStackHandler inventory, ContainerData data,
@@ -51,13 +51,17 @@ final class AdvancedMachineMenu extends AbstractContainerMenu {
                 }
             });
         }
+        addSlot(new SlotItemHandler(inventory, variant.layout.slots(), 134, 53));
+        addSlot(new SlotItemHandler(inventory, variant.layout.slots() + 1, 152, 53));
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, 84 + row * 18));
         }
         for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, 142));
     }
 
-    int energy() { return data.get(0); }
+    int energy() { return data.get(0) & 65535 | data.get(7) << 16; }
+    int capacity() { return data.get(8) & 65535 | data.get(9) << 16; }
+    int packet() { return data.get(10) & 65535 | data.get(11) << 16; }
     int heat() { return data.get(1); }
     int progress() { return data.get(2); }
     boolean split() { return data.get(3) != 0; }
@@ -84,9 +88,10 @@ final class AdvancedMachineMenu extends AbstractContainerMenu {
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack stack = slot.getItem();
         ItemStack before = stack.copy();
-        int machineSlots = variant.layout.slots();
+        int machineSlots = variant.layout.slots() + 2;
         boolean moved = index < machineSlots ? moveItemStackTo(stack, machineSlots, slots.size(), true)
-            : moveItemStackTo(stack, 0, 1, false) || moveItemStackTo(stack, 1, variant.layout.inputs() + 1, false);
+            : moveItemStackTo(stack, variant.layout.slots(), machineSlots, false)
+                || moveItemStackTo(stack, 0, 1, false) || moveItemStackTo(stack, 1, variant.layout.inputs() + 1, false);
         if (!moved) return ItemStack.EMPTY;
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
         else slot.setChanged();

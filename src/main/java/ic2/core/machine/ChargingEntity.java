@@ -73,7 +73,8 @@ final class ChargingEntity extends BlockEntity implements MenuProvider, EnergySi
     private boolean accepts(int slot, ItemStack stack) {
         if (slot < 0 || slot >= kind.slots() || stack.isEmpty()) return false;
         if (kind.pad() && slot > 0) return slot <= kind.projectionSlots()
-            ? stack.getItem() instanceof PadUpgradeItem : stack.getItem() instanceof ic2.api.machine.MachineUpgrade;
+            ? stack.getItem() instanceof PadUpgradeItem : stack.getItem() instanceof ic2.api.machine.MachineUpgrade upgrade
+                && (upgrade.category(stack) == ic2.api.machine.MachineUpgrade.Category.MACHINE || upgrade.category(stack) == ic2.api.machine.MachineUpgrade.Category.RECIPE);
         if (kind == ChargingDevices.Kind.PAD_FISSION && stack.getItem() instanceof ic2.core.item.UraniumFuelRod) return true;
         if (kind.pad() && (stack.is(Items.REDSTONE) || stack.is(Items.REDSTONE_BLOCK))) return true;
         int packet = kind.inventoryGrid() && (kind.family == ChargingDevices.Family.STATION || slot < 16) ? Integer.MAX_VALUE : inputPacket();

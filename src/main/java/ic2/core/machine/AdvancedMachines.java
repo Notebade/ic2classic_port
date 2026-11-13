@@ -124,5 +124,15 @@ public final class AdvancedMachines {
 
         int capacity() { return this == RARE_EARTH ? 5120 : this == SLOW ? 1000 : 10000; }
         int packet() { return this == PRESSURE ? 512 : 128; }
+        String sound() {
+            return switch (this) {
+                case FURNACE, BLAST, SMOKER -> "machine_furnace_operating";
+                case ROTARY -> "machine_macerator_operating";
+                case CENTRIFUGAL -> "machine_extractor_operating";
+                case SINGULARITY -> "machine_compressor_operating";
+                case COMPACTING, SLOW -> "machine_recycler_operating";
+                default -> null;
+            };
+        }
     }
 }

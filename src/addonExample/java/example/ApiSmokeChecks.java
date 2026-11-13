@@ -28,6 +28,9 @@ public final class ApiSmokeChecks {
             ColossalChecks.run(server.overworld());
             EnchanterChecks.run(server.overworld());
             FisherChecks.run(server.overworld());
+            AdvancedUpgradeChecks.run(server.overworld());
+            PressureAccessChecks.run(server.overworld());
+            TransportUpgradeChecks.run(server.overworld());
             var compression = Ic2Recipes.find(Process.COMPRESSION, new ItemStack(Items.COBBLED_DEEPSLATE)).orElseThrow();
             require(compression.id().equals(ResourceLocation.parse("exampleaddon:deepslate")) && compression.output() == Items.DEEPSLATE, "addon compression is used by the machine recipe lookup");
             var extraction = Ic2Recipes.find(Process.EXTRACTION, new ItemStack(Items.MOSS_BLOCK)).orElseThrow();

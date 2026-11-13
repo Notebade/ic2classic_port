@@ -29,3 +29,9 @@ Earlier gameplay commit `d226731` includes original pad/chunkloader screens, uti
 - All twenty-four wood blocks at controller height are real EU input ports. `EnergyPortOwner` / `EuNetwork.registerPorts` implement mechanics and server-side API lookup; cable-arm visuals for these plain wood blocks remain a graphics concern. Ports are reconstructed after reload and rejected immediately when a remote structure block breaks.
 - API exposes formed state, chain length/luck, progress and thirty-two loot rolls per cycle. `lit` indicates a working powered tick. Each cycle is 300 ticks at 150 EU/t, with source Luck of the Sea III tool context and depth-based luck.
 - Real-server tests compare every actual output item/component with the exact thirty-two seeded loot-table rolls, including a mid-cycle reload, and exercise EU input through plain wood, invalid containers, starvation and broken-port revocation.
+
+## Advanced upgrades backend contract
+
+- Advanced inventories now contain their original slots plus two upgrade slots. Backend menu data retains indices 0–6 and extends to 13: 7 energy high word, 8/9 capacity low/high, 10/11 input packet low/high, 12 sound multiplier permille. `AdvancedMachineMenu.energy()`, `capacity()` and `packet()` reconstruct the values. Upgrade slots currently use (134,53)/(152,53); final screen layout belongs to the graphics stage.
+- New item IDs needing names/models: upgrade_simple_import, upgrade_simple_export, upgrade_redstone_inverter, upgrade_redstone_sensitivity, upgrade_loudness, upgrade_muffler, upgrade_mute. Existing fluid_import_upgrade_simple/fluid_export_upgrade_simple and cobblegen_upgrade retain their IDs and now work in compatible slots.
+- Transport direction is selected by using the upgrade on a block face (Shift reverses); unset direction disables transport. Sound registration/import and actual client audio checks are complete. No screen rendering or model files were modified in this unit.

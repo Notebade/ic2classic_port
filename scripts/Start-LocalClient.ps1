@@ -4,6 +4,7 @@ param(
     [ValidatePattern('^[a-zA-Z0-9_-]+$')] [string] $RunName = 'smoke-client',
     [string] $QuickPlayWorld,
     [switch] $VerifyGeneration,
+    [switch] $VerifyAudio,
     [string] $Install = (Join-Path $env:USERPROFILE 'curseforge/minecraft/Install')
 )
 
@@ -21,7 +22,8 @@ $optionsPath = Join-Path $run 'options.txt'
 $options = if (Test-Path -LiteralPath $optionsPath) {
     Get-Content -LiteralPath $optionsPath | Where-Object { $_ -notmatch '^soundCategory_master:' }
 }
-(@($options) + 'soundCategory_master:0.0') | Set-Content -LiteralPath $optionsPath -Encoding utf8NoBOM
+$masterVolume = if ($VerifyAudio) { '0.03' } else { '0.0' }
+(@($options) + "soundCategory_master:$masterVolume") | Set-Content -LiteralPath $optionsPath -Encoding utf8NoBOM
 
 $seen = [Collections.Generic.HashSet[string]]::new()
 $classpath = foreach ($library in @($neo.libraries) + @($vanilla.libraries)) {
@@ -59,6 +61,7 @@ $values = @{
 
 $arguments = @('-Xmx3G') + @($neo.arguments.jvm) + @($vanilla.arguments.jvm | Where-Object { $_ -is [string] })
 if ($VerifyGeneration) { $arguments += '-Dic2.client.verify=true' }
+if ($VerifyAudio) { $arguments += '-Dic2.audio.verify=true' }
 $arguments += @($neo.mainClass) + @($neo.arguments.game) + @($vanilla.arguments.game | Where-Object { $_ -is [string] })
 if ($VerifyGeneration) { $arguments += @('--width','1280','--height','900') }
 if ($QuickPlayWorld) {

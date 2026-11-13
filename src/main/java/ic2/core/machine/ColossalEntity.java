@@ -30,7 +30,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
-final class ColossalEntity extends BlockEntity implements MenuProvider, EnergySink, MachineSnapshot.Provider {
+final class ColossalEntity extends BlockEntity implements MenuProvider, EnergySink, MachineSnapshot.Provider, ic2.api.machine.UpgradeContext.ConnectionProvider {
     final ColossalMachines.Kind kind = ((ColossalBlock) getBlockState().getBlock()).kind;
     private int energy, edge;
     private float experience;
@@ -42,7 +42,7 @@ final class ColossalEntity extends BlockEntity implements MenuProvider, EnergySi
         @Override public boolean isItemValid(int slot, ItemStack stack) {
             if (slot < 8) return slot < lanes() && ColossalRecipes.find(kind, stack, level) != null;
             if (slot == 16) return RechargeableItem.supports(stack.copyWithCount(1), modifiers().packet(), false);
-            return slot >= 17 && stack.getItem() instanceof MachineUpgrade upgrade && upgrade.speedMultiplier(stack) == 1 && upgrade.energyDemandMultiplier(stack) == 1;
+            return slot >= 17 && stack.getItem() instanceof MachineUpgrade upgrade && upgrade.category(stack) != MachineUpgrade.Category.RECIPE;
         }
         @Override protected void onContentsChanged(int slot) {
             if (slot < 8) {
@@ -81,8 +81,21 @@ final class ColossalEntity extends BlockEntity implements MenuProvider, EnergySi
 
     ColossalEntity(BlockPos pos, BlockState state) { super(ColossalMachines.ENTITY.get(), pos, state); }
     private MachineModifiers modifiers() { return MachineModifiers.read(inventory, 17, 100000, 4); }
+    private ic2.api.machine.UpgradeContext upgradeContext() {
+        return new ic2.api.machine.UpgradeContext((ServerLevel) level, worldPosition,
+            new RangedWrapper(inventory, 0, lanes()), new RangedWrapper(inventory, 8, 8 + lanes()), java.util.Optional.of(tanks));
+    }
+    private void tickUpgrades() {
+        for (int slot = 17; slot < 19; slot++) {
+            var stack = inventory.getStackInSlot(slot);
+            if (stack.getItem() instanceof MachineUpgrade upgrade && upgrade.tickUpgrade(stack, upgradeContext())) setChanged();
+        }
+    }
     int lanes() { return ColossalCycle.lanes(edge); }
     boolean contains(BlockPos pos) { return parts.contains(pos); }
+    @Override public List<BlockPos> upgradeConnectionPositions() {
+        var positions = new ArrayList<BlockPos>(); positions.add(worldPosition); positions.addAll(parts); return List.copyOf(positions);
+    }
     boolean geometryValid() {
         if (edge == 0 || parts.size() != edge * edge * edge - 1) return false;
         for (var pos : parts) if (!level.hasChunkAt(pos) || !level.getBlockState(pos).is(ColossalMachines.BASE.get())) return false;
@@ -116,21 +129,25 @@ final class ColossalEntity extends BlockEntity implements MenuProvider, EnergySi
     void tick() {
         validateStructure();
         if (!live()) { setProcessing(false); return; }
+        tickUpgrades();
+        if (!live()) { setProcessing(false); return; }
         discharge();
         var recipes = new ColossalRecipes.Batch[lanes()];
         int active = 0;
         for (int lane = 0; lane < lanes(); lane++) { recipes[lane] = available(lane); if (recipes[lane] != null) active++; }
+        int cost = MachineUpgradeRules.scale(30, modifiers().demand());
         boolean ready = active > 0 && ColossalCycle.fluidsReady(water.getFluidAmount(), steam.getFluidAmount(), active)
-            && energy >= (processing ? active * 30 : modifiers().capacity() / 10);
+            && modifiers().redstoneAllowed(false, level.hasNeighborSignal(worldPosition))
+            && energy >= (processing ? (long) active * cost : modifiers().capacity() / 10);
         boolean worked = false;
         for (int lane = 0; lane < lanes(); lane++) {
             var recipe = recipes[lane];
-            boolean run = ready && recipe != null && energy >= 30;
+            boolean run = ready && recipe != null && energy >= cost;
             int step = kind == ColossalMachines.Kind.RECYCLER ? 6000 : 1000;
             int previous = progress[lane];
             progress[lane] = recipe == null ? 0 : ColossalCycle.progress(progress[lane], run, step);
             if (run) {
-                worked = true; energy -= 30;
+                worked = true; energy -= cost;
                 if (progress[lane] == 6000) finish(lane, recipe);
             }
             if (run || previous != progress[lane]) setChanged();
@@ -157,6 +174,10 @@ final class ColossalEntity extends BlockEntity implements MenuProvider, EnergySi
         water.drain(50, IFluidHandler.FluidAction.EXECUTE);
         steam.fill(new FluidStack(SteamFluids.steam(), 25), IFluidHandler.FluidAction.EXECUTE);
         experience += recipe.experience();
+        for (int slot = 17; slot < 19; slot++) {
+            var stack = inventory.getStackInSlot(slot);
+            if (stack.getItem() instanceof MachineUpgrade upgrade) upgrade.recipeFinished(stack, upgradeContext(), success ? recipe.output().copy() : ItemStack.EMPTY, recipe.experience());
+        }
     }
 
     private void discharge() {

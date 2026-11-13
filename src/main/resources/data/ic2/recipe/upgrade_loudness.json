@@ -1,0 +1,19 @@
+{
+  "key": {
+    "Y": {
+      "item": "minecraft:redstone_torch"
+    },
+    "X": {
+      "item": "ic2:upgrade_muffler"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "X",
+    "Y"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:upgrade_loudness"
+  }
+}

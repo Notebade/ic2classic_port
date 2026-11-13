@@ -21,7 +21,7 @@ final class MachineSoundLoop extends AbstractTickableSoundInstance {
         this.sound = sound;
         looping = true;
         delay = 0;
-        volume = 0.5F;
+        volume = entity instanceof MachineAudio machine ? .5F * machine.audioMultiplier() : .5F;
         x = entity.getBlockPos().getX() + 0.5;
         y = entity.getBlockPos().getY() + 0.5;
         z = entity.getBlockPos().getZ() + 0.5;
@@ -30,6 +30,7 @@ final class MachineSoundLoop extends AbstractTickableSoundInstance {
     private static boolean active(BlockEntity entity, String sound) {
         if (entity.isRemoved() || entity.getLevel() != Minecraft.getInstance().level
             || !entity.getBlockState().hasProperty(BlockStateProperties.LIT) || !entity.getBlockState().getValue(BlockStateProperties.LIT)) return false;
+        if (entity instanceof MachineAudio machine && (!machine.audioWorking() || machine.audioMultiplier() <= 0)) return false;
         if (sound.equals("reactor_operating")) return entity instanceof MachineEntity machine && machine.reactorSoundLevel() > 0;
         if (!sound.startsWith("geiger_")) return true;
         int tier = switch (sound) { case "geiger_low" -> 1; case "geiger_med" -> 2; default -> 3; };
@@ -56,5 +57,6 @@ final class MachineSoundLoop extends AbstractTickableSoundInstance {
     public void tick() {
         var current = entity.get();
         if (current == null || !active(current, sound)) stop();
+        else if (current instanceof MachineAudio machine) volume = .5F * machine.audioMultiplier();
     }
 }

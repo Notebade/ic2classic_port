@@ -13,7 +13,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
 final class ColossalChecks {
-    private static final BlockPos ORIGIN = new BlockPos(256, 303, 256);
+    static final BlockPos ORIGIN = new BlockPos(256, 303, 256);
     private ColossalChecks() {}
 
     static void run(ServerLevel level) {
@@ -68,7 +68,7 @@ final class ColossalChecks {
     }
 
     private static ItemStack stack(String id) { return new ItemStack(Ic2Api.item(ResourceLocation.parse(id)).orElseThrow()); }
-    private static void build(ServerLevel level, int edge, String kind) {
+    static void build(ServerLevel level, int edge, String kind) {
         for (int y = 0; y < edge; y++) for (int z = 0; z < edge; z++) for (int x = 0; x < edge; x++) {
             var pos = ORIGIN.west(x).south(z).below(y);
             level.getChunkAt(pos);
@@ -76,7 +76,7 @@ final class ColossalChecks {
         }
         level.setBlockAndUpdate(ORIGIN, Ic2Api.block(ResourceLocation.parse("ic2:colossal_" + kind)).orElseThrow().defaultBlockState());
     }
-    private static void clear(ServerLevel level) {
+    static void clear(ServerLevel level) {
         for (int y = 0; y < 4; y++) for (int z = 0; z < 4; z++) for (int x = 0; x < 4; x++) {
             var pos = ORIGIN.west(x).south(z).below(y);
             if (level.hasChunkAt(pos)) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
