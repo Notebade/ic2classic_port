@@ -1,6 +1,7 @@
 param(
     [Parameter(Mandatory)] [string] $WorldPath,
-    [string] $NeoProfile = 'neoforge-21.1.238'
+    [string] $NeoProfile = 'neoforge-21.1.238',
+    [switch] $KeepOpen
 )
 
 $ErrorActionPreference = 'Stop'
@@ -32,10 +33,21 @@ try {
     & jar --create --file $addon -C build/classes/java/addonExample . -C (Split-Path -Parent $metadata) META-INF
     if ($LASTEXITCODE -ne 0) { throw 'Verification addon packaging failed' }
     $env:JAVA_TOOL_OPTIONS = "$previousOptions -Dic2.remastered.verify=true"
+    if ($KeepOpen) { $env:JAVA_TOOL_OPTIONS += ' -Dic2.remastered.keepOpen=true' }
     $version = [regex]::Match((Get-Content build.gradle -Raw), "(?m)^version = '([^']+)'").Groups[1].Value
     $process = & "$PSScriptRoot/Start-LocalClient.ps1" -ModJar (Join-Path $root "build/libs/ic2-classic-re-$version.jar") -NeoProfile $NeoProfile -RunName 'remastered-client-check' -QuickPlayWorld 'verification'
     $deadline = [DateTime]::UtcNow.AddMinutes(3)
     while (!$process.WaitForExit(1000)) {
+        if ($KeepOpen -and (Test-Path -LiteralPath (Join-Path $run 'console.log'))) {
+            $currentLog = Get-Content -LiteralPath (Join-Path $run 'console.log') -Raw
+            if ($currentLog -and $currentLog.Contains('IC2 Remastered checks passed:')) {
+                $leaveRunning = $true
+                Write-Output "Remastered verification passed; Minecraft left running (PID $($process.Id))."
+                # Keep the launcher session alive so its child is not reaped by the host.
+                $process.WaitForExit()
+                return
+            }
+        }
         if ([DateTime]::UtcNow -gt $deadline) { throw 'Remastered verification timed out' }
     }
     $log = Get-Content -LiteralPath (Join-Path $run 'console.log') -Raw
@@ -45,6 +57,6 @@ try {
     Write-Output 'Remastered verification passed; screenshots in runs/remastered-client-check/screenshots'
 } finally {
     $env:JAVA_TOOL_OPTIONS = $previousOptions
-    if ($process -and !$process.HasExited) { Stop-Process -Id $process.Id }
+    if ($process -and !$process.HasExited -and !$leaveRunning) { Stop-Process -Id $process.Id }
     Pop-Location
 }

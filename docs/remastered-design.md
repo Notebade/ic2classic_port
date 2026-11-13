@@ -2,6 +2,37 @@
 
 Base: `d2267319eb625c1b71c8dfe3607441f17da07a0e`, independent `ic2classic-port-gui` checkout, `gui-update` branch.
 
+## Current layout revision
+
+The user selected a T-shaped composition and then requested native rendering in
+place of a generated frame. The production screen now uses code-drawn beveled
+steel frames: a wide 256x148 machine cap above a centered 176x94 inventory panel.
+Total bounds remain 256x240. All 27 inventory cells and 9 hotbar cells fit inside
+the lower panel. `AlloyGuiLayout` shares coordinates between menu and rendering.
+`RemasteredButton` keeps vanilla input, focus and narration while drawing its own
+graphite/steel skin, orange selected border and distinct hover/disabled states.
+Recipe paging uses the same button skin. The unused generated PNG was removed;
+earlier generation notes below describe the superseded first prototype only.
+
+An additional real-client assertion reproduced the vanilla-button problem before
+the rendering change. The suite now checks styled buttons and actual inventory
+slot bounds as well as tabs and shift-click. `Test-RemasteredClient.ps1 -KeepOpen`
+reports successful verification, leaving the client and alloy screen open while
+its launcher session waits for the user's manual exit.
+The opt-in test addon stops automated actions after verification and supplies
+copper/tin in the player's creative inventory for manual checks. Normal test runs
+still exit the client automatically. Production gameplay has no test behavior.
+
+Revision action log: reproduced the old button rendering; replaced raster shell
+with dimensioned frames; centralized slot coordinates; styled tabs and paging;
+removed unused texture; added keep-open handoff and checks. Offline build and 24
+existing checks passed. The first keep-open launch exposed an empty startup-log
+race in the test script; added a null check before reading its success marker.
+Real-client checks passed for styled tabs, all 36 inventory cell bounds, recipe
+paging and bidirectional shift-click. Inspected the actual game screenshots.
+Kept the launcher session alive after success so the host cannot reap the client
+when the command exits. No changes were made in the original project.
+
 ## Existing architecture
 
 Minecraft 1.21.1, NeoForge 21.1.219, Java 21, NeoGradle userdev 7.1.20.

@@ -21,9 +21,10 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 public final class RemasteredClientChecks {
     private static final BlockPos POS = new BlockPos(100, 82, 100);
     private static int age;
+    private static boolean finished;
 
     @SubscribeEvent public static void tick(ClientTickEvent.Post event) {
-        if (!Boolean.getBoolean("ic2.remastered.verify")) return;
+        if (!Boolean.getBoolean("ic2.remastered.verify") || finished) return;
         var client = Minecraft.getInstance();
         var server = client.getSingleplayerServer();
         if (server == null || client.player == null || client.level == null) return;
@@ -37,6 +38,15 @@ public final class RemasteredClientChecks {
         if (age == 80 || age == 110 || age == 140 || age == 170) {
             int tab = (age - 80) / 30;
             var screen = screen(client);
+            if (tab == 0) {
+                if (!tab(client, 0).getClass().getSimpleName().equals("RemasteredButton"))
+                    throw new AssertionError("Machine tabs still use vanilla button rendering");
+                for (int i = 3; i < 39; i++) {
+                    var slot = screen.getMenu().getSlot(i);
+                    if (slot.x - 2 < 42 || slot.x + 18 > 214 || slot.y - 2 < 160 || slot.y + 18 > 236)
+                        throw new AssertionError("Player slot escapes inventory frame: " + i);
+                }
+            }
             if (tab > 0) tab(client, tab).onPress();
             long active = screen.getMenu().slots.stream().filter(slot -> slot.isActive()).count();
             if (active != (tab == 0 ? 39 : 36)) throw new AssertionError("Wrong active slots: " + active);
@@ -68,8 +78,22 @@ public final class RemasteredClientChecks {
         if (age == 210 && !screen(client).getMenu().getSlot(0).getItem().is(Items.COPPER_INGOT))
             throw new AssertionError("Shift-click did not return input");
         if (age == 220) {
+            finished = true;
             com.mojang.logging.LogUtils.getLogger().info("IC2 Remastered checks passed: four tabs, recipe paging, synchronized slots, shift-click");
-            client.stop();
+            if (Boolean.getBoolean("ic2.remastered.keepOpen")) {
+                server.execute(() -> {
+                    var player = server.getPlayerList().getPlayer(client.player.getUUID());
+                    player.setGameMode(net.minecraft.world.level.GameType.CREATIVE);
+                    var inventory = player.getInventory();
+                    inventory.setItem(0, new ItemStack(Items.COPPER_INGOT, 64));
+                    inventory.setItem(1, new ItemStack(Ic2Api.item(ResourceLocation.parse("ic2:ingot_tin")).orElseThrow(), 64));
+                    var entity = server.overworld().getBlockEntity(POS);
+                    var tag = entity.saveWithFullMetadata(server.overworld().registryAccess());
+                    tag.putInt("energy", 4000);
+                    entity.loadWithComponents(tag, server.overworld().registryAccess());
+                    player.containerMenu.broadcastChanges();
+                });
+            } else client.stop();
         }
     }
 

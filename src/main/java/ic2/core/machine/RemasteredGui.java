@@ -1,8 +1,6 @@
 package ic2.core.machine;
 
-import ic2.core.IC2;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 
 /** Shared client rendering primitives; no inventory or machine behavior lives here. */
 final class RemasteredGui {
@@ -10,16 +8,44 @@ final class RemasteredGui {
     static final int MUTED = 0xffadb7c4;
     static final int ORANGE = 0xffffa438;
     static final int GREEN = 0xff77d447;
-    private static final ResourceLocation PANEL = ResourceLocation.fromNamespaceAndPath(
-        IC2.MOD_ID, "textures/gui/remastered/machine_panel.png");
 
     private RemasteredGui() {}
 
     static void background(GuiGraphics graphics, int x, int y) {
-        // Map the generated art's three bands to the exact Minecraft layout.
-        graphics.blit(PANEL, x, y, 256, 48, 0, 0, 1254, 280, 1254, 1254);
-        graphics.blit(PANEL, x, y + 48, 256, 100, 0, 280, 1254, 570, 1254, 1254);
-        graphics.blit(PANEL, x, y + 148, 256, 92, 0, 850, 1254, 404, 1254, 1254);
+        frame(graphics, x + AlloyGuiLayout.INVENTORY_X, y + AlloyGuiLayout.INVENTORY_Y,
+            AlloyGuiLayout.INVENTORY_WIDTH, AlloyGuiLayout.INVENTORY_HEIGHT);
+        // A wide machine cap sits on the narrower inventory; no side wings below it.
+        frame(graphics, x, y, AlloyGuiLayout.WIDTH, 148);
+        graphics.fill(x + 6, y + 5, x + 250, y + 21, 0xffb2bac3);
+        graphics.fill(x + 8, y + 21, x + 248, y + 22, ORANGE);
+        recess(graphics, x + 8, y + 48, 240, 96);
+        recess(graphics, x + 46, y + 160, 164, 76);
+    }
+
+    private static void frame(GuiGraphics graphics, int x, int y, int width, int height) {
+        graphics.fill(x, y, x + width, y + height, 0xff10151b);
+        graphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0xff737e8b);
+        graphics.fill(x + 2, y + 2, x + width - 2, y + height - 2, 0xffa3adb8);
+        graphics.fill(x + 3, y + 3, x + width - 3, y + height - 3, 0xff48515d);
+        graphics.fill(x + 4, y + 4, x + width - 4, y + height - 4, 0xff343d48);
+        for (int dy = 6; dy < height - 5; dy += 4)
+            graphics.fill(x + 4, y + dy, x + width - 4, y + dy + 1, 0xff39434f);
+        bolt(graphics, x + 3, y + 3);
+        bolt(graphics, x + width - 7, y + 3);
+        bolt(graphics, x + 3, y + height - 7);
+        bolt(graphics, x + width - 7, y + height - 7);
+    }
+
+    private static void recess(GuiGraphics graphics, int x, int y, int width, int height) {
+        graphics.fill(x - 1, y - 1, x + width + 1, y + height + 1, 0xff7b8794);
+        graphics.fill(x, y, x + width, y + height, 0xff111820);
+        graphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0xff252d37);
+    }
+
+    private static void bolt(GuiGraphics graphics, int x, int y) {
+        graphics.fill(x, y, x + 4, y + 4, 0xff171e27);
+        graphics.fill(x, y, x + 3, y + 3, 0xffaeb9c5);
+        graphics.fill(x + 1, y + 1, x + 3, y + 2, 0xff414c59);
     }
 
     static void slot(GuiGraphics graphics, int x, int y) {

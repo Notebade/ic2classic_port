@@ -22,10 +22,10 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
 
     AlloySmelterScreen(MachineMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
-        imageWidth = 256;
-        imageHeight = 240;
-        inventoryLabelX = 48;
-        inventoryLabelY = 152;
+        imageWidth = AlloyGuiLayout.WIDTH;
+        imageHeight = AlloyGuiLayout.HEIGHT;
+        inventoryLabelX = AlloyGuiLayout.SLOT_X;
+        inventoryLabelY = 150;
     }
 
     @Override protected void init() {
@@ -33,13 +33,13 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
         recipes = MachineRecipeViews.forProcess(MachineRecipeView.Process.ALLOY_SMELTER, minecraft.level);
         recipeIndex = Math.clamp(recipeIndex, 0, Math.max(0, recipes.size() - 1));
         for (Tab choice : Tab.values()) {
-            addRenderableWidget(Button.builder(text("tab." + choice.name().toLowerCase(Locale.ROOT)), ignored -> select(choice))
-                .bounds(leftPos + 8 + choice.ordinal() * 60, topPos + 24, 59, 20).build());
+            addRenderableWidget(new RemasteredButton(leftPos + 8 + choice.ordinal() * 60, topPos + 24, 59, 20,
+                text("tab." + choice.name().toLowerCase(Locale.ROOT)), ignored -> select(choice), () -> tab == choice));
         }
-        previous = addRenderableWidget(Button.builder(Component.literal("<"), ignored -> changeRecipe(-1))
-            .bounds(leftPos + 192, topPos + 130, 22, 20).build());
-        next = addRenderableWidget(Button.builder(Component.literal(">"), ignored -> changeRecipe(1))
-            .bounds(leftPos + 220, topPos + 130, 22, 20).build());
+        previous = addRenderableWidget(new RemasteredButton(leftPos + 192, topPos + 125, 22, 18,
+            Component.literal("<"), ignored -> changeRecipe(-1), () -> false));
+        next = addRenderableWidget(new RemasteredButton(leftPos + 220, topPos + 125, 22, 18,
+            Component.literal(">"), ignored -> changeRecipe(1), () -> false));
         select(tab);
     }
 
@@ -68,8 +68,6 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
 
     @Override protected void renderBg(GuiGraphics graphics, float tick, int mouseX, int mouseY) {
         RemasteredGui.background(graphics, leftPos, topPos);
-        graphics.fill(leftPos + 9 + tab.ordinal() * 60, topPos + 44,
-            leftPos + 66 + tab.ordinal() * 60, topPos + 46, RemasteredGui.ORANGE);
         for (var slot : menu.slots) {
             if (slot.isActive()) RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
         }

@@ -191,11 +191,14 @@ final class MachineMenu extends AbstractContainerMenu {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
                 addSlot(new Slot(playerInventory, column + row * 9 + 9,
-                    (isAlloySmelter() ? 48 : 8) + column * 18, (isAlloySmelter() ? 164 : 83) + row * 18));
+                    (isAlloySmelter() ? AlloyGuiLayout.SLOT_X : 8) + column * 18,
+                    (isAlloySmelter() ? AlloyGuiLayout.INVENTORY_SLOTS_Y : 83) + row * 18));
             }
         }
         for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(playerInventory, column, (isAlloySmelter() ? 48 : 8) + column * 18, isAlloySmelter() ? 220 : 141));
+            addSlot(new Slot(playerInventory, column,
+                (isAlloySmelter() ? AlloyGuiLayout.SLOT_X : 8) + column * 18,
+                isAlloySmelter() ? AlloyGuiLayout.HOTBAR_Y : 141));
         }
     }
 
