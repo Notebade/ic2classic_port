@@ -23,6 +23,7 @@ public final class ExampleAddon {
     static final net.neoforged.neoforge.registries.DeferredItem<TestMiningTool> MINING_TEST_TOOL = ITEMS.registerItem("mining_test_tool", p -> new TestMiningTool(p.stacksTo(1)));
     static final net.neoforged.neoforge.registries.DeferredItem<TestScanner> SCANNER_TEST_TOOL = ITEMS.registerItem("scanner_test_tool", p -> new TestScanner(p.stacksTo(1)));
     static final net.neoforged.neoforge.registries.DeferredItem<TestEuItem> EU_TEST_ITEM = ITEMS.registerItem("eu_test_item", p -> new TestEuItem(p.stacksTo(1)));
+    static final net.neoforged.neoforge.registries.DeferredItem<TestDynamicEuItem> DYNAMIC_EU_ITEM = ITEMS.registerItem("dynamic_eu_item", p -> new TestDynamicEuItem(p.stacksTo(1)));
     public ExampleAddon(IEventBus modBus) {
         if (Ic2Api.version() != 1) throw new IllegalStateException("This addon needs IC2 API v1");
         ITEMS.register(modBus);
@@ -55,6 +56,22 @@ public final class ExampleAddon {
         @Override public int charge(net.minecraft.world.item.ItemStack stack) { return stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag().getInt("eu"); }
         @Override public void setCharge(net.minecraft.world.item.ItemStack stack, int charge) {
             net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt("eu", Math.clamp(charge, 0, capacity())));
+        }
+    }
+    static final class TestDynamicEuItem extends net.minecraft.world.item.Item implements ic2.api.item.ElectricItem {
+        TestDynamicEuItem(Properties properties) { super(properties); }
+        @Override public int capacity() { return 0; }
+        @Override public int transferRate() { return 0; }
+        @Override public int minimumPacket() { return 32; }
+        @Override public boolean canProvideEnergy() { return false; }
+        private static net.minecraft.nbt.CompoundTag data(net.minecraft.world.item.ItemStack stack) { return stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag(); }
+        @Override public int capacity(net.minecraft.world.item.ItemStack stack) { return data(stack).getBoolean("big") ? 2000 : 200; }
+        @Override public int transferRate(net.minecraft.world.item.ItemStack stack) { return data(stack).getBoolean("big") ? 40 : 7; }
+        @Override public int minimumPacket(net.minecraft.world.item.ItemStack stack) { return data(stack).getBoolean("big") ? 512 : 32; }
+        @Override public boolean canProvideEnergy(net.minecraft.world.item.ItemStack stack) { return data(stack).getBoolean("provider"); }
+        @Override public int charge(net.minecraft.world.item.ItemStack stack) { return data(stack).getInt("eu"); }
+        @Override public void setCharge(net.minecraft.world.item.ItemStack stack, int charge) {
+            net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt("eu", Math.clamp(charge, 0, capacity(stack))));
         }
     }
 

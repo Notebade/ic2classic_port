@@ -11,7 +11,7 @@ final class ElectricCrafting {
         var target = (ElectricItem) output.getItem();
         long total = target.charge(output);
         for (var stack : input.items()) if (ElectricItem.supports(stack, Integer.MAX_VALUE, true)) total += ((ElectricItem) stack.getItem()).charge(stack);
-        target.setCharge(output, (int) Math.min(target.capacity(), total));
+        target.setCharge(output, (int) Math.min(target.capacity(output), total));
         return output;
     }
 }

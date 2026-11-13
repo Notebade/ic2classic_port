@@ -30,6 +30,6 @@ final class BatterySlot extends RangedWrapper {
 
     private boolean completed(ItemStack stack) {
         return stack.getCount() == 1 && stack.getItem() instanceof ic2.api.item.ElectricItem cell
-            && cell.charge(stack) == (charging ? cell.capacity() : 0);
+            && cell.charge(stack) == (charging ? cell.capacity(stack) : 0);
     }
 }

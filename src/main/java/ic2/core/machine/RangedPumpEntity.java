@@ -84,12 +84,12 @@ final class RangedPumpEntity extends BlockEntity implements EnergySink, MachineS
     private void chargeItems() {
         var stack = inventory.getStackInSlot(0);
         if (RechargeableItem.supports(stack, 128, false)) {
-            var battery = (ic2.api.item.ElectricItem) stack.getItem(); int amount = Math.min(5000 - energy, Math.min(battery.charge(stack), battery.transferRate()));
+            var battery = (ic2.api.item.ElectricItem) stack.getItem(); int amount = Math.min(5000 - energy, Math.min(battery.charge(stack), battery.transferRate(stack)));
             if (amount > 0) { battery.setCharge(stack, battery.charge(stack) - amount); energy += amount; setChanged(); }
         }
         stack = inventory.getStackInSlot(2);
         if (stack.getItem() instanceof ic2.api.item.ElectricItem scanner && RechargeableItem.supports(stack, 128)) {
-            int amount = Math.min(energy, scanner.capacity() - scanner.charge(stack));
+            int amount = Math.min(energy, scanner.capacity(stack) - scanner.charge(stack));
             if (amount > 0) { scanner.setCharge(stack, scanner.charge(stack) + amount); energy -= amount; setChanged(); }
         }
     }

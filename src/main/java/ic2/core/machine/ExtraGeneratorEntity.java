@@ -182,7 +182,7 @@ final class ExtraGeneratorEntity extends BlockEntity implements MenuProvider, Ma
         if (!RechargeableItem.supports(stack, type.chargeTier)) return;
         ic2.api.item.ElectricItem cell = (ic2.api.item.ElectricItem) stack.getItem();
         int charge = cell.charge(stack);
-        int moved = Math.min(energy, Math.min(cell.transferRate(), cell.capacity() - charge));
+        int moved = Math.min(energy, Math.min(cell.transferRate(stack), cell.capacity(stack) - charge));
         if (moved > 0) {
             ItemStack updated = stack.copy(); cell.setCharge(updated, charge + moved);
             energy -= moved; inventory.setStackInSlot(0, updated);

@@ -50,7 +50,7 @@ final class ChargingEntity extends BlockEntity implements MenuProvider, EnergySi
             ItemStack stack = inventory.getStackInSlot(slot);
             if (!(stack.getItem() instanceof ic2.api.item.ElectricItem cell)) return ItemStack.EMPTY;
             boolean source = sourceSlot(slot);
-            return (source ? cell.charge(stack) == 0 : cell.charge(stack) == cell.capacity())
+            return (source ? cell.charge(stack) == 0 : cell.charge(stack) == cell.capacity(stack))
                 ? inventory.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
         }
     };
@@ -101,7 +101,7 @@ final class ChargingEntity extends BlockEntity implements MenuProvider, EnergySi
         boolean any = false, full = true;
         for (int slot = 0; slot < 16; slot++) {
             ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack.getItem() instanceof ic2.api.item.ElectricItem cell) { any = true; full &= cell.charge(stack) == cell.capacity(); }
+            if (stack.getItem() instanceof ic2.api.item.ElectricItem cell) { any = true; full &= cell.charge(stack) == cell.capacity(stack); }
         }
         int state = !any ? 0 : running ? 2 : full ? 3 : 1;
         if (getBlockState().getValue(ChargingBenchBlock.CHARGE_STATE) != state)
@@ -127,13 +127,13 @@ final class ChargingEntity extends BlockEntity implements MenuProvider, EnergySi
         int tier = kind.family == ChargingDevices.Family.STATION ? Integer.MAX_VALUE : inputPacket();
         if (!RechargeableItem.supports(stack, tier, false)) return;
         ic2.api.item.ElectricItem cell = (ic2.api.item.ElectricItem) stack.getItem();
-        int amount = ChargingDistribution.transfer(cell.charge(stack), energy, capacity(), cell.transferRate());
+        int amount = ChargingDistribution.transfer(cell.charge(stack), energy, capacity(), cell.transferRate(stack));
         if (amount > 0) { cell.setCharge(stack, cell.charge(stack) - amount); energy += amount; setChanged(); }
     }
     private int charge(ItemStack stack, int budget, int packet) {
         if (!RechargeableItem.supports(stack, packet)) return 0;
         ic2.api.item.ElectricItem cell = (ic2.api.item.ElectricItem) stack.getItem();
-        int amount = ChargingDistribution.transfer(Math.min(budget, energy), cell.charge(stack), cell.capacity(), cell.transferRate());
+        int amount = ChargingDistribution.transfer(Math.min(budget, energy), cell.charge(stack), cell.capacity(stack), cell.transferRate(stack));
         if (amount > 0) { cell.setCharge(stack, cell.charge(stack) + amount); energy -= amount; setChanged(); }
         return amount;
     }
@@ -183,11 +183,11 @@ final class ChargingEntity extends BlockEntity implements MenuProvider, EnergySi
     private void eligible(List<ItemStack> items, ItemStack stack, boolean drain) {
         if (!RechargeableItem.supports(stack, inputPacket(), !drain)) return;
         var cell = (ic2.api.item.ElectricItem) stack.getItem();
-        if (drain ? cell.charge(stack) > 0 : cell.charge(stack) < cell.capacity()) items.add(stack);
+        if (drain ? cell.charge(stack) > 0 : cell.charge(stack) < cell.capacity(stack)) items.add(stack);
     }
     private int drainTarget(ItemStack stack, int budget) {
         var cell = (ic2.api.item.ElectricItem) stack.getItem();
-        int moved = Math.min(Math.min(budget, energy), Math.min(cell.transferRate(), cell.charge(stack)));
+        int moved = Math.min(Math.min(budget, energy), Math.min(cell.transferRate(stack), cell.charge(stack)));
         cell.setCharge(stack, cell.charge(stack) - moved); energy -= moved; setChanged(); return moved;
     }
     int padFlags() {

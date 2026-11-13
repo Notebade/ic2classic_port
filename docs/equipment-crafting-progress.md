@@ -73,3 +73,12 @@ First unit verified: .tools/equipment-first-unit-check.log (full server/addon su
 - Fixed the source stale-local-charge bug: simultaneous transfer and movement no longer recreate already transferred EU. Airborne/riding/water state resets the anchor, including while the buffer is full.
 - Combined boots/solar test reproduced wrong independently registered callback order at a nearly full store. Central ordered callbacks restore source priority and avoid discarding solar production while unnecessarily retaining old static charge.
 - Red: equipment-static-boots-red.log and equipment-armor-tick-order-red.log. Green: equipment-static-order-check.log covers actual movement, carpet, airborne reset, source 22-EU ceiling, detached copies, same-tick conservation and combined generation plus all prior suites.
+
+## Per-stack electric parameters
+
+- Source modular armor derives storage, transfer, tier and provider status from installed modules. Added additive ElectricItem overloads taking ItemStack; fixed-storage addons retain their original parameterless methods and defaults.
+- Migrated every native generic EU consumer, battery slot, charger, generator, machine/chemistry/mining family, portable/disposable charging, recipe transfer and worn-energy helper to stack parameters. Client screens were not edited.
+- Added a separately registered addon item whose baseline capacity/rate are zero but individual stacks expose 200/2000 EU, 7/40 EU rates, 32/512 EU packet requirements and switchable provider status.
+- equipment-dynamic-energy-red.log reproduces baseline rejection. equipment-dynamic-energy-complete-check.log verifies native bench charge/discharge, completed extraction, source packet checks, portable/disposable use, armor refill and failed oversized use, alongside all fixed-storage regressions.
+- Initial bench assertion wrongly assumed receiveEnergy(1000) bypassed a 32-EU input packet; corrected the fixture to supply a legal packet. Production packet enforcement was retained.
+- Source findings for the next unit: native armor batteries are energy_crystal (armor rate250), lapatron_crystal(1000), glowtronic_crystal(5000), uesc(10000). RE/PESD/quantum accumulators have no armor-battery transfer and are not installable by default. Nano/quantum module slots, provider modifiers and damage contracts must preserve per-stack behavior.

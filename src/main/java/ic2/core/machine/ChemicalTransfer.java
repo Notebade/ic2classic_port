@@ -39,7 +39,7 @@ final class ChemicalTransfer {
         var stack = inventory.getStackInSlot(0);
         if (!RechargeableItem.supports(stack, packet, false)) return energy;
         var cell = (ic2.api.item.ElectricItem) stack.getItem();
-        int moved = Math.min(Math.min(cell.transferRate(), cell.charge(stack)), capacity - energy);
+        int moved = Math.min(Math.min(cell.transferRate(stack), cell.charge(stack)), capacity - energy);
         if (moved > 0) { cell.setCharge(stack, cell.charge(stack) - moved); inventory.setStackInSlot(0, stack); }
         return energy + moved;
     }

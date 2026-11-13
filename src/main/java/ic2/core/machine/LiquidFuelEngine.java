@@ -70,7 +70,7 @@ final class LiquidFuelEngine {
     private static int charge(int energy, ItemStack stack) {
         if (!RechargeableItem.supports(stack, 128)) return energy;
         var cell = (ic2.api.item.ElectricItem) stack.getItem();
-        int moved = Math.min(energy, Math.min(cell.transferRate(), cell.capacity() - cell.charge(stack)));
+        int moved = Math.min(energy, Math.min(cell.transferRate(stack), cell.capacity(stack) - cell.charge(stack)));
         if (moved > 0) cell.setCharge(stack, cell.charge(stack) + moved);
         return energy - moved;
     }

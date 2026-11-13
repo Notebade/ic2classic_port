@@ -341,7 +341,7 @@ final class MachineMenu extends AbstractContainerMenu {
         if (stack.getItem() instanceof ic2.api.item.ElectricItem cell) {
             if (isFluidGenerator(getType())) {
                 input = MachineEntity.FUEL_GENERATOR_BATTERY_SLOT;
-            } else if (isStorage() && cell.canProvideEnergy() && cell.charge(stack) > 0) {
+            } else if (isStorage() && cell.canProvideEnergy(stack) && cell.charge(stack) > 0) {
                 input = MachineEntity.OUTPUT_SLOT;
             }
         } else if (isElectrolyzer() && Electrolysis.discharge(stack) != null) {

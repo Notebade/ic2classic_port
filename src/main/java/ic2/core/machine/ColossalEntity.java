@@ -185,7 +185,7 @@ final class ColossalEntity extends BlockEntity implements MenuProvider, EnergySi
         if (!RechargeableItem.supports(stack, modifiers().packet(), false)) return;
         var cell = (ic2.api.item.ElectricItem) stack.getItem();
         int room = (int) ((long) modifiers().capacity() * 9 / 10 - energy);
-        int amount = Math.max(0, Math.min(room, Math.min(cell.transferRate(), cell.charge(stack))));
+        int amount = Math.max(0, Math.min(room, Math.min(cell.transferRate(stack), cell.charge(stack))));
         if (amount > 0) { cell.setCharge(stack, cell.charge(stack) - amount); energy += amount; setChanged(); }
     }
     private void setProcessing(boolean active) {

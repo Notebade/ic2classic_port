@@ -118,7 +118,7 @@ final class ElectricEnchanterEntity extends BlockEntity implements MenuProvider,
         if (room <= 0) return;
         if (RechargeableItem.supports(stack, 512, false)) {
             var cell = (ic2.api.item.ElectricItem) stack.getItem();
-            int amount = Math.min(room, Math.min(cell.transferRate(), cell.charge(stack)));
+            int amount = Math.min(room, Math.min(cell.transferRate(stack), cell.charge(stack)));
             if (amount > 0) { cell.setCharge(stack, cell.charge(stack) - amount); energy += amount; setChanged(); }
         } else {
             int value = stack.is(Items.REDSTONE) ? 500 : stack.is(Items.REDSTONE_BLOCK) ? 4500 : 0;

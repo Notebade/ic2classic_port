@@ -774,9 +774,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         }
         int charge = cell.charge(battery);
         int available = charging
-            ? Math.min(energy, cell.capacity() - charge)
+            ? Math.min(energy, cell.capacity(battery) - charge)
             : Math.min(kind.capacity - energy, charge);
-        int moved = Math.min(cell.transferRate(), available);
+        int moved = Math.min(cell.transferRate(battery), available);
         if (moved > 0) {
             int batteryGain = charging ? moved : -moved;
             ItemStack updated = battery.copy();

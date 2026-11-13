@@ -42,7 +42,7 @@ public final class ElectricEquipment {
     public static int chargeFromArmor(ItemStack target, LivingEntity wearer) {
         if (wearer == null || wearer.level().isClientSide || !ElectricItem.supports(target, Integer.MAX_VALUE, true)) return 0;
         var item = (ElectricItem) target.getItem();
-        int needed = item.capacity() - item.charge(target), transferred = 0;
+        int needed = item.capacity(target) - item.charge(target), transferred = 0;
         for (var armor : wearer.getArmorSlots()) {
             if (needed <= 0) break;
             if (armor == target || !ElectricItem.supports(armor, Integer.MAX_VALUE, false)) continue;
@@ -67,7 +67,7 @@ public final class ElectricEquipment {
             if (remaining <= 0) break;
             if (!ElectricItem.supports(stack, Integer.MAX_VALUE, true)) continue;
             var item = (ElectricItem) stack.getItem();
-            int amount = Math.min(remaining, Math.min(item.transferRate(), item.capacity() - item.charge(stack)));
+            int amount = Math.min(remaining, Math.min(item.transferRate(stack), item.capacity(stack) - item.charge(stack)));
             if (amount <= 0) continue;
             item.setCharge(stack, item.charge(stack) + amount); remaining -= amount;
         }

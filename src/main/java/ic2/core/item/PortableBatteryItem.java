@@ -50,7 +50,7 @@ public final class PortableBatteryItem extends RechargeableItem {
         }
         ic2.api.item.ElectricItem cell = (ic2.api.item.ElectricItem) target.getItem();
         int stored = cell.charge(target);
-        int moved = Math.min(available, cell.capacity() - stored);
+        int moved = Math.min(available, cell.capacity(target) - stored);
         if (moved <= 0) {
             return false;
         }

@@ -18,7 +18,7 @@ public final class DisposableBatteryItem extends Item {
                 var target = player.getInventory().getItem(slot);
                 if (!RechargeableItem.supports(target, 32)) continue;
                 var item = (ic2.api.item.ElectricItem) target.getItem();
-                int amount = Math.min(remaining, item.capacity() - item.charge(target));
+                int amount = Math.min(remaining, item.capacity(target) - item.charge(target));
                 if (amount > 0) { item.setCharge(target, item.charge(target) + amount); remaining -= amount; }
             }
             if (remaining < 1000) { stack.shrink(1); player.getInventory().setChanged(); }
