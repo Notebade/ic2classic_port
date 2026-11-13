@@ -6,6 +6,12 @@ Base: `d2267319eb625c1b71c8dfe3607441f17da07a0e`, independent `ic2classic-port-g
 
 ### Implemented processor rollout
 
+EU icon follow-up: replaced the ambiguous three-rectangle energy mark with a
+shared native pixel lightning silhouette, yellow fill/highlight and dark outline.
+Used it beside the work-panel EU label and recipe energy cost; no font-dependent
+glyph or new texture. Offline JAR build passed. Reopened the existing numbered
+review world with the updated build, without replaying the automated tour.
+
 The common GUI now covers the 32 already implemented processors listed in
 `remastered-processors.md`. Generators, storage, reactors, monitoring/utility
 screens and unported machinery stay outside this rollout. `ProcessingMenu`

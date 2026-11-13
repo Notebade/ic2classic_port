@@ -247,7 +247,8 @@ class ProcessingMachineScreen<T extends net.minecraft.world.inventory.AbstractCo
     }
 
     private void work(GuiGraphics graphics) {
-        label(graphics, menu.energyCapacity() == 0 ? text("fuel") : Component.literal("EU"), 18, 39, RemasteredGui.GREEN);
+        if (menu.energyCapacity() > 0) RemasteredGui.lightning(graphics, 17, 36);
+        label(graphics, menu.energyCapacity() == 0 ? text("fuel") : Component.literal("EU"), menu.energyCapacity() == 0 ? 18 : 31, 39, RemasteredGui.TEXT);
         if (menu.energyCapacity() > 0) {
             label(graphics, Integer.toString(menu.storedEnergy()), 31, 65, RemasteredGui.TEXT);
             label(graphics, "/ " + menu.energyCapacity(), 31, 78, RemasteredGui.MUTED);
@@ -286,9 +287,7 @@ class ProcessingMachineScreen<T extends net.minecraft.world.inventory.AbstractCo
                 label(graphics, energy.longValue() + " EU", 173, 94, 0xff252b33);
                 label(graphics, text("recipe_seconds", seconds(ticks.intValue())), 173, 106, 0xff252b33);
                 label(graphics, (ticks.intValue() == 0 ? 0 : energy.longValue() / ticks.intValue()) + " EU/t", 173, 118, 0xff252b33);
-                graphics.fill(163, 94, 167, 99, 0xffffc237);
-                graphics.fill(160, 98, 166, 101, 0xffffc237);
-                graphics.fill(162, 100, 165, 104, 0xffffc237);
+                RemasteredGui.lightning(graphics, 160, 92);
                 graphics.pose().pushPose();
                 graphics.pose().translate(160, 105, 0);
                 graphics.pose().scale(.6f, .6f, 1);

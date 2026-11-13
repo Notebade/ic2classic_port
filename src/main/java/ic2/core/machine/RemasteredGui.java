@@ -11,6 +11,17 @@ final class RemasteredGui {
 
     private RemasteredGui() {}
 
+    /** Pixel lightning silhouette with a dark outline, independent of font glyphs. */
+    static void lightning(GuiGraphics graphics, int x, int y) {
+        int[][] rows = {{5,8}, {4,7}, {4,7}, {3,6}, {2,8}, {1,7}, {4,6}, {4,5}, {3,4}, {3,4}, {2,3}, {2,2}};
+        for (int row = 0; row < rows.length; row++)
+            graphics.fill(x + rows[row][0] - 1, y + row - 1, x + rows[row][1] + 2, y + row + 2, 0xff20242c);
+        for (int row = 0; row < rows.length; row++) {
+            graphics.fill(x + rows[row][0], y + row, x + rows[row][1] + 1, y + row + 1, 0xffffc42c);
+            graphics.fill(x + rows[row][0], y + row, x + rows[row][0] + 1, y + row + 1, 0xffffee83);
+        }
+    }
+
     static void background(GuiGraphics graphics, int x, int y) {
         frame(graphics, x, y, AlloyGuiLayout.WIDTH, AlloyGuiLayout.HEIGHT);
         graphics.fill(x + 6, y + 5, x + 250, y + 27, 0xffc4c8d0);
