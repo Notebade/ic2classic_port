@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:electric_hoe"
+  },
+  "pattern": [
+    "II ",
+    " C ",
+    " B "
+  ],
+  "key": {
+    "I": {
+      "tag": "c:ingots/refined_iron"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    },
+    "B": {
+      "item": "ic2:re_battery"
+    }
+  },
+  "category": "equipment"
+}

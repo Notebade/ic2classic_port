@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " II",
+    "ICI",
+    "BI "
+  ],
+  "key": {
+    "B": {
+      "item": "ic2:re_battery"
+    },
+    "I": {
+      "tag": "c:ingots/refined_iron"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:chainsaw"
+  }
+}

@@ -320,3 +320,7 @@ recipeFinished receives a detached result or ItemStack.EMPTY for chance-failed/p
 `ic2.api.item.ConfigurableTool`: `modes()` перечисляет устойчивые строковые значения; `mode(stack)` читает режим; `setMode(stack, mode)` возвращает false для чужого предмета/неизвестного режима без изменения данных. Меняйте на сервере. Для `diamond_drill`/`rock_cutter_drill`: normal/dirt; для `advanced_drill`: single/area. Режим сохраняется с ItemStack, переключение — Shift+ПКМ. Все три варианта реализуют MiningDrill, ElectricItem и ElectricEnchantable. В шахтёре MiningDrill выполняет одиночную операцию без разрушения 3×3.
 
 Рецепты `ic2:sized_shaped` используют стандартные поля shaped-рецепта плюс `counts`: объект `{ "minecraft:end_crystal": 3 }`, количества 1–64 по item ID. Проверяется каждая ячейка; форма, отражение, результат и компоненты стандартные. Указанные количества списываются в верстаке и ванильном Crafter. API остаётся v1.
+
+### Мотыги и бензопилы
+
+`electric_hoe`, `advanced_hoe`, `chainsaw`, `advanced_chainsaw` доступны через Ic2Api.item и ElectricItem, отдача EU запрещена. Мотыги расходуют 50/100 EU за изменённый блок; улучшенная хранит 100000 EU, принимает пакеты 512 EU и через ConfigurableTool предоставляет радиусы "0".."5". Обычная хранит 10000 EU/32 EU. Бензопилы хранят 10000 EU, принимают 32/512 EU и расходуют 50/100 EU за операцию; стрижка IShearable требует две операции. Действия инструментов используют стандартные NeoForge ItemAbilities/BlockToolModificationEvent, валка — стандартный BreakEvent. Прочие части экипировки пока переносятся.

@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "ic2:tool_hoe_bronze",
-    "ic2:tool_hoe_aluminium"
+    "ic2:tool_hoe_aluminium",
+    "ic2:electric_hoe",
+    "ic2:advanced_hoe"
   ]
 }

@@ -11,7 +11,6 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -21,7 +20,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -43,7 +41,7 @@ final class PoweredDrill extends RechargeableItem implements MiningDrill, Electr
         Kind(String id, int cost, float speed, int boost, int machineCost) { this.id = id; this.cost = cost; this.speed = speed; this.boost = boost; this.machineCost = machineCost; }
     }
     private PoweredDrill(Properties properties, Kind kind) {
-        super(properties.stacksTo(1).component(DataComponents.TOOL, new Tool(List.of(
+        super(properties.stacksTo(1).attributes(net.minecraft.world.item.PickaxeItem.createAttributes(net.minecraft.world.item.Tiers.WOOD, 0, -3)).component(DataComponents.TOOL, new Tool(List.of(
             Tool.Rule.deniesDrops(kind == Kind.ADVANCED ? BlockTags.INCORRECT_FOR_NETHERITE_TOOL : BlockTags.INCORRECT_FOR_DIAMOND_TOOL),
             Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_PICKAXE, kind.speed), Tool.Rule.minesAndDrops(BlockTags.MINEABLE_WITH_SHOVEL, kind.speed)), 1, 0)), 10000, 100, kind == Kind.ADVANCED ? 512 : 32);
         this.kind = kind;
@@ -81,7 +79,7 @@ final class PoweredDrill extends RechargeableItem implements MiningDrill, Electr
     }
     @Override public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity owner) {
         if (!level.isClientSide) {
-            consumeUse(stack);
+            if (state.getDestroySpeed(level, pos) != 0) consumeUse(stack);
             if (owner instanceof ServerPlayer player && kind == Kind.ADVANCED && mode(stack).equals("area") && !player.isShiftKeyDown() && charge(stack) >= 8 * kind.cost && miningArea.add(player.getUUID())) {
                 try { mineNeighbors(stack, player, pos); } finally { miningArea.remove(player.getUUID()); }
             }
@@ -99,19 +97,12 @@ final class PoweredDrill extends RechargeableItem implements MiningDrill, Electr
         }
     }
     @Override public List<String> modes() { return kind == Kind.ADVANCED ? List.of("single", "area") : List.of("normal", "dirt"); }
-    @Override public String mode(ItemStack stack) {
-        String mode = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getString("ic2_tool_mode");
-        return modes().contains(mode) ? mode : modes().getFirst();
-    }
-    @Override public boolean setMode(ItemStack stack, String mode) {
-        if (!stack.is(this) || !modes().contains(mode)) return false;
-        CompoundTag data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        data.putString("ic2_tool_mode", mode); stack.set(DataComponents.CUSTOM_DATA, CustomData.of(data)); return true;
-    }
+    @Override public String mode(ItemStack stack) { return ToolModes.read(this, stack); }
+    @Override public boolean setMode(ItemStack stack, String mode) { return ToolModes.write(this, this, stack, mode); }
     @Override public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!player.isShiftKeyDown()) return InteractionResultHolder.pass(player.getItemInHand(hand));
         var stack = player.getItemInHand(hand);
-        if (!level.isClientSide) setMode(stack, modes().get((modes().indexOf(mode(stack)) + 1) % modes().size()));
+        if (!level.isClientSide) ToolModes.next(this, this, stack);
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 }

@@ -24,3 +24,10 @@ First unit verified: .tools/equipment-first-unit-check.log (full server/addon su
 - Red: .tools/equipment-drills-red.log and .tools/equipment-fortune-red.log. Green: .tools/equipment-drills-final-check.log and .tools/equipment-fortune-take-check.log. Actual CraftingMenu take verifies full ingredient consumption and Fortune III assembly.
 - Source drill/scanner probing and audio remain for the equipment audit; row 8 stays open.
 - Auto-review rejected reverting JSON field-order churn because it might discard uncommitted recipes. Kept the files; no restore was executed.
+
+## Electric hoes and chainsaws
+
+- Added electric/advanced hoes with original capacity, tier, 50/100 EU per till, persisted radius 0..5 and native HOE_TILL events. Each target gets its own context, permission and loaded-chunk checks.
+- Added both chainsaws: source charging/speed, native stripping, real IShearable entity support, intact leaf/web drops and source powered combat. Advanced saw fells connected matching logs only when an attached crown is found; native server destruction preserves block protection and actual per-log charging.
+- Shared tool-mode serialization removes duplicate drill/hoe logic. Added source attack attributes and fixed zero-hardness mining to consume no EU.
+- Red: equipment-hoes-red.log, equipment-chainsaws-red.log, equipment-zero-hardness-red.log, equipment-chainsaw-combat-red.log. Green: equipment-hoes-check.log, equipment-utility-check.log, equipment-chainsaw-tree-check.log. Tests use real farmland, sheep shearing/combat, block loot and native tree destruction. Sound/probing/global equipment audit remains open.

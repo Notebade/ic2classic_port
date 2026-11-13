@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:advanced_hoe"
+  },
+  "pattern": [
+    "XYX",
+    "CVC",
+    "XBX"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:complex_circuit"
+    },
+    "Y": {
+      "item": "ic2:advanced_field_expansion_pad_upgrade"
+    },
+    "B": {
+      "item": "ic2:plate_iridium"
+    },
+    "X": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "V": {
+      "item": "ic2:electric_hoe"
+    }
+  },
+  "category": "equipment"
+}

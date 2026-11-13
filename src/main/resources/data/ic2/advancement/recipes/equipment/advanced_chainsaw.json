@@ -1,0 +1,76 @@
+{
+  "rewards": {
+    "recipes": [
+      "ic2:advanced_chainsaw"
+    ]
+  },
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_material_2": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:advanced_field_expansion_pad_upgrade"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_material_3": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:plate_iridium"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_material_0": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:complex_circuit"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ic2:advanced_chainsaw"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_material_4": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:chainsaw"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_material_1": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:netherite_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_material_2",
+      "has_material_3",
+      "has_material_0",
+      "has_the_recipe",
+      "has_material_4",
+      "has_material_1"
+    ]
+  ]
+}
