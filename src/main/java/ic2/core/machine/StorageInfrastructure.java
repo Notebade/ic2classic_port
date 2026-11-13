@@ -29,6 +29,8 @@ public final class StorageInfrastructure {
         items.registerSimpleBlockItem(BUFFER);
         items.registerSimpleBlockItem(PERSONAL);
         TOOLBOX = items.registerItem("toolbox", ToolboxItem::new, new net.minecraft.world.item.Item.Properties().stacksTo(1));
+        items.registerItem("carbon_box", p -> new ToolboxItem(p, 15));
+        items.registerItem("iridium_box", p -> new ToolboxItem(p, 45));
         bus.addListener((net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event)->event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ENTITY.get(), (storage,side)->storage.personal() ? null : storage.inventory));
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.level.BlockEvent.BreakEvent event)->{
             if (event.getLevel().getBlockEntity(event.getPos()) instanceof StorageEntity storage && !storage.allowed(event.getPlayer())) event.setCanceled(true);

@@ -31,3 +31,12 @@ First unit verified: .tools/equipment-first-unit-check.log (full server/addon su
 - Added both chainsaws: source charging/speed, native stripping, real IShearable entity support, intact leaf/web drops and source powered combat. Advanced saw fells connected matching logs only when an attached crown is found; native server destruction preserves block protection and actual per-log charging.
 - Shared tool-mode serialization removes duplicate drill/hoe logic. Added source attack attributes and fixed zero-hardness mining to consume no EU.
 - Red: equipment-hoes-red.log, equipment-chainsaws-red.log, equipment-zero-hardness-red.log, equipment-chainsaw-combat-red.log. Green: equipment-hoes-check.log, equipment-utility-check.log, equipment-chainsaw-tree-check.log. Tests use real farmland, sheep shearing/combat, block loot and native tree destruction. Sound/probing/global equipment audit remains open.
+
+## Toolboxes: storage and upgrades
+
+- Added carbon_box (15) and iridium_box (45), retained toolbox (8), tool-only insertion, non-nesting and detached public storage reads. Legacy non-tool contents remain extractable, never deleted on opening or upgrading.
+- Added Toolbox and BoxableItem public contracts plus ic2:toolbox_tools tag admission. Native tool/electric classes are recognized; addon-specific stacks can opt in. Extended boxes cycle tools with ownership checks; Shift+right-click exchanges the other held tool.
+- Backend menus reuse native container types, retain inaccessible padding and lock the held box. Native shift-click tests verify insertion/extraction and persistence for all three capacities; no client screen code changed.
+- Source nano_toolbox/quantum_toolbox recipes transfer contents, including charge components, without mutating inputs. ic2:toolbox_upgrade is a native shaped-recipe serializer with inventory transfer.
+- Red: equipment-toolboxes-red.log, equipment-toolbox-upgrade-red.log. Green: equipment-toolbox-menu-check.log covers all prior checks, admission, ownership, scroll conservation, all menus and both upgrade chains.
+- Diagnostic/food-can delegation and source mouse-wheel binding remain open; public scroll/backend storage are ready for that integration.

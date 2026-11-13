@@ -324,3 +324,11 @@ recipeFinished receives a detached result or ItemStack.EMPTY for chance-failed/p
 ### Мотыги и бензопилы
 
 `electric_hoe`, `advanced_hoe`, `chainsaw`, `advanced_chainsaw` доступны через Ic2Api.item и ElectricItem, отдача EU запрещена. Мотыги расходуют 50/100 EU за изменённый блок; улучшенная хранит 100000 EU, принимает пакеты 512 EU и через ConfigurableTool предоставляет радиусы "0".."5". Обычная хранит 10000 EU/32 EU. Бензопилы хранят 10000 EU, принимают 32/512 EU и расходуют 50/100 EU за операцию; стрижка IShearable требует две операции. Действия инструментов используют стандартные NeoForge ItemAbilities/BlockToolModificationEvent, валка — стандартный BreakEvent. Прочие части экипировки пока переносятся.
+
+### Ящики инструментов
+
+`ic2.api.item.Toolbox` у предметов `toolbox`/`carbon_box`/`iridium_box`: `slots()` = 8/15/45; `accepts(stack)` проверяет вставку; `stored(box, slot)` возвращает копию либо EMPTY; `store(box, slot, item)` копирует данные, неверная вставка возвращает false без изменения. Пишите на серверном потоке. Пустой стек очищает слот. Старое содержимое сохраняется, даже если новый фильтр его не принимает.
+
+`scroll(box, player, direction)` на сервере меняет удерживаемый инструмент с непустой ячейкой карбонового/квантового ящика; direction задаёт знак шага. Проверяет владение конкретным стеком ящика и допустимость вкладываемого инструмента; копия чужого/собственного ящика прав на инвентарь не даёт. В игре Shift+ПКМ ящиком обменивает инструмент в другой руке. Базовый ящик прокрутку не поддерживает.
+
+Для инструментов аддона: реализуйте `BoxableItem.canStoreInToolbox(stack)` либо добавьте item ID в тег `ic2:toolbox_tools`. Обычные TieredItem/ShearsItem/FishingRodItem/FlintAndSteelItem/BrushItem и ElectricItem уже принимаются. Вложенные ящики и предметы с запретом контейнеров не принимаются. Нативные рецепты `ic2:toolbox_upgrade` сохраняют DataComponents.CONTAINER при увеличении ёмкости. Диагностика ящиков ещё переносится.

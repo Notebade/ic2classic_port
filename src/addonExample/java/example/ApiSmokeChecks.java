@@ -41,6 +41,7 @@ public final class ApiSmokeChecks {
             PortableEnergyChecks.run(server.overworld());
             EquipmentChecks.run(server.overworld());
         UtilityToolChecks.run(server.overworld());
+        ToolboxChecks.run(server.overworld());
             PowerTierChecks.run(server.overworld());
             NetworkDistributionChecks.run(server.overworld());
             RecipeUnlockChecks.run(server.overworld());

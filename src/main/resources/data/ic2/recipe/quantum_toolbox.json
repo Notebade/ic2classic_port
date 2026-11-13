@@ -1,0 +1,20 @@
+{
+  "category": "equipment",
+  "result": {
+    "id": "ic2:iridium_box",
+    "count": 1
+  },
+  "type": "ic2:toolbox_upgrade",
+  "pattern": [
+    "XYX",
+    "XXX"
+  ],
+  "key": {
+    "Y": {
+      "item": "ic2:carbon_box"
+    },
+    "X": {
+      "item": "ic2:plate_iridium"
+    }
+  }
+}

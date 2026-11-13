@@ -10,11 +10,15 @@ import net.minecraft.world.item.ItemStack;
 
 final class ToolboxMenu extends AbstractContainerMenu {
     private final Container contents;
+    private final int capacity;
+    private final int physical;
 
-    ToolboxMenu(int id, Inventory player, Container contents, ItemStack box) {
-        super(MenuType.GENERIC_3x3, id);
+    ToolboxMenu(int id, Inventory player, Container contents, ItemStack box, int capacity) {
+        super(capacity == 8 ? MenuType.GENERIC_3x3 : capacity == 15 ? MenuType.GENERIC_9x2 : MenuType.GENERIC_9x5, id);
         this.contents = contents;
-        for (int i = 0; i < 9; i++) addSlot(new Slot(contents, i, 62 + i % 3 * 18, 17 + i / 3 * 18){
+        this.capacity = capacity; this.physical = contents.getContainerSize();
+        int columns = capacity == 8 ? 3 : 9;
+        for (int i = 0; i < physical; i++) addSlot(new Slot(contents, i, (capacity == 8 ? 62 : 8) + i % columns * 18, (capacity == 8 ? 17 : 18) + i / columns * 18){
 
             @Override
             public boolean mayPlace(ItemStack stack) {
@@ -23,11 +27,12 @@ final class ToolboxMenu extends AbstractContainerMenu {
 
             @Override
             public boolean mayPickup(Player owner) {
-                return getContainerSlot() < 8;
+                return getContainerSlot() < capacity;
             }
         });
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addPlayerSlot(player, box, 9 + row * 9 + col, 8 + col * 18, 84 + row * 18);
-        for (int col = 0; col < 9; col++) addPlayerSlot(player, box, col, 8 + col * 18, 142);
+        int inventoryY = capacity == 8 ? 84 : physical / 9 * 18 + 31;
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addPlayerSlot(player, box, 9 + row * 9 + col, 8 + col * 18, inventoryY + row * 18);
+        for (int col = 0; col < 9; col++) addPlayerSlot(player, box, col, 8 + col * 18, inventoryY + 58);
     }
 
     private void addPlayerSlot(Inventory player, ItemStack box, int index, int x, int y) {
@@ -57,7 +62,7 @@ final class ToolboxMenu extends AbstractContainerMenu {
         if (!slot.hasItem() || !slot.mayPickup(player)) return ItemStack.EMPTY;
         var stack = slot.getItem();
         var before = stack.copy();
-        if (!(index < 9 ? moveItemStackTo(stack, 9, slots.size(), true) : moveItemStackTo(stack, 0, 8, false))) return ItemStack.EMPTY;
+        if (!(index < physical ? moveItemStackTo(stack, physical, slots.size(), true) : moveItemStackTo(stack, 0, capacity, false))) return ItemStack.EMPTY;
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY); else slot.setChanged();
         slot.onTake(player, before.copyWithCount(before.getCount() - stack.getCount()));
         return before;
