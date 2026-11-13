@@ -48,3 +48,9 @@ Five colossal processing machines, electric enchanter and electric fisher; upgra
 - Added `EnergyPortOwner` and atomic `EuNetwork` port registration/removal/lookup. Plain wood blocks can now receive EU for a loaded, validated controller. API telemetry follows the same live owner; broken links and unloaded owners do not load chunks or receive energy. Existing real BlockEntity sinks keep priority.
 - `.tools/fisher-server-check.log` passed real input through a vanilla wood block, atomic rejection without loading distant chunks, container restrictions, starvation, progress/port restoration after reload, all actual item/components from the exact thirty-two seeded source loot rolls, and immediate revocation after remote timber damage.
 - The source fisher crafting pattern depends on the ranged pump from row 6. Its final working dependency/recipe still needs reconciliation before claiming the fisher acquisition path complete. No inert ingredient placeholder has been registered. General upgrades/network/restart verification remain open; visual work remains assigned to the parallel stage.
+
+## Chunkloader restart follow-up
+
+- Added validation of every persisted ticket against the owner's saved radius and processing mode, in addition to checking that the active powered controller still exists.
+- `scripts/Test-ChunkloaderRestart.ps1` passed **three independent server processes** sharing one isolated world. The first saves a valid owner plus injected missing-owner, wrong-radius and wrong-mode tickets; the second proves startup prunes only stale tickets and changes to processing mode; the third proves the ticking ticket survives another restart and is removed when the restored controller breaks.
+- Evidence: `.tools/chunkloader-restart-check.log` and `build/chunkloader-verification/{save,restore,ticking}.log`. The temporary addon is removed by the script. No gameplay instance/world is modified.

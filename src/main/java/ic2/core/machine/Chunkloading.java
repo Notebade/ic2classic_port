@@ -21,9 +21,14 @@ final class Chunkloading {
     static final Supplier<BlockEntityType<ChunkloaderEntity>> ENTITY = ENTITIES.register("chunkloader", () -> BlockEntityType.Builder.of(ChunkloaderEntity::new, BLOCK.get()).build(null));
     static final Supplier<MenuType<ChunkloaderMenu>> MENU = MENUS.register("chunkloader", () -> new MenuType<>(ChunkloaderMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final TicketController TICKETS = new TicketController(ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "chunkloader"), (level, helper) -> {
-        for (var owner : helper.getBlockTickets().keySet()) {
+        for (var entry : helper.getBlockTickets().entrySet()) {
+            var owner = entry.getKey();
             level.getChunkAt(owner);
             if (!(level.getBlockEntity(owner) instanceof ChunkloaderEntity entity) || !entity.savedActive()) helper.removeAllTickets(owner);
+            else {
+                for (long chunk : entry.getValue().nonTicking().toLongArray()) if (!entity.expectedTicket(chunk, false)) helper.removeTicket(owner, chunk, false);
+                for (long chunk : entry.getValue().ticking().toLongArray()) if (!entity.expectedTicket(chunk, true)) helper.removeTicket(owner, chunk, true);
+            }
         }
     });
 

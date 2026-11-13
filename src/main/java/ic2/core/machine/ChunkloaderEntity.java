@@ -30,6 +30,11 @@ final class ChunkloaderEntity extends BlockEntity implements MenuProvider, Energ
     ChunkloaderEntity(BlockPos pos, BlockState state) { super(Chunkloading.ENTITY.get(), pos, state); }
 
     boolean savedActive() { return active && energy >= ChunkloaderRules.cost(radius, processing); }
+    boolean expectedTicket(long packedChunk, boolean ticking) {
+        var chunk = new net.minecraft.world.level.ChunkPos(packedChunk);
+        return ticking == processing && Math.abs((long) chunk.x - (worldPosition.getX() >> 4)) <= radius
+            && Math.abs((long) chunk.z - (worldPosition.getZ() >> 4)) <= radius;
+    }
 
     void tick() {
         int cost = ChunkloaderRules.cost(radius, processing);
