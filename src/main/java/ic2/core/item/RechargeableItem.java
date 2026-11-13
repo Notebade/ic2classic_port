@@ -9,7 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
-public class RechargeableItem extends Item {
+public class RechargeableItem extends Item implements ic2.api.item.ElectricItem {
     private final int capacity;
     private final int transferRate;
     private final int minimumPacket;
@@ -26,8 +26,7 @@ public class RechargeableItem extends Item {
     }
 
     public static boolean supports(ItemStack stack, int machinePacket, boolean charging) {
-        return stack.getCount() == 1 && stack.getItem() instanceof RechargeableItem cell
-            && cell.minimumPacket <= machinePacket && (charging || cell.canProvideEnergy());
+        return ic2.api.item.ElectricItem.supports(stack, machinePacket, charging);
     }
 
     public boolean canProvideEnergy() {
@@ -42,7 +41,7 @@ public class RechargeableItem extends Item {
         return transferRate;
     }
 
-    protected final int minimumPacket() {
+    public final int minimumPacket() {
         return minimumPacket;
     }
 

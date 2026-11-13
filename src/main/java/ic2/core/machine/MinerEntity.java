@@ -83,13 +83,13 @@ final class MinerEntity extends BlockEntity implements EnergySink, MachineSnapsh
     private void chargeTools() {
         var stack = inventory.getStackInSlot(0);
         if (RechargeableItem.supports(stack, 128, false)) {
-            var battery = (RechargeableItem) stack.getItem(); int amount = Math.min(9000 - energy, Math.min(battery.charge(stack), battery.transferRate()));
+            var battery = (ic2.api.item.ElectricItem) stack.getItem(); int amount = Math.min(9000 - energy, Math.min(battery.charge(stack), battery.transferRate()));
             if (amount > 0) { battery.setCharge(stack, battery.charge(stack) - amount); energy += amount; setChanged(); }
         }
         if (energy < 100) return;
         for (int slot : new int[]{1, 3}) {
             stack = inventory.getStackInSlot(slot);
-            if (stack.getItem() instanceof RechargeableItem item) {
+            if (stack.getItem() instanceof ic2.api.item.ElectricItem item) {
                 int amount = Math.min(energy, item.capacity() - item.charge(stack));
                 if (amount > 0) { item.setCharge(stack, item.charge(stack) + amount); energy -= amount; setChanged(); }
             }

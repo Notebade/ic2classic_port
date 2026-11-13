@@ -415,7 +415,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     private void dischargeBattery() {
         ItemStack stack = inventory.getStackInSlot(0);
         if (!RechargeableItem.supports(stack, modifiers().packet(), false)) return;
-        RechargeableItem cell = (RechargeableItem) stack.getItem();
+        ic2.api.item.ElectricItem cell = (ic2.api.item.ElectricItem) stack.getItem();
         int stored = cell.charge(stack);
         int moved = Math.min(Math.min(stored, cell.transferRate()), modifiers().capacity() - energy);
         if (moved > 0) {

@@ -769,7 +769,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
 
     private void transferBattery(int slot, boolean charging) {
         ItemStack battery = inventory.getStackInSlot(slot);
-        if (!(battery.getItem() instanceof RechargeableItem cell) || !inventory.isItemValid(slot, battery)) {
+        if (!(battery.getItem() instanceof ic2.api.item.ElectricItem cell) || !inventory.isItemValid(slot, battery)) {
             return;
         }
         int charge = cell.charge(battery);

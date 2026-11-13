@@ -24,7 +24,7 @@ public final class NuclearInfrastructure {
     static net.neoforged.neoforge.registries.DeferredItem<net.minecraft.world.item.Item> COBBLEGEN;
     static {
         for (String id : new String[]{"generator_operating", "windmill_operating", "reactor_operating", "geiger_low", "geiger_med", "geiger_high",
-                "machine_furnace_operating", "machine_macerator_operating", "machine_extractor_operating", "machine_compressor_operating", "machine_recycler_operating", "machine_interruption"})
+                "machine_furnace_operating", "machine_macerator_operating", "machine_extractor_operating", "machine_compressor_operating", "machine_recycler_operating", "machine_interruption", "battery_charging"})
             SOUNDS.put(id, SOUND_EVENTS.register(id, ()->net.minecraft.sounds.SoundEvent.createVariableRangeEvent(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, id))));
     }
     static final DeferredBlock<MonitorBlock> MONITOR = BLOCKS.registerBlock("monitor", MonitorBlock::new, properties());

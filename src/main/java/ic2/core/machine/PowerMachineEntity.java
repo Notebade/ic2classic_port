@@ -90,13 +90,14 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
     private final IEnergyStorage fe = new IEnergyStorage() {
         @Override public int receiveEnergy(int amount, boolean simulate) { return 0; }
         @Override public int extractEnergy(int amount, boolean simulate) {
+            if (!accessible()) return 0;
             int extracted = Math.max(0, Math.min(amount, energy));
             if (!simulate && extracted > 0) { energy -= extracted; setChanged(); }
             return extracted;
         }
-        @Override public int getEnergyStored() { return energy; }
-        @Override public int getMaxEnergyStored() { return kind.capacity; }
-        @Override public boolean canExtract() { return true; }
+        @Override public int getEnergyStored() { return accessible() ? energy : 0; }
+        @Override public int getMaxEnergyStored() { return accessible() ? kind.capacity : 0; }
+        @Override public boolean canExtract() { return accessible(); }
         @Override public boolean canReceive() { return false; }
     };
     final ContainerData data = new ContainerData() {
@@ -111,7 +112,8 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
     PowerMachineEntity(BlockPos pos, BlockState state) { super(PowerMachines.ENTITY.get(), pos, state); }
     Direction front() { return getBlockState().getValue(BlockStateProperties.FACING); }
     int capacity() { return kind == PowerMachines.Kind.TRANSFORMER ? EnergyConversion.buffer(packet) : kind.capacity; }
-    private boolean accessible() { return !kind.multiblock() || formed(); }
+    private boolean live() { return level != null && !isRemoved() && level.hasChunkAt(worldPosition) && level.getBlockEntity(worldPosition) == this; }
+    private boolean accessible() { return live() && (!kind.multiblock() || formed()); }
     private int metric(int index) {
         if (chemical != null && index >= 13) return chemical.metric(index);
         return switch (index) {
@@ -320,10 +322,11 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
         inventory.setStackInSlot(slot, current.isEmpty() ? stack.copy() : current.copyWithCount(current.getCount() + stack.getCount()));
     }
     @Override public boolean canReceiveEnergy(Direction side, int sourceStorageOutput, int offered) {
-        return kind.input > 0 && offered <= kind.input && energy < capacity()
+        return live() && kind.input > 0 && offered <= kind.input && energy < capacity()
             && (kind == PowerMachines.Kind.TRANSFORMER ? side == front() : !kind.flux() || side != front());
     }
     @Override public int receiveEnergy(int available) {
+        if (!live()) return 0;
         int accepted = kind.flux() ? EnergyConversion.acceptedEu(energy, capacity(), available) : Math.max(0, Math.min(available, capacity() - energy));
         energy += accepted * (kind.flux() ? 4 : 1);
         if (accepted > 0) setChanged();

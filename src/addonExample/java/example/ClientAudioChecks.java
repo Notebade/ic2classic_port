@@ -20,7 +20,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 public final class ClientAudioChecks {
     private static final BlockPos POS = new BlockPos(100, 82, 100);
     private static int age;
-    private static SoundInstance muffled, normal;
+    private static SoundInstance muffled, normal, battery;
     private ClientAudioChecks() {}
     @SubscribeEvent public static void tick(ClientTickEvent.Post event) throws Exception {
         if (!Boolean.getBoolean("ic2.audio.verify")) return;
@@ -57,7 +57,25 @@ public final class ClientAudioChecks {
         }
         if (age == 180) {
             require(((TickableSoundInstance) normal).isStopped() && !client.getSoundManager().isActive(normal), "destroyed machine releases its loop");
-            com.mojang.logging.LogUtils.getLogger().info("IC2 client audio checks passed: real loops, muffler, mute, unmute and removed-block cleanup");
+            server.execute(() -> {
+                var player = server.getPlayerList().getPlayer(client.player.getUUID()); player.getInventory().clearContent(); player.getInventory().selected = 0;
+                var source = new ItemStack(Ic2Api.item(ResourceLocation.parse("ic2:re_battery")).orElseThrow());
+                ((ic2.core.item.RechargeableItem) source.getItem()).setCharge(source, 10000);
+                player.getInventory().setItem(0, source);
+                player.getInventory().setItem(1, new ItemStack(Ic2Api.item(ResourceLocation.parse("ic2:quantum_accumulator")).orElseThrow()));
+            });
+        }
+        if (age == 190) { client.player.getInventory().selected = 0; client.options.keyUse.setDown(true); client.gameMode.useItem(client.player, net.minecraft.world.InteractionHand.MAIN_HAND); }
+        if (age == 210) {
+            var field = Class.forName("ic2.core.machine.BatterySoundLoop").getDeclaredField("playing"); field.setAccessible(true);
+            battery = (SoundInstance) field.get(null);
+            require(battery != null && client.getSoundManager().isActive(battery), "portable hold-use plays its original battery loop; loop=" + battery + "; using=" + client.player.isUsingItem() + "; hand=" + client.player.getMainHandItem() + "; use=" + client.player.getUseItem());
+            client.options.keyUse.setDown(false);
+            client.gameMode.releaseUsingItem(client.player);
+        }
+        if (age == 230) {
+            require(((TickableSoundInstance) battery).isStopped() && !client.getSoundManager().isActive(battery), "releasing the portable battery stops its real sound loop");
+            com.mojang.logging.LogUtils.getLogger().info("IC2 client audio checks passed: real machine and portable battery loops, modifiers and cleanup");
             client.stop();
         }
     }

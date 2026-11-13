@@ -38,7 +38,7 @@ final class ChemicalTransfer {
     static int discharge(int energy, int capacity, int packet, ItemStackHandler inventory) {
         var stack = inventory.getStackInSlot(0);
         if (!RechargeableItem.supports(stack, packet, false)) return energy;
-        var cell = (RechargeableItem) stack.getItem();
+        var cell = (ic2.api.item.ElectricItem) stack.getItem();
         int moved = Math.min(Math.min(cell.transferRate(), cell.charge(stack)), capacity - energy);
         if (moved > 0) { cell.setCharge(stack, cell.charge(stack) - moved); inventory.setStackInSlot(0, stack); }
         return energy + moved;
@@ -55,7 +55,7 @@ final class ChemicalTransfer {
             @Override public boolean isItemValid(int slot, ItemStack stack) { return inventory.isItemValid(slots[slot], stack); }
         };
     }
-    static boolean discharged(ItemStack stack) { return stack.getItem() instanceof RechargeableItem item && item.charge(stack) == 0; }
+    static boolean discharged(ItemStack stack) { return stack.getItem() instanceof ic2.api.item.ElectricItem item && item.charge(stack) == 0; }
     static void push(ServerLevel level, BlockPos pos, IFluidHandler source, int limit) {
         int remaining = limit;
         for (var side : Direction.values()) {

@@ -65,7 +65,7 @@ final class ExtractionEntity extends BlockEntity implements EnergySink, MachineS
     private void dischargeBattery() {
         var stack = inventory.getStackInSlot(0);
         if (RechargeableItem.supports(stack, 128, false)) {
-            var battery = (RechargeableItem) stack.getItem();
+            var battery = (ic2.api.item.ElectricItem) stack.getItem();
             int amount = Math.min(2250 - energy, Math.min(battery.transferRate(), battery.charge(stack)));
             if (amount > 0) { battery.setCharge(stack, battery.charge(stack) - amount); energy += amount; setChanged(); }
         }

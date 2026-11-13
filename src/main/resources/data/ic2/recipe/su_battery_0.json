@@ -1,0 +1,24 @@
+{
+  "pattern": [
+    "C",
+    "R",
+    "D"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "ic2:copper_insulated_cable_item"
+    },
+    "D": {
+      "item": "ic2:dust_coal"
+    }
+  },
+  "category": "equipment",
+  "result": {
+    "id": "ic2:su_battery",
+    "count": 6
+  },
+  "type": "minecraft:crafting_shaped"
+}

@@ -51,3 +51,5 @@ Earlier gameplay commit `d226731` includes original pad/chunkloader screens, uti
 ## Ranged pump backend
 
 - Registered ranged_pump and its backend menu: three source roles (battery, pipes/backfill, fluid scanner), four data values (EU, progress/5, tank mB, capacity/5000). Source crafting path through accelerated pump/miner is complete, as is the original electric_fisher recipe. Common ExtractionMenu supplies the backend; no client screen/model/language files were changed.
+
+- New missing catalog item su_battery is functional, with six original recipes. Names/model/creative energy classification remain the graphics stage. The original portable battery audio loop is imported, registered and verified in a real client; no screen/layout files were changed.

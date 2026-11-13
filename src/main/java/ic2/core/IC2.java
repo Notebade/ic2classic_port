@@ -60,6 +60,7 @@ public final class IC2 {
         COMPONENTS.registerComponentType("battery_charge", builder -> builder
             .persistent(Codec.intRange(0, 50_000_000)));
     public static final DeferredItem<RechargeableItem> RE_BATTERY = rechargeable("re_battery", 10_000, 100, 32);
+    public static final DeferredItem<Item> SU_BATTERY = ITEMS.registerItem("su_battery", ic2.core.item.DisposableBatteryItem::new);
     public static final DeferredItem<RechargeableItem> ENERGY_CRYSTAL = rechargeable("energy_crystal", 100_000, 250, 128);
     public static final DeferredItem<RechargeableItem> LAPOTRON_CRYSTAL = rechargeable("lapatron_crystal", LAPOTRON_CAPACITY, 600, 512);
     public static final DeferredItem<RechargeableItem> GLOWTRONIC_CRYSTAL = rechargeable("glowtronic_crystal", 7_500_000, 2500, 512);
