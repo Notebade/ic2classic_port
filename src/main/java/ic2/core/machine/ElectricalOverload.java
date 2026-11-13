@@ -8,8 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 final class ElectricalOverload {
     static void destroy(BlockEntity input) {
-        BlockEntity owner = input instanceof PressurePartEntity part ? part.controller()
-            : input instanceof ColossalPartEntity part ? part.controller() : input;
+        BlockEntity owner = input instanceof EnergySink sink ? (BlockEntity) sink.networkOwner() : input;
         if (owner == null || owner.isRemoved() || !(owner.getLevel() instanceof ServerLevel level)
             || !level.hasChunkAt(owner.getBlockPos()) || level.getBlockEntity(owner.getBlockPos()) != owner) return;
         var origin = owner.getBlockPos(); var positions = new ArrayList<BlockPos>(); positions.add(origin);

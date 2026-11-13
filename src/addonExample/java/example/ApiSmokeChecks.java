@@ -39,6 +39,7 @@ public final class ApiSmokeChecks {
             OvervoltageChecks.run(server.overworld());
             PortableEnergyChecks.run(server.overworld());
             PowerTierChecks.run(server.overworld());
+            NetworkDistributionChecks.run(server.overworld());
             CableHazardChecks.run(server.overworld());
             TransportUpgradeChecks.run(server.overworld());
             var compression = Ic2Recipes.find(Process.COMPRESSION, new ItemStack(Items.COBBLED_DEEPSLATE)).orElseThrow();

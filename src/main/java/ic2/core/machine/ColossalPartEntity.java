@@ -12,6 +12,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 
 final class ColossalPartEntity extends BlockEntity implements EnergySink, MachineSnapshot.Access {
+    @Override public EnergySink networkOwner() { return controller(); }
     private BlockPos owner;
     ColossalPartEntity(BlockPos pos, BlockState state) { super(ColossalMachines.PART_ENTITY.get(), pos, state); }
 

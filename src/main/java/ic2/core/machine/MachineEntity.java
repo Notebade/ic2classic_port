@@ -1135,8 +1135,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
                 COMPRESSOR, PUMP, RECYCLER -> packetSize <= 32;
             case MASS_FABRICATOR -> packetSize <= 512 && !level.hasNeighborSignal(worldPosition);
             case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> canReceiveTransformerEnergy(incomingSide, packetSize);
-            // Only charge up the storage tiers, so a cable loop cannot feed energy back.
-            case BATBOX, MFE, MFSU, ESU, ISU, PESU -> packetSize <= kind.storageOutput && sourceStorageOutput < kind.storageOutput && incomingSide != outputSide();
+            case BATBOX, MFE, MFSU, ESU, ISU, PESU -> packetSize <= kind.storageOutput && incomingSide != outputSide();
         };
     }
 

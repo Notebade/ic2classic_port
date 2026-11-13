@@ -43,6 +43,7 @@ final class PressurePartEntity extends BlockEntity implements EnergySink, ic2.ap
     @Override public java.util.Optional<ic2.api.machine.MachineSnapshot> resolveMachineInfo() {
         return java.util.Optional.ofNullable(controller()).map(AdvancedMachineEntity::machineInfo);
     }
+    @Override public EnergySink networkOwner() { return controller(); }
 
     @Override public boolean canReceiveEnergy(Direction side, int sourceStorageOutput, int packet) {
         var controller = controller();
