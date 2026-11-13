@@ -4,6 +4,27 @@ Base: `d2267319eb625c1b71c8dfe3607441f17da07a0e`, independent `ic2classic-port-g
 
 ## Current layout revision
 
+Latest recipe revision: replaced the single large recipe with five visible 18px
+rows in NeoForge's existing `ScrollPanel`. The panel handles wheel input, scrollbar
+dragging and clipping; the adapter supplies recipe rows, selection and hover
+items. Buttons retain previous/next selection and reveal the selected row; arrow
+keys navigate a focused list. Recipe details occupy the right side with EU/t at
+y=118, clear of the lower edge and paging controls. No new dependency was added.
+
+Library research: inspected the installed NeoForge 21.1.219 `ScrollPanel` source
+and the official NeoForge GUI documentation. Also considered owo-ui's documented
+scroll containers (https://docs.wispforest.io/owo/ui/components/scroll-container)
+and NeoForge setup (https://docs.wispforest.io/owo/setup). The already available
+NeoForge primitive covers this feature without adopting another UI framework.
+
+Revision log: first reproduced the missing ScrollPanel with a failing real-client
+assertion. Added the adapter and five-row/detail layout, corrected the narration
+implementation against the installed API, then passed the full offline build and
+24 checks. Real-client wheel, sixth-row selection, repeated next-button wrap,
+four-tab and shift-click checks passed. Inspected screenshots showing five full
+rows and EU/t inside the panel. Launched in a separate copied world using the new
+RunName option and kept the verified client open for the user.
+
 Latest user revision: restored a single full 256x240 outer steel frame around
 both the machine and inventory. Kept native rendering, styled buttons, recessed
 inventory and verified slot coordinates. Removed unused split-frame dimensions.

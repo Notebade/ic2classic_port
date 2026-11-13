@@ -643,5 +643,6 @@
   "gui.ic2.remastered.upgrades_unavailable": "This machine does not support upgrade modules in the current implementation.",
   "gui.ic2.remastered.base_stats": "Base characteristics",
   "gui.ic2.remastered.capacity": "Energy capacity: %s EU",
-  "gui.ic2.remastered.packet_unlimited": "Input packet: no voltage limit in the existing machine logic."
+  "gui.ic2.remastered.packet_unlimited": "Input packet: no voltage limit in the existing machine logic.",
+  "gui.ic2.remastered.recipe_seconds": "%s s"
 }

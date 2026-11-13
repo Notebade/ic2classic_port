@@ -18,6 +18,7 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
     private List<MachineRecipeView> recipes = List.of();
     private Button previous;
     private Button next;
+    private MachineRecipePanel recipePanel;
     private ItemStack hoveredRecipe = ItemStack.EMPTY;
 
     AlloySmelterScreen(MachineMenu menu, Inventory inventory, Component title) {
@@ -36,9 +37,12 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
             addRenderableWidget(new RemasteredButton(leftPos + 8 + choice.ordinal() * 60, topPos + 24, 59, 20,
                 text("tab." + choice.name().toLowerCase(Locale.ROOT)), ignored -> select(choice), () -> tab == choice));
         }
-        previous = addRenderableWidget(new RemasteredButton(leftPos + 192, topPos + 125, 22, 18,
+        recipePanel = addRenderableWidget(new MachineRecipePanel(leftPos + 14, topPos + 51, recipes,
+            () -> recipeIndex, index -> recipeIndex = index, () -> tab == Tab.RECIPES, stack -> hoveredRecipe = stack));
+        recipePanel.reveal(recipeIndex);
+        previous = addRenderableWidget(new RemasteredButton(leftPos + 192, topPos + 130, 22, 12,
             Component.literal("<"), ignored -> changeRecipe(-1), () -> false));
-        next = addRenderableWidget(new RemasteredButton(leftPos + 220, topPos + 125, 22, 18,
+        next = addRenderableWidget(new RemasteredButton(leftPos + 220, topPos + 130, 22, 12,
             Component.literal(">"), ignored -> changeRecipe(1), () -> false));
         select(tab);
     }
@@ -51,7 +55,10 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
     }
 
     private void changeRecipe(int delta) {
-        if (!recipes.isEmpty()) recipeIndex = Math.floorMod(recipeIndex + delta, recipes.size());
+        if (!recipes.isEmpty()) {
+            recipeIndex = Math.floorMod(recipeIndex + delta, recipes.size());
+            recipePanel.reveal(recipeIndex);
+        }
     }
 
     @Override public void removed() {
@@ -84,7 +91,7 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
         graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, RemasteredGui.TEXT, false);
         switch (tab) {
             case WORK -> work(graphics);
-            case RECIPES -> recipe(graphics, mouseX - leftPos, mouseY - topPos);
+            case RECIPES -> recipe(graphics);
             case UPGRADES -> upgrades(graphics);
             case ENERGY -> energy(graphics);
         }
@@ -111,31 +118,22 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
         }
     }
 
-    private void recipe(GuiGraphics graphics, int mouseX, int mouseY) {
+    private void recipe(GuiGraphics graphics) {
         if (recipes.isEmpty()) {
             label(graphics, text("no_recipes"), 18, 60, RemasteredGui.MUTED);
             return;
         }
         MachineRecipeView recipe = recipes.get(recipeIndex);
-        label(graphics, text("recipe_page", recipeIndex + 1, recipes.size()), 18, 54, RemasteredGui.TEXT);
-        recipeItem(graphics, recipe.inputs().get(0), 30, 76, mouseX, mouseY);
-        label(graphics, "+", 68, 80, RemasteredGui.TEXT);
-        recipeItem(graphics, recipe.inputs().get(1), 94, 76, mouseX, mouseY);
-        label(graphics, ">", 140, 80, RemasteredGui.ORANGE);
-        recipeItem(graphics, recipe.outputs().getFirst(), 182, 76, mouseX, mouseY);
-        label(graphics, text("recipe_cost", KIND.recipeTicks * KIND.energyPerTick), 18, 108, RemasteredGui.GREEN);
-        label(graphics, text("duration", seconds(KIND.recipeTicks)), 18, 122, RemasteredGui.MUTED);
-        label(graphics, KIND.energyPerTick + " EU/t", 18, 138, RemasteredGui.MUTED);
-    }
-
-    private void recipeItem(GuiGraphics graphics, MachineRecipeView.Slot slot, int x, int y, int mouseX, int mouseY) {
-        RemasteredGui.slot(graphics, x, y);
-        if (slot.items().isEmpty()) return;
-        int cycle = (int) (minecraft.level.getGameTime() / 20 % slot.items().size());
-        ItemStack stack = slot.items().get(cycle);
-        graphics.renderItem(stack, x, y);
-        graphics.renderItemDecorations(font, stack, x, y);
-        if (mouseX >= x && mouseX < x + 16 && mouseY >= y && mouseY < y + 16) hoveredRecipe = stack;
+        label(graphics, text("recipe_page", recipeIndex + 1, recipes.size()), 160, 54, RemasteredGui.TEXT);
+        var output = recipe.outputs().getFirst().items();
+        if (!output.isEmpty()) {
+            var lines = font.split(output.getFirst().getHoverName(), 82);
+            for (int i = 0; i < Math.min(2, lines.size()); i++)
+                graphics.drawString(font, lines.get(i), 160, 68 + i * 9, RemasteredGui.MUTED, false);
+        }
+        label(graphics, KIND.recipeTicks * KIND.energyPerTick + " EU", 160, 96, RemasteredGui.GREEN);
+        label(graphics, text("recipe_seconds", seconds(KIND.recipeTicks)), 160, 107, RemasteredGui.MUTED);
+        label(graphics, KIND.energyPerTick + " EU/t", 160, 118, RemasteredGui.MUTED);
     }
 
     private void upgrades(GuiGraphics graphics) {

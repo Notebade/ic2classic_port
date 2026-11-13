@@ -57,8 +57,18 @@ public final class RemasteredClientChecks {
             int tab = (age - 90) / 30;
             Screenshot.grab(client.gameDirectory, "remastered-" + tab + ".png", client.getMainRenderTarget(), ignored -> {});
         }
-        if (age == 125) screen(client).children().stream().filter(Button.class::isInstance).map(Button.class::cast)
-            .filter(button -> button.getMessage().getString().equals(">")).findFirst().orElseThrow().onPress();
+        if (age == 115) {
+            var panel = recipePanel(client);
+            double x = (screen(client).width - 256) / 2.0 + 30;
+            double y = (screen(client).height - 240) / 2.0 + 65;
+            if (!screen(client).mouseScrolled(x, y, 0, -1)) throw new AssertionError("Recipe wheel ignored");
+            if (!panel.mouseClicked(x, y + 72, 0)) throw new AssertionError("Scrolled recipe row not selectable");
+        }
+        if (age == 125) {
+            for (int i = 0; i < 6; i++) screen(client).children().stream().filter(Button.class::isInstance).map(Button.class::cast)
+                .filter(button -> button.getMessage().getString().equals(">")).findFirst().orElseThrow().onPress();
+            Screenshot.grab(client.gameDirectory, "remastered-recipes-scrolled.png", client.getMainRenderTarget(), ignored -> {});
+        }
         if (age == 190) {
             tab(client, 0).onPress();
             client.gameMode.handleInventoryMouseClick(client.player.containerMenu.containerId, 0, 0,
@@ -102,6 +112,13 @@ public final class RemasteredClientChecks {
                 || !screen.getClass().getSimpleName().equals("AlloySmelterScreen"))
             throw new AssertionError("Expected Remastered alloy screen, got " + client.screen);
         return screen;
+    }
+
+    private static net.neoforged.neoforge.client.gui.widget.ScrollPanel recipePanel(Minecraft client) {
+        return screen(client).children().stream()
+            .filter(net.neoforged.neoforge.client.gui.widget.ScrollPanel.class::isInstance)
+            .map(net.neoforged.neoforge.client.gui.widget.ScrollPanel.class::cast).findFirst()
+            .orElseThrow(() -> new AssertionError("Recipes need a ready-made NeoForge ScrollPanel"));
     }
 
     private static Button tab(Minecraft client, int index) {
