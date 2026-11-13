@@ -29,6 +29,7 @@ public final class Equipment {
         items.registerItem("mowing_tool", PoweredMower::new);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST, PoweredMower::collectDrops);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(Equipment::tickArmor);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ArmorFalls::fall);
     }
     private static void tickArmor(net.neoforged.neoforge.event.tick.PlayerTickEvent.Post event) {
         var player = event.getEntity();

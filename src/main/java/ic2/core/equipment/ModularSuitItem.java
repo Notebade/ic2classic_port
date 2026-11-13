@@ -25,7 +25,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /** Module custody and derived EU configuration change together; rejected operations preserve caller stacks. */
-final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTickItem, ProtectiveArmor, ElectricEnchantable {
+final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTickItem, ProtectiveArmor, FallProtectiveArmor, ElectricEnchantable {
     private static final TagKey<DamageType> MAGIC = TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.parse("ic2:armor_magic"));
     private final Type piece;
     ModularSuitItem(Holder<ArmorMaterial> material, Type piece, Properties properties) { super(material, piece, properties); this.piece = piece; }
@@ -140,6 +140,12 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
         setCharge(stack, charge(stack) - ElectricEquipment.energyCost(stack, (int) Math.min(Integer.MAX_VALUE, (long) damage * 800)));
     }
     @Override public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) { return false; }
+    @Override public int absorbFall(ItemStack stack, Player wearer, int damage, boolean simulate) {
+        if (!stack.is(this) || piece != Type.BOOTS || stack.getCount() != 1 || damage <= 0) return 0;
+        int absorbed = Math.min(damage, Math.min(enhanced(stack) ? Integer.MAX_VALUE : 11, charge(stack) / 800));
+        if (!simulate && absorbed > 0) setCharge(stack, charge(stack) - absorbed * 800);
+        return absorbed;
+    }
     @Override public boolean isEnchantable(ItemStack stack) { return false; }
     @Override public boolean makesPiglinsNeutral(ItemStack stack, LivingEntity wearer) { return features(stack).contains(ArmorModule.id("golden")); }
     @Override public boolean acceptsElectricEnchantment(ItemStack stack, Holder<Enchantment> enchantment, boolean anvil) { return !enchantment.is(Enchantments.MENDING); }

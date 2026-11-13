@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -21,7 +22,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-public final class Hazmat extends ArmorItem {
+public final class Hazmat extends ArmorItem implements ic2.api.item.FallProtectiveArmor {
     private static final DeferredRegister<ArmorMaterial> MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, IC2.MOD_ID);
     private static final DeferredHolder<ArmorMaterial, ArmorMaterial> MATERIAL = MATERIALS.register("hazmat", () ->
         new ArmorMaterial(Map.of(Type.HELMET, 1, Type.CHESTPLATE, 3, Type.LEGGINGS, 2, Type.BOOTS, 1, Type.BODY, 0),
@@ -58,6 +59,12 @@ public final class Hazmat extends ArmorItem {
             && wears(entity, EquipmentSlot.CHEST, Type.CHESTPLATE)
             && wears(entity, EquipmentSlot.LEGS, Type.LEGGINGS)
             && wears(entity, EquipmentSlot.FEET, Type.BOOTS);
+    }
+    @Override public int absorbFall(ItemStack stack, Player wearer, int damage, boolean simulate) {
+        if (!stack.is(this) || getType() != Type.BOOTS || stack.getCount() != 1 || damage <= 0) return 0;
+        int absorbed = Math.min(damage, Math.min(11, 2 * (stack.getMaxDamage() - stack.getDamageValue())));
+        if (!simulate && absorbed > 0) stack.hurtAndBreak((absorbed + 1) / 2, wearer, EquipmentSlot.FEET);
+        return absorbed;
     }
 
     private static boolean wears(LivingEntity entity, EquipmentSlot slot, Type type) {
