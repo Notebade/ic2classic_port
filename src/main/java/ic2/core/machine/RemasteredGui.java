@@ -12,10 +12,7 @@ final class RemasteredGui {
     private RemasteredGui() {}
 
     static void background(GuiGraphics graphics, int x, int y) {
-        frame(graphics, x + AlloyGuiLayout.INVENTORY_X, y + AlloyGuiLayout.INVENTORY_Y,
-            AlloyGuiLayout.INVENTORY_WIDTH, AlloyGuiLayout.INVENTORY_HEIGHT);
-        // A wide machine cap sits on the narrower inventory; no side wings below it.
-        frame(graphics, x, y, AlloyGuiLayout.WIDTH, 148);
+        frame(graphics, x, y, AlloyGuiLayout.WIDTH, AlloyGuiLayout.HEIGHT);
         graphics.fill(x + 6, y + 5, x + 250, y + 21, 0xffb2bac3);
         graphics.fill(x + 8, y + 21, x + 248, y + 22, ORANGE);
         recess(graphics, x + 8, y + 48, 240, 96);

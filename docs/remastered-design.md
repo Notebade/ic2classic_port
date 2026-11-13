@@ -4,6 +4,11 @@ Base: `d2267319eb625c1b71c8dfe3607441f17da07a0e`, independent `ic2classic-port-g
 
 ## Current layout revision
 
+Latest user revision: restored a single full 256x240 outer steel frame around
+both the machine and inventory. Kept native rendering, styled buttons, recessed
+inventory and verified slot coordinates. Removed unused split-frame dimensions.
+The T-shaped composition described below records the previous iteration.
+
 The user selected a T-shaped composition and then requested native rendering in
 place of a generated frame. The production screen now uses code-drawn beveled
 steel frames: a wide 256x148 machine cap above a centered 176x94 inventory panel.
