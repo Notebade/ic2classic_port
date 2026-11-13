@@ -1,0 +1,27 @@
+{
+  "key": {
+    "V": {
+      "item": "ic2:re_battery"
+    },
+    "C": {
+      "item": "ic2:turbine_blade"
+    },
+    "X": {
+      "tag": "c:ingots/refined_iron"
+    },
+    "Y": {
+      "item": "ic2:circuit"
+    }
+  },
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "XYX",
+    "XVX"
+  ],
+  "result": {
+    "id": "ic2:mowing_tool",
+    "count": 1
+  },
+  "category": "equipment"
+}

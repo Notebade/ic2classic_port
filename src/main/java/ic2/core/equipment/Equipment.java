@@ -15,5 +15,7 @@ public final class Equipment {
         items.registerItem("advanced_hoe", p -> new PoweredHoe(p, true));
         items.registerItem("chainsaw", p -> new PoweredChainsaw(p, false));
         items.registerItem("advanced_chainsaw", p -> new PoweredChainsaw(p, true));
+        items.registerItem("mowing_tool", PoweredMower::new);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST, PoweredMower::collectDrops);
     }
 }

@@ -1,0 +1,65 @@
+{
+  "rewards": {
+    "recipes": [
+      "ic2:mowing_tool"
+    ]
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_material_0",
+      "has_material_2",
+      "has_material_1",
+      "has_material_3"
+    ]
+  ],
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ic2:mowing_tool"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_material_0": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:re_battery"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_material_2": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:ingots/refined_iron"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_material_1": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:turbine_blade"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_material_3": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:circuit"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "parent": "minecraft:recipes/root"
+}

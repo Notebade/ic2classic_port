@@ -40,3 +40,11 @@ First unit verified: .tools/equipment-first-unit-check.log (full server/addon su
 - Source nano_toolbox/quantum_toolbox recipes transfer contents, including charge components, without mutating inputs. ic2:toolbox_upgrade is a native shaped-recipe serializer with inventory transfer.
 - Red: equipment-toolboxes-red.log, equipment-toolbox-upgrade-red.log. Green: equipment-toolbox-menu-check.log covers all prior checks, admission, ownership, scroll conservation, all menus and both upgrade chains.
 - Diagnostic/food-can delegation and source mouse-wheel binding remain open; public scroll/backend storage are ready for that integration.
+
+## Mowing tool
+
+- Added mowing_tool, source recipe and persistent off/on modes through ConfigurableTool. Right-click toggles; selected/offhand server ticks act every five ticks.
+- Clears the original 3x3x3 bush/leaf targets while excluding CropBlock, uses native protected destruction and imports loot through BlockDropsEvent. Full inventory leaves excess drops to native world spawning. AXE_SCRAPE behavior is retained.
+- Source block cost is 5 EU; manual nonzero-hardness mining uses 1 EU and the automatic harvesting guard prevents double debit. Entity ray hits now spend the advertised 1 EU; the original omitted this debit, which permitted free damage while holding charge.
+- Red: equipment-mower-red.log and equipment-mower-manual-red.log. Green: equipment-mower-final-check.log. Checks cover activation, empty denial, protection, crop exclusion, seven exact imports/35 EU, full-inventory overflow, copper scraping, real entity damage and manual mining.
+- Overflow fixture initially queried a hidden entity section before the first server tick. Primary entity-manager source confirmed that lookup excludes such sections. The test now observes actual uncancelled entity-spawn events; the ray target explicitly participates in entity lookup. No production loot workaround was needed.

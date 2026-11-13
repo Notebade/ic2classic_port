@@ -65,3 +65,5 @@ Drill IDs diamond_drill, advanced_drill, rock_cutter_drill added. Public Configu
 Electric/advanced hoes and chainsaws added: electric_hoe, advanced_hoe, chainsaw, advanced_chainsaw. Advanced hoe ConfigurableTool modes are radius strings 0..5; Shift+right-click cycles. Original gameplay recipes and tags supplied. Names/models/creative grouping remain the graphics stage; no screen/layout changed.
 
 Toolbox backend now has source capacities 8/15/45: toolbox, carbon_box, iridium_box. Extended storage reuses native 9x2/9x5 menus (carbon has three blocked padding slots); the base keeps its existing 3x3 backend/eight active slots. No client screen changed. Public Toolbox.scroll and Shift+right-click other-hand exchange are ready; source mouse-wheel/key binding and visual layout remain for the client stage. Original upgrade recipes preserve contents/EU.
+
+mowing_tool added with off/on ConfigurableTool mode, normal right-click toggle, source recipe and server-held operation. Models/names/creative classification remain with graphics. No screen or client layout changed.
