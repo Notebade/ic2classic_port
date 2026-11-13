@@ -24,6 +24,9 @@ public final class EnergyNetwork {
 
         while (!pending.isEmpty()) {
             Route route = pending.remove();
+            if (!level.hasChunkAt(route.position())) continue;
+            if (!route.position().equals(source) && (!(level.getBlockState(route.position()).getBlock() instanceof EnergyCableBlock cable)
+                || !cable.canCarry(level.getBlockState(route.position()), 0))) continue;
             if (!visited.add(route.position())) {
                 continue;
             }
@@ -43,14 +46,18 @@ public final class EnergyNetwork {
                 var entity = level.getBlockEntity(next);
                 var machine = entity instanceof ic2.api.energy.EnergySink sink ? sink : level instanceof net.minecraft.server.level.ServerLevel server
                     ? ic2.api.internal.EnergyPortRegistry.resolve(server, next).orElse(null) : null;
+                int incoming = machine instanceof ic2.api.energy.OvervoltageHandler ? remaining - loss : available;
                 if (!next.equals(source) && machine != null
-                    && machine.canReceiveEnergy(direction.getOpposite(), sourceStorageOutput, available)) {
+                    && machine.canReceiveEnergy(direction.getOpposite(), sourceStorageOutput, incoming)) {
                     int accepted = Math.clamp(machine.receiveEnergy(remaining - loss), 0, remaining - loss);
                     if (accepted > 0) {
                         remaining -= accepted + loss;
                         recordTransfer(level, route.meters(), accepted, loss);
                         if (route.cables() != null) supplied.merge(route.cables(), accepted, Integer::sum);
                     }
+                } else if (!next.equals(source) && machine instanceof ic2.api.energy.OvervoltageHandler handler
+                    && machine.canReceiveEnergy(direction.getOpposite(), sourceStorageOutput, 1)) {
+                    handler.onOvervoltage(direction.getOpposite(), incoming);
                 }
                 var state = level.getBlockState(next);
                 if (state.getBlock() instanceof EnergyCableBlock cable && cable.canCarry(state, 0)

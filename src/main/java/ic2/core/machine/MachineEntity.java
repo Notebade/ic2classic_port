@@ -1132,11 +1132,11 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
             case VACUUM_CANNER, REACTOR_PLANNER -> packetSize <= MachineKind.MFE.storageOutput;
             case URANIUM_ENRICHER -> packetSize <= UraniumEnrichment.PACKET_LIMIT;
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
-                COMPRESSOR, PUMP, RECYCLER -> true;
-            case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
+                COMPRESSOR, PUMP, RECYCLER -> packetSize <= 32;
+            case MASS_FABRICATOR -> packetSize <= 512 && !level.hasNeighborSignal(worldPosition);
             case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> canReceiveTransformerEnergy(incomingSide, packetSize);
             // Only charge up the storage tiers, so a cable loop cannot feed energy back.
-            case BATBOX, MFE, MFSU, ESU, ISU, PESU -> sourceStorageOutput < kind.storageOutput && incomingSide != outputSide();
+            case BATBOX, MFE, MFSU, ESU, ISU, PESU -> packetSize <= kind.storageOutput && sourceStorageOutput < kind.storageOutput && incomingSide != outputSide();
         };
     }
 

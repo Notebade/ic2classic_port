@@ -31,7 +31,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
-final class ElectricFisherEntity extends BlockEntity implements EnergyPortOwner, MachineSnapshot.Provider {
+final class ElectricFisherEntity extends BlockEntity implements EnergyPortOwner, EnergySink, MachineSnapshot.Provider {
     private static final ResourceKey<LootTable> LOOT = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath("ic2", "electric_fisher"));
     private int energy, progress, length;
     private boolean formed, registered;

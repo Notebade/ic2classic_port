@@ -292,3 +292,7 @@ The miner now consumes the public MiningDrill/WorldScanner contracts, including 
 ### Native ranged pump
 
 `ranged_pump` accepts WorldScanner items with scansFluids=true. Slots: 0 battery, 1 pipes/backfill, 2 scanner. Its snapshot reports input_packet_eu=128, progress_units/target=5, fluid_mb, queued_targets, searching and pipe_tip_y; capacity=5000 EU. The tank is extraction-only and DOWN fluid/item access is disabled. Search uses up to 32 positions per controller tick and loaded chunks only. Target/queue/progress persist; an incomplete derived search restarts after reload. The source fisher acquisition recipe is now present with its real ranged-pump dependency.
+
+### Optional overvoltage behavior
+
+Existing `EnergySink` implementations keep their packet-rejection semantics. An addon may instead implement `ic2.api.energy.OvervoltageHandler`. Its positive-packet acceptance must be monotone: an accepted one-EU probe establishes an active input; rejection of the actual larger packet invokes `onOvervoltage(side, packet)` instead of receipt. This contract receives packet sizes after cable loss. The addon owns its fuse/damage behavior; IC2 does not destroy addon blocks automatically and records zero EU received for the overload callback. Native sinks implement this contract with source electrical explosions. A full/disabled/wrong-side sink that rejects one EU receives no overload callback. Both paths are verified by actual registered blocks of the separately compiled addon.

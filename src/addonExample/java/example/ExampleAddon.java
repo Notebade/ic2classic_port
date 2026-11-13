@@ -25,6 +25,7 @@ public final class ExampleAddon {
     public ExampleAddon(IEventBus modBus) {
         if (Ic2Api.version() != 1) throw new IllegalStateException("This addon needs IC2 API v1");
         ITEMS.register(modBus);
+        AddonEnergyFixtures.register(modBus);
         if (System.getProperty("ic2.chunkloader.phase") != null)
             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ChunkloaderRestartChecks::run);
         modBus.addListener(this::setup);

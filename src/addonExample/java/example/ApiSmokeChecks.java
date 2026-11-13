@@ -36,6 +36,7 @@ public final class ApiSmokeChecks {
             MiningToolChecks.run(server.overworld());
             MinerChecks.run(server.overworld());
             RangedPumpChecks.run(server.overworld());
+            OvervoltageChecks.run(server.overworld());
             CableHazardChecks.run(server.overworld());
             TransportUpgradeChecks.run(server.overworld());
             var compression = Ic2Recipes.find(Process.COMPRESSION, new ItemStack(Items.COBBLED_DEEPSLATE)).orElseThrow();

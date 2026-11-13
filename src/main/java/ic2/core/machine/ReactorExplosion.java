@@ -33,21 +33,24 @@ public final class ReactorExplosion {
     private final float power;
     private final Explosion event;
     private final AABB bounds;
+    private final boolean electrical;
     private final Map<BlockPos, Hit> blocks = new LinkedHashMap<>();
     private final Map<Entity, Vec3> motion = new LinkedHashMap<>();
     private List<Entity> entities;
 
-    private ReactorExplosion(ServerLevel level, BlockPos pos, float power) {
+    private ReactorExplosion(ServerLevel level, BlockPos pos, float power, boolean electrical) {
         this.level = level;
-        this.origin = Vec3.atLowerCornerOf(pos);
+        this.electrical = electrical;
+        this.origin = electrical ? Vec3.atCenterOf(pos) : Vec3.atLowerCornerOf(pos);
         this.power = power;
         event = new Explosion(level, null, origin.x, origin.y, origin.z, (float)ReactorBlastMath.radius(power), false, Explosion.BlockInteraction.DESTROY);
         bounds = new AABB(pos).inflate(ReactorBlastMath.radius(power));
     }
 
     public static void detonate(ServerLevel level, BlockPos pos, float power) {
-        if (Float.isFinite(power) && power > 0) new ReactorExplosion(level, pos, power).run();
+        if (Float.isFinite(power) && power > 0) new ReactorExplosion(level, pos, power, false).run();
     }
+    static void detonateElectrical(ServerLevel level, BlockPos pos) { new ReactorExplosion(level, pos, 2.5F, true).run(); }
 
     private void run() {
         if (EventHooks.onExplosionStart(level, event)) return;
@@ -59,7 +62,7 @@ public final class ReactorExplosion {
         for (var pos : new java.util.LinkedHashSet<>(event.getToBlow())) {
             var hit = blocks.get(pos);
             if (hit == null || !level.hasChunkAt(pos)) continue;
-            if (hit.drops() && level.random.nextFloat() <= 0.01F && hit.state().canDropFromExplosion(level, pos, event)) Block.dropResources(hit.state(), level, pos, level.getBlockEntity(pos));
+            if (hit.drops() && level.random.nextFloat() <= (electrical ? 0.75F : 0.01F) && hit.state().canDropFromExplosion(level, pos, event)) Block.dropResources(hit.state(), level, pos, level.getBlockEntity(pos));
             hit.state().onBlockExploded(level, pos, event);
         }
         for (var entry : motion.entrySet()) {
@@ -69,7 +72,7 @@ public final class ReactorExplosion {
         }
         level.playSound(null, origin.x, origin.y, origin.z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4, (1 + (level.random.nextFloat() - level.random.nextFloat()) * 0.2F) * 0.7F);
         level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, origin.x, origin.y, origin.z, 1, 0, 0, 0, 0);
-        Radiation.exposeToFallout(level, origin);
+        if (!electrical) Radiation.exposeToFallout(level, origin);
     }
 
     private void ray(Vec3 start, double phi, double theta, double strength, boolean damageEntities) {
@@ -108,7 +111,7 @@ public final class ReactorExplosion {
         for (var entity : entities) {
             if (!entity.ignoreExplosion(event) && entity.position().distanceTo(point) <= strength / 1.5) {
                 double distance = entity.position().distanceTo(origin);
-                entity.hurt(Radiation.nuclearDamage(level), ReactorBlastMath.damage(strength, distance));
+                entity.hurt(electrical ? ElectricHazards.source(level) : Radiation.nuclearDamage(level), ReactorBlastMath.damage(strength, distance));
                 if (!entity.isAlive()) {
                     motion.remove(entity);
                     continue;
