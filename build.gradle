@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'ic2'
-version = '0.67.0'
+version = '0.68.0'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -44,7 +44,8 @@ def standaloneChecks = [
     verifyEnergyExpansion: 'ic2.core.machine.EnergyExpansionTest',
     verifyAddonRegistry: 'ic2.api.internal.ExtensionRegistryTest',
     verifyGeneratorExpansion: 'ic2.core.machine.GeneratorExpansionTest',
-    verifyChemistryCycles: 'ic2.core.machine.ChemistryCycleTest'
+    verifyChemistryCycles: 'ic2.core.machine.ChemistryCycleTest',
+    verifyChargingDistribution: 'ic2.core.machine.ChargingDistributionTest'
 ]
 standaloneChecks.each { taskName, entryPoint ->
     tasks.register(taskName, Exec) {

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/electric/charging_bench/mv/down",
+    "up": "ic2:block/electric/charging_bench/mv/up",
+    "north": "ic2:block/electric/charging_bench/mv/missing_side",
+    "south": "ic2:block/electric/charging_bench/mv/missing_side",
+    "east": "ic2:block/electric/charging_bench/mv/missing_side",
+    "west": "ic2:block/electric/charging_bench/mv/missing_side",
+    "particle": "ic2:block/electric/charging_bench/mv/missing_side"
+  }
+}

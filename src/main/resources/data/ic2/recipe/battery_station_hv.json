@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "CVC",
+    "CBC"
+  ],
+  "key": {
+    "X": {
+      "item": "ic2:rubber"
+    },
+    "Y": {
+      "item": "ic2:glassfiber_cable_item"
+    },
+    "C": {
+      "tag": "minecraft:planks"
+    },
+    "B": {
+      "item": "ic2:transformer_hv"
+    },
+    "V": {
+      "item": "ic2:advanced_circuit"
+    }
+  },
+  "result": {
+    "id": "ic2:battery_station_hv",
+    "count": 1
+  }
+}

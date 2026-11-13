@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " X ",
+    "YCY",
+    " V "
+  ],
+  "key": {
+    "V": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "C": {
+      "item": "ic2:transformer_mv"
+    },
+    "Y": {
+      "item": "ic2:splitter_cable_item"
+    },
+    "X": {
+      "item": "ic2:detector_cable_item"
+    }
+  },
+  "result": {
+    "id": "ic2:redirector_master",
+    "count": 1
+  }
+}

@@ -143,6 +143,7 @@ public final class IC2 {
         AdvancedMachines.register(modBus, ITEMS);
         ExtraGenerators.register(modBus, ITEMS);
         PowerMachines.register(modBus, ITEMS);
+        ic2.core.machine.ChargingDevices.register(modBus, ITEMS);
         Rubberwood.register(modBus, ITEMS);
         Materials.register(modBus, ITEMS);
         Hazmat.register(modBus, ITEMS);

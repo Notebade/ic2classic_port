@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/electric/battery_station/ev/down",
+    "up": "ic2:block/electric/battery_station/ev/up",
+    "north": "ic2:block/electric/battery_station/ev/side",
+    "south": "ic2:block/electric/battery_station/ev/side",
+    "east": "ic2:block/electric/battery_station/ev/side",
+    "west": "ic2:block/electric/battery_station/ev/side",
+    "particle": "ic2:block/electric/battery_station/ev/side"
+  }
+}

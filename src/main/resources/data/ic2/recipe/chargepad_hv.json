@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "CVC"
+  ],
+  "key": {
+    "V": {
+      "item": "ic2:mfsu"
+    },
+    "C": {
+      "item": "ic2:advanced_circuit"
+    },
+    "Y": {
+      "item": "minecraft:stone_pressure_plate"
+    },
+    "X": {
+      "item": "ic2:carbon_plate"
+    }
+  },
+  "result": {
+    "id": "ic2:chargepad_hv",
+    "count": 1
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "variants": {
+    "facing=north,charge_state=0": {
+      "model": "ic2:block/charging_bench_hv"
+    },
+    "facing=east,charge_state=0": {
+      "model": "ic2:block/charging_bench_hv",
+      "y": 90
+    },
+    "facing=south,charge_state=0": {
+      "model": "ic2:block/charging_bench_hv",
+      "y": 180
+    },
+    "facing=west,charge_state=0": {
+      "model": "ic2:block/charging_bench_hv",
+      "y": 270
+    },
+    "facing=up,charge_state=0": {
+      "model": "ic2:block/charging_bench_hv",
+      "x": 270
+    },
+    "facing=down,charge_state=0": {
+      "model": "ic2:block/charging_bench_hv",
+      "x": 90
+    },
+    "facing=north,charge_state=1": {
+      "model": "ic2:block/charging_bench_hv_missing"
+    },
+    "facing=east,charge_state=1": {
+      "model": "ic2:block/charging_bench_hv_missing",
+      "y": 90
+    },
+    "facing=south,charge_state=1": {
+      "model": "ic2:block/charging_bench_hv_missing",
+      "y": 180
+    },
+    "facing=west,charge_state=1": {
+      "model": "ic2:block/charging_bench_hv_missing",
+      "y": 270
+    },
+    "facing=up,charge_state=1": {
+      "model": "ic2:block/charging_bench_hv_missing",
+      "x": 270
+    },
+    "facing=down,charge_state=1": {
+      "model": "ic2:block/charging_bench_hv_missing",
+      "x": 90
+    },
+    "facing=north,charge_state=2": {
+      "model": "ic2:block/charging_bench_hv_charging"
+    },
+    "facing=east,charge_state=2": {
+      "model": "ic2:block/charging_bench_hv_charging",
+      "y": 90
+    },
+    "facing=south,charge_state=2": {
+      "model": "ic2:block/charging_bench_hv_charging",
+      "y": 180
+    },
+    "facing=west,charge_state=2": {
+      "model": "ic2:block/charging_bench_hv_charging",
+      "y": 270
+    },
+    "facing=up,charge_state=2": {
+      "model": "ic2:block/charging_bench_hv_charging",
+      "x": 270
+    },
+    "facing=down,charge_state=2": {
+      "model": "ic2:block/charging_bench_hv_charging",
+      "x": 90
+    },
+    "facing=north,charge_state=3": {
+      "model": "ic2:block/charging_bench_hv_charged"
+    },
+    "facing=east,charge_state=3": {
+      "model": "ic2:block/charging_bench_hv_charged",
+      "y": 90
+    },
+    "facing=south,charge_state=3": {
+      "model": "ic2:block/charging_bench_hv_charged",
+      "y": 180
+    },
+    "facing=west,charge_state=3": {
+      "model": "ic2:block/charging_bench_hv_charged",
+      "y": 270
+    },
+    "facing=up,charge_state=3": {
+      "model": "ic2:block/charging_bench_hv_charged",
+      "x": 270
+    },
+    "facing=down,charge_state=3": {
+      "model": "ic2:block/charging_bench_hv_charged",
+      "x": 90
+    }
+  }
+}

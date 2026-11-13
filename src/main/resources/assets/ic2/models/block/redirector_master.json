@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ic2:block/electric/cable/redirector/master/down",
+    "up": "ic2:block/electric/cable/redirector/master/up",
+    "north": "ic2:block/electric/cable/redirector/master/north",
+    "south": "ic2:block/electric/cable/redirector/master/south",
+    "east": "ic2:block/electric/cable/redirector/master/east",
+    "west": "ic2:block/electric/cable/redirector/master/west",
+    "particle": "ic2:block/electric/cable/redirector/master/north"
+  }
+}

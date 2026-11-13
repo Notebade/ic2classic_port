@@ -65,6 +65,7 @@ final class CreativeTabs {
             return "machines";
         }
         if (ENERGY.contains(name) || name.endsWith("_cable_item") || name.startsWith("transformer_")
+            || name.startsWith("charging_bench_") || name.startsWith("battery_station_") || name.startsWith("chargepad_") || name.startsWith("redirector_")
             || name.equals("adjustable_transformer") || name.endsWith("_flux_generator")) {
             return "energy";
         }

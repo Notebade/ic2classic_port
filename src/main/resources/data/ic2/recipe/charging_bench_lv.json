@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "C C",
+    "CBC"
+  ],
+  "key": {
+    "X": {
+      "item": "ic2:rubber"
+    },
+    "Y": {
+      "item": "ic2:copper_insulated_cable_item"
+    },
+    "C": {
+      "tag": "minecraft:planks"
+    },
+    "B": {
+      "item": "ic2:batbox"
+    }
+  },
+  "result": {
+    "id": "ic2:charging_bench_lv",
+    "count": 1
+  }
+}

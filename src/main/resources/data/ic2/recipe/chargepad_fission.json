@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "CVC"
+  ],
+  "key": {
+    "V": {
+      "item": "ic2:nuclear_reactor"
+    },
+    "C": {
+      "item": "ic2:tfbp_irrigation"
+    },
+    "Y": {
+      "item": "ic2:chargepad_hv"
+    },
+    "X": {
+      "item": "ic2:plate_iridium"
+    }
+  },
+  "result": {
+    "id": "ic2:chargepad_fission",
+    "count": 1
+  }
+}

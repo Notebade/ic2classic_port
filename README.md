@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.67.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.68.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.67.0` |
+| Project version | `0.68.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -482,3 +482,7 @@ Adds a windmill with six replaceable rotors, airflow sharing, rotor wear and a r
 ### Gasifiers and refinery (0.67.0)
 
 Adds solid-fuel/electric wood gasifiers and a refinery with two inputs and a shared layered fluid output. Closes wood gas, liquid biofuel, alcohol and polished-gold production. A whisky-only barrel foundation supplies the original alcohol dependency; its default server ageing reaches distillable whisky after seven loaded days. Includes flour processing, recipes, containers, automation, JEI and API telemetry. [Operation, timing and remaining scope](docs/gasifiers-and-refinery.md).
+
+### Energy redirectors and charging (0.68.0)
+
+Adds paired EU redirectors, five charging benches, five battery stations and four charge pads. Includes persistent packet queues, share controls, item and player charging, automation, original recipes/textures, GUI, JEI and API telemetry. [Operating values, controls and remaining scope](docs/energy-redirectors-and-charging.md). Fifteen standalone suites and isolated-server device checks pass. Pad upgrades and client visual validation remain.

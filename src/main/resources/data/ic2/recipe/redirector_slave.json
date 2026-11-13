@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XCX"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:circuit"
+    },
+    "Y": {
+      "item": "ic2:transformer_mv"
+    },
+    "X": {
+      "item": "ic2:gold_double_insulated_cable_item"
+    }
+  },
+  "result": {
+    "id": "ic2:redirector_slave",
+    "count": 1
+  }
+}

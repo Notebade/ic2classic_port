@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "ic2:block/chargepad_lv"
+    },
+    "lit=true": {
+      "model": "ic2:block/chargepad_lv_active"
+    }
+  }
+}

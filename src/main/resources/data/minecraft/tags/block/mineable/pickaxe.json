@@ -88,6 +88,22 @@
     "ic2:iron_fence",
     "ic2:wood_gassifier",
     "ic2:electric_wood_gassifier",
-    "ic2:refinery"
+    "ic2:refinery",
+    "ic2:charging_bench_lv",
+    "ic2:charging_bench_mv",
+    "ic2:charging_bench_hv",
+    "ic2:charging_bench_ev",
+    "ic2:charging_bench_iv",
+    "ic2:battery_station_lv",
+    "ic2:battery_station_mv",
+    "ic2:battery_station_hv",
+    "ic2:battery_station_ev",
+    "ic2:battery_station_iv",
+    "ic2:chargepad_lv",
+    "ic2:chargepad_mv",
+    "ic2:chargepad_hv",
+    "ic2:chargepad_fission",
+    "ic2:redirector_master",
+    "ic2:redirector_slave"
   ]
 }

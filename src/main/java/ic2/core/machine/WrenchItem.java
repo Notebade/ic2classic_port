@@ -32,13 +32,13 @@ final class WrenchItem extends Item {
         var state = level.getBlockState(pos);
         if (!(state.getBlock() instanceof MachineBlock || state.getBlock() instanceof AdvancedMachineBlock
                 || state.getBlock() instanceof PressurePartBlock || state.getBlock() instanceof ExtraGeneratorBlock
-                || state.getBlock() instanceof PowerMachineBlock || state.getBlock() instanceof PowerPartBlock || state.getBlock() instanceof PowerTankBlock) || player == null || !player.mayBuild()
+                || state.getBlock() instanceof ChargingBlock || state.getBlock() instanceof PowerMachineBlock || state.getBlock() instanceof PowerPartBlock || state.getBlock() instanceof PowerTankBlock) || player == null || !player.mayBuild()
             || !level.mayInteract(player, pos)) {
             return InteractionResult.PASS;
         }
 
         var facing = state.getBlock() instanceof MachineBlock machine ? machine.facingProperty()
-            : state.getBlock() instanceof PowerMachineBlock ? net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING
+            : state.getBlock() instanceof PowerMachineBlock || state.getBlock() instanceof ChargingBlock ? net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING
             : net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
         Direction target = selectedFace(context, player.isShiftKeyDown());
         boolean hasFacing = state.hasProperty(facing);
@@ -48,6 +48,7 @@ final class WrenchItem extends Item {
             return InteractionResult.PASS;
         }
         boolean rotate = hasFacing && state.getValue(facing) != target;
+        if (rotate && state.getBlock() instanceof ChargingBlock block && !block.canFace(level, pos, target)) return InteractionResult.PASS;
         int cost = rotate ? 1 : 10;
         if (!canPay.test(cost)) {
             return InteractionResult.PASS;

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "CVC"
+  ],
+  "key": {
+    "V": {
+      "item": "ic2:batbox"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    },
+    "Y": {
+      "item": "minecraft:stone_pressure_plate"
+    },
+    "X": {
+      "item": "ic2:rubber"
+    }
+  },
+  "result": {
+    "id": "ic2:chargepad_lv",
+    "count": 1
+  }
+}

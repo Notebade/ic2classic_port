@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "ic2:block/battery_station_ev"
+    },
+    "facing=east": {
+      "model": "ic2:block/battery_station_ev",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "ic2:block/battery_station_ev",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "ic2:block/battery_station_ev",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "ic2:block/battery_station_ev",
+      "x": 270
+    },
+    "facing=down": {
+      "model": "ic2:block/battery_station_ev",
+      "x": 90
+    }
+  }
+}
