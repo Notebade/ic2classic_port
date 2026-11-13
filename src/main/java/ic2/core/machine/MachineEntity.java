@@ -230,6 +230,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MV_TRANSFORMER -> Machines.MV_TRANSFORMER_ENTITY.get();
             case HV_TRANSFORMER -> Machines.HV_TRANSFORMER_ENTITY.get();
             case EV_TRANSFORMER -> Machines.EV_TRANSFORMER_ENTITY.get();
+            case IV_TRANSFORMER -> Machines.IV_TRANSFORMER_ENTITY.get();
             case MACERATOR -> Machines.MACERATOR_ENTITY.get();
             case ELECTRIC_FURNACE -> Machines.ELECTRIC_FURNACE_ENTITY.get();
             case ELECTRIC_BLAST_FURNACE -> Machines.ELECTRIC_BLAST_FURNACE_ENTITY.get();
@@ -264,7 +265,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case REACTOR_PLANNER -> tickReactorPlanner();
             case URANIUM_ENRICHER -> tickUraniumEnrichment();
             case CANNER, VACUUM_CANNER -> tickCanner();
-            case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> tickTransformer();
+            case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> tickTransformer();
             case PUMP -> tickPump();
             case MASS_FABRICATOR -> tickMassFabricator();
             case MACERATOR, ELECTRIC_FURNACE, EXTRACTOR, COMPRESSOR, RECYCLER -> tickProcessor();
@@ -806,7 +807,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
             case BATBOX, MFE, MFSU, SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, STEAM_TURBINE, REACTOR_PLANNER,
                 URANIUM_ENRICHER, CANNER, VACUUM_CANNER, WAVE_GENERATOR, OCEAN_GENERATOR,
-                LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> false;
+                LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> false;
         };
     }
 
@@ -841,7 +842,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case GENERATOR, GEOTHERMAL, THERMAL_GENERATOR, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
                 WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
                 BATBOX, MFE, MFSU, SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, STEAM_TURBINE, REACTOR_PLANNER,
-                LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER,
+                LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER,
                 PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER, URANIUM_ENRICHER, CANNER, VACUUM_CANNER -> null;
         };
     }
@@ -1079,7 +1080,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MACERATOR, ELECTRIC_FURNACE, ALLOY_SMELTER, EXTRACTOR, RARE_EARTH_EXTRACTOR,
                 COMPRESSOR, PUMP, RECYCLER -> true;
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
-            case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> canReceiveTransformerEnergy(incomingSide, packetSize);
+            case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> canReceiveTransformerEnergy(incomingSide, packetSize);
             // Only charge up the storage tiers, so a cable loop cannot feed energy back.
             case BATBOX, MFE, MFSU -> sourceKind.storageOutput < kind.storageOutput && incomingSide != outputSide();
         };
@@ -1233,7 +1234,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 ? kind.waterMillTier.output() * WaterMillTier.UNITS_PER_EU : Math.max(0, passiveWaterUnits);
             case BATBOX, MFE, MFSU -> outputSide().ordinal();
             case SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, REACTOR_PLANNER, GEOTHERMAL, WAVE_GENERATOR, OCEAN_GENERATOR, ELECTROLYZER,
-                LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER -> 0;
+                LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> 0;
             case MASS_FABRICATOR -> amplifier;
             case URANIUM_ENRICHER -> enrichment.ingotProgress();
             case MACERATOR, ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL,

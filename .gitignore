@@ -227,3 +227,4 @@ src/main/resources/assets/ic2/textures/item/cable/comparing.png
 
 # Imported original HV solar textures
 src/main/resources/assets/ic2/textures/block/electric/generator/hv_solar_panel/
+src/main/resources/assets/ic2/textures/block/electric/transformer/iv/

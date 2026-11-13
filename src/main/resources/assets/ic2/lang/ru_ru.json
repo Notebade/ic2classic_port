@@ -223,6 +223,7 @@
   "message.ic2.transformer_down": "%s / %s EU | Понижение | Грань %s EU: %s",
   "block.ic2.transformer_mv": "Трансформатор СН",
   "block.ic2.transformer_hv": "Трансформатор ВН",
+  "block.ic2.transformer_iv": "Трансформатор сверхвысокого напряжения IV",
   "block.ic2.transformer_ev": "Трансформатор сверхвысокого напряжения",
   "block.ic2.solar_panel_mv": "Солнечная панель СН",
   "block.ic2.solar_panel_hv": "Солнечная панель ВН",

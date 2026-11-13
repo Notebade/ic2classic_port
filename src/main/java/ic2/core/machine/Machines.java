@@ -175,6 +175,10 @@ public final class Machines {
         BLOCKS.registerBlock("transformer_ev",
             properties -> new TransformerBlock(properties, MachineKind.EV_TRANSFORMER, TransformerBlock.EV_HIGH_PACKET),
             machineProperties());
+    static final DeferredBlock<TransformerBlock> IV_TRANSFORMER =
+        BLOCKS.registerBlock("transformer_iv",
+            properties -> new TransformerBlock(properties, MachineKind.IV_TRANSFORMER, TransformerBlock.IV_HIGH_PACKET),
+            machineProperties());
     static final DeferredBlock<MachineBlock> MACERATOR =
         BLOCKS.registerBlock("macerator", properties -> new MachineBlock(properties, MachineKind.MACERATOR), machineProperties());
     static final DeferredBlock<MachineBlock> ELECTRIC_FURNACE =
@@ -296,6 +300,8 @@ public final class Machines {
         ENTITIES.register("transformer_hv", () -> entityType(HV_TRANSFORMER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> EV_TRANSFORMER_ENTITY =
         ENTITIES.register("transformer_ev", () -> entityType(EV_TRANSFORMER.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> IV_TRANSFORMER_ENTITY =
+        ENTITIES.register("transformer_iv", () -> entityType(IV_TRANSFORMER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> MACERATOR_ENTITY =
         ENTITIES.register("macerator", () -> entityType(MACERATOR.get()));
     static final Supplier<BlockEntityType<MachineEntity>> ELECTRIC_FURNACE_ENTITY =
@@ -378,6 +384,7 @@ public final class Machines {
         items.registerSimpleBlockItem(MV_TRANSFORMER);
         items.registerSimpleBlockItem(HV_TRANSFORMER);
         items.registerSimpleBlockItem(EV_TRANSFORMER);
+        items.registerSimpleBlockItem(IV_TRANSFORMER);
         items.registerSimpleBlockItem(MACERATOR);
         items.registerSimpleBlockItem(ELECTRIC_FURNACE);
         items.registerSimpleBlockItem(ELECTRIC_BLAST_FURNACE);
@@ -464,6 +471,7 @@ public final class Machines {
                 event.accept(MV_TRANSFORMER.get());
                 event.accept(HV_TRANSFORMER.get());
                 event.accept(EV_TRANSFORMER.get());
+                event.accept(IV_TRANSFORMER.get());
                 event.accept(tinCableItem.get());
                 event.accept(splitterCableItem.get());
                 event.accept(detectorCableItem.get());

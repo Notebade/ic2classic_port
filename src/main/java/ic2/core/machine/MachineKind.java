@@ -38,7 +38,8 @@ enum MachineKind {
     LV_TRANSFORMER(TransformerBlock.LV_HIGH_PACKET * 2, 0, 0),
     MV_TRANSFORMER(TransformerBlock.MV_HIGH_PACKET * 2, 0, 0),
     HV_TRANSFORMER(TransformerBlock.HV_HIGH_PACKET * 2, 0, 0),
-    EV_TRANSFORMER(TransformerBlock.EV_HIGH_PACKET * 2, 0, 0);
+    EV_TRANSFORMER(TransformerBlock.EV_HIGH_PACKET * 2, 0, 0),
+    IV_TRANSFORMER(TransformerBlock.IV_HIGH_PACKET * 2, 0, 0);
 
     final int capacity;
     final int energyPerTick;

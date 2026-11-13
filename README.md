@@ -79,7 +79,7 @@ Launch the development client:
 | 🌬️ Wind | Up to **16 EU/t** | Wind and obstacles |
 | 🌋 Geothermal | Up to **20 EU/t** | 24,000 mB lava tank |
 | ☀️ Basic Solar Panel | **1 EU/t** | Standard and compact versions |
-| ☀️ LV / MV Solar Panel | **8 / 64 EU/t** | Standard and compact versions |
+| ☀️ LV / MV / HV Solar Panel | **8 / 64 / 512 EU/t** | Standard and compact versions |
 
 > Outputs refer to the operating conditions described below.
 
@@ -372,3 +372,5 @@ Crafting for other machines, full machine recipe lists, advanced network tiers, 
 ## 📜 License
 
 The original mod is distributed under **All Rights Reserved**. This repository contains the prototype implementation, models referencing locally imported textures, and build configuration. [Original mod license](https://www.curseforge.com/minecraft/mc-mods/ic2-classic/license).
+
+IV Transformer supports 8,192/32,768 EU packets and a 65,536 EU buffer. Redstone switches step-up mode. HV solar crafting uses eight MV panels and an IV Transformer; the IV survival recipe awaits its original late-game materials.

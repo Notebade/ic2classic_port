@@ -15,6 +15,7 @@ final class TransformerBlock extends DirectionalMachineBlock {
     static final int MV_HIGH_PACKET = 512;
     static final int HV_HIGH_PACKET = 2048;
     static final int EV_HIGH_PACKET = 8192;
+    static final int IV_HIGH_PACKET = 32768;
     static final int LOW_PACKETS = 4;
     private final int highPacket;
 

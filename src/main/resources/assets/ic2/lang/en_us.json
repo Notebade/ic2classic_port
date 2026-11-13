@@ -223,6 +223,7 @@
   "message.ic2.transformer_down": "%s / %s EU | Step-down | %s EU face %s",
   "block.ic2.transformer_mv": "MV Transformer",
   "block.ic2.transformer_hv": "HV Transformer",
+  "block.ic2.transformer_iv": "IV Transformer",
   "block.ic2.transformer_ev": "EV Transformer",
   "block.ic2.solar_panel_mv": "MV Solar Panel",
   "block.ic2.solar_panel_hv": "HV Solar Panel",
