@@ -4,6 +4,22 @@ Base: `d2267319eb625c1b71c8dfe3607441f17da07a0e`, independent `ic2classic-port-g
 
 ## Current layout revision
 
+Latest Create revision: ordinary Create loads one batch and switches to Work.
+Holding Shift when clicking requests the maximum complete batches fitting the
+two machine input slots. The server bounds and decodes the mode/recipe button ID
+and computes the maximum using available stacks, recipe ratios, item stack limits
+and the 64-item machine slot cap. It tries complete batch counts in descending
+order on copies; nothing is consumed until a valid transfer exists. An already
+loaded recipe is retained if a full inventory prevents rearranging its leftovers.
+
+Revision log: added failing real-client/server assertions for max loading and
+Work-tab switching before implementation. Added max planning and server mode
+validation, captured Shift at click time and updated localized help. Full offline
+build and all 24 standalone checks passed. Tests cover 64 copper/64 tin becoming
+63/21 with exact leftovers, repeat max requests and a limiting two-tin supply.
+All game-backed checks passed, including Create switching to Work. Left the
+updated isolated Minecraft client running for manual verification.
+
 Latest search/craft revision: added a native EditBox with immediate, case-insensitive
 matching against localized output names. Five compact rows remain visible beneath
 the search field. Filtered rows retain references to the unfiltered recipe views,

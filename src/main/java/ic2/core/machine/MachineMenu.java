@@ -346,19 +346,29 @@ final class MachineMenu extends AbstractContainerMenu {
         return stillValid(access, player, block);
     }
 
-    private AlloyRecipeTransfer.Plan recipeTransfer(int recipeIndex) {
+    static int recipeButton(int recipeIndex, boolean maximum) {
+        return recipeIndex + (maximum ? AlloyRecipes.recipes().size() : 0);
+    }
+
+    private AlloyRecipeTransfer.Plan recipeTransfer(int recipeIndex, boolean maximum) {
         if (!isAlloySmelter() || recipeIndex < 0 || recipeIndex >= AlloyRecipes.recipes().size()) return null;
-        return AlloyRecipeTransfer.plan(AlloyRecipes.recipes().get(recipeIndex), slots.get(0).getItem(),
-            slots.get(2).getItem(), slots.subList(machineSlots, slots.size()).stream().map(Slot::getItem).toList());
+        var recipe = AlloyRecipes.recipes().get(recipeIndex);
+        var first = slots.get(0).getItem();
+        var second = slots.get(2).getItem();
+        var player = slots.subList(machineSlots, slots.size()).stream().map(Slot::getItem).toList();
+        return maximum ? AlloyRecipeTransfer.maximum(recipe, first, second, player)
+            : AlloyRecipeTransfer.plan(recipe, first, second, player);
     }
 
     boolean canLoadRecipe(int recipeIndex) {
-        return recipeTransfer(recipeIndex) != null;
+        return recipeTransfer(recipeIndex, false) != null;
     }
 
-    @Override public boolean clickMenuButton(Player player, int recipeIndex) {
+    @Override public boolean clickMenuButton(Player player, int button) {
         if (player.level().isClientSide || !stillValid(player)) return false;
-        var plan = recipeTransfer(recipeIndex);
+        int count = AlloyRecipes.recipes().size();
+        if (button < 0 || button >= count * 2) return false;
+        var plan = recipeTransfer(button % count, button >= count);
         if (plan == null) return false;
         for (int i = 0; i < plan.player().size(); i++) slots.get(machineSlots + i).set(plan.player().get(i));
         slots.get(0).set(plan.first());

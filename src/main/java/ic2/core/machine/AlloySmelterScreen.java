@@ -58,8 +58,11 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
         next = addRenderableWidget(new RemasteredButton(leftPos + 226, topPos + 130, 16, 12,
             Component.literal(">"), ignored -> changeRecipe(1), () -> false));
         craft = addRenderableWidget(new RemasteredButton(leftPos + 178, topPos + 130, 46, 12,
-            text("create"), ignored -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId,
-                allRecipes.indexOf(recipes.get(recipeIndex))), () -> false));
+            text("create"), ignored -> {
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId,
+                    MachineMenu.recipeButton(allRecipes.indexOf(recipes.get(recipeIndex)), hasShiftDown()));
+                select(Tab.WORK);
+            }, () -> false));
         craft.setTooltip(Tooltip.create(text("create_hint")));
         search.setResponder(this::filterRecipes);
         search.setValue(query);

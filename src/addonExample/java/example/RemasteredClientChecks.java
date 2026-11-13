@@ -78,9 +78,11 @@ public final class RemasteredClientChecks {
             search.setValue("БРОНЗ");
             selectBronzeRow(client);
             if (!craftButton(client).active) throw new AssertionError("Case-insensitive search lost bronze");
-            craftButton(client).onPress();
         }
         if (age == 129) Screenshot.grab(client.gameDirectory, "remastered-search.png", client.getMainRenderTarget(), ignored -> {});
+        if (age == 131) craftButton(client).onPress();
+        if (age == 132 && screen(client).getMenu().slots.stream().filter(slot -> slot.isActive()).count() != 39)
+            throw new AssertionError("Create did not switch to Work");
         if (age == 133) {
             var search = screen(client).children().stream().filter(net.minecraft.client.gui.components.EditBox.class::isInstance)
                 .map(net.minecraft.client.gui.components.EditBox.class::cast).findFirst().orElseThrow();
@@ -228,6 +230,27 @@ public final class RemasteredClientChecks {
         menu.getSlot(2).set(new ItemStack(Items.COPPER_INGOT, 3));
         if (!menu.clickMenuButton(player, 3) || !menu.getSlot(0).getItem().is(tin))
             throw new AssertionError("Already loaded reversed recipe changed");
+        menu.getSlot(0).set(ItemStack.EMPTY);
+        menu.getSlot(2).set(ItemStack.EMPTY);
+        menu.getSlot(3).set(new ItemStack(Items.COPPER_INGOT, 64));
+        menu.getSlot(4).set(new ItemStack(tin, 64));
+        // Six recipes: max-mode ID is the base recipe index plus six.
+        if (!menu.clickMenuButton(player, 9) || menu.getSlot(0).getItem().getCount() != 63
+                || menu.getSlot(2).getItem().getCount() != 21
+                || menu.getSlot(3).getItem().getCount() != 1 || menu.getSlot(4).getItem().getCount() != 43)
+            throw new AssertionError("Shift create did not load the maximum fitting batches");
+        if (!menu.clickMenuButton(player, 9) || menu.getSlot(0).getItem().getCount() != 63
+                || menu.getSlot(3).getItem().getCount() != 1)
+            throw new AssertionError("Repeated max request duplicated ingredients");
+        player.getInventory().clearContent();
+        menu.getSlot(0).set(ItemStack.EMPTY);
+        menu.getSlot(2).set(ItemStack.EMPTY);
+        menu.getSlot(3).set(new ItemStack(Items.COPPER_INGOT, 10));
+        menu.getSlot(4).set(new ItemStack(tin, 2));
+        if (!menu.clickMenuButton(player, 9) || menu.getSlot(0).getItem().getCount() != 6
+                || menu.getSlot(2).getItem().getCount() != 2 || menu.getSlot(3).getItem().getCount() != 4)
+            throw new AssertionError("Max request ignored the limiting ingredient");
+        player.getInventory().clearContent();
         menu.getSlot(0).set(ItemStack.EMPTY);
         menu.getSlot(2).set(ItemStack.EMPTY);
     }

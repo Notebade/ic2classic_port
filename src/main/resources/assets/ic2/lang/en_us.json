@@ -647,5 +647,5 @@
   "gui.ic2.remastered.recipe_seconds": "%s s",
   "gui.ic2.remastered.search": "Search result...",
   "gui.ic2.remastered.create": "Create",
-  "gui.ic2.remastered.create_hint": "Load ingredients for one batch. Processing still requires EU and time. Green rows have available ingredients and room to load them."
+  "gui.ic2.remastered.create_hint": "Load one batch and open Work. Shift: load the maximum complete batches that fit. Processing still requires EU and time. Green rows have ingredients and room to load them."
 }

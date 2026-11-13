@@ -14,12 +14,31 @@ final class AlloyRecipeTransfer {
     static Plan plan(AlloyRecipes.Recipe recipe, ItemStack first, ItemStack second, List<ItemStack> player) {
         if (recipe.matches(first, second) || recipe.matches(second, first))
             return new Plan(first.copy(), second.copy(), copies(player));
+        return batch(recipe, first, second, player, 1);
+    }
+
+    static Plan maximum(AlloyRecipes.Recipe recipe, ItemStack first, ItemStack second, List<ItemStack> player) {
+        // ItemStackHandler machine slots are capped at 64; preserve complete recipe ratios.
+        int limit = Math.min(64 / recipe.firstCount(), 64 / recipe.secondCount());
+        for (int batches = limit; batches >= 1; batches--) {
+            Plan plan = batch(recipe, first, second, player, batches);
+            if (plan != null) return plan;
+        }
+        // An already loaded recipe remains usable if a full inventory prevents rearrangement.
+        return plan(recipe, first, second, player);
+    }
+
+    private static Plan batch(AlloyRecipes.Recipe recipe, ItemStack first, ItemStack second,
+                              List<ItemStack> player, int batches) {
+        boolean reversed = recipe.second().test(first) && recipe.first().test(second);
         var pool = new ArrayList<ItemStack>();
         pool.add(first.copy());
         pool.add(second.copy());
         pool.addAll(copies(player));
-        ItemStack a = take(pool, recipe.first(), recipe.firstCount());
-        ItemStack b = take(pool, recipe.second(), recipe.secondCount());
+        ItemStack a = take(pool, reversed ? recipe.second() : recipe.first(),
+            (reversed ? recipe.secondCount() : recipe.firstCount()) * batches);
+        ItemStack b = take(pool, reversed ? recipe.first() : recipe.second(),
+            (reversed ? recipe.firstCount() : recipe.secondCount()) * batches);
         if (a.isEmpty() || b.isEmpty()) return null;
         var remaining = new ArrayList<>(pool.subList(2, pool.size()));
         if (!returnStack(remaining, pool.get(0)) || !returnStack(remaining, pool.get(1))) return null;
@@ -35,6 +54,7 @@ final class AlloyRecipeTransfer {
     private static ItemStack take(List<ItemStack> pool, Ingredient ingredient, int count) {
         for (ItemStack candidate : pool) {
             if (!ingredient.test(candidate)) continue;
+            if (count > candidate.getMaxStackSize()) continue;
             int available = pool.stream().filter(stack -> ItemStack.isSameItemSameComponents(stack, candidate))
                 .mapToInt(ItemStack::getCount).sum();
             if (available < count) continue;
