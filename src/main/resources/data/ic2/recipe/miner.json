@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["XYX", " C ", " C "],
+  "key": {"X": {"item": "ic2:circuit"}, "Y": {"item": "ic2:machine_block"}, "C": {"item": "ic2:miningpipe_slim"}},
+  "result": {"id": "ic2:miner", "count": 1}
+}

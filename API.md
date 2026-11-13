@@ -284,3 +284,7 @@ A block entity implementing `ic2.api.machine.FluidPump` accepts a complete `Flui
 ### Mining tool contracts
 
 `ic2.api.item.MiningDrill` owns `canUse`, `canMine`, `consumeUse`, `progressPerTick` and `machineEuPerTick`. The drill item accounts for its own charge/durability; the controller accounts for machine EU separately. `WorldScanner.scanRadius(stack, useEnergy)` is a free range query with false; true spends one scan or returns zero. `isValuable` checks loaded block data, and `scansFluids()` distinguishes fluid scanners. Methods must not load chunks. These contracts support the ongoing native miner/ranged-pump dependency transfer; their controllers are not yet marked complete.
+
+### Native miner
+
+The miner now consumes the public MiningDrill/WorldScanner contracts, including real items from a separately compiled addon. Inventory roles: 0 battery, 1 non-fluid scanner, 2 pipes/backfill blocks, 3 drill. Addon drill progress and machine EU are bounded at the controller boundary; tool-owned consumption is a separate completed-use callback. Native machine telemetry: input_packet_eu=128, progress_units/target=200, blocked, queued_targets, pipe_tip_y; capacity=10000 EU. Cached item access rejects a removed controller. Break protection is checked before working and before world mutation. Adjacent prepared FluidPump implementations enable source-fluid mining.

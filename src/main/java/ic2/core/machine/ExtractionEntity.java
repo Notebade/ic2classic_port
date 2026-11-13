@@ -29,7 +29,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
-final class ExtractionEntity extends BlockEntity implements EnergySink, MachineSnapshot.Provider, MenuProvider, ic2.api.machine.FluidPump {
+final class ExtractionEntity extends BlockEntity implements EnergySink, MachineSnapshot.Provider, ExtractionDevice, ic2.api.machine.FluidPump {
     private int energy, progress, delay;
     private final PumpTank tank = new PumpTank(this::setChanged);
     final ItemStackHandler inventory = new ItemStackHandler(3) {
@@ -47,7 +47,7 @@ final class ExtractionEntity extends BlockEntity implements EnergySink, MachineS
     };
     ExtractionEntity(BlockPos pos, BlockState state) { super(ExtractionMachines.ENTITY.get(), pos, state); }
     private boolean live() { return level != null && !isRemoved() && level.hasChunkAt(worldPosition) && level.getBlockEntity(worldPosition) == this; }
-    void tick() {
+    @Override public void tick() {
         if (!live()) return;
         dischargeBattery();
         if (delay > 0) delay--;
@@ -107,7 +107,7 @@ final class ExtractionEntity extends BlockEntity implements EnergySink, MachineS
     @Override public MachineSnapshot machineInfo() { return MachineTelemetry.snapshot(this, energy, 2500, MachineSnapshot.EnergyUnit.EU, java.util.Map.of("input_packet_eu", 128L, "progress_units", (long) progress, "progress_target", 25L, "fluid_mb", (long) tank.getFluidAmount())); }
     @Override public Component getDisplayName() { return getBlockState().getBlock().getName(); }
     @Override public AbstractContainerMenu createMenu(int id, Inventory player, Player owner) { return new ExtractionMenu(id, player, this); }
-    void dropContents() { for (int slot = 0; slot < inventory.getSlots(); slot++) Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), inventory.getStackInSlot(slot)); }
+    @Override public void dropContents() { for (int slot = 0; slot < inventory.getSlots(); slot++) Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), inventory.getStackInSlot(slot)); }
     @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider lookup) {
         super.saveAdditional(tag, lookup); tag.putInt("energy", energy); tag.putInt("progress", progress); tag.putInt("delay", delay);
         tag.put("inventory", inventory.serializeNBT(lookup)); tag.put("tank", tank.writeToNBT(lookup, new CompoundTag()));

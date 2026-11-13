@@ -12,10 +12,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public final class MiningPipeBlock extends Block {
     private static final VoxelShape SHAPE = Block.box(6, 0, 6, 10, 16, 10);
 
-    public MiningPipeBlock(Properties properties) { super(properties); }
+    private final boolean slim;
+    public MiningPipeBlock(Properties properties) { this(properties, true); }
+    public MiningPipeBlock(Properties properties, boolean slim) { super(properties); this.slim = slim; }
 
     @Override protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return slim ? SHAPE : net.minecraft.world.phys.shapes.Shapes.block();
     }
 
     @Override protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) { return false; }

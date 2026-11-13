@@ -20,6 +20,8 @@ public final class ExampleAddon {
     static final net.neoforged.neoforge.registries.DeferredItem<TestElectricItem> ELECTRIC_TEST_ITEM = ITEMS.registerItem("electric_test_item", p -> new TestElectricItem(p.stacksTo(1)));
     static final net.neoforged.neoforge.registries.DeferredItem<TestPassiveUpgrade> PASSIVE_TEST_UPGRADE = ITEMS.registerItem("passive_test_upgrade", TestPassiveUpgrade::new);
     static final net.neoforged.neoforge.registries.DeferredItem<TestHookUpgrade> HOOK_TEST_UPGRADE = ITEMS.registerItem("hook_test_upgrade", TestHookUpgrade::new);
+    static final net.neoforged.neoforge.registries.DeferredItem<TestMiningTool> MINING_TEST_TOOL = ITEMS.registerItem("mining_test_tool", p -> new TestMiningTool(p.stacksTo(1)));
+    static final net.neoforged.neoforge.registries.DeferredItem<TestScanner> SCANNER_TEST_TOOL = ITEMS.registerItem("scanner_test_tool", p -> new TestScanner(p.stacksTo(1)));
     public ExampleAddon(IEventBus modBus) {
         if (Ic2Api.version() != 1) throw new IllegalStateException("This addon needs IC2 API v1");
         ITEMS.register(modBus);
@@ -42,6 +44,25 @@ public final class ExampleAddon {
         return Ic2Api.machineInfo(level, pos);
     }
     private static ResourceLocation id(String path) { return ResourceLocation.fromNamespaceAndPath(MOD_ID, path); }
+
+    static final class TestMiningTool extends net.minecraft.world.item.Item implements ic2.api.item.MiningDrill {
+        TestMiningTool(Properties properties) { super(properties); }
+        @Override public boolean canUse(net.minecraft.world.item.ItemStack stack) { return true; }
+        @Override public boolean canMine(net.minecraft.world.item.ItemStack stack, net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.LevelReader level, BlockPos pos) { return state.getDestroySpeed(level, pos) >= 0; }
+        @Override public int progressPerTick(net.minecraft.world.item.ItemStack stack, net.minecraft.world.level.block.state.BlockState state) { return 200; }
+        @Override public int machineEuPerTick(net.minecraft.world.item.ItemStack stack) { return 7; }
+        @Override public void consumeUse(net.minecraft.world.item.ItemStack stack) {
+            net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt("uses", tag.getInt("uses") + 1));
+        }
+    }
+    static final class TestScanner extends net.minecraft.world.item.Item implements ic2.api.item.WorldScanner {
+        TestScanner(Properties properties) { super(properties); }
+        @Override public int scanRadius(net.minecraft.world.item.ItemStack stack, boolean consume) {
+            if (consume) net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt("scans", tag.getInt("scans") + 1));
+            return 2;
+        }
+        @Override public boolean isValuable(net.minecraft.world.item.ItemStack stack, net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.LevelReader level, BlockPos pos) { return state.is(net.neoforged.neoforge.common.Tags.Blocks.ORES); }
+    }
 
     static final class TestElectricItem extends net.minecraft.world.item.Item implements ic2.api.item.ElectricEnchantable {
         TestElectricItem(Properties properties) { super(properties); }

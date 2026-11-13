@@ -42,3 +42,8 @@ Earlier gameplay commit `d226731` includes original pad/chunkloader screens, uti
 - Item automation: top container input; horizontal discharged battery/output; down disabled. Fluid automation: extraction only, down disabled. Source GUI/background belongs to the original accelerated-pump family. Native public FluidPump handoff is implemented and tested.
 
 - Mining dependency item IDs now registered: drill, od_scanner, ov_scanner, ov_scanner_ranged, fluid_scanner. Real power/tool/scanner behavior and source recipes are verified. Their names/models/creative classification belong to the graphics stage. Manual scanner result uses message.ic2.scanner.result with a fallback. No client screen or language files were edited.
+
+## Miner backend
+
+- Registered miner, backend menu miner: four source roles 0 battery, 1 scanner, 2 pipes/backfill, 3 drill. Six data values: EU, progress (200 max), blocked flag, capacity (10000), queued target count, pipe tip Y. Existing extraction_machine menu remains three slots/four values. Both use the common ExtractionMenu backend; separate client menu factories preserve their sizes.
+- Physical miningpipe_slim shafts and miningpipe bottom now work through the machine. The bottom is internal, has no creative item and drops a shaft. Add names/models/creative classification and screen registration in the graphics stage. No client screen or language/model files were modified here.
