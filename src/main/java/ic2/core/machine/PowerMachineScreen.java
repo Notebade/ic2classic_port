@@ -24,7 +24,12 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
         imageHeight = layout == null ? 214 : layout.height();
     }
     @SubscribeEvent public static void register(RegisterMenuScreensEvent event) {
-        for (var type : PowerMachines.SCREENS.values()) event.register(type.get(), PowerMachineScreen::new);
+        for (var entry : PowerMachines.SCREENS.entrySet()) {
+            var kind = entry.getKey();
+            if (kind == PowerMachines.Kind.GASIFIER || kind == PowerMachines.Kind.ELECTRIC_GASIFIER || kind == PowerMachines.Kind.REFINERY)
+                event.register(entry.getValue().get(), ProcessingMachineScreen<PowerMachineMenu>::new);
+            else event.register(entry.getValue().get(), PowerMachineScreen::new);
+        }
     }
     @SubscribeEvent public static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {

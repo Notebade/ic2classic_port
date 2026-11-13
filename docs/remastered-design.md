@@ -4,6 +4,60 @@ Base: `d2267319eb625c1b71c8dfe3607441f17da07a0e`, independent `ic2classic-port-g
 
 ## Current layout revision
 
+### Implemented processor rollout
+
+The common GUI now covers the 32 already implemented processors listed in
+`remastered-processors.md`. Generators, storage, reactors, monitoring/utility
+screens and unported machinery stay outside this rollout. `ProcessingMenu`
+adapters preserve real inventories, recipe sources and work controls;
+`ProcessingMachineScreen` is the shared rendering/search/selection implementation.
+The original alloy entry point is a thin subclass, not a second GUI system.
+
+Added native fuel processing menus without changing fuel handling, output
+experience callbacks or block/item IDs. New processing/iron-furnace menu types
+separate processor presentation from the existing generator and vanilla furnace
+menus. Added variant synchronization and a high word for advanced-machine heat.
+Recipe views reuse the existing processing logic; canning views call the existing
+canning resolver, and induction views retain their variable-speed/energy notes.
+
+`RecipeCatalog` caches an open menu's recipe list and sorts by stable recipe or
+registry IDs so client filters cannot change server recipe identity. Shared
+`ProcessingTransfer` simulates exact/maximum batches on copies, validates target
+slots and existing machine restrictions, and only then commits. Shift also fills
+parallel/queued input slots for single-input processing. The tested alloy's
+existing transfer behavior and packet IDs remain compatible.
+
+Visual steering: restored light steel, compact narrated icon tabs, graphite
+instrument panels, vertical EU/fuel gauges, machine icons/piping and metal recipe
+cards. Selected recipes use orange borders; loadable rows remain green. Recipe
+details show real EU, seconds and EU/t when the existing source supplies exact
+timing, with full notes on hover for variable processes. Fluids use their real
+atlas textures and localized tooltips. Tank-only recipes are browseable but do
+not pretend to support item-only fluid transfer.
+
+Scrollbar regression: a real click/drag/release test reproduced the bug.
+`AbstractContainerScreen` consumed mouse dragging before the NeoForge ScrollPanel
+could receive it. The shared screen now captures recipe-panel gestures and
+forwards movement/release to that existing widget, preventing inventory gestures
+from stealing the drag. The regression test checks the resulting selected row
+through narration rather than merely checking an event's boolean return.
+
+Final validation: full offline Gradle build, all 24 standalone checks and addon
+consumer compilation passed. Thirty item-loadable processor routes passed single
+and maximum server loading with item conservation. Pump/refinery tank routes
+correctly reject unsupported inventory-only requests. All 32 actual work screens
+and 32 recipe screens passed bounds/filter checks; screenshots were captured and
+representative single, multiple-output, queued, fuel, pressure and fluid screens
+were visually inspected. Alloy regression checks, including scrollbar dragging,
+search, rollback and Shift loading, passed. The numbered final gallery is left
+open in `runs/processing-gallery-final` for manual inspection of every machine.
+
+Action log: audited existing menu/recipe families; narrowed scope to implemented
+processors per user clarification; extracted shared rendering and transfer
+contracts; preserved special controls and native fuel slots; adapted visuals to
+the supplied reference; built the gallery; reproduced/fixed drag interception;
+ran server/client checks and documented coverage. No edits in the original checkout.
+
 Latest Create revision: ordinary Create loads one batch and switches to Work.
 Holding Shift when clicking requests the maximum complete batches fitting the
 two machine input slots. The server bounds and decodes the mode/recipe button ID

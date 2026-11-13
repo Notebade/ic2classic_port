@@ -13,9 +13,9 @@ final class RemasteredGui {
 
     static void background(GuiGraphics graphics, int x, int y) {
         frame(graphics, x, y, AlloyGuiLayout.WIDTH, AlloyGuiLayout.HEIGHT);
-        graphics.fill(x + 6, y + 5, x + 250, y + 21, 0xffb2bac3);
-        graphics.fill(x + 8, y + 21, x + 248, y + 22, ORANGE);
-        recess(graphics, x + 8, y + 48, 240, 96);
+        graphics.fill(x + 6, y + 5, x + 250, y + 27, 0xffc4c8d0);
+        graphics.fill(x + 8, y + 28, x + 248, y + 29, 0xff697380);
+        recess(graphics, x + 8, y + 31, 240, 113);
         recess(graphics, x + 46, y + 160, 164, 76);
     }
 
@@ -23,10 +23,10 @@ final class RemasteredGui {
         graphics.fill(x, y, x + width, y + height, 0xff10151b);
         graphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0xff737e8b);
         graphics.fill(x + 2, y + 2, x + width - 2, y + height - 2, 0xffa3adb8);
-        graphics.fill(x + 3, y + 3, x + width - 3, y + height - 3, 0xff48515d);
-        graphics.fill(x + 4, y + 4, x + width - 4, y + height - 4, 0xff343d48);
+        graphics.fill(x + 3, y + 3, x + width - 3, y + height - 3, 0xff747c88);
+        graphics.fill(x + 4, y + 4, x + width - 4, y + height - 4, 0xffa6acb7);
         for (int dy = 6; dy < height - 5; dy += 4)
-            graphics.fill(x + 4, y + dy, x + width - 4, y + dy + 1, 0xff39434f);
+            graphics.fill(x + 4, y + dy, x + width - 4, y + dy + 1, 0xffaeb4be);
         bolt(graphics, x + 3, y + 3);
         bolt(graphics, x + width - 7, y + 3);
         bolt(graphics, x + 3, y + height - 7);
@@ -48,7 +48,7 @@ final class RemasteredGui {
     static void slot(GuiGraphics graphics, int x, int y) {
         graphics.fill(x - 2, y - 2, x + 18, y + 18, 0xff080b0e);
         graphics.fill(x - 1, y - 1, x + 17, y + 17, 0xff68727d);
-        graphics.fill(x, y, x + 16, y + 16, 0xff303741);
+        graphics.fill(x, y, x + 16, y + 16, 0xff858c96);
         graphics.fill(x, y, x + 16, y + 1, 0xff171d24);
     }
 
@@ -57,5 +57,13 @@ final class RemasteredGui {
         graphics.fill(x, y, x + width, y + height, 0xff303945);
         int filled = (int) (width * Math.clamp((double) value / Math.max(1, max), 0, 1));
         graphics.fill(x, y, x + filled, y + height, color);
+    }
+
+    static void verticalBar(GuiGraphics graphics, int x, int y, int width, int height, int value, int max) {
+        graphics.fill(x - 1, y - 1, x + width + 1, y + height + 1, 0xff10151b);
+        graphics.fill(x, y, x + width, y + height, 0xff303945);
+        int filled = (int) (height * Math.clamp((double) value / Math.max(1, max), 0, 1));
+        graphics.fill(x, y + height - filled, x + width, y + height, GREEN);
+        for (int dy = 4; dy < height; dy += 5) graphics.fill(x, y + dy, x + width, y + dy + 1, 0xff37552c);
     }
 }

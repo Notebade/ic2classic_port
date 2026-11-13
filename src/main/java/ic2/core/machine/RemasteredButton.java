@@ -7,7 +7,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
 /** Native button interaction/narration with the machine's own industrial skin. */
-final class RemasteredButton extends Button {
+class RemasteredButton extends Button {
     private final BooleanSupplier selected;
 
     RemasteredButton(int x, int y, int width, int height, Component label, OnPress action, BooleanSupplier selected) {

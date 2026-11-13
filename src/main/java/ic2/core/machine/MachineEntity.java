@@ -1254,6 +1254,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
                 case ESU -> Machines.ESU_MENU.get();
                 case ISU -> Machines.ISU_MENU.get();
                 case PESU -> Machines.PESU_MENU.get();
+                case MACERATOR, ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER,
+                    EXTRACTOR, COMPRESSOR, SAWMILL, RECYCLER, PUMP -> Machines.PROCESSING_MENU.get();
                 case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_MENU.get();
                 case URANIUM_ENRICHER -> Machines.URANIUM_ENRICHER_MENU.get();
                 case STEAM_TURBINE -> Machines.STEAM_TURBINE_MENU.get();

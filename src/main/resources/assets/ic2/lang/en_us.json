@@ -646,6 +646,10 @@
   "gui.ic2.remastered.packet_unlimited": "Input packet: no voltage limit in the existing machine logic.",
   "gui.ic2.remastered.recipe_seconds": "%s s",
   "gui.ic2.remastered.search": "Search result...",
+  "gui.ic2.remastered.machine_aux": "Machine reserve: %s",
+  "gui.ic2.remastered.fuel": "Fuel",
+  "gui.ic2.remastered.fuel_wait": "Waiting for fuel or ingredients",
+  "gui.ic2.remastered.fluid_external": "This recipe requires machine fluids. Supply them through the existing tanks, pipes or container slots; Create does not move fluids.",
   "gui.ic2.remastered.create": "Create",
   "gui.ic2.remastered.create_hint": "Load one batch and open Work. Shift: load the maximum complete batches that fit. Processing still requires EU and time. Green rows have ingredients and room to load them."
 }

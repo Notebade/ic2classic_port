@@ -47,8 +47,10 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     @SubscribeEvent
     public static void register(RegisterMenuScreensEvent event) {
         event.register(Machines.COMPARING_CABLE_MENU.get(), ComparingCableScreen::new);
-        event.register(Machines.STONE_MACERATOR_MENU.get(), StoneMaceratorScreen::new);
+        event.register(Machines.STONE_MACERATOR_MENU.get(), ProcessingMachineScreen<StoneMaceratorMenu>::new);
+        event.register(Machines.IRON_FURNACE_MENU.get(), ProcessingMachineScreen<IronFurnaceMenu>::new);
         event.register(Machines.MENU.get(), MachineScreen::new);
+        event.register(Machines.PROCESSING_MENU.get(), ProcessingMachineScreen<MachineMenu>::new);
         event.register(Machines.BATBOX_MENU.get(), MachineScreen::new);
         event.register(Machines.MFE_MENU.get(), MachineScreen::new);
         event.register(Machines.MFSU_MENU.get(), MachineScreen::new);
@@ -56,13 +58,13 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.ISU_MENU.get(), MachineScreen::new);
         event.register(Machines.PESU_MENU.get(), MachineScreen::new);
         event.register(Machines.ALLOY_SMELTER_MENU.get(), AlloySmelterScreen::new);
-        event.register(Machines.RARE_EARTH_MENU.get(), MachineScreen::new);
-        event.register(Machines.URANIUM_ENRICHER_MENU.get(), MachineScreen::new);
-        event.register(Machines.CANNER_MENU.get(), MachineScreen::new);
-        event.register(Machines.VACUUM_CANNER_MENU.get(), MachineScreen::new);
-        event.register(Machines.ELECTROLYZER_MENU.get(), MachineScreen::new);
-        event.register(Machines.CHARGED_ELECTROLYZER_MENU.get(), MachineScreen::new);
-        event.register(Machines.FABRICATOR_MENU.get(), MachineScreen::new);
+        event.register(Machines.RARE_EARTH_MENU.get(), ProcessingMachineScreen<MachineMenu>::new);
+        event.register(Machines.URANIUM_ENRICHER_MENU.get(), ProcessingMachineScreen<MachineMenu>::new);
+        event.register(Machines.CANNER_MENU.get(), ProcessingMachineScreen<MachineMenu>::new);
+        event.register(Machines.VACUUM_CANNER_MENU.get(), ProcessingMachineScreen<MachineMenu>::new);
+        event.register(Machines.ELECTROLYZER_MENU.get(), ProcessingMachineScreen<MachineMenu>::new);
+        event.register(Machines.CHARGED_ELECTROLYZER_MENU.get(), ProcessingMachineScreen<MachineMenu>::new);
+        event.register(Machines.FABRICATOR_MENU.get(), ProcessingMachineScreen<MachineMenu>::new);
         event.register(Machines.GEOTHERMAL_MENU.get(), MachineScreen::new);
         event.register(Machines.THERMAL_GENERATOR_MENU.get(), MachineScreen::new);
         event.register(Machines.NUCLEAR_REACTOR_MENU.get(), ReactorScreen::new);

@@ -74,4 +74,29 @@ final class CanningRecipes {
     }
 
     record Batch(ItemStack output, int materialCount, boolean repair) {}
+
+    static List<MachineRecipeView> recipeViews(Level level, boolean vacuum) {
+        var containers = new java.util.ArrayList<ItemStack>();
+        var materials = new java.util.ArrayList<ItemStack>();
+        for (Item item : net.minecraft.core.registries.BuiltInRegistries.ITEM) {
+            var stack = new ItemStack(item);
+            if (acceptsContainer(stack)) {
+                if (stack.isDamageableItem()) stack.setDamageValue(stack.getMaxDamage() - 1);
+                containers.add(stack);
+            }
+            if (acceptsMaterial(stack)) materials.add(stack.copyWithCount(stack.getMaxStackSize()));
+        }
+        var result = new java.util.ArrayList<MachineRecipeView>();
+        var resolver = new CanningRecipes();
+        var kind = vacuum ? MachineKind.VACUUM_CANNER : MachineKind.CANNER;
+        for (ItemStack container : containers) for (ItemStack material : materials) {
+            var batch = resolver.find(container, material, level);
+            if (batch == null) continue;
+            result.add(new MachineRecipeView(List.of(MachineRecipeView.Slot.item(container.copy()),
+                MachineRecipeView.Slot.item(material.copyWithCount(batch.materialCount()))),
+                List.of(MachineRecipeView.Slot.item(batch.output())),
+                MachineRecipeViews.note("cost", kind.recipeTicks, (long) kind.recipeTicks * kind.energyPerTick)));
+        }
+        return List.copyOf(result);
+    }
 }

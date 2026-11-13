@@ -646,6 +646,10 @@
   "gui.ic2.remastered.packet_unlimited": "Входящий пакет: ограничения напряжения в логике механизма нет.",
   "gui.ic2.remastered.recipe_seconds": "%s с",
   "gui.ic2.remastered.search": "Название результата...",
+  "gui.ic2.remastered.machine_aux": "Резерв механизма: %s",
+  "gui.ic2.remastered.fuel": "Топливо",
+  "gui.ic2.remastered.fuel_wait": "Ожидание топлива или сырья",
+  "gui.ic2.remastered.fluid_external": "Для рецепта нужны жидкости в механизме. Подайте их через существующие резервуары, трубы или слоты тары. Кнопка «Создать» жидкости не переносит.",
   "gui.ic2.remastered.create": "Создать",
   "gui.ic2.remastered.create_hint": "Загрузить одну порцию и открыть вкладку работы. Shift: загрузить максимум полных порций по вместимости слотов. Обработка требует EU и времени. Зелёные строки: хватает ингредиентов и места."
 }

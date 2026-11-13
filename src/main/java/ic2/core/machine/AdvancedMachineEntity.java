@@ -78,7 +78,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     private final IItemHandler bottom = new CombinedInvWrapper(output, battery);
     private final IItemHandler sides = new CombinedInvWrapper(battery, input, output);
     final ContainerData data = new ContainerData() {
-        @Override public int getCount() { return 7; }
+        @Override public int getCount() { return 9; }
         @Override public void set(int index, int value) {}
         @Override public int get(int index) {
             return switch (index) {
@@ -89,6 +89,8 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
                 case 4 -> processing ? 1 : 0;
                 case 5 -> rareEarth.units() * 1000 / RareEarthProgress.UNITS_PER_OUTPUT;
                 case 6 -> grinderMode;
+                case 7 -> variant.ordinal();
+                case 8 -> heat >>> 16;
                 default -> throw new IndexOutOfBoundsException(index);
             };
         }

@@ -7,6 +7,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
@@ -39,7 +40,7 @@ public final class RemasteredClientChecks {
             int tab = (age - 80) / 30;
             var screen = screen(client);
             if (tab == 0) {
-                if (!tab(client, 0).getClass().getSimpleName().equals("RemasteredButton"))
+                if (!tab(client, 0).getClass().getSimpleName().equals("RemasteredIconButton"))
                     throw new AssertionError("Machine tabs still use vanilla button rendering");
                 for (int i = 3; i < 39; i++) {
                     var slot = screen.getMenu().getSlot(i);
@@ -92,6 +93,19 @@ public final class RemasteredClientChecks {
             for (int i = 0; i < 6; i++) screen(client).children().stream().filter(Button.class::isInstance).map(Button.class::cast)
                 .filter(button -> button.getMessage().getString().equals(">")).findFirst().orElseThrow().onPress();
             Screenshot.grab(client.gameDirectory, "remastered-recipes-scrolled.png", client.getMainRenderTarget(), ignored -> {});
+        }
+        if (age == 116) {
+            var screen = screen(client);
+            int left = (screen.width - 256) / 2;
+            int top = (screen.height - 240) / 2;
+            screen.mouseScrolled(left + 30, top + 56, 0, 100);
+            screen.mouseClicked(left + 148, top + 60, 0);
+            screen.mouseDragged(left + 148, top + 137, 0, 0, 77);
+            screen.mouseReleased(left + 148, top + 137, 0);
+            screen.mouseClicked(left + 30, top + 56, 0);
+            screen.mouseReleased(left + 30, top + 56, 0);
+            String expected = Component.translatable("gui.ic2.remastered.recipe_page", 2, 6).getString();
+            if (!narration(recipePanel(client)).contains(expected)) throw new AssertionError("Dragging scrollbar did not move recipe rows");
         }
         if (age == 190) {
             tab(client, 0).onPress();
@@ -150,17 +164,28 @@ public final class RemasteredClientChecks {
             .filter(button -> button.getMessage().getString().equals("Создать")).findFirst().orElseThrow();
     }
 
+    private static String narration(net.neoforged.neoforge.client.gui.widget.ScrollPanel panel) {
+        var text = new StringBuilder();
+        panel.updateNarration(new net.minecraft.client.gui.narration.NarrationElementOutput() {
+            @Override public void add(net.minecraft.client.gui.narration.NarratedElementType type, net.minecraft.client.gui.narration.NarrationThunk<?> value) {
+                value.getText(text::append);
+            }
+            @Override public net.minecraft.client.gui.narration.NarrationElementOutput nest() { return this; }
+        });
+        return text.toString();
+    }
+
     private static void selectBronzeRow(Minecraft client) {
         var screen = screen(client);
         if (!recipePanel(client).mouseClicked((screen.width - 256) / 2.0 + 30,
-                (screen.height - 240) / 2.0 + 91, 0))
+                (screen.height - 240) / 2.0 + 74, 0))
             throw new AssertionError("Filtered bronze row missing");
     }
 
     private static Button tab(Minecraft client, int index) {
         var screen = screen(client);
         return screen.children().stream().filter(Button.class::isInstance).map(Button.class::cast)
-            .filter(button -> button.getY() == (screen.height - 240) / 2 + 24)
+            .filter(button -> button.getY() == (screen.height - 240) / 2 + 4)
             .sorted(java.util.Comparator.comparingInt(Button::getX)).toList().get(index);
     }
 
