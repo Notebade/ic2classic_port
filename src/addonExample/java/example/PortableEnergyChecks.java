@@ -26,6 +26,15 @@ final class PortableEnergyChecks {
         int selected = player.getInventory().selected;
         try {
             player.getInventory().clearContent(); player.getInventory().selected = 0;
+            int[] rates = {100, 250, 600, 2500, 9500, 25000, 1000, 6000};
+            for (int i = 0; i < names.length; i++) {
+                var source = stack(names[i]); var sourceCell = (RechargeableItem) source.getItem();
+                var target = stack("quantum_accumulator_big"); var targetCell = (RechargeableItem) target.getItem();
+                sourceCell.setCharge(source, 2 * rates[i]); player.getInventory().setItem(0, source); player.getInventory().setItem(1, target);
+                sourceCell.use(level, player, InteractionHand.MAIN_HAND); sourceCell.onUseTick(level, player, source, 19999);
+                require(sourceCell.transferRate() == rates[i] && sourceCell.charge(source) == 0 && targetCell.charge(target) == 2 * rates[i], "real portable charging conserves the full source rate for " + names[i]);
+                player.stopUsingItem();
+            }
             var disposable = stack("su_battery").copyWithCount(2);
             var drill = stack("drill"); var scanner = stack("od_scanner");
             ((RechargeableItem) drill.getItem()).setCharge(drill, 9900);

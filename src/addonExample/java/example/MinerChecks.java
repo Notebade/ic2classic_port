@@ -69,18 +69,22 @@ final class MinerChecks {
             } finally { net.neoforged.neoforge.common.NeoForge.EVENT_BUS.unregister(protection); }
             for (int tick = 0; tick < 2; tick++) ApiSmokeChecks.tick(level, pos, entity.getType());
             require(level.getBlockState(pos.below()).getBlock() instanceof ic2.core.machine.MiningPipeBlock, "miner resumes when the protection veto is removed");
-            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState()); level.setBlockAndUpdate(pos, block.orElseThrow().defaultBlockState());
-            entity = level.getBlockEntity(pos); menu = ((MenuProvider) entity).createMenu(0, player.getInventory(), player);
-            menu.slots.get(3).safeInsert(new ItemStack(ExampleAddon.MINING_TEST_TOOL.get())); menu.slots.get(2).safeInsert(stack("miningpipe_slim"));
-            level.setBlockAndUpdate(pos.below(), Blocks.WATER.defaultBlockState()); ((EnergySink) entity).receiveEnergy(1000);
-            level.setBlockAndUpdate(pos.east(), Ic2Api.block(ResourceLocation.parse("ic2:overclocked_pump")).orElseThrow().defaultBlockState());
-            var pump = level.getBlockEntity(pos.east()); ((EnergySink) pump).receiveEnergy(200);
-            for (int tick = 0; tick < 25; tick++) ApiSmokeChecks.tick(level, pos.east(), pump.getType());
-            for (int tick = 0; tick < 2; tick++) ApiSmokeChecks.tick(level, pos, entity.getType());
-            var tank = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, pos.east(), net.minecraft.core.Direction.UP);
-            require(tank.getFluidInTank(0).getAmount() == 1000 && level.getBlockState(pos.below()).getBlock() instanceof ic2.core.machine.MiningPipeBlock, "miner hands one real world source to a charged adjacent pump before extending its pipe");
-            level.setBlockAndUpdate(pos.east(), Blocks.AIR.defaultBlockState());
-        } finally { for (var at : java.util.List.of(pos, pos.below(), pos.below(2), pos.west())) level.setBlockAndUpdate(at, Blocks.AIR.defaultBlockState()); }
+            for (String pumpName : java.util.List.of("pump", "overclocked_pump")) {
+                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState()); level.setBlockAndUpdate(pos, block.orElseThrow().defaultBlockState());
+                entity = level.getBlockEntity(pos); menu = ((MenuProvider) entity).createMenu(0, player.getInventory(), player);
+                menu.slots.get(3).safeInsert(new ItemStack(ExampleAddon.MINING_TEST_TOOL.get())); menu.slots.get(2).safeInsert(stack("miningpipe_slim"));
+                level.setBlockAndUpdate(pos.below(), Blocks.WATER.defaultBlockState()); ((EnergySink) entity).receiveEnergy(1000);
+                level.setBlockAndUpdate(pos.east(), Ic2Api.block(ResourceLocation.parse("ic2:" + pumpName)).orElseThrow().defaultBlockState());
+                var pump = level.getBlockEntity(pos.east()); boolean basic = pumpName.equals("pump");
+                for (int packet = 0; packet < (basic ? 4 : 2); packet++)
+                    require(ic2.api.energy.EuNetwork.send(level, pos.east(2), basic ? 32 : 100, java.util.Set.of(net.minecraft.core.Direction.WEST), 0) == (basic ? 32 : 100), "pump receives its valid source voltage");
+                for (int tick = 0; tick < (basic ? 120 : 25); tick++) ApiSmokeChecks.tick(level, pos.east(), pump.getType());
+                for (int tick = 0; tick < 2; tick++) ApiSmokeChecks.tick(level, pos, entity.getType());
+                var tank = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, pos.east(), net.minecraft.core.Direction.UP);
+                require(tank.getFluidInTank(0).getAmount() == 1000 && level.getBlockState(pos.below()).getBlock() instanceof ic2.core.machine.MiningPipeBlock, "miner hands one world source to prepared " + pumpName + " before extending its pipe");
+                level.setBlockAndUpdate(pos.east(), Blocks.AIR.defaultBlockState());
+            }
+        } finally { for (var at : java.util.List.of(pos, pos.below(), pos.below(2), pos.west(), pos.east(), pos.east().below())) level.setBlockAndUpdate(at, Blocks.AIR.defaultBlockState()); }
     }
     private static ItemStack stack(String name) { return new ItemStack(Ic2Api.item(ResourceLocation.parse("ic2:" + name)).orElseThrow()); }
     private static void require(boolean value, String message) { if (!value) throw new AssertionError(message); }

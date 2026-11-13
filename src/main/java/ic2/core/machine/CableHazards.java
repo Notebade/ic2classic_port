@@ -26,11 +26,16 @@ final class CableHazards {
             if (!level.hasChunkAt(pos) || !level.getBlockState(pos).is(visit.cable())) continue;
             var rating = rating(visit.cable());
             if (energy > rating.absorption()) {
-                for (var entity : level.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(1), ElectricHazards::shockable))
-                    shock.merge(entity, energy - rating.absorption(), Math::max);
+                var state = level.getBlockState(pos);
+                boolean water = state.getFluidState().is(net.minecraft.tags.FluidTags.WATER);
+                var contact = state.getFluidState().is(net.minecraft.tags.FluidTags.LAVA) ? new AABB(pos) : new AABB(pos).inflate(1);
+                var wet = new AABB(pos).inflate(3);
+                for (var entity : level.getEntitiesOfClass(LivingEntity.class, water ? wet : contact, ElectricHazards::shockable))
+                    if (entity.getBoundingBox().intersects(contact) || water && entity.isInWaterOrRain() && entity.getBoundingBox().intersects(wet))
+                        shock.merge(entity, energy - rating.absorption(), Math::max);
             }
             if (energy > rating.maximum()) {
-                level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2 | 16);
+                level.setBlock(pos, level.getBlockState(pos).getFluidState().createLegacyBlock(), 2 | 16);
             } else if (energy >= 9001 && rating.bare() != null) {
                 level.setBlock(pos, BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("ic2", rating.bare())).defaultBlockState(), 2 | 16);
             }

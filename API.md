@@ -10,8 +10,8 @@
 
 ```groovy
 dependencies {
-    compileOnly files('libs/ic2-classic-re-0.70.0.jar')
-    runtimeOnly files('libs/ic2-classic-re-0.70.0.jar')
+    compileOnly files('libs/ic2-classic-re-0.71.0.jar')
+    runtimeOnly files('libs/ic2-classic-re-0.71.0.jar')
 }
 ```
 
@@ -23,7 +23,7 @@ dependencies {
 [[dependencies.exampleaddon]]
 modId = "ic2"
 type = "required"
-versionRange = "[0.65.0,0.70.0)"
+versionRange = "[0.71.0,0.72.0)"
 ordering = "AFTER"
 side = "BOTH"
 ```
@@ -306,3 +306,7 @@ A real addon stores EU in its own CustomData and is charged by both a held nativ
 ### Source EU distribution
 
 One send first discovers shortest loaded routes and active receivers. Linked native parts and plain-block ports represent one controller, retaining its cheapest active input. Gross EU is shared using inverse path loss (minimum weight loss 0.1 EU); integer path losses are charged per executed allocation round. Remaining energy is redistributed after demand fills. Voltage-sensitive inputs see their allocated share after cable loss, so a 512-EU source split into four 127-EU delivered branches does not falsely overvolt MV receivers. The returned debit remains actual received EU plus executed path losses; overload callbacks still record no receipt. Ordinary legacy addon sinks keep the original offered-packet acceptance argument.
+
+### Final 0.71.0 details
+
+recipeFinished receives a detached result or ItemStack.EMPTY for chance-failed/partial output; rare-earth partial and completed batches both invoke it. Power-structure reads and fluid simulation require existing bound ownership and cannot repair replacement parts. Native cable fluid state is exposed through BlockState.getFluidState and the standard LiquidBlockContainer/BucketPickup interfaces (serialized fluid=none/water/lava). Readonly API calls and simulations continue to avoid chunk loading and structure formation. Complete stage scope and evidence: [energy/advanced completion](docs/energy-advanced-completion.md).

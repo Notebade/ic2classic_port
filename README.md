@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.70.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.71.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.70.0` |
+| Project version | `0.71.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -494,3 +494,7 @@ Adds an eight-card reactor monitor, the original reactor-card and heat-pump craf
 ### Nuclear and generation completion (0.70.0)
 
 Monitor walls now support group locking, dye colors, scale and alignment. Generation balance is server-configurable. Fusion accepts the non-consuming cobblestone upgrade; original tank recipes use working buffer/chest/toolbox dependencies. Reactor meltdowns use IC2 ray absorption, shielding, damage and fallout. Original generator GUI backgrounds/slot positions, Geiger loops and assembled-only steam-tunnel animation are present. Verification covers 20 standalone suites, dedicated-server scenarios including real chunk unloading, and 15 actual client screens with JEI. Client verification addons are temporary and are not gameplay dependencies. See [scope and verification](docs/nuclear-generation-completion.md).
+
+### Energy and advanced machine completion (0.71.0)
+
+Rows 3–4 now have verified gameplay, source fisher acquisition through working mining/pump dependencies, native upgrades, weighted EU routing and hazards, portable charging and public addon contracts. Tests cover real server processing/reloads, high power tiers, chunkloader restarts, recipe discovery/statistics and actual client sound loops. GUI/graphics continue in the user's separate stage. See [scope and evidence](docs/energy-advanced-completion.md).

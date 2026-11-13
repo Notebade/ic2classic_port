@@ -304,6 +304,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
                 ItemStack current = inventory.getStackInSlot(2);
                 inventory.setStackInSlot(2, output.copyWithCount(current.getCount() + output.getCount()));
             }
+            notifyRecipeFinished(batch.batches() > 0 ? output : ItemStack.EMPTY, 0);
         }
         updateLit(step.heating());
         if (changed) setChanged();
@@ -405,10 +406,12 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         else recipe.pump().drain(PumpTank.BUCKET, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
         if (recipe.secondInputCount() > 0) inventory.extractItem(2, recipe.secondInputCount(), false);
         experience += recipe.experience();
+        notifyRecipeFinished(success ? recipe.output() : ItemStack.EMPTY, recipe.experience());
+    }
+    private void notifyRecipeFinished(ItemStack result, float xp) {
         for (int slot = variant.layout.slots(); slot < inventory.getSlots(); slot++) {
-            var upgradeStack = inventory.getStackInSlot(slot);
-            if (upgradeStack.getItem() instanceof ic2.api.machine.MachineUpgrade upgrade)
-                upgrade.recipeFinished(upgradeStack, upgradeContext(), success ? recipe.output().copy() : ItemStack.EMPTY, recipe.experience());
+            var stack = inventory.getStackInSlot(slot);
+            if (stack.getItem() instanceof ic2.api.machine.MachineUpgrade upgrade) upgrade.recipeFinished(stack, upgradeContext(), result.copy(), xp);
         }
     }
 

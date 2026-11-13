@@ -67,6 +67,15 @@ final class AdvancedUpgradeChecks {
             require(hooks.getInt("upgrade_ticks") == 12 && hooks.getInt("upgrade_recipes") == 1
                 && hooks.getString("last_result").equals("minecraft:iron_ingot"), "real addon upgrade receives working tick and completed-output callbacks");
             level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos, Ic2Api.block(id("centrifugal_rare_earth_extractor")).orElseThrow().defaultBlockState());
+            machine = level.getBlockEntity(pos); menu = ((MenuProvider) machine).createMenu(0, player.getInventory(), player);
+            menu.slots.get(3).safeInsert(new ItemStack(ExampleAddon.HOOK_TEST_UPGRADE.get()));
+            menu.slots.get(1).safeInsert(new ItemStack(net.minecraft.world.item.Items.CLAY_BALL, 2));
+            hot = machine.saveWithoutMetadata(level.registryAccess()); hot.putInt("heat", 10000); hot.putInt("energy", 5120); machine.loadWithComponents(hot, level.registryAccess());
+            for (int tick = 0; tick < 6; tick++) ApiSmokeChecks.tick(level, pos, machine.getType());
+            hooks = menu.slots.get(3).getItem().getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+            require(hooks.getInt("upgrade_recipes") == 2 && hooks.getString("last_result").equals("ic2:dust_aluminium"), "rare-earth partial and completed batches both notify the real addon recipe hook");
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             level.setBlockAndUpdate(pos, Ic2Api.block(id("slow_grinder")).orElseThrow().defaultBlockState());
             menu = ((MenuProvider) level.getBlockEntity(pos)).createMenu(0, player.getInventory(), player);
             require(menu.slots.size() == 49 && !menu.slots.get(11).mayPlace(stack("upgrade_energy_storage", 1)), "slow grinder retains source prohibition on machine-stat modifiers");

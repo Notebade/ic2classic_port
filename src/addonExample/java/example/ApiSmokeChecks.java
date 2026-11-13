@@ -30,6 +30,7 @@ public final class ApiSmokeChecks {
             FisherChecks.run(server.overworld());
             AdvancedUpgradeChecks.run(server.overworld());
             PressureAccessChecks.run(server.overworld());
+            PowerAccessChecks.run(server.overworld());
             AdvancedProductionChecks.run(server.overworld());
             ChargedElectrolyzerChecks.run(server.overworld());
             ExtractionChecks.run(server.overworld());
@@ -40,6 +41,7 @@ public final class ApiSmokeChecks {
             PortableEnergyChecks.run(server.overworld());
             PowerTierChecks.run(server.overworld());
             NetworkDistributionChecks.run(server.overworld());
+            RecipeUnlockChecks.run(server.overworld());
             CableHazardChecks.run(server.overworld());
             TransportUpgradeChecks.run(server.overworld());
             var compression = Ic2Recipes.find(Process.COMPRESSION, new ItemStack(Items.COBBLED_DEEPSLATE)).orElseThrow();

@@ -16,5 +16,6 @@ public interface MachineUpgrade {
     default double soundMultiplier(ItemStack stack) { return 1; }
     /** Return true if the upgrade's own state changed and needs saving. */
     default boolean tickUpgrade(ItemStack stack, UpgradeContext context) { return false; }
+    /** Completed operation; result is a detached copy, or EMPTY for partial/chance-failed output. */
     default void recipeFinished(ItemStack stack, UpgradeContext context, ItemStack result, float experience) {}
 }

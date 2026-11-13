@@ -17,7 +17,7 @@ displayName="IC2 Chunkloader Restart Verification"
 [[dependencies.exampleaddon]]
 modId="ic2"
 type="required"
-versionRange="[0.65.0,0.71.0)"
+versionRange="[0.71.0,0.72.0)"
 ordering="AFTER"
 side="BOTH"
 '@

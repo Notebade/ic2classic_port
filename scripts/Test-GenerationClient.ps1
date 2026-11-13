@@ -28,7 +28,7 @@ displayName="IC2 Client Verification"
 [[dependencies.exampleaddon]]
 modId="ic2"
 type="required"
-versionRange="[0.70.0,0.71.0)"
+versionRange="[0.71.0,0.72.0)"
 ordering="AFTER"
 side="BOTH"
 '@ | Set-Content -LiteralPath (Join-Path $metadata 'neoforge.mods.toml') -Encoding utf8NoBOM

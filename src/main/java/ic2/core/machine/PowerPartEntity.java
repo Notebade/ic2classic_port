@@ -13,6 +13,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 
 final class PowerPartEntity extends BlockEntity implements ic2.api.machine.MachineSnapshot.Access {
     private BlockPos owner;
+    boolean ownedBy(BlockPos controller) { return controller.equals(owner); }
     PowerPartEntity(BlockPos pos, BlockState state) { super(PowerMachines.PART_ENTITY.get(), pos, state); }
     boolean canClaim(BlockPos pos) {
         if (owner == null || owner.equals(pos)) return true;

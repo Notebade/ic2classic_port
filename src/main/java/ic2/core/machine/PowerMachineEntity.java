@@ -160,7 +160,7 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
     void tick() {
         clock = (clock + 1) % 102400;
         if (kind.multiblock()) {
-            structure = formed();
+            structure = formStructure();
             if (getBlockState().getValue(PowerMachineBlock.FORMED) != structure)
                 level.setBlock(worldPosition, getBlockState().setValue(PowerMachineBlock.FORMED, structure), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
             if (!structure) { active(false); return; }
@@ -373,6 +373,11 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
         };
     }
     boolean formed() {
+        if (!structure || !live() || !shapeValid()) return false;
+        for (var cell : cells()) if (level.getBlockEntity(position(cell)) instanceof PowerPartEntity part && !part.ownedBy(worldPosition)) return false;
+        return true;
+    }
+    private boolean formStructure() {
         if (!shapeValid()) return false;
         for (var cell : cells()) if (level.getBlockEntity(position(cell)) instanceof PowerPartEntity part && !part.canClaim(worldPosition)) return false;
         for (var cell : cells()) if (level.getBlockEntity(position(cell)) instanceof PowerPartEntity part) part.claim(worldPosition);

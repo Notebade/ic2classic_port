@@ -25,7 +25,7 @@ displayName="IC2 Audio Verification"
 [[dependencies.exampleaddon]]
 modId="ic2"
 type="required"
-versionRange="[0.65.0,0.71.0)"
+versionRange="[0.71.0,0.72.0)"
 ordering="AFTER"
 side="BOTH"
 '@ | Set-Content -LiteralPath (Join-Path $metadata 'neoforge.mods.toml') -Encoding utf8NoBOM
@@ -41,7 +41,7 @@ try {
     while (!$process.WaitForExit(1000)) { if ([DateTime]::UtcNow -gt $deadline) { throw 'Audio verification timed out.' } }
     $log = Get-Content -LiteralPath (Join-Path $run 'console.log') -Raw
     if (!$log.Contains('IC2 client audio checks passed:') -or $log.Contains('Unreported exception')) { throw 'Client audio verification failed; inspect runs/audio-client-check/console.log.' }
-    Write-Output 'Client audio verification passed: actual playing loops, volume modifiers, mute/unmute and removal cleanup.'
+    Write-Output 'Client verification passed: recipe discovery/statistics, actual sound loops, volume modifiers, mute/unmute and cleanup.'
 } finally {
     if ($process -and !$process.HasExited) { Stop-Process -Id $process.Id -ErrorAction SilentlyContinue }
     if (Test-Path -LiteralPath $addon) { Remove-Item -LiteralPath $addon }
