@@ -24,6 +24,7 @@ public final class Radiation {
     private static final int TICKS_PER_BLOCK = 80;
     private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "radiation");
     private static final ResourceKey<DamageType> DAMAGE_TYPE = ResourceKey.create(Registries.DAMAGE_TYPE, ID);
+    private static final ResourceKey<DamageType> NUCLEAR = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "nuclear"));
     private static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, IC2.MOD_ID);
     private static final DeferredHolder<MobEffect, RadiationEffect> EFFECT = EFFECTS.register("radiation", RadiationEffect::new);
 
@@ -44,6 +45,10 @@ public final class Radiation {
     }
 
     public static void exposeToFallout(Level level, Vec3 origin) {
+        for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, AABB.ofSize(origin, 200, 200, 200))) {
+            int duration = (int) (120 * (100 - Math.sqrt(entity.distanceToSqr(origin))));
+            if (duration > 0) entity.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.HUNGER, duration));
+        }
         var area = AABB.ofSize(origin, FALLOUT_RADIUS * 2, FALLOUT_RADIUS * 2, FALLOUT_RADIUS * 2);
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, area)) {
             double distance = Math.sqrt(entity.distanceToSqr(origin));
@@ -53,6 +58,8 @@ public final class Radiation {
             }
         }
     }
+
+    public static net.minecraft.world.damagesource.DamageSource nuclearDamage(Level level) { return level.damageSources().source(NUCLEAR); }
 
     private static void preventProtectedDamage(LivingIncomingDamageEvent event) {
         if (event.getSource().is(DAMAGE_TYPE) && Hazmat.protects(event.getEntity())) {

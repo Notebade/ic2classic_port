@@ -1,6 +1,7 @@
 package ic2.core.machine;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -22,16 +23,17 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
 final class PowerMachineBlock extends Block implements EntityBlock {
+    static final net.minecraft.world.level.block.state.properties.BooleanProperty FORMED = net.minecraft.world.level.block.state.properties.BooleanProperty.create("formed");
     final PowerMachines.Kind kind;
 
     PowerMachineBlock(Properties properties, PowerMachines.Kind kind) {
         super(properties);
         this.kind = kind;
-        registerDefaultState(defaultBlockState().setValue(BlockStateProperties.LIT, false));
+        registerDefaultState(defaultBlockState().setValue(BlockStateProperties.LIT, false).setValue(FORMED, false));
     }
 
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(BlockStateProperties.FACING, BlockStateProperties.LIT);
+        builder.add(BlockStateProperties.FACING, BlockStateProperties.LIT, FORMED);
     }
 
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -47,6 +49,17 @@ final class PowerMachineBlock extends Block implements EntityBlock {
     }
 
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new PowerMachineEntity(pos, state); }
+    @Override public void animateTick(BlockState state, Level level, BlockPos pos, net.minecraft.util.RandomSource random) {
+        if (kind != PowerMachines.Kind.TUNNEL || !state.getValue(BlockStateProperties.LIT)) return;
+        Direction front = state.getValue(BlockStateProperties.FACING);
+        for (int i = 0; i < 5; i++) {
+            level.addParticle(net.minecraft.core.particles.ParticleTypes.SMOKE,
+                pos.getX() + .5 + front.getStepX() * .6 + random.nextFloat() * 2 - 1,
+                pos.getY() + .5 + random.nextFloat() * 2 - 1,
+                pos.getZ() + .5 + front.getStepZ() * .6 + random.nextFloat() * 2 - 1,
+                front.getStepX() * .35, .125, front.getStepZ() * .35);
+        }
+    }
     @Override public void setPlacedBy(Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (!level.isClientSide && kind == PowerMachines.Kind.WHISKY_BARREL && level.getBlockEntity(pos) instanceof PowerMachineEntity barrel) {

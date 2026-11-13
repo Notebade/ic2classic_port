@@ -54,6 +54,7 @@ public final class ExtraGenerators {
         final int chargeTier;
         Type(int packet, int chargeTier) { this.packet = packet; this.chargeTier = chargeTier; }
         MenuType<ExtraGeneratorMenu> menu() { return this == SOLAR ? SOLAR_MENU.get() : SLAG_MENU.get(); }
-        int maxStored() { return this == SOLAR ? SolarTurbineCycle.MAX_STORED : SlagGeneratorCycle.CAPACITY; }
+        int packet() { return this == SOLAR ? Math.max(1, (int) (32 * GenerationConfig.SOLAR.get())) : GenerationConfig.SLAG.get(); }
+        int maxStored() { return this == SOLAR ? SolarTurbineCycle.NOMINAL_BUFFER + (int) Math.ceil(32 * GenerationConfig.SOLAR.get()) - 1 : SlagGeneratorCycle.CAPACITY; }
     }
 }

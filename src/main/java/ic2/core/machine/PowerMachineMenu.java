@@ -23,16 +23,20 @@ final class PowerMachineMenu extends AbstractContainerMenu {
                      ContainerLevelAccess access, PowerMachineEntity machine) {
         super(kind.menu(), id); this.kind = kind; this.data = data; this.access = access; this.machine = machine;
         addDataSlots(data);
+        var layout = GenerationLayout.forId(kind.id);
         for (int slot = 0; slot < kind.slots; slot++) {
             final int index = slot;
-            addSlot(new SlotItemHandler(inventory, slot, 8 + slot * 22, 100) {
+            int x = layout == null ? 8 + slot * 22 : layout.slots().get(slot).x();
+            int y = layout == null ? 100 : layout.slots().get(slot).y();
+            addSlot(new SlotItemHandler(inventory, slot, x, y) {
                 @Override public boolean mayPlace(ItemStack stack) {
                     return !kind.outputSlot(index) && super.mayPlace(stack);
                 }
             });
         }
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, 132 + row * 18));
-        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, 190));
+        int inventoryY = layout == null ? 132 : layout.inventoryY();
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, inventoryY + row * 18));
+        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, inventoryY + 58));
     }
     int value(int index) { return data.get(index * 2) & 65535 | data.get(index * 2 + 1) << 16; }
     @Override public boolean clickMenuButton(Player player, int button) {

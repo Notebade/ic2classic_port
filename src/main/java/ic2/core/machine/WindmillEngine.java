@@ -35,7 +35,7 @@ final class WindmillEngine {
                 else stack.setDamageValue(stack.getDamageValue() + 1);
             }
         } else { radius = -1; freeAir = 0; airSpeed = 0; }
-        var step = state.step(target, rotor, freeAir > 0, energy);
+        var step = state.step(target, rotor, freeAir > 0, energy, GenerationConfig.WIND.get());
         state = step.next();
         return step.energy();
     }
@@ -54,7 +54,7 @@ final class WindmillEngine {
     int speedThousandths() { return (int) (state.speed() * 1000); }
     boolean spinning() { return state.speed() > 0; }
     int freePermille() { return (int) (freeAir * 1000); }
-    int outputHundredths() { return (int) (state.speed() * 25600); }
+    int outputHundredths() { return (int) (state.speed() * GenerationConfig.WIND.get() * 100); }
     float angle(double time) {
         if (renderTime >= 0) renderAngle = (float) ((renderAngle + Math.clamp(time - renderTime, 0, 2) * state.speed() * 18) % 360);
         renderTime = time; return renderAngle;

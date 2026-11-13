@@ -40,6 +40,8 @@ public final class IC2 {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
         DeferredRegister.create(Registries.RECIPE_SERIALIZER, MOD_ID);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PowerCraftingRecipe>> MACHINE_BUFFER_RECIPE =
+        RECIPE_SERIALIZERS.register("machine_buffer", () -> PowerCraftingRecipe.serializer(PowerCraftingRecipe.Kind.BUFFER));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PowerCraftingRecipe>> PLASMA_CORE_RECIPE =
         RECIPE_SERIALIZERS.register("plasma_core", () -> PowerCraftingRecipe.serializer(PowerCraftingRecipe.Kind.CORE));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PowerCraftingRecipe>> BOILER_CASING_RECIPE =
@@ -135,7 +137,8 @@ public final class IC2 {
     public static final DeferredItem<ScrapBoxItem> SCRAP_BOX = ITEMS.registerItem("scrapbox", ScrapBoxItem::new);
     public static final DeferredItem<Item> UU_MATTER = ITEMS.registerSimpleItem("uumatter");
 
-    public IC2(IEventBus modBus) {
+    public IC2(IEventBus modBus, net.neoforged.fml.ModContainer container) {
+        container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, ic2.core.machine.GenerationConfig.SPEC);
         COMPONENTS.register(modBus);
         ITEMS.register(modBus);
         RECIPE_SERIALIZERS.register(modBus);

@@ -16,7 +16,13 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 @EventBusSubscriber(modid = IC2.MOD_ID, value = Dist.CLIENT)
 final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu> {
-    PowerMachineScreen(PowerMachineMenu menu, Inventory player, Component title) { super(menu, player, title); imageHeight = 214; }
+    private final GenerationLayout layout;
+    private final java.util.List<Component> details = new java.util.ArrayList<>();
+    PowerMachineScreen(PowerMachineMenu menu, Inventory player, Component title) {
+        super(menu, player, title);
+        layout = GenerationLayout.forId(menu.kind.id);
+        imageHeight = layout == null ? 214 : layout.height();
+    }
     @SubscribeEvent public static void register(RegisterMenuScreensEvent event) {
         for (var type : PowerMachines.SCREENS.values()) event.register(type.get(), PowerMachineScreen::new);
     }
@@ -50,18 +56,47 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
     }
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float tick) {
         super.render(graphics, mouseX, mouseY, tick); renderTooltip(graphics, mouseX, mouseY);
+        if (layout != null && hoveredSlot == null && mouseX >= leftPos + 8 && mouseX < leftPos + 168
+            && mouseY >= topPos + 14 && mouseY < topPos + layout.inventoryY() - 10)
+            graphics.renderComponentTooltip(font, details, mouseX, mouseY);
     }
     @Override protected void renderBg(GuiGraphics graphics, float tick, int mouseX, int mouseY) {
+        if (layout != null) {
+            var texture = ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, layout.texture());
+            graphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+            switch (menu.kind) {
+                case PLASMAFIER -> gauge(graphics, 82, 24, 12, 41, menu.value(6), 10000, 0xffbd57ff);
+                case LIQUID_FUEL -> gauge(graphics, 48, 15, 16, 58, menu.value(14), 16000, 0xff91a847);
+                case BOILER -> {
+                    gauge(graphics, 30, 15, 16, 58, menu.value(2), 16000, 0xff3c73cf);
+                    gauge(graphics, 152, 15, 16, 58, menu.value(3), 128000, 0xffd8d8df);
+                    gauge(graphics, 126, 18, 8, 52, menu.value(1), 24000, 0xffe36a30);
+                }
+                case FUSION -> {
+                    gauge(graphics, 8, 18, 16, 58, Math.max(0, menu.value(4) - 10000), 512000, 0xffff7518);
+                    gauge(graphics, 152, 19, 16, 58, menu.value(1), 48000, 0xffed3c1b);
+                }
+                default -> { }
+            }
+            return;
+        }
         graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xffc6c6c6);
         for (var slot : menu.slots) {
             graphics.fill(leftPos + slot.x - 1, topPos + slot.y - 1, leftPos + slot.x + 17, topPos + slot.y + 17, 0xff555555);
             graphics.fill(leftPos + slot.x, topPos + slot.y, leftPos + slot.x + 16, topPos + slot.y + 16, 0xff8b8b8b);
         }
     }
+    private void gauge(GuiGraphics graphics, int x, int y, int width, int height, int value, int capacity, int color) {
+        int filled = (int) (Math.clamp(value / (double) capacity, 0, 1) * height);
+        graphics.fill(leftPos + x, topPos + y + height - filled, leftPos + x + width, topPos + y + height, color);
+    }
     private void line(GuiGraphics graphics, int row, String key, Object... args) {
-        graphics.drawString(font, Component.translatable("gui.ic2.power_" + key, args), 8, 20 + row * 12, 0x404040, false);
+        var text = Component.translatable("gui.ic2.power_" + key, args);
+        if (layout != null) details.add(text);
+        else graphics.drawString(font, text, 8, 20 + row * 12, 0x404040, false);
     }
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        details.clear();
         graphics.drawString(font, title, 8, 6, 0x404040, false);
         if (menu.kind == PowerMachines.Kind.GASIFIER) line(graphics, 0, "solid_fuel", menu.value(18));
         else if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) line(graphics, 0, "barrel_state_" + menu.value(20));
@@ -101,6 +136,6 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
                 line(graphics, 3, "chemical_progress", menu.value(17) == 0 ? 0 : (int) (menu.value(13) * 100L / menu.value(17)));
             }
         }
-        graphics.drawString(font, playerInventoryTitle, 8, 122, 0x404040, false);
+        graphics.drawString(font, playerInventoryTitle, 8, layout == null ? 122 : layout.inventoryY() - 10, 0x404040, false);
     }
 }

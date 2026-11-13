@@ -22,5 +22,29 @@
         "name": "ic2:generators/reactor/nuclear_reactor_operating"
       }
     ]
+  },
+  "geiger_low": {
+    "sounds": [
+      {
+        "stream": false,
+        "name": "ic2:generators/reactor/geiger_low"
+      }
+    ]
+  },
+  "geiger_med": {
+    "sounds": [
+      {
+        "stream": false,
+        "name": "ic2:generators/reactor/geiger_med"
+      }
+    ]
+  },
+  "geiger_high": {
+    "sounds": [
+      {
+        "stream": false,
+        "name": "ic2:generators/reactor/geiger_high"
+      }
+    ]
   }
 }

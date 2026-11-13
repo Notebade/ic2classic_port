@@ -10,9 +10,13 @@ final class SlagGeneratorCycle {
     static boolean canRefuel(int energy) { return energy <= CAPACITY - OUTPUT; }
 
     static Step step(int remaining, int energy, int counter, boolean scrapFuel) {
+        return step(remaining, energy, counter, scrapFuel, OUTPUT);
+    }
+
+    static Step step(int remaining, int energy, int counter, boolean scrapFuel, int output) {
         if (remaining <= 0) return new Step(0, energy, counter, false, false);
         int nextCounter = scrapFuel ? counter : counter - 1;
-        return new Step(remaining - 1, Math.min(CAPACITY, energy + OUTPUT), nextCounter, !scrapFuel && nextCounter <= 0, true);
+        return new Step(remaining - 1, Math.min(CAPACITY, energy + output), nextCounter, !scrapFuel && nextCounter <= 0, true);
     }
 
     record Step(int remaining, int energy, int counter, boolean scrap, boolean burning) {}

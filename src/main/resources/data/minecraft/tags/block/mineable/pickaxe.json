@@ -111,6 +111,8 @@
     "ic2:luminator",
     "ic2:adjustable_luminator",
     "ic2:valve",
-    "ic2:refined_iron_block"
+    "ic2:refined_iron_block",
+    "ic2:machine_buffer",
+    "ic2:personal_chest"
   ]
 }

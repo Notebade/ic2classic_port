@@ -19,8 +19,10 @@ public final class ExampleAddon {
     public ExampleAddon(IEventBus modBus) {
         if (Ic2Api.version() != 1) throw new IllegalStateException("This addon needs IC2 API v1");
         modBus.addListener(this::setup);
-        if (Boolean.getBoolean("ic2.api.verify"))
+        if (Boolean.getBoolean("ic2.api.verify")) {
             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ApiSmokeChecks::run);
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(StructureChunkChecks::tick);
+        }
     }
     private void setup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {

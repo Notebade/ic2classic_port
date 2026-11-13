@@ -21,8 +21,9 @@ public final class NuclearInfrastructure {
     private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, IC2.MOD_ID);
     private static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, IC2.MOD_ID);
     static final java.util.Map<String, Supplier<net.minecraft.sounds.SoundEvent>> SOUNDS = new java.util.HashMap<>();
+    static net.neoforged.neoforge.registries.DeferredItem<net.minecraft.world.item.Item> COBBLEGEN;
     static {
-        for (String id : new String[]{"generator_operating", "windmill_operating", "reactor_operating"}) SOUNDS.put(id, SOUND_EVENTS.register(id, ()->net.minecraft.sounds.SoundEvent.createVariableRangeEvent(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, id))));
+        for (String id : new String[]{"generator_operating", "windmill_operating", "reactor_operating", "geiger_low", "geiger_med", "geiger_high"}) SOUNDS.put(id, SOUND_EVENTS.register(id, ()->net.minecraft.sounds.SoundEvent.createVariableRangeEvent(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, id))));
     }
     static final DeferredBlock<MonitorBlock> MONITOR = BLOCKS.registerBlock("monitor", MonitorBlock::new, properties());
     static final DeferredBlock<Block> REFINED_IRON_BLOCK = BLOCKS.registerSimpleBlock("refined_iron_block", properties());
@@ -49,6 +50,7 @@ public final class NuclearInfrastructure {
         SOUND_EVENTS.register(bus);
         for (var block : new DeferredBlock<?>[]{MONITOR, PIPE, PRESSURE_PIPE, LAMP, ADJUSTABLE_LAMP, REFINED_IRON_BLOCK}) items.registerSimpleBlockItem(block);
         for (String item : new String[]{"frequency_transmitter", "monitor_card", "fluid_import_upgrade_simple"}) items.registerSimpleItem(item);
+        COBBLEGEN = items.registerSimpleItem("cobblegen_upgrade");
         bus.addListener(NuclearInfrastructure::capabilities);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(WindWorldData::tick);
     }

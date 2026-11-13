@@ -367,7 +367,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         List<BlockPos> chambers = reactorChambers();
         boolean powered = level.hasNeighborSignal(worldPosition) || chambers.stream().anyMatch(level::hasNeighborSignal);
         if (!powered) {
+            boolean changedOutput = reactorOutput != 0;
             reactorOutput = 0;
+            if (changedOutput) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
         if (steamTanks != null || level.getGameTime() % ReactorRules.CYCLE_TICKS == 0) {
             int width = ReactorRules.BASE_COLUMNS + chambers.size();
@@ -384,7 +386,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
             reactorOutput = cycle.output();
             reactorHeat = cycle.heat();
             setChanged();
-            if (reactorHeat >= reactorMaxHeat) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+            if (reactorHeat >= reactorMaxHeat && GenerationConfig.REACTOR_DAMAGE.get() > 0) {
                 meltReactor(grid.blastPower(hull.containment()));
                 return;
             }
@@ -471,11 +474,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
             inventory.setStackInSlot(slot, ItemStack.EMPTY);
         }
-        Vec3 origin = Vec3.atCenterOf(worldPosition);
         level.removeBlock(worldPosition, false);
-        level.explode(null, origin.x, origin.y, origin.z, power,
-            Level.ExplosionInteraction.BLOCK);
-        Radiation.exposeToFallout(level, origin);
+        ReactorExplosion.detonate((ServerLevel) level, worldPosition, power);
     }
 
     private void tickWindTurbine() {
@@ -757,7 +757,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
     private void setActive(boolean active) {
         BlockState state = getBlockState();
         if (state.getValue(BlockStateProperties.LIT) != active) {
-            level.setBlock(worldPosition, state.setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS);
+            level.setBlock(worldPosition, state.setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
         }
     }
 
@@ -1312,6 +1312,26 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
             Containers.dropItemStack(world, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
                 inventory.getStackInSlot(slot));
         }
+    }
+
+    int reactorSoundLevel() {
+        if (!kind.isReactor() || reactorOutput <= 0) return 0;
+        double output = kind == MachineKind.STEAM_REACTOR ? reactorOutput / 3.2 : reactorOutput / (double) GenerationConfig.NUCLEAR.get();
+        return output < 40 ? 1 : output < 80 ? 2 : 3;
+    }
+
+    @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        var tag = new CompoundTag();
+        if (kind.isReactor()) tag.putInt("reactor_output", reactorOutput);
+        return tag;
+    }
+
+    @Override public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        if (kind.isReactor()) reactorOutput = Math.max(0, tag.getInt("reactor_output"));
+    }
+
+    @Override public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return kind.isReactor() ? net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this) : null;
     }
 
     @Override

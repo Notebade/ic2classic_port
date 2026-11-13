@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "down": "ic2:block/electric/generator/steam_tunnel/base/down",
+    "up": "ic2:block/electric/generator/steam_tunnel/base/up",
+    "north": "ic2:block/electric/generator/steam_tunnel/base/north",
+    "south": "ic2:block/electric/generator/steam_tunnel/base/south",
+    "west": "ic2:block/electric/generator/steam_tunnel/base/west",
+    "east": "ic2:block/electric/generator/steam_tunnel/base/east",
+    "particle": "ic2:block/electric/generator/steam_tunnel/base/north"
+  },
+  "parent": "minecraft:block/cube"
+}

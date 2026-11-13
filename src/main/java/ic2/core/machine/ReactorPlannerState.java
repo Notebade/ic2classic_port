@@ -171,7 +171,7 @@ final class ReactorPlannerState {
         int cells = fuelCells(); long baseline = 0;
         for (int slot = 0; slot < simulation.getSlots(); slot++) {
             if (simulation.getStackInSlot(slot).getItem() instanceof ic2.core.item.UraniumFuelRod rod)
-                baseline += (long) rod.cells() * rod.type().energyPerPulse() * (steam ? 1 : ReactorRules.CYCLE_TICKS);
+                baseline += (long) rod.cells() * rod.type().energyPerPulse() * (steam ? 1 : GenerationConfig.NUCLEAR.get());
         }
         if (tanks != null) {
             tanks.fill(new FluidStack(Fluids.WATER, SteamReactorTanks.WATER_CAPACITY), FluidAction.EXECUTE);

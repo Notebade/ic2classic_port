@@ -83,7 +83,7 @@ final class ExtraGeneratorEntity extends BlockEntity implements MenuProvider, Ma
         @Override public FluidStack drain(int amount, FluidAction action) { return FluidStack.EMPTY; }
     };
     final ContainerData data = new ContainerData() {
-        @Override public int getCount() { return 6; }
+        @Override public int getCount() { return 7; }
         @Override public void set(int index, int value) {}
         @Override public int get(int index) {
             return switch (index) {
@@ -92,7 +92,8 @@ final class ExtraGeneratorEntity extends BlockEntity implements MenuProvider, Ma
                 case 2 -> solar.water() & 0xffff;
                 case 3 -> solar.water() >>> 16;
                 case 4 -> maxFuel == 0 ? 0 : (int) (1000L * remainingFuel / maxFuel);
-                case 5 -> outputHundredths;
+                case 5 -> outputHundredths & 0xffff;
+                case 6 -> outputHundredths >>> 16;
                 default -> throw new IndexOutOfBoundsException(index);
             };
         }
@@ -103,7 +104,7 @@ final class ExtraGeneratorEntity extends BlockEntity implements MenuProvider, Ma
     void tick() {
         boolean active = type == ExtraGenerators.Type.SOLAR ? tickSolar() : tickSlag();
         chargeBattery();
-        int sent = EnergyNetwork.send(level, worldPosition, Math.min(energy, type.packet), side -> true, 0);
+        int sent = EnergyNetwork.send(level, worldPosition, Math.min(energy, type.packet()), side -> true, 0);
         if (sent > 0) { energy -= sent; setChanged(); }
         BlockState state = getBlockState();
         if (state.getValue(BlockStateProperties.LIT) != active) level.setBlock(worldPosition, state.setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS);
@@ -112,7 +113,7 @@ final class ExtraGeneratorEntity extends BlockEntity implements MenuProvider, Ma
     private boolean tickSolar() {
         refillWater();
         if (++sunAge >= 128) { sunny = SolarPanelBlock.hasSun(level, worldPosition); sunAge = 0; }
-        var step = solar.step(energy, sunny);
+        var step = solar.step(energy, sunny, GenerationConfig.SOLAR.get());
         if (!solar.equals(step.next()) || energy != step.energy()) setChanged();
         solar = step.next(); energy = step.energy(); outputHundredths = step.outputHundredths();
         return sunny;
@@ -130,10 +131,10 @@ final class ExtraGeneratorEntity extends BlockEntity implements MenuProvider, Ma
 
     private boolean tickSlag() {
         if (scrapCounter < 1) scrapCounter = nextScrapCounter();
-        if (remainingFuel <= 0 && SlagGeneratorCycle.canRefuel(energy)) startFuel();
-        var step = SlagGeneratorCycle.step(remainingFuel, energy, scrapCounter, scrapFuel);
+        if (remainingFuel <= 0 && energy <= SlagGeneratorCycle.CAPACITY - GenerationConfig.SLAG.get()) startFuel();
+        var step = SlagGeneratorCycle.step(remainingFuel, energy, scrapCounter, scrapFuel, GenerationConfig.SLAG.get());
         remainingFuel = step.remaining(); energy = step.energy(); scrapCounter = step.counter();
-        outputHundredths = step.burning() ? SlagGeneratorCycle.OUTPUT * 100 : 0;
+        outputHundredths = step.burning() ? GenerationConfig.SLAG.get() * 100 : 0;
         if (step.scrap()) {
             scrapCounter = nextScrapCounter();
             ItemStack scrap = new ItemStack(IC2.SCRAP.get());

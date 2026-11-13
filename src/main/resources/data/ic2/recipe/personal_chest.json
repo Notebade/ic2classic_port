@@ -1,0 +1,24 @@
+{
+  "result": {
+    "count": 1,
+    "id": "ic2:personal_chest"
+  },
+  "pattern": [
+    "C",
+    "M",
+    "W"
+  ],
+  "key": {
+    "W": {
+      "tag": "c:chests/wooden"
+    },
+    "M": {
+      "item": "ic2:machine_block"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    }
+  },
+  "category": "misc",
+  "type": "minecraft:crafting_shaped"
+}

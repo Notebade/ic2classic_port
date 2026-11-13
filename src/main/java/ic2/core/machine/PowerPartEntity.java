@@ -23,7 +23,8 @@ final class PowerPartEntity extends BlockEntity {
         if (!pos.equals(owner)) { owner = pos.immutable(); setChanged(); level.invalidateCapabilities(worldPosition); }
     }
     PowerMachineEntity controller() {
-        if (level == null || owner == null || !level.isLoaded(owner)) return null;
+        if (level == null || isRemoved() || owner == null || !level.hasChunkAt(worldPosition)
+            || level.getBlockEntity(worldPosition) != this || !level.isLoaded(owner)) return null;
         return level.getBlockEntity(owner) instanceof PowerMachineEntity machine && machine.contains(worldPosition) && machine.formed() ? machine : null;
     }
     // Resolve at operation time so a cached capability cannot access a broken or reassigned structure.

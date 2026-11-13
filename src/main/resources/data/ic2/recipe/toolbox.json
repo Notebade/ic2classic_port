@@ -1,0 +1,20 @@
+{
+  "result": {
+    "count": 1,
+    "id": "ic2:toolbox"
+  },
+  "pattern": [
+    "ICI",
+    "III"
+  ],
+  "key": {
+    "C": {
+      "tag": "c:chests/wooden"
+    },
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    }
+  },
+  "category": "misc",
+  "type": "minecraft:crafting_shaped"
+}

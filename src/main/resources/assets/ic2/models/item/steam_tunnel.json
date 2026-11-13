@@ -1,3 +1,1 @@
-{
-  "parent": "ic2:block/steam_tunnel"
-}
+{"parent":"ic2:block/steam_tunnel_unformed"}

@@ -10,8 +10,8 @@
 
 ```groovy
 dependencies {
-    compileOnly files('libs/ic2-classic-re-0.69.0.jar')
-    runtimeOnly files('libs/ic2-classic-re-0.69.0.jar')
+    compileOnly files('libs/ic2-classic-re-0.70.0.jar')
+    runtimeOnly files('libs/ic2-classic-re-0.70.0.jar')
 }
 ```
 
@@ -218,3 +218,5 @@ var fe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side);
 В 0.68.0 тот же API v1 видит зарядные столы, батарейные станции, площадки и перенаправители. Новые ключи: packet_eu, sorted (0/1), packets_per_tick (станции: 4), active_ticks, cooldown_ticks, pending_packets, connected_sides и share_down/up/north/south/west/east (проценты). connected_sides — битовая маска D/U/N/S/W/E с битами 0–5; имеет смысл у главного узла. energyStored ведомого включает очередь и остаток; у главного это остаток до 5 EU. Столы и площадки реализуют публичный EnergySink, станции и ведомые не принимают EU из сети. Дополнительных точек регистрации рецептов или изменяемого доступа к инвентарям в API v1 не вводится. [Правила работы устройств](docs/energy-redirectors-and-charging.md).
 
 В 0.69.0 API v1 дополнен телеметрией планировщика: simulation_cycles, total_production (EU либо мВ пара по режиму), fuel_runtime_ticks, fuel_remaining_ticks (верхняя оценка), efficiency_permille (электрический КПД ×1000; −1 для парового режима/нет базовой выработки), full_run_state (0 — обычный, 1 — полный в работе/паузе, 2 — топливо закончилось, 3 — перегрев). Монитор публикует cards и requires_redstone; светильники — brightness. Трубы публикуют fluid_mb, capacity_mb и transfer_mb (мВ/тик трубы-источника), с EnergyUnit.NONE. Обычный valve перенаправляет capabilities сформированного контроллера, как прежние специализированные клапаны. Контракт и версия API не изменены. [Поведение и границы реализации](docs/nuclear-and-generation-followup.md).
+
+0.70.0: базовые машинный буфер и личный сундук публикуют storage_slots и locked; буфер также сообщает EU/ёмкость. Публичный контракт остаётся v1. Регулируемая генерация отражается в фактических данных машин. Классы интеграционных проверок, включая прямую проверку внутреннего ReactorExplosion, не входят в стабильный API аддонов.

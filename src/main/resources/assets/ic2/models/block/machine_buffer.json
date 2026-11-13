@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "east": "ic2:block/machine/lv/machine_buffer/inactive_east",
+    "up": "ic2:block/machine/lv/machine_buffer/inactive_up",
+    "south": "ic2:block/machine/lv/machine_buffer/inactive_south",
+    "north": "ic2:block/machine/lv/machine_buffer/inactive_north",
+    "particle": "ic2:block/machine/lv/machine_buffer/inactive_north",
+    "down": "ic2:block/machine/lv/machine_buffer/inactive_down",
+    "west": "ic2:block/machine/lv/machine_buffer/inactive_west"
+  },
+  "parent": "minecraft:block/cube"
+}

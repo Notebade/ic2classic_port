@@ -72,7 +72,7 @@ final class ReactorGrid {
                 }
             }
         }
-        return Math.clamp(power * multiplier, 0, 45);
+        return Math.clamp(power * multiplier, 0, GenerationConfig.REACTOR_DAMAGE.get().floatValue());
     }
 
     Cycle run(int width, int hullHeat, int hullCapacity, boolean powered, boolean damageTick, boolean passiveCooling, RandomSource random) {
@@ -82,7 +82,7 @@ final class ReactorGrid {
         if (powered && damageTick) {
             ageFuel(width, random);
         }
-        int netOutput = steam == null ? Math.max(0, (cycle.output() * 10 - cooling.costTenths()) / 10) : cooling.steamOutput();
+        int netOutput = steam == null ? (int) Math.clamp(((long) cycle.output() * 10 - cooling.costTenths()) * GenerationConfig.NUCLEAR.get() / 200, 0, Integer.MAX_VALUE) : cooling.steamOutput();
         return new Cycle(netOutput, cycle.heat());
     }
 

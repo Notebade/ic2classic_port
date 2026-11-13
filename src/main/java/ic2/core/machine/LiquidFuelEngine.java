@@ -41,9 +41,10 @@ final class LiquidFuelEngine {
         if (state.remaining() == 0 && !tank.isEmpty()) {
             var profile = GeneratorFluids.fuel(tank.getFluid().getFluid());
             int amount = Math.min(1000, tank.getFluidAmount());
-            if (profile != null && energy <= 10000 - profile.output) {
+            int production = profile == null ? 0 : Math.max(1, (int) (profile.output * GenerationConfig.LIQUID.get()));
+            if (profile != null && energy <= 10000 - production) {
                 int ticks = LiquidFuelCycle.fuelTicks(profile.ticks, amount);
-                if (ticks > 0) { state = new LiquidFuelCycle.State(ticks, profile.output); maxFuel = ticks; tank.drain(amount, FluidAction.EXECUTE); }
+                if (ticks > 0) { state = new LiquidFuelCycle.State(ticks, production); maxFuel = ticks; tank.drain(amount, FluidAction.EXECUTE); }
             }
         }
         var step = state.step(energy);
@@ -89,7 +90,7 @@ final class LiquidFuelEngine {
         tank.readFromNBT(lookup, tag.getCompound("tank"));
         if (!tank.isEmpty() && GeneratorFluids.fuel(tank.getFluid().getFluid()) == null) tank.setFluid(net.neoforged.neoforge.fluids.FluidStack.EMPTY);
         int production = tag.getInt("production");
-        if (production != 10 && production != 50 && production != 128) production = 0;
+        if (production < 1 || production > 1280) production = 0;
         maxFuel = Mth.clamp(tag.getInt("max_fuel"), 0, 24000);
         state = new LiquidFuelCycle.State(production == 0 ? 0 : Mth.clamp(tag.getInt("remaining"), 0, maxFuel), production);
     }

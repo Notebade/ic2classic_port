@@ -169,6 +169,10 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
             int x = leftPos + slot.x - 1;
             int y = topPos + slot.y - 1;
             graphics.fill(x, y, x + 18, y + 18, slot.isActive() ? 0xFF8B8B8B : 0xFFAAAAAA);
+            graphics.fill(x, y, x + 17, y + 1, 0xFF373737);
+            graphics.fill(x, y, x + 1, y + 17, 0xFF373737);
+            graphics.fill(x + 1, y + 17, x + 18, y + 18, 0xFFFFFFFF);
+            graphics.fill(x + 17, y + 1, x + 18, y + 18, 0xFFFFFFFF);
         }
     }
 }

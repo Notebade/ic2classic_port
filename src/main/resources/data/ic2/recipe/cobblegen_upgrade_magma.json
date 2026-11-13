@@ -1,0 +1,30 @@
+{
+  "key": {
+    "X": {
+      "tag": "c:glass_blocks"
+    },
+    "W": {
+      "item": "minecraft:water_bucket"
+    },
+    "H": {
+      "item": "minecraft:magma_block"
+    },
+    "P": {
+      "item": "minecraft:golden_pickaxe"
+    },
+    "B": {
+      "item": "ic2:upgrade_base"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:cobblegen_upgrade"
+  },
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XPX",
+    "H W",
+    "XBX"
+  ]
+}

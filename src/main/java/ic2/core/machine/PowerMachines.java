@@ -79,6 +79,7 @@ public final class PowerMachines {
         WindRotor.register(items);
         GeneratorFluids.register(bus, items);
         ChemistryMaterials.register(bus, items);
+        StorageInfrastructure.register(bus, items);
         bus.addListener(PowerMachines::capabilities);
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {

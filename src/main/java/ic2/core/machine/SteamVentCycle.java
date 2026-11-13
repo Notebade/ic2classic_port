@@ -8,7 +8,6 @@ import net.minecraft.world.item.component.CustomData;
 
 final class SteamVentCycle {
     private static final int STEAM_PER_WATER = 160;
-    private static final int HEAT_PER_WATER = 20;
 
     private SteamVentCycle() {}
 
@@ -22,13 +21,14 @@ final class SteamVentCycle {
             }
             return 0;
         }
-        double rate = vent.selfCooling() * heat / ((stack.getMaxDamage() - 100.0) * HEAT_PER_WATER);
+        double heatPerWater = 40 / GenerationConfig.STEAM_REACTOR.get();
+        double rate = vent.selfCooling() * heat / ((stack.getMaxDamage() - 100.0) * heatPerWater);
         int steam = (int) (Math.min(water, rate) * STEAM_PER_WATER);
         if (!tanks.produce(steam)) {
             return 0;
         }
         double consumed = (double) steam / STEAM_PER_WATER;
-        double cooling = data.getDouble("vent_cooling") + consumed * HEAT_PER_WATER;
+        double cooling = data.getDouble("vent_cooling") + consumed * heatPerWater;
         int cooled = Math.min(heat, (int) cooling);
         stack.setDamageValue(heat - cooled);
         data.putDouble("vent_water", water - consumed);

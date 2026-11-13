@@ -17,7 +17,7 @@ import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public final class PowerCraftingRecipe extends CustomRecipe implements CountedCrafting {
-    public enum Kind { CORE, BOILER, FUEL }
+    public enum Kind { CORE, BOILER, FUEL, BUFFER }
     public static RecipeSerializer<PowerCraftingRecipe> serializer(Kind kind) {
         return new SimpleCraftingRecipeSerializer<>(category -> new PowerCraftingRecipe(category, kind));
     }
@@ -35,12 +35,15 @@ public final class PowerCraftingRecipe extends CustomRecipe implements CountedCr
         String[] pattern = pattern();
         for (int slot = 0; slot < 9; slot++) {
             ItemStack stack = input.getItem(slot);
+            if (kind == Kind.BUFFER && stack.is(ic2.core.machine.StorageInfrastructure.TOOLBOX.get())
+                && stack.getOrDefault(net.minecraft.core.component.DataComponents.CONTAINER, net.minecraft.world.item.component.ItemContainerContents.EMPTY).nonEmptyStream().findAny().isPresent()) return false;
             if (pattern[slot].isEmpty()) { if (!stack.isEmpty()) return false; }
             else if (!stack.is(item(pattern[slot]).getItem()) || stack.getCount() < consumed(stack)) return false;
         }
         return true;
     }
     private String[] pattern() {
+        if (kind == Kind.BUFFER) return new String[]{"", "upgrade_base", "", "circuit", "toolbox", "circuit", "", "machine_block", ""};
         return kind == Kind.CORE ? new String[]{"magnet", "plate_advanced_alloy", "magnet", "plate_advanced_alloy", "cell_plasma", "plate_advanced_alloy", "magnet", "plate_advanced_alloy", "magnet"}
             : new String[]{"circuit", "fluid_export_upgrade_simple", "circuit", "plating_heat_capacity", "machine_tank", "plating_heat_capacity", "", "iron_furnace", ""};
     }
@@ -74,10 +77,11 @@ public final class PowerCraftingRecipe extends CustomRecipe implements CountedCr
         return can;
     }
     @Override public ItemStack getResultItem(HolderLookup.Provider lookup) {
+        if (kind == Kind.BUFFER) return item("machine_buffer");
         return kind == Kind.CORE ? new ItemStack(PowerMachines.PLASMA_CORE.get()) : kind == Kind.BOILER ? item("fuel_boiler_structure").copyWithCount(8) : new ItemStack(BoilerFuel.CAN.get());
     }
     @Override public boolean canCraftInDimensions(int width, int height) { return kind == Kind.FUEL ? width * height >= 2 : width >= 3 && height >= 3; }
     @Override public RecipeSerializer<?> getSerializer() {
-        return switch (kind) { case CORE -> IC2.PLASMA_CORE_RECIPE.get(); case BOILER -> IC2.BOILER_CASING_RECIPE.get(); case FUEL -> IC2.FUEL_CAN_RECIPE.get(); };
+        return switch (kind) { case CORE -> IC2.PLASMA_CORE_RECIPE.get(); case BOILER -> IC2.BOILER_CASING_RECIPE.get(); case FUEL -> IC2.FUEL_CAN_RECIPE.get(); case BUFFER -> IC2.MACHINE_BUFFER_RECIPE.get(); };
     }
 }

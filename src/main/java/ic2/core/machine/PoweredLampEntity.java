@@ -33,7 +33,7 @@ final class PoweredLampEntity extends BlockEntity implements EnergySink, Machine
     private void updateLight(boolean active) {
         int light = active ? brightness : 0;
         if (getBlockState().getValue(PoweredLampBlock.LIGHT) != light || getBlockState().getValue(BlockStateProperties.LIT) != active)
-            level.setBlock(worldPosition, getBlockState().setValue(PoweredLampBlock.LIGHT, light).setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS);
+            level.setBlock(worldPosition, getBlockState().setValue(PoweredLampBlock.LIGHT, light).setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
     }
 
     void adjust(int delta) {

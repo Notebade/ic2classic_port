@@ -18,7 +18,7 @@ final class ExtraGeneratorMenu extends AbstractContainerMenu {
     private final ExtraGeneratorEntity generator;
 
     ExtraGeneratorMenu(int id, Inventory player, ExtraGenerators.Type type) {
-        this(id, player, type, new ItemStackHandler(3), new SimpleContainerData(6), ContainerLevelAccess.NULL, null);
+        this(id, player, type, new ItemStackHandler(3), new SimpleContainerData(7), ContainerLevelAccess.NULL, null);
     }
 
     ExtraGeneratorMenu(int id, Inventory player, ExtraGenerators.Type type, ItemStackHandler inventory, ContainerData data,
@@ -26,22 +26,23 @@ final class ExtraGeneratorMenu extends AbstractContainerMenu {
         super(type.menu(), id);
         this.type = type; this.data = data; this.access = access; this.generator = generator;
         addDataSlots(data);
-        addSlot(new SlotItemHandler(inventory, 0, 26, 76));
-        addSlot(new SlotItemHandler(inventory, 1, 80, 76));
-        addSlot(new SlotItemHandler(inventory, 2, 134, 76) {
+        var points = GenerationLayout.forId(type == ExtraGenerators.Type.SOLAR ? "solar_turbine" : "slag_generator").slots();
+        addSlot(new SlotItemHandler(inventory, 0, points.get(0).x(), points.get(0).y()));
+        addSlot(new SlotItemHandler(inventory, 1, points.get(1).x(), points.get(1).y()));
+        addSlot(new SlotItemHandler(inventory, 2, points.get(2).x(), points.get(2).y()) {
             @Override public boolean mayPlace(ItemStack stack) { return false; }
         });
         for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, 106 + row * 18));
+            for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, 84 + row * 18));
         }
-        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, 164));
+        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, 142));
     }
 
     int energy() { return data.get(0); }
     int heat() { return data.get(1); }
     int water() { return (data.get(3) << 16) | (data.get(2) & 0xffff); }
     int fuelPercent() { return data.get(4) / 10; }
-    int outputHundredths() { return data.get(5); }
+    int outputHundredths() { return (data.get(5) & 0xffff) | data.get(6) << 16; }
 
     @Override public boolean stillValid(Player player) {
         return access.evaluate((level, pos) -> level.getBlockState(pos).getBlock() instanceof ExtraGeneratorBlock block

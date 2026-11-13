@@ -25,17 +25,21 @@ final class SolarTurbineCycle {
         }
 
         Step step(int energy, boolean sunny) {
+            return step(energy, sunny, 1);
+        }
+
+        Step step(int energy, boolean sunny, double multiplier) {
             int nextHeat = sunny ? Math.min(MAX_HEAT, heat + 2) : Math.max(0, heat - 1);
             if (water == 0 || nextHeat == 0) return new Step(new State(nextHeat, water, waterRemainder, energyRemainder), energy, 0);
             int consumed = waterRemainder + nextHeat;
             int waterLeft = Math.max(0, water - consumed / 6000);
             int remainder = energyRemainder;
             if (energy < NOMINAL_BUFFER) {
-                long generated = remainder + (long) water * nextHeat;
+                long generated = remainder + (long) (water * (double) nextHeat * multiplier);
                 energy += (int) (generated / ENERGY_DENOMINATOR);
                 remainder = (int) (generated % ENERGY_DENOMINATOR);
             }
-            int outputHundredths = (int) ((long) water * nextHeat * 100 / ENERGY_DENOMINATOR);
+            int outputHundredths = (int) (water * (double) nextHeat * multiplier * 100 / ENERGY_DENOMINATOR);
             return new Step(new State(nextHeat, waterLeft, consumed % 6000, remainder), energy, outputHundredths);
         }
     }

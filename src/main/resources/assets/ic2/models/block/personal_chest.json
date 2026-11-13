@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "east": "ic2:block/personal/chest/east",
+    "up": "ic2:block/personal/chest/up",
+    "south": "ic2:block/personal/chest/south",
+    "north": "ic2:block/personal/chest/north",
+    "particle": "ic2:block/personal/chest/north",
+    "down": "ic2:block/personal/chest/down",
+    "west": "ic2:block/personal/chest/west"
+  },
+  "parent": "minecraft:block/cube"
+}

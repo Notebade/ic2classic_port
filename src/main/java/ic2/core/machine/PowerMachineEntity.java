@@ -138,7 +138,8 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
             case WINDMILL -> stack.getItem() instanceof WindRotor;
             case LIQUID_FUEL -> LiquidFuelEngine.accepts(slot, stack);
             case PLASMAFIER -> slot == 0 ? stack.is(IC2.UU_MATTER.get()) : slot == 1 && stack.is(IC2.CELL_EMPTY.get());
-            case FUSION -> slot < 6 ? stack.getItem() instanceof UraniumFuelRod : stack.is(Items.COBBLESTONE) || stack.is(Items.NETHERRACK);
+            case FUSION -> slot < 6 ? stack.getItem() instanceof UraniumFuelRod
+                : stack.is(Items.COBBLESTONE) || stack.is(Items.NETHERRACK) || stack.is(NuclearInfrastructure.COBBLEGEN.get());
             case BOILER -> slot == 0 ? FluidUtil.getFluidContained(stack).filter(f -> f.is(Fluids.WATER)).isPresent()
                 : (slot == 2 || slot == 4 || slot == 5) && stack.is(BoilerFuel.CAN.get()) && BoilerFuel.amount(stack) > 0;
             default -> false;
@@ -158,6 +159,8 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
         clock = (clock + 1) % 102400;
         if (kind.multiblock()) {
             structure = formed();
+            if (getBlockState().getValue(PowerMachineBlock.FORMED) != structure)
+                level.setBlock(worldPosition, getBlockState().setValue(PowerMachineBlock.FORMED, structure), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
             if (!structure) { active(false); return; }
         }
         boolean running = switch (kind) {
@@ -176,7 +179,7 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
     }
     private void active(boolean active) {
         if (getBlockState().getValue(BlockStateProperties.LIT) != active)
-            level.setBlock(worldPosition, getBlockState().setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS);
+            level.setBlock(worldPosition, getBlockState().setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
     }
     private boolean tickWindmill() {
         energy = windmill.tick((net.minecraft.server.level.ServerLevel) level, worldPosition, front(), inventory, clock, energy);
@@ -227,7 +230,7 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
         return state.energy() > energy;
     }
     private boolean tickTunnel() {
-        var step = SteamTunnelCycle.step(energy, steam, water, remainder);
+        var step = SteamTunnelCycle.step(energy, steam, water, remainder, GenerationConfig.TUNNEL.get());
         boolean running = step.energy() > energy;
         energy = step.energy(); steam = step.steam(); water = step.water(); remainder = step.remainder();
         for (int i = 0; i < 4 && energy > 0; i++) {
@@ -242,7 +245,8 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
         ItemStack feed = inventory.getStackInSlot(6);
         while (material <= 9000 && !feed.isEmpty() && accepts(6, feed)) {
             productionRate = feed.is(Items.NETHERRACK) ? 1.5 : 1;
-            material += 1000; feed.shrink(1);
+            material += 1000;
+            if (!feed.is(NuclearInfrastructure.COBBLEGEN.get())) feed.shrink(1);
         }
         int rods = 0, slots = 0, totalHeat = 0;
         for (int slot = 0; slot < 6; slot++) {
@@ -347,6 +351,7 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
     }
     boolean contains(BlockPos pos) { return cells().stream().anyMatch(cell -> position(cell).equals(pos)); }
     boolean shapeValid() {
+        if (level == null || isRemoved() || !level.hasChunkAt(worldPosition) || level.getBlockEntity(worldPosition) != this) return false;
         if (!kind.multiblock() || front().getAxis().isVertical()) return false;
         for (var cell : cells()) {
             BlockPos pos = position(cell);

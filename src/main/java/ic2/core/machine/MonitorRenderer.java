@@ -23,19 +23,28 @@ final class MonitorRenderer implements BlockEntityRenderer<MonitorEntity> {
 
     @Override
     public void render(MonitorEntity entity, float partial, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
-        if (entity.lines.isEmpty()) return;
+        if (!entity.master || entity.lines.isEmpty()) return;
         var font = Minecraft.getInstance().font;
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
         pose.mulPose(Axis.YP.rotationDegrees(-entity.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()));
         pose.translate(0, 0, 0.502);
-        pose.scale(0.004F, -0.004F, 0.004F);
-        int y = -100;
-        for (var line : entity.lines) for (var part : font.split(line, 220)) {
-            if (y > 100) break;
-            font.drawInBatch(part, -110, y, -8323200, false, pose.last().pose(), buffers, Font.DisplayMode.NORMAL, 0, 15728880);
+        float scale = entity.scale / 256F;
+        pose.translate(-0.45, 0.45, 0);
+        pose.scale(scale, -scale, scale);
+        int width = (int) ((entity.width - 0.1F) / scale);
+        int height = (int) ((entity.height - 0.1F) / scale);
+        int y = 0;
+        int color = 0xff000000 | net.minecraft.world.item.DyeColor.byId(entity.color).getTextColor();
+        for (var line : entity.lines) for (var part : font.split(line.copy().withStyle(style -> style.withColor(color & 0xffffff)), width)) {
+            if (y + font.lineHeight > height) break;
+            int x = MonitorLayout.textX(width, font.width(part), entity.alignment);
+            font.drawInBatch(part, x, y, color, false, pose.last().pose(), buffers, Font.DisplayMode.POLYGON_OFFSET, 0, 15728880);
             y += 10;
         }
         pose.popPose();
     }
+
+    @Override
+    public boolean shouldRenderOffScreen(MonitorEntity entity) { return true; }
 }

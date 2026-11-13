@@ -4,12 +4,16 @@ final class WindmillCycle {
     static final int DIVISOR = 256000;
     record State(double speed, int remainder) {
         Step step(double target, boolean rotor, boolean openAir, int energy) {
+            return step(target, rotor, openAir, energy, 256);
+        }
+
+        Step step(double target, boolean rotor, boolean openAir, int energy, int output) {
             if (!rotor) return new Step(new State(0, remainder), energy);
             double next = Math.max(0, speed + (openAir ? Math.clamp((target - speed) * .01, -.01, .01) : -.001));
             int stored = remainder;
             if (energy < 4000) stored += (int) (next * DIVISOR);
             if (stored > DIVISOR && energy < 4000) {
-                energy = Math.min(4000, energy + stored / DIVISOR * 256);
+                energy = Math.min(4000, energy + stored / DIVISOR * output);
                 stored %= DIVISOR;
             }
             return new Step(new State(next, stored), energy);

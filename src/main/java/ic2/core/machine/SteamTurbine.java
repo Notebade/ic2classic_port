@@ -10,7 +10,6 @@ final class SteamTurbine extends FluidTank {
     static final int BUFFER = 4_000;
     static final int PACKET = 128;
     private static final int TOP_SPEED = 200;
-    private static final int MAX_PRODUCTION = 64;
     private final Runnable changed;
     private int speed;
 
@@ -27,7 +26,7 @@ final class SteamTurbine extends FluidTank {
         if (previous != speed) {
             changed.run();
         }
-        return speed * MAX_PRODUCTION / TOP_SPEED;
+        return speed * GenerationConfig.STEAM.get() / TOP_SPEED;
     }
 
     boolean spinning() {

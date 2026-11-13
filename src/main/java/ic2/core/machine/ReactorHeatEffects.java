@@ -13,15 +13,13 @@ final class ReactorHeatEffects {
     private ReactorHeatEffects() {}
 
     static void apply(Level level, BlockPos core, int heat, int capacity, float containment) {
-        if (heat < 4_000) {
+        if (heat < 4_000 || GenerationConfig.REACTOR_DAMAGE.get() <= 0) {
             return;
         }
         float ratio = (float) heat / capacity;
         if (ratio >= 0.85F && level.random.nextFloat() < 0.2F * containment) {
             BlockPos target = nearby(level, core);
-            if (target != null && level.isEmptyBlock(target)) {
-                level.setBlockAndUpdate(target, Blocks.FIRE.defaultBlockState());
-            }
+            if (target != null) melt(level, target);
         }
         if (ratio >= 0.7F) {
             Radiation.exposeNearReactor(level, core, containment);
@@ -41,6 +39,19 @@ final class ReactorHeatEffects {
                 level.setBlockAndUpdate(target, Blocks.FIRE.defaultBlockState());
             }
         }
+    }
+
+    private static void melt(Level level, BlockPos target) {
+        var state = level.getBlockState(target);
+        if (state.isAir()) {
+            level.setBlockAndUpdate(target, Blocks.FIRE.defaultBlockState());
+            return;
+        }
+        float hardness = state.getDestroySpeed(level, target);
+        if (hardness < 0 || hardness > 10 || level.getBlockEntity(target) != null) return;
+        boolean mineral = state.is(BlockTags.MINEABLE_WITH_PICKAXE) || state.is(BlockTags.DIRT)
+            || state.is(Blocks.CLAY) || state.getFluidState().is(FluidTags.LAVA);
+        level.setBlockAndUpdate(target, mineral ? Blocks.LAVA.defaultBlockState() : Blocks.FIRE.defaultBlockState());
     }
 
     private static boolean burns(BlockState state) {

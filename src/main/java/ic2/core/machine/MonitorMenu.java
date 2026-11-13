@@ -13,7 +13,7 @@ final class MonitorMenu extends AbstractContainerMenu {
     private final MonitorEntity entity;
 
     MonitorMenu(int id, Inventory player) {
-        this(id, player, new ItemStackHandler(8), new SimpleContainerData(2), ContainerLevelAccess.NULL, null);
+        this(id, player, new ItemStackHandler(8), new SimpleContainerData(6), ContainerLevelAccess.NULL, null);
     }
 
     MonitorMenu(int id, Inventory player, ItemStackHandler items, ContainerData data, ContainerLevelAccess access, MonitorEntity entity) {
@@ -22,9 +22,9 @@ final class MonitorMenu extends AbstractContainerMenu {
         this.access = access;
         this.entity = entity;
         addDataSlots(data);
-        for (int i = 0; i < 8; i++) addSlot(new SlotItemHandler(items, i, 17 + i % 4 * 36, 40 + i / 4 * 20));
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, 103 + row * 18));
-        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, 161));
+        for (int i = 0; i < 8; i++) addSlot(new SlotItemHandler(items, i, 26 + i % 4 * 18, 19 + i / 4 * 18));
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, 137 + row * 18));
+        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, 195));
     }
 
     int energy() {
@@ -35,6 +35,8 @@ final class MonitorMenu extends AbstractContainerMenu {
         return data.get(1) != 0;
     }
 
+    int setting(int index) { return data.get(index); }
+
     @Override
     public boolean stillValid(Player player) {
         return access.evaluate((l,p)->l.getBlockEntity(p) == entity && player.distanceToSqr(p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5) <= 64, true);
@@ -42,8 +44,8 @@ final class MonitorMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player p, int id) {
-        if (id != 0 || entity == null || !stillValid(p)) return false;
-        entity.toggleRedstone();
+        if (id < 0 || id > 5 || entity == null || !stillValid(p)) return false;
+        entity.configure(id);
         return true;
     }
 
