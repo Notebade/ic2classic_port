@@ -50,12 +50,12 @@ final class PoweredDrill extends RechargeableItem implements MiningDrill, Electr
         for (var kind : Kind.values()) items.registerItem(kind.id, p -> new PoweredDrill(p, kind));
     }
     @Override public boolean canProvideEnergy() { return false; }
-    @Override public boolean canUse(ItemStack stack) { return charge(stack) >= kind.cost; }
+    @Override public boolean canUse(ItemStack stack) { return ic2.api.item.ElectricEquipment.canUse(stack, kind.cost); }
     @Override public boolean canMine(ItemStack stack, BlockState state, LevelReader level, BlockPos pos) {
         return canUse(stack) && state.getDestroySpeed(level, pos) >= 0 && (!state.requiresCorrectToolForDrops() || isCorrectToolForDrops(stack, state));
     }
     @Override public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) { return canUse(stack) && super.isCorrectToolForDrops(stack, state); }
-    @Override public void consumeUse(ItemStack stack) { setCharge(stack, charge(stack) - kind.cost); }
+    @Override public void consumeUse(ItemStack stack) { ic2.api.item.ElectricEquipment.use(stack, kind.cost, null); }
     @Override public float getDestroySpeed(ItemStack stack, BlockState state) {
         if (!canUse(stack) || kind == Kind.ROCK && !state.is(ROCK)) return 1;
         float speed = super.getDestroySpeed(stack, state);
@@ -79,7 +79,7 @@ final class PoweredDrill extends RechargeableItem implements MiningDrill, Electr
     }
     @Override public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity owner) {
         if (!level.isClientSide) {
-            if (state.getDestroySpeed(level, pos) != 0) consumeUse(stack);
+            if (state.getDestroySpeed(level, pos) != 0) ic2.api.item.ElectricEquipment.use(stack, kind.cost, owner);
             if (owner instanceof ServerPlayer player && kind == Kind.ADVANCED && mode(stack).equals("area") && !player.isShiftKeyDown() && charge(stack) >= 8 * kind.cost && miningArea.add(player.getUUID())) {
                 try { mineNeighbors(stack, player, pos); } finally { miningArea.remove(player.getUUID()); }
             }

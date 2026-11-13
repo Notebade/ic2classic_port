@@ -1,0 +1,32 @@
+{
+  "requirements": [
+    [
+      "has_belt",
+      "has_the_recipe"
+    ]
+  ],
+  "criteria": {
+    "has_belt": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:industrial_belt"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "ic2:re_battery_1"
+      }
+    }
+  },
+  "rewards": {
+    "recipes": [
+      "ic2:re_battery_1"
+    ]
+  },
+  "parent": "minecraft:recipes/root"
+}

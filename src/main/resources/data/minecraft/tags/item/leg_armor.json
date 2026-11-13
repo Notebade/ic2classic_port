@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "ic2:armor_bronze_leggings",
-    "ic2:armor_composite_leggings"
+    "ic2:armor_composite_leggings",
+    "ic2:industrial_belt"
   ]
 }

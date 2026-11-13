@@ -1,6 +1,6 @@
 {
   "category": "equipment",
-  "type": "minecraft:crafting_shaped",
+  "type": "ic2:electric_shaped",
   "pattern": [
     "XCX",
     "XYX",

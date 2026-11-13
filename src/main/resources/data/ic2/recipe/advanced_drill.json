@@ -24,7 +24,7 @@
       "item": "minecraft:netherite_ingot"
     }
   },
-  "type": "minecraft:crafting_shaped",
+  "type": "ic2:electric_shaped",
   "category": "equipment",
   "result": {
     "id": "ic2:advanced_drill",

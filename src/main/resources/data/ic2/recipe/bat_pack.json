@@ -1,0 +1,24 @@
+{
+  "category": "equipment",
+  "type": "ic2:electric_shaped",
+  "key": {
+    "B": {
+      "item": "ic2:re_battery"
+    },
+    "T": {
+      "tag": "c:ingots/tin"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    }
+  },
+  "pattern": [
+    "BCB",
+    "BTB",
+    "B B"
+  ],
+  "result": {
+    "id": "ic2:batpack",
+    "count": 1
+  }
+}

@@ -39,7 +39,7 @@ final class PoweredMower extends RechargeableItem implements ConfigurableTool, E
     @Override public List<String> modes() { return List.of("off", "on"); }
     @Override public String mode(ItemStack stack) { return ToolModes.read(this, stack); }
     @Override public boolean setMode(ItemStack stack, String mode) { return ToolModes.write(this, this, stack, mode); }
-    @Override public boolean canPerformAction(ItemStack stack, ItemAbility ability) { return ability == ItemAbilities.AXE_SCRAPE && charge(stack) > 0 && mode(stack).equals("on"); }
+    @Override public boolean canPerformAction(ItemStack stack, ItemAbility ability) { return ability == ItemAbilities.AXE_SCRAPE && ic2.api.item.ElectricEquipment.canUse(stack, 1) && mode(stack).equals("on"); }
     @Override public boolean acceptsElectricEnchantment(ItemStack stack, Holder<Enchantment> enchantment, boolean anvil) {
         return enchantment.is(Enchantments.EFFICIENCY) || enchantment.is(Enchantments.UNBREAKING);
     }
@@ -49,11 +49,11 @@ final class PoweredMower extends RechargeableItem implements ConfigurableTool, E
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
     @Override public boolean mineBlock(ItemStack stack, Level level, net.minecraft.world.level.block.state.BlockState state, BlockPos pos, net.minecraft.world.entity.LivingEntity owner) {
-        if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0 && !harvesting.contains(owner.getUUID())) setCharge(stack, charge(stack) - 1);
+        if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0 && !harvesting.contains(owner.getUUID())) ic2.api.item.ElectricEquipment.use(stack, 1, owner);
         return true;
     }
     @Override public void inventoryTick(ItemStack stack, Level level, Entity owner, int slot, boolean selected) {
-        if (!(owner instanceof ServerPlayer player) || level.getGameTime() % 5 != 0 || charge(stack) < 1 || !mode(stack).equals("on")) return;
+        if (!(owner instanceof ServerPlayer player) || level.getGameTime() % 5 != 0 || !ic2.api.item.ElectricEquipment.canUse(stack, 1) || !mode(stack).equals("on")) return;
         if (!selected && player.getOffhandItem() != stack) return;
         var ray = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
         if (ray.getType() == HitResult.Type.BLOCK) mowAround(stack, player, ray);
@@ -68,10 +68,10 @@ final class PoweredMower extends RechargeableItem implements ConfigurableTool, E
                 new BlockHitResult(Vec3.atCenterOf(pos), ray.getDirection(), pos, false));
             var scraped = state.getToolModifiedState(context, ItemAbilities.AXE_SCRAPE, false);
             if (scraped != null) { level.setBlock(pos, scraped, 3); continue; }
-            if (charge(stack) < 5 || state.getBlock() instanceof CropBlock || !(state.is(BlockTags.LEAVES) || state.getBlock() instanceof BushBlock)) continue;
+            if (!ic2.api.item.ElectricEquipment.canUse(stack, 5) || state.getBlock() instanceof CropBlock || !(state.is(BlockTags.LEAVES) || state.getBlock() instanceof BushBlock)) continue;
             harvesting.add(player.getUUID());
             try {
-                if (player.gameMode.destroyBlock(pos) && !level.getBlockState(pos).equals(state)) setCharge(stack, charge(stack) - 5);
+                if (player.gameMode.destroyBlock(pos) && !level.getBlockState(pos).equals(state)) ic2.api.item.ElectricEquipment.use(stack, 5, player);
             } finally { harvesting.remove(player.getUUID()); }
         }
     }
@@ -82,7 +82,7 @@ final class PoweredMower extends RechargeableItem implements ConfigurableTool, E
             var hit = target.getBoundingBox().inflate(target.getPickRadius()).clip(start, end);
             if (hit.isPresent() && start.distanceToSqr(hit.get()) < distance) { nearest = target; distance = start.distanceToSqr(hit.get()); }
         }
-        if (nearest != null && nearest.hurt(player.damageSources().generic(), 1)) setCharge(stack, charge(stack) - 1);
+        if (nearest != null && nearest.hurt(player.damageSources().generic(), 1)) ic2.api.item.ElectricEquipment.use(stack, 1, player);
     }
     static void collectDrops(BlockDropsEvent event) {
         if (!(event.getTool().getItem() instanceof PoweredMower mower) || !(event.getBreaker() instanceof ServerPlayer player) || !mower.harvesting.contains(player.getUUID())) return;

@@ -38,4 +38,5 @@ public final class SizedShapedRecipe extends ShapedRecipe implements CountedCraf
         return super.matches(input, level) && input.items().stream().allMatch(stack -> stack.isEmpty() || stack.getCount() >= consumed(stack));
     }
     @Override public RecipeSerializer<?> getSerializer() { return IC2.SIZED_SHAPED_RECIPE.get(); }
+    @Override public ItemStack assemble(CraftingInput input, net.minecraft.core.HolderLookup.Provider lookup) { return ElectricCrafting.carry(input, super.assemble(input, lookup)); }
 }

@@ -19,8 +19,7 @@ final class ElectricWrenchItem extends RechargeableItem {
 
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
-        int stored = charge(stack);
-        return WrenchItem.useOnMachine(context, cost -> stored >= cost * ENERGY_PER_USE,
-            cost -> setCharge(stack, stored - cost * ENERGY_PER_USE));
+        return WrenchItem.useOnMachine(context, cost -> ic2.api.item.ElectricEquipment.canUse(stack, cost * ENERGY_PER_USE),
+            cost -> ic2.api.item.ElectricEquipment.use(stack, cost * ENERGY_PER_USE, context.getPlayer()));
     }
 }

@@ -42,43 +42,42 @@ public final class PoweredChainsaw extends RechargeableItem implements ElectricE
     }
     private int cost() { return advanced ? 100 : 50; }
     @Override public boolean canProvideEnergy() { return false; }
-    @Override public boolean canPerformAction(ItemStack stack, ItemAbility ability) { return charge(stack) >= cost() && ability == ItemAbilities.AXE_STRIP; }
+    @Override public boolean canPerformAction(ItemStack stack, ItemAbility ability) { return ic2.api.item.ElectricEquipment.canUse(stack, cost()) && ability == ItemAbilities.AXE_STRIP; }
     @Override public boolean acceptsElectricEnchantment(ItemStack stack, Holder<Enchantment> enchantment, boolean anvil) {
         return enchantment.is(Enchantments.EFFICIENCY) || enchantment.is(Enchantments.FORTUNE) || enchantment.is(Enchantments.UNBREAKING);
     }
-    @Override public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) { return charge(stack) >= cost() && (state.is(Blocks.COBWEB) || super.isCorrectToolForDrops(stack, state)); }
+    @Override public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) { return ic2.api.item.ElectricEquipment.canUse(stack, cost()) && (state.is(Blocks.COBWEB) || super.isCorrectToolForDrops(stack, state)); }
     @Override public float getDestroySpeed(ItemStack stack, BlockState state) {
-        if (charge(stack) < cost()) return 1;
+        if (!ic2.api.item.ElectricEquipment.canUse(stack, cost())) return 1;
         return state.is(BlockTags.LOGS) || state.is(BlockTags.PLANKS) || state.is(BlockTags.LEAVES) || state.is(Blocks.BAMBOO) || state.getBlock() instanceof net.minecraft.world.level.block.BushBlock ? 12 : super.getDestroySpeed(stack, state);
     }
     @Override public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
-        if (!(entity instanceof IShearable target) || charge(stack) < 2 * cost() || !target.isShearable(player, stack, entity.level(), entity.blockPosition())) return InteractionResult.PASS;
+        if (!(entity instanceof IShearable target) || !ic2.api.item.ElectricEquipment.canUse(stack, 2 * cost()) || !target.isShearable(player, stack, entity.level(), entity.blockPosition())) return InteractionResult.PASS;
         if (!entity.level().isClientSide) {
             for (var drop : target.onSheared(player, stack, entity.level(), entity.blockPosition())) entity.spawnAtLocation(drop, 1);
-            setCharge(stack, charge(stack) - 2 * cost());
+            ic2.api.item.ElectricEquipment.use(stack, 2 * cost(), player);
         }
         return InteractionResult.sidedSuccess(entity.level().isClientSide);
     }
     @Override public InteractionResult useOn(UseOnContext context) {
         var player = context.getPlayer(); var level = context.getLevel(); var pos = context.getClickedPos(); var stack = context.getItemInHand();
-        if (player == null || charge(stack) < cost() || !level.mayInteract(player, pos) || !player.mayUseItemAt(pos, context.getClickedFace(), stack)) return InteractionResult.PASS;
+        if (player == null || !ic2.api.item.ElectricEquipment.canUse(stack, cost()) || !level.mayInteract(player, pos) || !player.mayUseItemAt(pos, context.getClickedFace(), stack)) return InteractionResult.PASS;
         var stripped = level.getBlockState(pos).getToolModifiedState(context, ItemAbilities.AXE_STRIP, false);
         if (stripped == null) return InteractionResult.PASS;
-        if (!level.isClientSide && level.setBlock(pos, stripped, 11)) setCharge(stack, charge(stack) - cost());
+        if (!level.isClientSide && level.setBlock(pos, stripped, 11)) ic2.api.item.ElectricEquipment.use(stack, cost(), player);
         level.playSound(player, pos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1, 1);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
     @Override public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!attacker.level().isClientSide && attacker instanceof Player player) {
-            boolean powered = charge(stack) >= cost();
-            if (powered) setCharge(stack, charge(stack) - cost());
+            boolean powered = ic2.api.item.ElectricEquipment.use(stack, cost(), player);
             target.hurt(player.damageSources().playerAttack(player), powered ? 10 : 1);
         }
         return false;
     }
     @Override public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity owner) {
         if (!level.isClientSide) {
-            if (state.getDestroySpeed(level, pos) != 0) setCharge(stack, charge(stack) - cost());
+            if (state.getDestroySpeed(level, pos) != 0) ic2.api.item.ElectricEquipment.use(stack, cost(), owner);
             if (advanced && state.is(BlockTags.LOGS) && owner instanceof ServerPlayer player && !player.isShiftKeyDown() && felling.add(player.getUUID())) {
                 try { fellTree(stack, player, pos, state); } finally { felling.remove(player.getUUID()); }
             }
@@ -99,12 +98,12 @@ public final class PoweredChainsaw extends RechargeableItem implements ElectricE
             for (var direction : Direction.values()) queue.add(pos.relative(direction));
         }
         if (leaves) for (var pos : logs) {
-            if (charge(stack) < cost()) break;
+            if (!ic2.api.item.ElectricEquipment.canUse(stack, cost())) break;
             player.gameMode.destroyBlock(pos);
         }
     }
     public static List<ItemStack> harvestDrops(ItemStack stack, BlockState state, List<ItemStack> original) {
-        if (stack.getItem() instanceof PoweredChainsaw saw && saw.charge(stack) >= saw.cost() && (state.is(BlockTags.LEAVES) || state.is(Blocks.COBWEB))) return List.of(new ItemStack(state.getBlock()));
+        if (stack.getItem() instanceof PoweredChainsaw saw && ic2.api.item.ElectricEquipment.canUse(stack, saw.cost()) && (state.is(BlockTags.LEAVES) || state.is(Blocks.COBWEB))) return List.of(new ItemStack(state.getBlock()));
         return original;
     }
 }

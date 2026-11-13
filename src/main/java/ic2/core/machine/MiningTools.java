@@ -41,15 +41,15 @@ final class MiningTools {
         @Override public boolean acceptsElectricEnchantment(ItemStack stack, net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment> enchantment, boolean anvil) {
             return enchantment.is(Enchantments.EFFICIENCY) || enchantment.is(Enchantments.FORTUNE) || enchantment.is(Enchantments.UNBREAKING);
         }
-        @Override public boolean canUse(ItemStack stack) { return charge(stack) >= 50; }
+        @Override public boolean canUse(ItemStack stack) { return ic2.api.item.ElectricEquipment.canUse(stack, 50); }
         @Override public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) { return canUse(stack) && super.isCorrectToolForDrops(stack, state); }
         @Override public float getDestroySpeed(ItemStack stack, BlockState state) { return canUse(stack) ? super.getDestroySpeed(stack, state) : 1; }
         @Override public boolean canMine(ItemStack stack, BlockState state, LevelReader level, BlockPos pos) {
             return canUse(stack) && state.getDestroySpeed(level, pos) >= 0 && (!state.requiresCorrectToolForDrops() || isCorrectToolForDrops(stack, state));
         }
-        @Override public void consumeUse(ItemStack stack) { setCharge(stack, charge(stack) - 50); }
+        @Override public void consumeUse(ItemStack stack) { ic2.api.item.ElectricEquipment.use(stack, 50, null); }
         @Override public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity owner) {
-            if (!level.isClientSide) consumeUse(stack);
+            if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0) ic2.api.item.ElectricEquipment.use(stack, 50, owner);
             return true;
         }
         @Override public int progressPerTick(ItemStack stack, BlockState state) { int efficiency = enchantment(stack, Enchantments.EFFICIENCY); return 1 + (efficiency == 0 ? 0 : efficiency * efficiency + 1); }
@@ -65,16 +65,15 @@ final class MiningTools {
         @Override public boolean scansFluids() { return fluids; }
         @Override public int scanRadius(ItemStack stack, boolean useEnergy) {
             if (!useEnergy) return radius;
-            if (charge(stack) < cost) return 0;
-            setCharge(stack, charge(stack) - cost); return radius;
+            return ic2.api.item.ElectricEquipment.use(stack, cost, null) ? radius : 0;
         }
         @Override public boolean isValuable(ItemStack stack, BlockState state, LevelReader level, BlockPos pos) {
             return fluids ? !state.getFluidState().isEmpty() && state.getFluidState().isSource() : state.is(Tags.Blocks.ORES);
         }
         @Override public InteractionResult useOn(UseOnContext context) {
             if (context.getLevel().isClientSide) return InteractionResult.SUCCESS;
-            int distance = scanRadius(context.getItemInHand(), true);
-            if (distance == 0) return InteractionResult.FAIL;
+            if (!ic2.api.item.ElectricEquipment.use(context.getItemInHand(), cost, context.getPlayer())) return InteractionResult.FAIL;
+            int distance = radius;
             int found = 0;
             var level = context.getLevel(); var center = context.getClickedPos();
             for (var pos : BlockPos.betweenClosed(center.offset(-distance, -distance, -distance), center.offset(distance, distance, distance)))

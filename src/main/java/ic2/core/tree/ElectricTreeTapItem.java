@@ -24,13 +24,12 @@ final class ElectricTreeTapItem extends RechargeableItem {
         var state = level.getBlockState(pos);
         var face = context.getClickedFace();
         var stack = context.getItemInHand();
-        int stored = charge(stack);
-        if (context.getPlayer() == null || stored < ENERGY_PER_TAP || !RubberLogBlock.canTap(state, face)) {
+        if (context.getPlayer() == null || !ic2.api.item.ElectricEquipment.canUse(stack, ENERGY_PER_TAP) || !RubberLogBlock.canTap(state, face)) {
             return InteractionResult.PASS;
         }
         if (level instanceof ServerLevel server) {
             ((RubberLogBlock) state.getBlock()).tap(server, pos, state, face);
-            setCharge(stack, stored - ENERGY_PER_TAP);
+            ic2.api.item.ElectricEquipment.use(stack, ENERGY_PER_TAP, context.getPlayer());
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

@@ -17,7 +17,7 @@
       "item": "ic2:plate_advanced_alloy"
     }
   },
-  "type": "minecraft:crafting_shaped",
+  "type": "ic2:electric_shaped",
   "category": "equipment",
   "result": {
     "id": "ic2:rock_cutter_drill",

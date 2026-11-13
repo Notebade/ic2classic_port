@@ -13,7 +13,7 @@
       "item": "ic2:circuit"
     }
   },
-  "type": "minecraft:crafting_shaped",
+  "type": "ic2:electric_shaped",
   "pattern": [
     " C ",
     "XYX",

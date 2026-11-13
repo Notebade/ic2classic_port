@@ -8,6 +8,7 @@ public final class Equipment {
     public static void register(IEventBus bus, DeferredRegister.Items items) {
         ConventionalTools.register(items);
         ConventionalArmor.register(bus, items);
+        WearableBatteries.register(bus, items);
         ConventionalShield.register(items);
         items.registerItem("nano_shield", NanoShield::new);
         PoweredDrill.register(items);

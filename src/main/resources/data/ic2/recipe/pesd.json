@@ -1,6 +1,6 @@
 {
   "category": "misc",
-  "type": "minecraft:crafting_shaped",
+  "type": "ic2:electric_shaped",
   "key": {
     "Y": {
       "item": "ic2:plate_advanced_alloy"

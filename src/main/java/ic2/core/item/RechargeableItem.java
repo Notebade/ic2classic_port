@@ -1,10 +1,8 @@
 package ic2.core.item;
 
-import ic2.core.IC2;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -46,16 +44,11 @@ public class RechargeableItem extends Item implements ic2.api.item.ElectricItem 
     }
 
     public int charge(ItemStack stack) {
-        return Mth.clamp(stack.getOrDefault(IC2.BATTERY_CHARGE.get(), 0), 0, capacity);
+        return EuCharge.get(stack, capacity);
     }
 
     public void setCharge(ItemStack stack, int charge) {
-        charge = Mth.clamp(charge, 0, capacity);
-        if (charge == 0) {
-            stack.remove(IC2.BATTERY_CHARGE.get());
-        } else {
-            stack.set(IC2.BATTERY_CHARGE.get(), charge);
-        }
+        EuCharge.set(stack, capacity, charge);
     }
 
     @Override

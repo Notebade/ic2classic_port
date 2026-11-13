@@ -1,0 +1,24 @@
+{
+  "category": "equipment",
+  "type": "ic2:electric_shaped",
+  "key": {
+    "A": {
+      "item": "ic2:advanced_circuit"
+    },
+    "L": {
+      "item": "minecraft:lapis_block"
+    },
+    "B": {
+      "item": "ic2:batpack"
+    }
+  },
+  "pattern": [
+    "LAL",
+    "LBL",
+    "L L"
+  ],
+  "result": {
+    "id": "ic2:lappack",
+    "count": 1
+  }
+}

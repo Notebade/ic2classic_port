@@ -1,0 +1,23 @@
+{
+  "category": "equipment",
+  "type": "ic2:electric_shaped",
+  "key": {
+    "Y": {
+      "item": "minecraft:leather"
+    },
+    "C": {
+      "item": "ic2:re_battery"
+    },
+    "X": {
+      "tag": "c:rubber"
+    }
+  },
+  "pattern": [
+    "XYY",
+    "CCC"
+  ],
+  "result": {
+    "id": "ic2:industrial_belt",
+    "count": 1
+  }
+}

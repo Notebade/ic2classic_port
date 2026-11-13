@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "ic2:bronze_shield",
+    "ic2:aluminium_shield",
+    "ic2:composite_shield"
+  ]
+}

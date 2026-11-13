@@ -1,0 +1,13 @@
+{
+  "ingredients": [
+    {
+      "item": "ic2:industrial_belt"
+    }
+  ],
+  "category": "equipment",
+  "type": "minecraft:crafting_shapeless",
+  "result": {
+    "id": "ic2:re_battery",
+    "count": 3
+  }
+}

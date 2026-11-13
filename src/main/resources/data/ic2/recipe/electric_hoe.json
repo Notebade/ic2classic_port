@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "ic2:electric_shaped",
   "result": {
     "count": 1,
     "id": "ic2:electric_hoe"

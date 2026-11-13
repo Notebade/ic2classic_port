@@ -36,25 +36,25 @@ final class PoweredHoe extends RechargeableItem implements ConfigurableTool, Ele
     }
     private int cost() { return advanced ? 100 : 50; }
     @Override public boolean canProvideEnergy() { return false; }
-    @Override public boolean canPerformAction(ItemStack stack, ItemAbility ability) { return charge(stack) >= cost() && ItemAbilities.DEFAULT_HOE_ACTIONS.contains(ability); }
+    @Override public boolean canPerformAction(ItemStack stack, ItemAbility ability) { return ic2.api.item.ElectricEquipment.canUse(stack, cost()) && ItemAbilities.DEFAULT_HOE_ACTIONS.contains(ability); }
     @Override public boolean acceptsElectricEnchantment(ItemStack stack, Holder<Enchantment> enchantment, boolean anvil) {
         return enchantment.is(Enchantments.EFFICIENCY) || enchantment.is(Enchantments.UNBREAKING) || enchantment.is(Enchantments.FORTUNE);
     }
     @Override public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity owner) {
-        if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0) setCharge(stack, charge(stack) - cost());
+        if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0) ic2.api.item.ElectricEquipment.use(stack, cost(), owner);
         return true;
     }
-    @Override public float getDestroySpeed(ItemStack stack, BlockState state) { return charge(stack) >= cost() ? super.getDestroySpeed(stack, state) : 1; }
+    @Override public float getDestroySpeed(ItemStack stack, BlockState state) { return ic2.api.item.ElectricEquipment.canUse(stack, cost()) ? super.getDestroySpeed(stack, state) : 1; }
     @Override public InteractionResult useOn(UseOnContext context) {
         var player = context.getPlayer(); var level = context.getLevel(); var stack = context.getItemInHand();
-        if (player == null || charge(stack) < cost()) return InteractionResult.PASS;
+        if (player == null || !ic2.api.item.ElectricEquipment.canUse(stack, cost())) return InteractionResult.PASS;
         int radius = advanced ? Integer.parseInt(mode(stack)) : 0;
         int changed = 0;
         // The selected block must be valid before spreading to its neighbors.
         if (!till(context, context.getClickedPos())) return InteractionResult.PASS;
         changed++;
         for (var pos : BlockPos.betweenClosed(context.getClickedPos().offset(-radius, 0, -radius), context.getClickedPos().offset(radius, 0, radius))) {
-            if (!pos.equals(context.getClickedPos()) && charge(stack) >= cost() && till(context, pos)) changed++;
+            if (!pos.equals(context.getClickedPos()) && ic2.api.item.ElectricEquipment.canUse(stack, cost()) && till(context, pos)) changed++;
         }
         return changed > 0 ? InteractionResult.sidedSuccess(level.isClientSide) : InteractionResult.PASS;
     }
@@ -66,7 +66,7 @@ final class PoweredHoe extends RechargeableItem implements ConfigurableTool, Ele
         if (state == null) return false;
         if (!level.isClientSide) {
             if (!level.setBlock(pos, state, 11)) return false;
-            setCharge(stack, charge(stack) - cost());
+            ic2.api.item.ElectricEquipment.use(stack, cost(), player);
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, state));
         }
         level.playSound(player, pos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1, 1);

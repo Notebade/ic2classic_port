@@ -1,9 +1,8 @@
 package ic2.core.equipment;
 
 import ic2.api.item.ElectricItem;
-import ic2.core.IC2;
+import ic2.core.item.EuCharge;
 import java.util.function.Consumer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,19 +18,17 @@ final class NanoShield extends ShieldItem implements ElectricItem {
     @Override public int transferRate() { return 300; }
     @Override public int minimumPacket() { return 128; }
     @Override public boolean canProvideEnergy() { return false; }
-    @Override public int charge(ItemStack stack) { return Mth.clamp(stack.getOrDefault(IC2.BATTERY_CHARGE.get(), 0), 0, capacity()); }
-    @Override public void setCharge(ItemStack stack, int amount) {
-        int charge = Mth.clamp(amount, 0, capacity());
-        if (charge == 0) stack.remove(IC2.BATTERY_CHARGE.get()); else stack.set(IC2.BATTERY_CHARGE.get(), charge);
-    }
+    @Override public int charge(ItemStack stack) { return EuCharge.get(stack, capacity()); }
+    @Override public void setCharge(ItemStack stack, int amount) { EuCharge.set(stack, capacity(), amount); }
     @Override public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        return charge(player.getItemInHand(hand)) < 50 ? InteractionResultHolder.fail(player.getItemInHand(hand)) : super.use(level, player, hand);
+        return !ic2.api.item.ElectricEquipment.canUse(player.getItemInHand(hand), 50) ? InteractionResultHolder.fail(player.getItemInHand(hand)) : super.use(level, player, hand);
     }
     @Override public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remaining) {
-        if (charge(stack) < 50) entity.stopUsingItem();
+        if (!ic2.api.item.ElectricEquipment.canUse(stack, 50)) entity.stopUsingItem();
     }
     @Override public <T extends LivingEntity> int damageItem(ItemStack stack, int damage, T entity, Consumer<Item> broken) {
-        setCharge(stack, (int) Math.max(0L, charge(stack) - 50L * Math.max(0, damage)));
+        int cost = ic2.api.item.ElectricEquipment.energyCost(stack, (int) Math.min(Integer.MAX_VALUE, 50L * Math.max(0, damage)));
+        setCharge(stack, Math.max(0, charge(stack) - cost));
         return 0;
     }
     @Override public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) { return false; }

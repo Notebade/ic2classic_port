@@ -1,0 +1,27 @@
+{
+  "category": "equipment",
+  "type": "ic2:electric_shaped",
+  "key": {
+    "Y": {
+      "item": "ic2:plate_iridium"
+    },
+    "V": {
+      "item": "ic2:lapatron_crystal"
+    },
+    "C": {
+      "item": "ic2:lappack"
+    },
+    "X": {
+      "item": "ic2:advanced_circuit"
+    }
+  },
+  "pattern": [
+    " X ",
+    "YCY",
+    " V "
+  ],
+  "result": {
+    "id": "ic2:quantum_pack",
+    "count": 1
+  }
+}

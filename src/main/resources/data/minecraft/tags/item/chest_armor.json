@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "ic2:armor_bronze_chest",
-    "ic2:armor_composite_chest"
+    "ic2:armor_composite_chest",
+    "ic2:batpack",
+    "ic2:lappack",
+    "ic2:quantum_pack"
   ]
 }
