@@ -1,0 +1,30 @@
+{
+  "pattern": [
+    "XYX",
+    "XCX",
+    "BVB"
+  ],
+  "key": {
+    "Y": {
+      "item": "ic2:cell_empty"
+    },
+    "V": {
+      "item": "ic2:iron_furnace"
+    },
+    "B": {
+      "item": "minecraft:smooth_stone"
+    },
+    "C": {
+      "item": "ic2:extractor"
+    },
+    "X": {
+      "item": "minecraft:stone"
+    }
+  },
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:wood_gassifier",
+    "count": 1
+  },
+  "category": "misc"
+}

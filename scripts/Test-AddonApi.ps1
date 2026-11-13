@@ -17,7 +17,7 @@ displayName = "IC2 API Verification Addon"
 [[dependencies.exampleaddon]]
 modId = "ic2"
 type = "required"
-versionRange = "[0.65.0,0.67.0)"
+versionRange = "[0.65.0,0.68.0)"
 ordering = "AFTER"
 side = "BOTH"
 '@

@@ -37,6 +37,11 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 @Override public int getTintColor() { return fuel.tint; }
             }, fuel.type.get());
         }
+        event.registerFluidType(new IClientFluidTypeExtensions() {
+            @Override public ResourceLocation getStillTexture() { return ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "block/fluids/base_fluid_still"); }
+            @Override public ResourceLocation getFlowingTexture() { return getStillTexture(); }
+            @Override public int getTintColor() { return 0xffbf9f18; }
+        }, ChemistryMaterials.WHISKY_TYPE.get());
     }
 
     @SubscribeEvent

@@ -17,7 +17,7 @@ final class PowerMachineMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final PowerMachineEntity machine;
     PowerMachineMenu(int id, Inventory player, PowerMachines.Kind kind) {
-        this(id, player, kind, new ItemStackHandler(kind.slots), new SimpleContainerData(34), ContainerLevelAccess.NULL, null);
+        this(id, player, kind, new ItemStackHandler(kind.slots), new SimpleContainerData(42), ContainerLevelAccess.NULL, null);
     }
     PowerMachineMenu(int id, Inventory player, PowerMachines.Kind kind, ItemStackHandler inventory, ContainerData data,
                      ContainerLevelAccess access, PowerMachineEntity machine) {
@@ -27,8 +27,7 @@ final class PowerMachineMenu extends AbstractContainerMenu {
             final int index = slot;
             addSlot(new SlotItemHandler(inventory, slot, 8 + slot * 22, 100) {
                 @Override public boolean mayPlace(ItemStack stack) {
-                    return !((kind == PowerMachines.Kind.PLASMAFIER || kind == PowerMachines.Kind.LIQUID_FUEL) && index == 2 || kind == PowerMachines.Kind.BOILER && (index == 1 || index == 3))
-                        && super.mayPlace(stack);
+                    return !kind.outputSlot(index) && super.mayPlace(stack);
                 }
             });
         }
@@ -37,7 +36,7 @@ final class PowerMachineMenu extends AbstractContainerMenu {
     }
     int value(int index) { return data.get(index * 2) & 65535 | data.get(index * 2 + 1) << 16; }
     @Override public boolean clickMenuButton(Player player, int button) {
-        if (machine == null || !stillValid(player) || kind != PowerMachines.Kind.TRANSFORMER || button < 0 || button > 5) return false;
+        if (machine == null || !stillValid(player) || button < 0 || button > 10 || !(kind == PowerMachines.Kind.TRANSFORMER || kind.chemical())) return false;
         machine.button(button); return true;
     }
     @Override public boolean stillValid(Player player) {
@@ -49,7 +48,11 @@ final class PowerMachineMenu extends AbstractContainerMenu {
         Slot slot = slots.get(index);
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack stack = slot.getItem(), before = stack.copy();
-        if (!(index < kind.slots ? moveItemStackTo(stack, kind.slots, slots.size(), true) : kind.slots > 0 && moveItemStackTo(stack, 0, kind.slots, false))) return ItemStack.EMPTY;
+        boolean moved = index < kind.slots ? moveItemStackTo(stack, kind.slots, slots.size(), true)
+            : kind == PowerMachines.Kind.GASIFIER && stack.is(net.minecraft.tags.ItemTags.LOGS)
+                ? moveItemStackTo(stack, 1, 2, false) || moveItemStackTo(stack, 0, kind.slots, false)
+                : kind.slots > 0 && moveItemStackTo(stack, 0, kind.slots, false);
+        if (!moved) return ItemStack.EMPTY;
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY); else slot.setChanged();
         slot.onTake(player, before.copyWithCount(before.getCount() - stack.getCount()));
         return before;

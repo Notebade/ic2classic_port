@@ -21,11 +21,21 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
         for (var type : PowerMachines.SCREENS.values()) event.register(type.get(), PowerMachineScreen::new);
     }
     @SubscribeEvent public static void setup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> ItemProperties.register(BoilerFuel.CAN.get(), ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "fueled"),
-            (stack, level, entity, seed) -> BoilerFuel.amount(stack) > 0 ? 1 : 0));
+        event.enqueueWork(() -> {
+            ItemProperties.register(BoilerFuel.CAN.get(), ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "fueled"),
+                (stack, level, entity, seed) -> BoilerFuel.amount(stack) > 0 ? 1 : 0);
+            ItemProperties.register(ChemistryMaterials.WHISKY_MUG.get(), ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "whisky_grade"),
+                (stack, level, entity, seed) -> ChemistryMaterials.grade(stack));
+        });
     }
     @Override protected void init() {
         super.init();
+        if (menu.kind == PowerMachines.Kind.REFINERY) {
+            chemicalButton(6, "1 → out", 8, 50); chemicalButton(7, "2 → out", 61, 50); chemicalButton(8, "out → in", 114, 54);
+        } else if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) {
+            chemicalButton(9, Component.translatable("gui.ic2.power_seal").getString(), 8, 76);
+            chemicalButton(10, Component.translatable("gui.ic2.power_open").getString(), 88, 80);
+        }
         if (menu.kind != PowerMachines.Kind.TRANSFORMER) return;
         String[] names = {"÷2", "×2", "-1", "+1", "-", "+"};
         for (int i = 0; i < names.length; i++) {
@@ -33,6 +43,10 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
             addRenderableWidget(Button.builder(Component.literal(names[i]), ignored -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, button))
                 .bounds(leftPos + 8 + i * 27, topPos + 74, 25, 20).build());
         }
+    }
+    private void chemicalButton(int id, String label, int x, int width) {
+        addRenderableWidget(Button.builder(Component.literal(label), ignored -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, id))
+            .bounds(leftPos + x, topPos + 74, width, 20).build());
     }
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float tick) {
         super.render(graphics, mouseX, mouseY, tick); renderTooltip(graphics, mouseX, mouseY);
@@ -49,7 +63,9 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
     }
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, 8, 6, 0x404040, false);
-        if (menu.kind.multiblock()) line(graphics, 0, menu.value(10) == 1 ? "formed" : "incomplete");
+        if (menu.kind == PowerMachines.Kind.GASIFIER) line(graphics, 0, "solid_fuel", menu.value(18));
+        else if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) line(graphics, 0, "barrel_state_" + menu.value(20));
+        else if (menu.kind.multiblock()) line(graphics, 0, menu.value(10) == 1 ? "formed" : "incomplete");
         else line(graphics, 0, menu.kind.flux() ? "fe" : "eu", menu.value(0), menu.value(12));
         switch (menu.kind) {
             case TRANSFORMER -> { line(graphics, 1, "packet", menu.value(8), menu.value(9)); line(graphics, 2, "transformer_faces"); line(graphics, 3, "buffer_guard"); }
@@ -68,6 +84,21 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
                 line(graphics, 1, "liquid_tank", menu.value(14)); line(graphics, 2, "fuel_remaining", menu.value(13));
                 line(graphics, 3, "generator_output", String.format(java.util.Locale.ROOT, "%.2f", menu.value(15) / 100.0));
                 line(graphics, 5, "liquid_slots");
+            }
+            case GASIFIER, ELECTRIC_GASIFIER -> {
+                line(graphics, 1, "gas_tank", menu.value(14), menu.kind == PowerMachines.Kind.GASIFIER ? 9000 : 18000);
+                line(graphics, 2, "chemical_progress", menu.value(17) == 0 ? 0 : menu.value(13) * 100 / menu.value(17));
+                line(graphics, 4, "gasifier_slots");
+            }
+            case REFINERY -> {
+                line(graphics, 1, "chemical_progress", menu.value(17) == 0 ? 0 : menu.value(13) * 100 / menu.value(17));
+                line(graphics, 2, "refinery_inputs", menu.value(14), menu.value(15));
+                line(graphics, 3, "refinery_output", menu.value(16));
+            }
+            case WHISKY_BARREL -> {
+                line(graphics, 1, "barrel_contents", menu.value(14), menu.value(15));
+                line(graphics, 2, "barrel_stage", menu.value(19));
+                line(graphics, 3, "chemical_progress", menu.value(17) == 0 ? 0 : (int) (menu.value(13) * 100L / menu.value(17)));
             }
         }
         graphics.drawString(font, playerInventoryTitle, 8, 122, 0x404040, false);

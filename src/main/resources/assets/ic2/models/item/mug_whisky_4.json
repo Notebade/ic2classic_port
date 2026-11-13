@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/food_and_drink/mug/whisky_25y"
+  },
+  "parent": "minecraft:item/generated"
+}

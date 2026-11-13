@@ -1,0 +1,11 @@
+{
+  "experience": 0.1,
+  "ingredient": {
+    "item": "ic2:flour"
+  },
+  "type": "minecraft:smelting",
+  "result": {
+    "id": "minecraft:bread"
+  },
+  "cookingtime": 200
+}

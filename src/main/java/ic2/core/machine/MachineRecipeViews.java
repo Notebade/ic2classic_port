@@ -31,6 +31,13 @@ final class MachineRecipeViews {
 
     static List<MachineRecipeView> forProcess(Process process, Level level) {
         return switch (process) {
+            case GASIFIER, ELECTRIC_GASIFIER -> {
+                boolean electric = process == Process.ELECTRIC_GASIFIER;
+                yield List.of(new MachineRecipeView(List.of(ingredient(net.minecraft.world.item.crafting.Ingredient.of(net.minecraft.tags.ItemTags.LOGS), 1)),
+                    List.of(new Slot(List.of(), new net.neoforged.neoforge.fluids.FluidStack(GeneratorFluids.Fuel.WOODGAS.fluid.get(), electric ? 810 : 1000)), item(Items.CHARCOAL)),
+                    note("chemical_recipe", electric ? 80 : 160, electric ? 80 : 0)));
+            }
+            case REFINERY -> ChemistryRecipeViews.refinery();
             case WINDMILL -> registeredItems().filter(stack -> stack.getItem() instanceof WindRotor).map(stack -> {
                 var rotor = ((WindRotor) stack.getItem()).kind;
                 return new MachineRecipeView(List.of(item(stack)), List.of(), note("wind_rotor", rotor.radius, rotor.effectiveness, rotor.durability));

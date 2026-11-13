@@ -65,7 +65,7 @@ final class MachineRecipeCategory implements IRecipeCategory<MachineRecipeView> 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, MachineRecipeView recipe, IFocusGroup focuses) {
         addSlots(builder, recipe.inputs(), RecipeIngredientRole.INPUT, 8);
-        addSlots(builder, recipe.outputs(), RecipeIngredientRole.OUTPUT, 111);
+        addSlots(builder, recipe.outputs(), RecipeIngredientRole.OUTPUT, recipe.outputs().size() > 1 ? 107 : 111);
     }
 
     private static void addSlots(IRecipeLayoutBuilder builder, List<Slot> contents, RecipeIngredientRole role, int x) {
@@ -83,7 +83,7 @@ final class MachineRecipeCategory implements IRecipeCategory<MachineRecipeView> 
     @Override
     public void draw(MachineRecipeView recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         if (!recipe.inputs().isEmpty() && !recipe.outputs().isEmpty()) {
-            arrow.draw(graphics, 62, 6);
+            arrow.draw(graphics, recipe.inputs().size() >= 3 ? 78 : 62, 6);
         }
         var font = Minecraft.getInstance().font;
         int y = 29;

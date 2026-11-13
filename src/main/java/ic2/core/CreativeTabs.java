@@ -23,7 +23,7 @@ final class CreativeTabs {
     private static final Set<String> MACHINES = Set.of(
         "macerator", "stone_macerator", "iron_furnace", "electric_furnace", "electric_blast_furnace",
         "rotary_macerator", "centrifugal_extractor", "singularity_compressor", "electric_smoker", "induction_furnace", "induction_blast_furnace", "induction_smoker", "sawmill", "alloy_smelter", "pressure_alloy_furnace", "extractor", "rare_earth_extractor",
-        "electrolyzer", "charged_electrolyzer", "centrifugal_rare_earth_extractor", "compressor", "pump", "recycler", "slow_grinder", "compacting_recycler", "mass_fabricator", "canner", "vacuum_canner", "plasmafier", "machine_tank", "personal_tank");
+        "electrolyzer", "charged_electrolyzer", "centrifugal_rare_earth_extractor", "compressor", "pump", "recycler", "slow_grinder", "compacting_recycler", "mass_fabricator", "canner", "vacuum_canner", "plasmafier", "machine_tank", "personal_tank", "wood_gassifier", "electric_wood_gassifier", "refinery", "barrel");
     private static final Set<String> ENERGY = Set.of(
         "batbox", "mfe", "mfsu", "esu", "isu", "pesu", "glowtronic_crystal", "uesc", "pesd", "quantum_accumulator", "quantum_accumulator_big", "re_battery", "energy_crystal", "lapatron_crystal");
     private static final Set<String> NUCLEAR = Set.of(

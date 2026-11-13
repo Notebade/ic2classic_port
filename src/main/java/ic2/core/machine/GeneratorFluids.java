@@ -50,6 +50,7 @@ public final class GeneratorFluids {
         return null;
     }
     public static ItemStack filledCell(Fluid fluid) {
-        Fuel fuel = fuel(fluid); return fuel == null ? ItemStack.EMPTY : new ItemStack(fuel.cell.get());
+        Fuel fuel = fuel(fluid);
+        return fuel != null ? new ItemStack(fuel.cell.get()) : fluid == ChemistryMaterials.WHISKY.get() ? new ItemStack(ChemistryMaterials.WHISKY_CELL.get()) : ItemStack.EMPTY;
     }
 }

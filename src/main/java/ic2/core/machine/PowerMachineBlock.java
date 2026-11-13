@@ -47,6 +47,13 @@ final class PowerMachineBlock extends Block implements EntityBlock {
     }
 
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new PowerMachineEntity(pos, state); }
+    @Override public void setPlacedBy(Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide && kind == PowerMachines.Kind.WHISKY_BARREL && level.getBlockEntity(pos) instanceof PowerMachineEntity barrel) {
+            var data = stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
+            if (data.contains("ic2_barrel")) barrel.restoreBarrel(data.getCompound("ic2_barrel"));
+        }
+    }
 
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> entityType) {
         return !level.isClientSide && entityType == PowerMachines.ENTITY.get()

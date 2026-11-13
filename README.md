@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.66.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.67.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.66.0` |
+| Project version | `0.67.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -478,3 +478,7 @@ Public ic2.api interfaces expose registry lookups, immutable server-side machine
 ### Windmill and liquid fuel generation (0.66.0)
 
 Adds a windmill with six replaceable rotors, airflow sharing, rotor wear and a rotating sprite renderer, plus a liquid-fuel generator for wood gas, liquid biofuel and alcohol. Includes EU output, battery/container handling, persistence, recipes, JEI, fluid cells and API telemetry. [Operating values and remaining limitations](docs/wind-and-liquid-generators.md). Manufacturing the fuel liquids awaits gasifiers/refinery; client visuals and original sounds still need work.
+
+### Gasifiers and refinery (0.67.0)
+
+Adds solid-fuel/electric wood gasifiers and a refinery with two inputs and a shared layered fluid output. Closes wood gas, liquid biofuel, alcohol and polished-gold production. A whisky-only barrel foundation supplies the original alcohol dependency; its default server ageing reaches distillable whisky after seven loaded days. Includes flour processing, recipes, containers, automation, JEI and API telemetry. [Operation, timing and remaining scope](docs/gasifiers-and-refinery.md).

@@ -1,0 +1,18 @@
+{
+  "pattern": [
+    "SS ",
+    "SSS",
+    "SS "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stone"
+    }
+  },
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:mug",
+    "count": 1
+  },
+  "category": "misc"
+}

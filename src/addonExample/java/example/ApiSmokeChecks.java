@@ -53,6 +53,7 @@ public final class ApiSmokeChecks {
                 level.setBlockAndUpdate(pos.above(), Blocks.AIR.defaultBlockState());
             }
             verifyGenerators(level, pos);
+            ChemistrySmokeChecks.verify(level, pos);
             LOGGER.info("IC2 API runtime smoke checks passed");
         } catch (Throwable error) {
             LOGGER.error("IC2 API runtime smoke checks FAILED", error);
@@ -112,7 +113,7 @@ public final class ApiSmokeChecks {
             require(Ic2Api.machineInfo(level, pos).orElseThrow().values().get("fuel_mb") == 1000, "container transfer preserves fluid amount");
         } finally { level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState()); }
     }
-    private static <T extends net.minecraft.world.level.block.entity.BlockEntity> void tick(net.minecraft.server.level.ServerLevel level,
+    static <T extends net.minecraft.world.level.block.entity.BlockEntity> void tick(net.minecraft.server.level.ServerLevel level,
             BlockPos pos, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
         var entity = type.getBlockEntity(level, pos);
         if (entity == null || !(entity.getBlockState().getBlock() instanceof net.minecraft.world.level.block.EntityBlock block))

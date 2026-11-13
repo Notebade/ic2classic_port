@@ -1,0 +1,12 @@
+{
+  "experience": 2.7,
+  "ingredient": {
+    "item": "minecraft:hay_block"
+  },
+  "type": "ic2:stone_macerating",
+  "result": {
+    "id": "ic2:flour",
+    "count": 9
+  },
+  "cookingtime": 1600
+}

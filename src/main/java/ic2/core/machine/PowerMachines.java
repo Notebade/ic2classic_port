@@ -27,7 +27,8 @@ public final class PowerMachines {
     static final Map<Kind, Supplier<MenuType<PowerMachineMenu>>> SCREENS = new EnumMap<>(Kind.class);
     static {
         for (Kind kind : Kind.values()) {
-            MACHINES.put(kind, BLOCKS.registerBlock(kind.id, p -> new PowerMachineBlock(p, kind), properties()));
+            MACHINES.put(kind, BLOCKS.registerBlock(kind.id, p -> new PowerMachineBlock(p, kind),
+                kind == Kind.WHISKY_BARREL ? properties().strength(2).sound(SoundType.WOOD) : properties()));
             SCREENS.put(kind, MENUS.register(kind.id, () -> new MenuType<>((id, inv) -> new PowerMachineMenu(id, inv, kind), FeatureFlags.DEFAULT_FLAGS)));
         }
     }
@@ -75,6 +76,7 @@ public final class PowerMachines {
         BoilerFuel.register(items);
         WindRotor.register(items);
         GeneratorFluids.register(bus, items);
+        ChemistryMaterials.register(bus, items);
         bus.addListener(PowerMachines::capabilities);
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {
@@ -95,12 +97,27 @@ public final class PowerMachines {
         TUNNEL("steam_tunnel", 0, 10000, 0),
         BOILER("fuel_boiler", 0, 0, 6),
         WINDMILL("windmill", 0, 4000, 1),
-        LIQUID_FUEL("liquid_fuel_generator", 0, 10000, 3);
+        LIQUID_FUEL("liquid_fuel_generator", 0, 10000, 3),
+        GASIFIER("wood_gassifier", 0, 0, 5),
+        ELECTRIC_GASIFIER("electric_wood_gassifier", 32, 500, 5),
+        REFINERY("refinery", 128, 5624, 5),
+        WHISKY_BARREL("barrel", 0, 0, 5);
         final String id;
         final int input, capacity, slots;
         Kind(String id, int input, int capacity, int slots) { this.id = id; this.input = input; this.capacity = capacity; this.slots = slots; }
         boolean flux() { return this == FLUX_LV || this == FLUX_MV || this == FLUX_HV; }
         boolean multiblock() { return this == FUSION || this == TUNNEL || this == BOILER; }
+        boolean chemical() { return this == GASIFIER || this == ELECTRIC_GASIFIER || this == REFINERY || this == WHISKY_BARREL; }
+        boolean outputSlot(int slot) {
+            return switch (this) {
+                case PLASMAFIER, LIQUID_FUEL -> slot == 2;
+                case BOILER -> slot == 1 || slot == 3;
+                case GASIFIER, ELECTRIC_GASIFIER -> slot == 2 || slot == 4;
+                case REFINERY -> slot >= 2;
+                case WHISKY_BARREL -> slot >= 3;
+                default -> false;
+            };
+        }
         PowerMachineBlock block() { return MACHINES.get(this).get(); }
         MenuType<PowerMachineMenu> menu() { return SCREENS.get(this).get(); }
     }

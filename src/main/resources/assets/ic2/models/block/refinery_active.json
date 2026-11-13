@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "east": "ic2:block/machine/mv/refinery/active_east",
+    "up": "ic2:block/machine/mv/refinery/active_up",
+    "north": "ic2:block/machine/mv/refinery/active_north",
+    "down": "ic2:block/machine/mv/refinery/active_down",
+    "particle": "ic2:block/machine/mv/refinery/active_north",
+    "west": "ic2:block/machine/mv/refinery/active_west",
+    "south": "ic2:block/machine/mv/refinery/active_south"
+  },
+  "parent": "minecraft:block/cube"
+}

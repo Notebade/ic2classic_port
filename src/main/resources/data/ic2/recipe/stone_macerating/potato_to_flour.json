@@ -1,0 +1,12 @@
+{
+  "experience": 0.1,
+  "ingredient": {
+    "item": "minecraft:potato"
+  },
+  "type": "ic2:stone_macerating",
+  "result": {
+    "id": "ic2:flour",
+    "count": 1
+  },
+  "cookingtime": 400
+}

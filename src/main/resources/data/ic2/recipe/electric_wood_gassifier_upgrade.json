@@ -1,0 +1,27 @@
+{
+  "pattern": [
+    " X ",
+    "CVC",
+    " B "
+  ],
+  "key": {
+    "V": {
+      "item": "ic2:wood_gassifier"
+    },
+    "B": {
+      "item": "ic2:circuit"
+    },
+    "C": {
+      "item": "ic2:carbon_plate"
+    },
+    "X": {
+      "item": "ic2:plate_advanced_alloy"
+    }
+  },
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:electric_wood_gassifier",
+    "count": 1
+  },
+  "category": "misc"
+}

@@ -10,8 +10,8 @@
 
 ```groovy
 dependencies {
-    compileOnly files('libs/ic2-classic-re-0.66.0.jar')
-    runtimeOnly files('libs/ic2-classic-re-0.66.0.jar')
+    compileOnly files('libs/ic2-classic-re-0.67.0.jar')
+    runtimeOnly files('libs/ic2-classic-re-0.67.0.jar')
 }
 ```
 
@@ -23,7 +23,7 @@ dependencies {
 [[dependencies.exampleaddon]]
 modId = "ic2"
 type = "required"
-versionRange = "[0.65.0,0.67.0)"
+versionRange = "[0.65.0,0.68.0)"
 ordering = "AFTER"
 side = "BOTH"
 ```
@@ -212,3 +212,5 @@ var fe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side);
 Скрипт компилирует и упаковывает только временный тестовый аддон. Основной JAR IC2 не собирает. Использует отдельный мир runs/addon-api-check, слушает только 127.0.0.1 на временном порту, после проверок останавливает сервер и удаляет тестовый JAR. Результат — в runs/addon-api-check/logs/latest.log. Клиентские assets при этом не скачиваются. Проверка включается свойством ic2.api.verify; не включайте его с примером аддона в обычном игровом мире.
 
 В 0.66.0 API v1 дополнен данными мельницы и жидкотопливного генератора. У мельницы output_eu_hundredths означает потенциальный выход при текущей скорости, у жидкотопливного генератора — выработку последнего тика (0 при паузе). Скрипт серверной проверки также проверяет новые генераторы, капсулы и сохранение их состояния.
+
+В 0.67.0 через тот же API v1 читаются газификаторы, рефайнер и бочка. Дополнительные ключи: gas_mb, input_1_mb, input_2_mb, output_mb (объёмы в мВ); age_ticks (прогресс текущего года), age_stage (годы), whisky_grade (0/1/2/3/4/5 для молодого/10/12/15/25/50-летнего), grist_units и opened (0/1). Каталог рефайнера пока не является открытым программным реестром API.

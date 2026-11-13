@@ -1,0 +1,30 @@
+{
+  "pattern": [
+    " X ",
+    "VYV",
+    "CBC"
+  ],
+  "key": {
+    "Y": {
+      "item": "ic2:alloy_smelter"
+    },
+    "V": {
+      "item": "minecraft:nether_bricks"
+    },
+    "B": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "C": {
+      "item": "ic2:machine_tank"
+    },
+    "X": {
+      "item": "ic2:complex_circuit"
+    }
+  },
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:refinery",
+    "count": 1
+  },
+  "category": "misc"
+}

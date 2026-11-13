@@ -1,0 +1,38 @@
+{
+  "overrides": [
+    {
+      "model": "ic2:item/mug_whisky_1",
+      "predicate": {
+        "ic2:whisky_grade": 1
+      }
+    },
+    {
+      "model": "ic2:item/mug_whisky_2",
+      "predicate": {
+        "ic2:whisky_grade": 2
+      }
+    },
+    {
+      "model": "ic2:item/mug_whisky_3",
+      "predicate": {
+        "ic2:whisky_grade": 3
+      }
+    },
+    {
+      "model": "ic2:item/mug_whisky_4",
+      "predicate": {
+        "ic2:whisky_grade": 4
+      }
+    },
+    {
+      "model": "ic2:item/mug_whisky_5",
+      "predicate": {
+        "ic2:whisky_grade": 5
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "ic2:item/food_and_drink/mug/youngster"
+  },
+  "parent": "minecraft:item/generated"
+}

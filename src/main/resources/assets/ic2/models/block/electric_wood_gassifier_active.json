@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "east": "ic2:block/machine/lv/electric_wood_gasificator/active_east",
+    "up": "ic2:block/machine/lv/electric_wood_gasificator/active_up",
+    "north": "ic2:block/machine/lv/electric_wood_gasificator/active_north",
+    "down": "ic2:block/machine/lv/electric_wood_gasificator/active_down",
+    "particle": "ic2:block/machine/lv/electric_wood_gasificator/active_north",
+    "west": "ic2:block/machine/lv/electric_wood_gasificator/active_west",
+    "south": "ic2:block/machine/lv/electric_wood_gasificator/active_south"
+  },
+  "parent": "minecraft:block/cube"
+}
