@@ -21,6 +21,10 @@ public final class ApiSmokeChecks {
     public static void run(ServerStartedEvent event) {
         var server = event.getServer();
         try {
+            RecipeAvailabilityChecks.run(server.overworld());
+            ChargingPadChecks.run(server.overworld());
+            UtilityMachineChecks.run(server.overworld());
+            ChunkloaderChecks.run(server.overworld());
             var compression = Ic2Recipes.find(Process.COMPRESSION, new ItemStack(Items.COBBLED_DEEPSLATE)).orElseThrow();
             require(compression.id().equals(ResourceLocation.parse("exampleaddon:deepslate")) && compression.output() == Items.DEEPSLATE, "addon compression is used by the machine recipe lookup");
             var extraction = Ic2Recipes.find(Process.EXTRACTION, new ItemStack(Items.MOSS_BLOCK)).orElseThrow();

@@ -24,10 +24,17 @@ final class ChargingMenu extends AbstractContainerMenu {
         for (int slot = 0; slot < kind.slots(); slot++) {
             int x = slot < 16 && kind.inventoryGrid() ? 26 + slot % 4 * 18 : 134;
             int y = slot < 16 && kind.inventoryGrid() ? 43 + slot / 4 * 18 : 70;
-            addSlot(new SlotItemHandler(inventory, slot, x, y) { @Override public int getMaxStackSize() { return 1; } });
+            if (kind.pad()) {
+                int upgrade = slot - kind.projectionSlots() - 1;
+                x = slot == 0 ? 8 : slot <= kind.projectionSlots() ? 152 : upgrade == 0 ? 98 : upgrade == 1 ? 88 : 108;
+                y = slot == 0 ? 56 : slot <= kind.projectionSlots() ? slot == 1 ? 58 : 29 : upgrade == 0 ? 38 : 58;
+            }
+            final boolean stacked = kind.pad() && slot > kind.projectionSlots();
+            addSlot(new SlotItemHandler(inventory, slot, x, y) { @Override public int getMaxStackSize() { return stacked ? 64 : 1; } });
         }
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, 160 + row * 18));
-        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, 218));
+        int inventoryY = kind.pad() ? 87 : 160;
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, inventoryY + row * 18));
+        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, inventoryY + 58));
     }
     int value(int index) { return data.get(index * 2) & 65535 | data.get(index * 2 + 1) << 16; }
     @Override public boolean clickMenuButton(Player player, int button) {

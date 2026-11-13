@@ -34,7 +34,7 @@ foreach ($rotor in @('wood','wool','iron','carbon','alloy','iridium')) {
     $path = "assets/ic2/textures/models/windmill/${rotor}_rotor.png"
     $runtimeTextures[$path] = $path
 }
-foreach ($sound in @('generators/generator_operating','generators/windmill_operating','generators/reactor/nuclear_reactor_operating')) {
+foreach ($sound in @('generators/generator_operating','generators/windmill_operating','generators/reactor/nuclear_reactor_operating','machines/magnetizer_operating')) {
     $path = "assets/ic2/sounds/$sound.ogg"
     $runtimeTextures[$path] = $path
 }
@@ -43,7 +43,7 @@ foreach ($sound in @('geiger_low','geiger_med','geiger_high')) {
     $runtimeTextures[$path] = $path
 }
 foreach ($gui in @('generators/gui_solar_turbine','generators/gui_slag_generator','generators/gui_windmill',
-    'generators/gui_liquid_generator','generators/gui_fuel_boiler','machines/ev/gui_plasmafier','machines/luv/gui_fusion_reactor','misc/gui_monitor')) {
+    'generators/gui_liquid_generator','generators/gui_fuel_boiler','machines/ev/gui_plasmafier','machines/luv/gui_fusion_reactor','misc/gui_monitor','storage/gui_charge_pad','machines/mv/gui_chunkloader')) {
     $path = "assets/ic2/textures/gui_sprites/blocks/$gui.png"
     $runtimeTextures[$path] = $path
 }

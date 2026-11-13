@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XYX",
+    "CVC",
+    "XYX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:wide_band_booster_pad_upgrade"
+  },
+  "key": {
+    "C": {
+      "item": "ic2:energy_crystal"
+    },
+    "X": {
+      "item": "ic2:advanced_circuit"
+    },
+    "V": {
+      "item": "ic2:splitter_cable_item"
+    },
+    "Y": {
+      "item": "ic2:proximity_booster_pad_upgrade"
+    }
+  },
+  "category": "misc"
+}

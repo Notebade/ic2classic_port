@@ -31,6 +31,10 @@ def compileVerification = tasks.register('compileVerificationJava', JavaCompile)
 }
 
 def standaloneChecks = [
+    verifyPadUpgrades: 'ic2.core.machine.PadUpgradeRulesTest',
+    verifyMachineUpgrades: 'ic2.core.machine.MachineUpgradeRulesTest',
+    verifyUtilityCycles: 'ic2.core.machine.UtilityCyclesTest',
+    verifyChunkloaderRules: 'ic2.core.machine.ChunkloaderRulesTest',
     verifyStorageControl: 'ic2.core.machine.StorageControlTest',
     verifyInductionCycle: 'ic2.core.machine.InductionCycleTest',
     verifyProcessingLayouts: 'ic2.core.machine.ProcessingLayoutTest',

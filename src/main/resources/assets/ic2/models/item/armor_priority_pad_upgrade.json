@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/upgrades/chargepads/armor_priority"
+  },
+  "parent": "minecraft:item/generated"
+}

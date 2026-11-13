@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/upgrades/chargepads/basic_field_expansion"
+  },
+  "parent": "minecraft:item/generated"
+}

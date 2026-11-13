@@ -60,6 +60,12 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         if (kind.isReactor()) {
             values.put("heat", (long) reactorHeat); values.put("heat_capacity", (long) reactorMaxHeat);
             values.put("output_eu", (long) reactorOutput);
+            if (kind == MachineKind.STEAM_REACTOR) values.put("output_steam_mb", (long) reactorOutput);
+        }
+        if (enrichment != null) {
+            values.put("progress_units", (long) enrichment.ingotProgress());
+            values.put("progress_target", (long) UraniumEnrichment.INGOT_TICKS);
+            values.put("enrichment_points", (long) enrichment.points());
         }
         if (fuelTank != null) values.put("fuel_mb", (long) fuelTank.getFluidAmount());
         return MachineTelemetry.snapshot(this, energy, kind.capacity, MachineSnapshot.EnergyUnit.EU, values);

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XYX",
+    "VCV"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:tesla_coil"
+  },
+  "key": {
+    "C": {
+      "item": "ic2:circuit"
+    },
+    "X": {
+      "item": "minecraft:redstone"
+    },
+    "V": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "Y": {
+      "item": "ic2:transformer_mv"
+    }
+  },
+  "category": "misc"
+}

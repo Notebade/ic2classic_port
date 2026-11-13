@@ -49,7 +49,7 @@ final class MachineRecipeCategory implements IRecipeCategory<MachineRecipeView> 
 
     @Override
     public int getHeight() {
-        return 86;
+        return process == Process.URANIUM_ENRICHER ? 110 : 86;
     }
 
     @Override

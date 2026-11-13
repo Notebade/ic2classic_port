@@ -46,10 +46,10 @@ try {
         if ([DateTime]::UtcNow -gt $deadline) { throw 'Client verification timed out; inspect the isolated test window and log.' }
     }
     $log = Get-Content -LiteralPath (Join-Path $run 'console.log') -Raw
-    if (!$log.Contains('IC2 client render checks passed: 15 screens') -or $log.Contains('Failed to load texture: ic2:')) {
+    if (!$log.Contains('IC2 client render checks passed: 22 screens') -or $log.Contains('Failed to load texture: ic2:')) {
         throw 'Client verification failed; inspect runs/generation-client-check/console.log.'
     }
-    Write-Output 'Client verification passed: 15 screens and monitor wall. Screenshots remain in the isolated run directory.'
+    Write-Output 'Client verification passed: 22 screens, including charging pads, chunkloader and enrichment recipes in JEI, and monitor wall.'
 } finally {
     if ($process -and !$process.HasExited) { Stop-Process -Id $process.Id -ErrorAction SilentlyContinue }
     if (Test-Path -LiteralPath $addon) { Remove-Item -LiteralPath $addon }

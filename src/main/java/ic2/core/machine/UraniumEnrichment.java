@@ -122,6 +122,25 @@ final class UraniumEnrichment {
         return stack.is(Items.NETHER_STAR) ? new Catalyst(Blend.NETHER_STAR, 200) : null;
     }
 
+    static java.util.List<MachineRecipeView> recipeViews() {
+        var recipes = new java.util.ArrayList<MachineRecipeView>();
+        for (var item : net.minecraft.core.registries.BuiltInRegistries.ITEM) {
+            var stack = new ItemStack(item);
+            var catalyst = catalystFor(stack);
+            if (catalyst == null) continue;
+            var blend = catalyst.blend();
+            int count = (blend.requiredPoints + catalyst.points() - 1) / catalyst.points();
+            recipes.add(new MachineRecipeView(
+                java.util.List.of(MachineRecipeView.Slot.item(IC2.URANIUM_INGOT.get()),
+                    MachineRecipeView.Slot.item(stack.copyWithCount(count))),
+                java.util.List.of(MachineRecipeView.Slot.item(IC2.ENRICHED_URANIUM.ingot(blend.type))),
+                MachineRecipeViews.note("cost", INGOT_TICKS, (long) INGOT_TICKS * blend.euPerTick),
+                MachineRecipeViews.note("enrichment_catalyst", count * catalyst.points(), blend.requiredPoints,
+                    count * CATALYST_TICKS, (long) count * CATALYST_TICKS * CATALYST_EU)));
+        }
+        return java.util.List.copyOf(recipes);
+    }
+
     private enum Blend {
         BLAZE(UraniumType.BLAZE, 100, 20),
         CHARCOAL(UraniumType.CHARCOAL, 100, 5),

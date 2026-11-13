@@ -52,6 +52,7 @@ record MachineRecipeView(ResourceLocation sourceId, List<Slot> inputs, List<Slot
         RARE_EARTH_EXTRACTOR(Machines.RARE_EARTH_EXTRACTOR),
         COMPRESSOR(Machines.COMPRESSOR),
         ALLOY_SMELTER(Machines.ALLOY_SMELTER),
+        URANIUM_ENRICHER(Machines.URANIUM_ENRICHER),
         PRESSURE_ALLOY_FURNACE(AdvancedMachines.PRESSURE),
         SAWMILL(Machines.SAWMILL),
         RECYCLER(Machines.RECYCLER),

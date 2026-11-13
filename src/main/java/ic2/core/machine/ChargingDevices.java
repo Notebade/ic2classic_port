@@ -35,6 +35,8 @@ public final class ChargingDevices {
         BlockEntityType.Builder.of(ChargingEntity::new, BLOCK.values().stream().map(Supplier::get).toArray(Block[]::new)).build(null));
     private ChargingDevices() {}
     public static void register(IEventBus bus, DeferredRegister.Items items) {
+        PadUpgradeItem.register(items);
+        MachineUpgradeItem.register(items);
         BLOCKS.register(bus); ENTITIES.register(bus); MENUS.register(bus); BLOCK.values().forEach(items::registerSimpleBlockItem);
         items.registerSimpleItem("tfbp"); items.registerSimpleItem("tfbp_irrigation");
         bus.addListener(ChargingDevices::capabilities);
@@ -65,7 +67,10 @@ public final class ChargingDevices {
         boolean pad() { return family == Family.PAD; }
         boolean inventoryGrid() { return family == Family.BENCH || family == Family.STATION; }
         boolean node() { return family == Family.MASTER || family == Family.SLAVE; }
-        int slots() { return inventoryGrid() ? 17 : pad() ? 1 : 0; }
+        int tier() { return this == PAD_LV ? 1 : this == PAD_MV ? 2 : this == PAD_HV ? 3 : 4; }
+        int projectionSlots() { return pad() && this != PAD_LV ? 2 : 0; }
+        int machineUpgradeSlots() { return !pad() ? 0 : tier() == 1 ? 1 : tier() == 2 ? 2 : 3; }
+        int slots() { return inventoryGrid() ? 17 : pad() ? 1 + projectionSlots() + machineUpgradeSlots() : 0; }
         ChargingBlock block() { return BLOCK.get(this).get(); }
         MenuType<ChargingMenu> menu() { return MENU.get(this).get(); }
     }

@@ -71,6 +71,7 @@ final class MachineRecipeViews {
             case RARE_EARTH_EXTRACTOR -> registeredItems().map(MachineRecipeViews::rareEarth).flatMap(Stream::ofNullable).toList();
             case COMPRESSOR -> compressor();
             case ALLOY_SMELTER -> alloy();
+            case URANIUM_ENRICHER -> UraniumEnrichment.recipeViews();
             case SAWMILL -> sawmill(level);
             case RECYCLER -> recycling();
             case ELECTROLYZER -> registeredItems().flatMap(MachineRecipeViews::electrolysis).toList();

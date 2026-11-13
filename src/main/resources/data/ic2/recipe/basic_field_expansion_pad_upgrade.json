@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XYX",
+    "CCC",
+    "VBV"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:basic_field_expansion_pad_upgrade"
+  },
+  "key": {
+    "C": {
+      "item": "ic2:advanced_circuit"
+    },
+    "X": {
+      "item": "ic2:reflector"
+    },
+    "B": {
+      "item": "ic2:upgrade_base"
+    },
+    "V": {
+      "item": "ic2:upgrade_overclocker"
+    },
+    "Y": {
+      "item": "ic2:frequency_transmitter"
+    }
+  },
+  "category": "misc"
+}

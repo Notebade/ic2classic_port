@@ -181,7 +181,11 @@ final class MonitorEntity extends BlockEntity implements MenuProvider, EnergySin
 
     @Override
     public MachineSnapshot machineInfo() {
-        return MachineTelemetry.snapshot(this, energy, 1000, MachineSnapshot.EnergyUnit.EU, Map.of("cards", (long)java.util.stream.IntStream.range(0, 8).filter((i)->!cards.getStackInSlot(i).isEmpty()).count(), "requires_redstone", requireRedstone ? 1L : 0L));
+        return MachineTelemetry.snapshot(this, energy, 1000, MachineSnapshot.EnergyUnit.EU, Map.of(
+            "cards", (long)java.util.stream.IntStream.range(0, 8).filter(i -> !cards.getStackInSlot(i).isEmpty()).count(),
+            "requires_redstone", requireRedstone ? 1L : 0L,
+            "screen_color", (long) color, "screen_scale", (long) scale, "screen_alignment", (long) alignment,
+            "screen_width", (long) width, "screen_height", (long) height, "screen_master", master ? 1L : 0L));
     }
 
     @Override

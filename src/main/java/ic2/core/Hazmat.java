@@ -21,7 +21,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-final class Hazmat extends ArmorItem {
+public final class Hazmat extends ArmorItem {
     private static final DeferredRegister<ArmorMaterial> MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, IC2.MOD_ID);
     private static final DeferredHolder<ArmorMaterial, ArmorMaterial> MATERIAL = MATERIALS.register("hazmat", () ->
         new ArmorMaterial(Map.of(Type.HELMET, 1, Type.CHESTPLATE, 3, Type.LEGGINGS, 2, Type.BOOTS, 1, Type.BODY, 0),
@@ -53,7 +53,7 @@ final class Hazmat extends ArmorItem {
             new Item.Properties().durability(64));
     }
 
-    static boolean protects(LivingEntity entity) {
+    public static boolean protects(LivingEntity entity) {
         return wears(entity, EquipmentSlot.HEAD, Type.HELMET)
             && wears(entity, EquipmentSlot.CHEST, Type.CHESTPLATE)
             && wears(entity, EquipmentSlot.LEGS, Type.LEGGINGS)

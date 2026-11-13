@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/upgrades/chargepads/damage_conversion"
+  },
+  "parent": "minecraft:item/generated"
+}

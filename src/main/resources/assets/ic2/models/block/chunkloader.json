@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "particle": "ic2:block/machine/mv/chunkloader/inactive_north",
+    "down": "ic2:block/machine/mv/chunkloader/inactive_down",
+    "up": "ic2:block/machine/mv/chunkloader/inactive_up",
+    "north": "ic2:block/machine/mv/chunkloader/inactive_north",
+    "south": "ic2:block/machine/mv/chunkloader/inactive_south",
+    "east": "ic2:block/machine/mv/chunkloader/inactive_east",
+    "west": "ic2:block/machine/mv/chunkloader/inactive_west"
+  },
+  "parent": "minecraft:block/cube"
+}

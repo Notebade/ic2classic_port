@@ -21,7 +21,7 @@ final class CreativeTabs {
         "generator", "solar_turbine", "slag_generator", "geothermal_generator", "thermal_generator", "wind_turbine",
         "wave_generator", "ocean_generator", "steam_turbine", "fuel_boiler", "steam_tunnel", "steam_tunnel_structure", "steam_tunnel_valve", "fuel_boiler_structure", "windmill", "liquid_fuel_generator");
     private static final Set<String> MACHINES = Set.of(
-        "macerator", "stone_macerator", "iron_furnace", "electric_furnace", "electric_blast_furnace",
+        "macerator", "stone_macerator", "iron_furnace", "electric_furnace", "electric_blast_furnace", "magnetizer", "tesla_coil", "chunkloader",
         "rotary_macerator", "centrifugal_extractor", "singularity_compressor", "electric_smoker", "induction_furnace", "induction_blast_furnace", "induction_smoker", "sawmill", "alloy_smelter", "pressure_alloy_furnace", "extractor", "rare_earth_extractor",
         "electrolyzer", "charged_electrolyzer", "centrifugal_rare_earth_extractor", "compressor", "pump", "recycler", "slow_grinder", "compacting_recycler", "mass_fabricator", "canner", "vacuum_canner", "plasmafier", "machine_tank", "personal_tank", "wood_gassifier", "electric_wood_gassifier", "refinery", "barrel");
     private static final Set<String> ENERGY = Set.of(

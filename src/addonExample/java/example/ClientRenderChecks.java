@@ -20,7 +20,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
  */
 @EventBusSubscriber(modid = ExampleAddon.MOD_ID, value = Dist.CLIENT)
 public final class ClientRenderChecks {
-    private static final String[] DEVICES = {"monitor", "reactor_planner", "nuclear_reactor", "steam_reactor", "solar_turbine", "slag_generator", "windmill", "liquid_fuel_generator", "plasmafier", "fuel_boiler", "fusion_reactor", "steam_tunnel", "machine_buffer", "personal_chest", "toolbox"};
+    private static final String[] DEVICES = {"monitor", "reactor_planner", "nuclear_reactor", "steam_reactor", "solar_turbine", "slag_generator", "windmill", "liquid_fuel_generator", "plasmafier", "fuel_boiler", "fusion_reactor", "steam_tunnel", "machine_buffer", "personal_chest", "toolbox", "chargepad_lv", "chargepad_mv", "chargepad_hv", "chargepad_fission", "chunkloader", "uranium_enricher", "uranium_enricher_jei"};
     private static int age;
     private static boolean finished;
     private static final BlockPos ORIGIN = new BlockPos(100, 82, 100);
@@ -66,13 +66,18 @@ public final class ClientRenderChecks {
                     box.getItem().use(server.overworld(), player, net.minecraft.world.InteractionHand.MAIN_HAND);
                     return;
                 }
+                if (DEVICES[step].equals("uranium_enricher_jei")) {
+                    player.closeContainer(); client.execute(RecipeJeiChecks::showEnrichment); return;
+                }
                 var entity = server.overworld().getBlockEntity(ORIGIN.offset(step * 2, 0, 0));
                 var opened = player.openMenu((MenuProvider)entity);
                 if (opened.isEmpty()) throw new AssertionError("Server refused menu " + DEVICES[step]);
             });
         }
         if (offset == 20) {
-            if (!(client.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?>)) throw new AssertionError("Expected actual machine screen for " + DEVICES[step] + ", got " + client.screen);
+            if (DEVICES[step].equals("uranium_enricher_jei")) {
+                if (client.screen == null || !client.screen.getClass().getName().contains("RecipesGui")) throw new AssertionError("Expected JEI recipes screen");
+            } else if (!(client.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?>)) throw new AssertionError("Expected actual machine screen for " + DEVICES[step] + ", got " + client.screen);
             Screenshot.grab(client.gameDirectory, "ic2-" + DEVICES[step] + ".png", client.getMainRenderTarget(), (message)->com.mojang.logging.LogUtils.getLogger().info("IC2 screenshot: {}", message.getString()));
         }
     }
@@ -82,14 +87,14 @@ public final class ClientRenderChecks {
         var level = server.overworld();
         var player = server.getPlayerList().getPlayer(client.player.getUUID());
         player.setGameMode(GameType.CREATIVE);
-        for (int x = 96; x < 136; x++) for (int z = 94; z < 104; z++) {
+        for (int x = 96; x < 106 + DEVICES.length * 2; x++) for (int z = 94; z < 104; z++) {
             var floor = new BlockPos(x, 79, z);
             level.getChunkAt(floor);
             level.setBlockAndUpdate(floor, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
         }
         player.connection.teleport(100, 80, 96, 0, 0);
         for (int i = 0; i < DEVICES.length; i++) {
-            if (DEVICES[i].equals("toolbox")) continue;
+            if (DEVICES[i].equals("toolbox") || DEVICES[i].endsWith("_jei")) continue;
             var pos = ORIGIN.offset(i * 2, 0, 0);
             level.getChunkAt(pos);
             var state = Ic2Api.block(ResourceLocation.parse("ic2:" + DEVICES[i])).orElseThrow().defaultBlockState();

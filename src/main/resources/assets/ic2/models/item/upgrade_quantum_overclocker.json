@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/upgrades/machines/quantum_overclocker"
+  },
+  "parent": "minecraft:item/generated"
+}

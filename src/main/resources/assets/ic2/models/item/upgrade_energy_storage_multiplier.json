@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/upgrades/machines/energy_storage_multiplier"
+  },
+  "parent": "minecraft:item/generated"
+}

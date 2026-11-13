@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/upgrades/chargepads/wide_band_booster"
+  },
+  "parent": "minecraft:item/generated"
+}

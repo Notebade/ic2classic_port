@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " Y ",
+    "CMC",
+    "VBV"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:chunkloader"
+  },
+  "key": {
+    "C": {
+      "item": "ic2:proximity_booster_pad_upgrade"
+    },
+    "V": {
+      "item": "ic2:advanced_circuit"
+    },
+    "B": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "Y": {
+      "item": "minecraft:ender_pearl"
+    },
+    "M": {
+      "item": "ic2:energy_crystal"
+    }
+  },
+  "category": "misc"
+}

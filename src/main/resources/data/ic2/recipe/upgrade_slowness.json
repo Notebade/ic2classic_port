@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X",
+    "Y"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:upgrade_slowness"
+  },
+  "key": {
+    "Y": {
+      "item": "minecraft:redstone_torch"
+    },
+    "X": {
+      "item": "ic2:upgrade_overclocker"
+    }
+  },
+  "category": "misc"
+}

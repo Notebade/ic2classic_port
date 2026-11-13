@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XYX",
+    "CVC",
+    "XYX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:upgrade_quantum_overclocker"
+  },
+  "key": {
+    "C": {
+      "item": "ic2:plasma_core"
+    },
+    "X": {
+      "item": "ic2:carbon_plate"
+    },
+    "V": {
+      "item": "ic2:upgrade_overclocker"
+    },
+    "Y": {
+      "item": "ic2:advanced_circuit"
+    }
+  },
+  "category": "misc"
+}

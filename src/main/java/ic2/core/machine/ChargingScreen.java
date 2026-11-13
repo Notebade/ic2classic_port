@@ -14,7 +14,7 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 @EventBusSubscriber(modid = IC2.MOD_ID, value = Dist.CLIENT)
 final class ChargingScreen extends AbstractContainerScreen<ChargingMenu> {
-    ChargingScreen(ChargingMenu menu, Inventory player, Component title) { super(menu, player, title); imageHeight = 242; inventoryLabelY = 148; }
+    ChargingScreen(ChargingMenu menu, Inventory player, Component title) { super(menu, player, title); imageHeight = menu.kind.pad() ? 169 : 242; inventoryLabelY = menu.kind.pad() ? 76 : 148; }
     @SubscribeEvent public static void register(RegisterMenuScreensEvent event) {
         for (var type : ChargingDevices.MENU.values()) event.register(type.get(), ChargingScreen::new);
     }
@@ -34,6 +34,13 @@ final class ChargingScreen extends AbstractContainerScreen<ChargingMenu> {
     }
     @Override public void render(GuiGraphics graphics, int x, int y, float tick) { super.render(graphics, x, y, tick); renderTooltip(graphics, x, y); }
     @Override protected void renderBg(GuiGraphics graphics, float tick, int x, int y) {
+        if (menu.kind.pad()) {
+            var texture = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ic2", "textures/gui_sprites/blocks/storage/gui_charge_pad.png");
+            graphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+            int filled = menu.value(1) > 0 ? (int) ((long) menu.value(0) * 51 / menu.value(1)) : 0;
+            graphics.blit(texture, leftPos + 31, topPos + 70 - filled, 176, 51 - filled, 12, filled);
+            return;
+        }
         graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xffc6c6c6);
         for (var slot : menu.slots) {
             graphics.fill(leftPos + slot.x - 1, topPos + slot.y - 1, leftPos + slot.x + 17, topPos + slot.y + 17, 0xff555555);
@@ -45,13 +52,13 @@ final class ChargingScreen extends AbstractContainerScreen<ChargingMenu> {
     }
     @Override protected void renderLabels(GuiGraphics graphics, int x, int y) {
         graphics.drawString(font, title, 8, 6, 0x404040, false);
-        graphics.drawString(font, menu.value(0) + " / " + menu.value(1) + " EU", 8, 22, 0x404040, false);
+        if (!menu.kind.pad()) graphics.drawString(font, menu.value(0) + " / " + menu.value(1) + " EU", 8, 22, 0x404040, false);
         if (menu.kind == ChargingDevices.Kind.MASTER) {
             for (Direction side : Direction.values()) {
                 int i = side.ordinal(); boolean present = (menu.value(3) & 1 << i) != 0;
                 graphics.drawString(font, Component.translatable("gui.ic2.charging_" + side.getName()).append(" " + menu.value(4 + i) + "%"), 8, 40 + i * 16, present ? 0x205020 : 0x666666, false);
             }
-        } else {
+        } else if (!menu.kind.pad()) {
             String key = switch (menu.kind.family) { case STATION -> "station"; case PAD -> "pad"; case SLAVE -> "slave"; default -> "bench"; };
             graphics.drawWordWrap(font, Component.translatable("gui.ic2.charging_" + key), 8, menu.kind.inventoryGrid() ? 34 : 45, 160, 0x404040);
         }

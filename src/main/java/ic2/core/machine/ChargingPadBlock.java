@@ -28,9 +28,7 @@ final class ChargingPadBlock extends ChargingBlock {
         float maxImpact = kind == ChargingDevices.Kind.PAD_LV ? 3.5F : kind == ChargingDevices.Kind.PAD_MV ? 2.5F : 1.5F;
         if (!level.isClientSide && entity instanceof LivingEntity && distance > maxImpact) {
             int tier = kind == ChargingDevices.Kind.PAD_LV ? 1 : kind == ChargingDevices.Kind.PAD_MV ? 2 : kind == ChargingDevices.Kind.PAD_HV ? 3 : 4;
-            var type = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE,
-                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ic2", "electricity"));
-            entity.hurt(entity.damageSources().source(type), 3 * tier);
+            entity.hurt(ElectricHazards.source(level), 3 * tier);
         }
     }
 }

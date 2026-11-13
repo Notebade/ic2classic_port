@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "YCY"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:damage_conversion_pad_upgrade"
+  },
+  "key": {
+    "C": {
+      "item": "ic2:advanced_circuit"
+    },
+    "X": {
+      "item": "ic2:uranium_rod_near_depleted"
+    },
+    "Y": {
+      "item": "ic2:gold_double_insulated_cable_item"
+    }
+  },
+  "category": "misc"
+}

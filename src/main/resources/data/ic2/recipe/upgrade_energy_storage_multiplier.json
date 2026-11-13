@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XYX",
+    "YCY",
+    "XYX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:upgrade_energy_storage_multiplier"
+  },
+  "key": {
+    "C": {
+      "item": "ic2:re_battery"
+    },
+    "X": {
+      "item": "ic2:advanced_circuit"
+    },
+    "Y": {
+      "item": "ic2:upgrade_energy_storage"
+    }
+  },
+  "category": "misc"
+}

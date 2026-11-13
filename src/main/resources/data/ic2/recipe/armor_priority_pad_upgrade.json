@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XYX",
+    "CVC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:armor_priority_pad_upgrade"
+  },
+  "key": {
+    "C": {
+      "item": "ic2:gold_double_insulated_cable_item"
+    },
+    "X": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "V": {
+      "item": "ic2:proximity_booster_pad_upgrade"
+    },
+    "Y": {
+      "item": "minecraft:ender_pearl"
+    }
+  },
+  "category": "misc"
+}

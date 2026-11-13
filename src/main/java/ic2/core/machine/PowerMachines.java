@@ -34,8 +34,8 @@ public final class PowerMachines {
     }
     static final DeferredBlock<Block> REINFORCED_STONE = BLOCKS.registerSimpleBlock("reinforced_stone", properties().strength(80, 1800));
     static final DeferredBlock<Block> IRIDIUM_STONE = BLOCKS.registerSimpleBlock("iridium_stone", properties().strength(100, 3000));
-    static final DeferredBlock<net.minecraft.world.level.block.IronBarsBlock> IRON_FENCE = BLOCKS.registerBlock("iron_fence",
-        net.minecraft.world.level.block.IronBarsBlock::new, properties().noOcclusion());
+    static final DeferredBlock<MagneticFenceBlock> IRON_FENCE = BLOCKS.registerBlock("iron_fence",
+        MagneticFenceBlock::new, properties().noOcclusion());
     static final DeferredBlock<PowerPartBlock> FUSION_VALVE = part("fusion_reactor_valve");
     static final DeferredBlock<PowerPartBlock> VALVE = part("valve");
     static final DeferredBlock<PowerPartBlock> TUNNEL_CASING = part("steam_tunnel_structure");
@@ -80,6 +80,8 @@ public final class PowerMachines {
         GeneratorFluids.register(bus, items);
         ChemistryMaterials.register(bus, items);
         StorageInfrastructure.register(bus, items);
+        UtilityMachines.register(bus, items);
+        Chunkloading.register(bus, items);
         bus.addListener(PowerMachines::capabilities);
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {
