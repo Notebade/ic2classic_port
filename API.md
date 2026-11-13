@@ -280,3 +280,7 @@ var fe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side);
 ### Prepared world-fluid pumps
 
 A block entity implementing `ic2.api.machine.FluidPump` accepts a complete `FluidStack` through `pumpFluid(fluid, simulate)`. Native basic and accelerated pumps require their charged cycle and sufficient tank room. A successful simulation leaves state unchanged; successful execution fills the tank and resets progress. It never removes the world fluid block: the miner must validate/remove its source after acceptance. Call only on the server thread. Unsupported native machines return false; removed pump instances reject calls. Accelerated-pump telemetry: input_packet_eu=128, progress_units/target=25, fluid_mb; capacity=2500 EU.
+
+### Mining tool contracts
+
+`ic2.api.item.MiningDrill` owns `canUse`, `canMine`, `consumeUse`, `progressPerTick` and `machineEuPerTick`. The drill item accounts for its own charge/durability; the controller accounts for machine EU separately. `WorldScanner.scanRadius(stack, useEnergy)` is a free range query with false; true spends one scan or returns zero. `isValuable` checks loaded block data, and `scansFluids()` distinguishes fluid scanners. Methods must not load chunks. These contracts support the ongoing native miner/ranged-pump dependency transfer; their controllers are not yet marked complete.

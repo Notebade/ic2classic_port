@@ -1,0 +1,27 @@
+{
+  "pattern": [
+    " G ",
+    "GCG",
+    "WSW"
+  ],
+  "result": {
+    "id": "ic2:ov_scanner",
+    "count": 1
+  },
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "ic2:od_scanner"
+    },
+    "G": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "W": {
+      "item": "ic2:gold_double_insulated_cable_item"
+    },
+    "C": {
+      "item": "ic2:advanced_circuit"
+    }
+  }
+}

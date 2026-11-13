@@ -1,0 +1,27 @@
+{
+  "pattern": [
+    " G ",
+    "CBC",
+    "WWW"
+  ],
+  "result": {
+    "id": "ic2:od_scanner",
+    "count": 1
+  },
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "W": {
+      "item": "ic2:copper_insulated_cable_item"
+    },
+    "B": {
+      "item": "ic2:re_battery"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    }
+  }
+}

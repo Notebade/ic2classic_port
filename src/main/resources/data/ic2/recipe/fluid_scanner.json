@@ -1,0 +1,16 @@
+{
+  "ingredients": [
+    {
+      "item": "ic2:ov_scanner_ranged"
+    },
+    {
+      "item": "minecraft:bucket"
+    }
+  ],
+  "result": {
+    "id": "ic2:fluid_scanner",
+    "count": 1
+  },
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment"
+}

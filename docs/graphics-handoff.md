@@ -40,3 +40,5 @@ Earlier gameplay commit `d226731` includes original pad/chunkloader screens, uti
 
 - New block overclocked_pump, common backend menu extraction_machine (three slots): 0 battery, 1 empty container, 2 output. Four data values: EU, progress (25 max), tank mB, capacity (2500). No client Screen/model/lang changes were made. Add this machine's creative classification, names, visuals and menu registration in the graphics stage.
 - Item automation: top container input; horizontal discharged battery/output; down disabled. Fluid automation: extraction only, down disabled. Source GUI/background belongs to the original accelerated-pump family. Native public FluidPump handoff is implemented and tested.
+
+- Mining dependency item IDs now registered: drill, od_scanner, ov_scanner, ov_scanner_ranged, fluid_scanner. Real power/tool/scanner behavior and source recipes are verified. Their names/models/creative classification belong to the graphics stage. Manual scanner result uses message.ic2.scanner.result with a fallback. No client screen or language files were edited.

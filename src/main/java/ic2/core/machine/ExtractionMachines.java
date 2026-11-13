@@ -20,6 +20,7 @@ final class ExtractionMachines {
     static final Supplier<BlockEntityType<ExtractionEntity>> ENTITY = ENTITIES.register("extraction_machine", () -> BlockEntityType.Builder.of(ExtractionEntity::new, FAST_PUMP.get()).build(null));
     static final Supplier<MenuType<ExtractionMenu>> MENU = MENUS.register("extraction_machine", () -> new MenuType<>(ExtractionMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static void register(IEventBus bus, DeferredRegister.Items items) {
+        MiningTools.register(items);
         BLOCKS.register(bus); ENTITIES.register(bus); MENUS.register(bus); items.registerSimpleBlockItem(FAST_PUMP);
         bus.addListener(ExtractionMachines::capabilities);
     }

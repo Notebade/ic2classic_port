@@ -1,0 +1,24 @@
+{
+  "pattern": [
+    " I ",
+    "ICI",
+    "IBI"
+  ],
+  "result": {
+    "id": "ic2:drill",
+    "count": 1
+  },
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "B": {
+      "item": "ic2:re_battery"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    }
+  }
+}
