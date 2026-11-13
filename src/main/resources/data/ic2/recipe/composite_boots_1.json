@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:armor_composite_boots"
+  },
+  "key": {
+    "I": {
+      "item": "minecraft:iron_boots"
+    },
+    "A": {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    "L": {
+      "item": "minecraft:leather_boots"
+    }
+  },
+  "pattern": [
+    "AIA",
+    "ALA"
+  ],
+  "category": "equipment"
+}

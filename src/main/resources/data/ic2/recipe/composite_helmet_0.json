@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:armor_composite_helmet"
+  },
+  "key": {
+    "I": {
+      "item": "minecraft:iron_helmet"
+    },
+    "A": {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    "L": {
+      "item": "minecraft:leather_helmet"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "AIA",
+    " L "
+  ],
+  "category": "equipment"
+}

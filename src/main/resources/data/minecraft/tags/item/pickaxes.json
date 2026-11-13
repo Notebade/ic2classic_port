@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "ic2:tool_pickaxe_bronze",
+    "ic2:tool_pickaxe_aluminium"
+  ]
+}

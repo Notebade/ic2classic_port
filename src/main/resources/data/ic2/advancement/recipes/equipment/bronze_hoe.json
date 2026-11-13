@@ -1,0 +1,32 @@
+{
+  "requirements": [
+    [
+      "has_material",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ic2:bronze_hoe"
+    ]
+  },
+  "criteria": {
+    "has_material": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:ingot_bronze"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ic2:bronze_hoe"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "parent": "minecraft:recipes/root"
+}

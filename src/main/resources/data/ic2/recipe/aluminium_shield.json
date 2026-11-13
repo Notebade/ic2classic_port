@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:aluminium_shield"
+  },
+  "key": {
+    "Y": {
+      "item": "minecraft:shield"
+    },
+    "X": {
+      "tag": "c:ingots/aluminium"
+    }
+  },
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XXX"
+  ],
+  "category": "equipment"
+}

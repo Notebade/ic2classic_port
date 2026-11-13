@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:armor_bronze_helmet"
+  },
+  "key": {
+    "B": {
+      "tag": "c:ingots/bronze"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "B B"
+  ],
+  "category": "equipment"
+}

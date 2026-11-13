@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:armor_bronze_chest"
+  },
+  "key": {
+    "B": {
+      "tag": "c:ingots/bronze"
+    }
+  },
+  "pattern": [
+    "B B",
+    "BBB",
+    "BBB"
+  ],
+  "category": "equipment"
+}

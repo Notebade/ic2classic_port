@@ -1,0 +1,21 @@
+{
+  "result": {
+    "id": "ic2:tool_hoe_aluminium",
+    "count": 1
+  },
+  "pattern": [
+    "MM",
+    " S",
+    " S"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "M": {
+      "tag": "c:ingots/aluminium"
+    }
+  }
+}

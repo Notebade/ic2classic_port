@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:armor_composite_leggings"
+  },
+  "key": {
+    "I": {
+      "item": "minecraft:iron_leggings"
+    },
+    "A": {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    "L": {
+      "item": "minecraft:leather_leggings"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "ALA",
+    "AIA"
+  ],
+  "category": "equipment"
+}

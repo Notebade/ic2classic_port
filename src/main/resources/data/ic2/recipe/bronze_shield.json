@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:bronze_shield"
+  },
+  "key": {
+    "Y": {
+      "item": "minecraft:shield"
+    },
+    "X": {
+      "tag": "c:ingots/bronze"
+    }
+  },
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XXX"
+  ],
+  "category": "equipment"
+}

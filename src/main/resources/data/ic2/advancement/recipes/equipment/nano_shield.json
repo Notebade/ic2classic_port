@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "ic2:nano_shield"
+    ]
+  },
+  "requirements": [
+    [
+      "has_shield",
+      "has_the_recipe"
+    ]
+  ],
+  "criteria": {
+    "has_shield": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:composite_shield"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ic2:nano_shield"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  }
+}

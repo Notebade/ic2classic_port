@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:composite_shield"
+  },
+  "key": {
+    "Y": {
+      "item": "ic2:bronze_shield"
+    },
+    "X": {
+      "item": "ic2:plate_advanced_alloy"
+    }
+  },
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XXX"
+  ],
+  "category": "equipment"
+}

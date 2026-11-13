@@ -310,3 +310,7 @@ One send first discovers shortest loaded routes and active receivers. Linked nat
 ### Final 0.71.0 details
 
 recipeFinished receives a detached result or ItemStack.EMPTY for chance-failed/partial output; rare-earth partial and completed batches both invoke it. Power-structure reads and fluid simulation require existing bound ownership and cannot repair replacement parts. Native cable fluid state is exposed through BlockState.getFluidState and the standard LiquidBlockContainer/BucketPickup interfaces (serialized fluid=none/water/lava). Readonly API calls and simulations continue to avoid chunk loading and structure formation. Complete stage scope and evidence: [energy/advanced completion](docs/energy-advanced-completion.md).
+
+## Обычная экипировка (этап 8, в работе)
+
+Через `Ic2Api.item(id)` доступны `tool_{axe,hoe,pickaxe,shovel,sword}_{bronze,aluminium}`, `armor_{bronze,composite}_{helmet,chest,leggings,boots}` и `{bronze,aluminium,composite,nano}_shield`. Обычные предметы используют стандартные контракты Minecraft `TieredItem`, `ArmorItem`, `ShieldItem`, ремонт и теги инструментов/брони. Нанощит реализует `ic2.api.item.ElectricItem`: 100000 EU, 300 EU/передачу, пакет от 128 EU; отдача энергии запрещена, блокирование требует 50 EU, износ расходует 50 EU за единицу. Заряд изменяйте через интерфейс, без зависимости от `ic2.core` или внутреннего компонента. API остаётся v1. Остальная экипировка и пункт 7 ещё переносятся.

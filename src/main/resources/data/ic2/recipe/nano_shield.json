@@ -1,0 +1,24 @@
+{
+  "category": "equipment",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XCX",
+    "XYX",
+    "XXX"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:energy_crystal"
+    },
+    "Y": {
+      "item": "ic2:composite_shield"
+    },
+    "X": {
+      "item": "ic2:carbon_plate"
+    }
+  },
+  "result": {
+    "id": "ic2:nano_shield",
+    "count": 1
+  }
+}

@@ -152,6 +152,7 @@ public final class IC2 {
         Rubberwood.register(modBus, ITEMS);
         Materials.register(modBus, ITEMS);
         Hazmat.register(modBus, ITEMS);
+        ic2.core.equipment.Equipment.register(modBus, ITEMS);
         Radiation.register(modBus);
         CreativeTabs.register(modBus);
         modBus.addListener(IC2::registerCapabilities);

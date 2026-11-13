@@ -55,3 +55,7 @@ Earlier gameplay commit `d226731` includes original pad/chunkloader screens, uti
 - New missing catalog item su_battery is functional, with six original recipes. Names/model/creative energy classification remain the graphics stage. The original portable battery audio loop is imported, registered and verified in a real client; no screen/layout files were changed.
 
 - Cables now expose a gameplay fluid property with values none/water/lava and standard fluid state/bucket behavior. Existing connection selectors can retain their models; this stage did not edit blockstates/models/screens/language files. Recipe discovery metadata and player statistics are verified separately from GUI work.
+
+## Equipment migration in progress
+
+Bronze/aluminium tools: tool_{axe,hoe,pickaxe,shovel,sword}_{bronze,aluminium}. Armor: armor_{bronze,composite}_{helmet,chest,leggings,boots}. Shields: bronze_shield, aluminium_shield, composite_shield, nano_shield. Mechanics, recipes, discovery and enchantment tags are supplied. Client textures/models/language, armor layers, shield transforms and creative classification remain with the graphics stage; no client GUI was changed.
