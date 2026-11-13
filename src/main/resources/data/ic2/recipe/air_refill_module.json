@@ -1,0 +1,30 @@
+{
+  "key": {
+    "X": {
+      "item": "ic2:cell_air"
+    },
+    "C": {
+      "item": "ic2:complex_circuit"
+    },
+    "V": {
+      "item": "ic2:base_module"
+    },
+    "Y": {
+      "item": "ic2:armor_hazmat_helmet"
+    }
+  },
+  "pattern": [
+    "XY",
+    "CV"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:air_refill_module"
+  },
+  "type": "ic2:sized_shaped",
+  "category": "equipment",
+  "counts": {
+    "ic2:cell_air": 64
+  }
+}
+

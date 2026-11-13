@@ -1,0 +1,24 @@
+{
+  "key": {
+    "X": {
+      "item": "ic2:advanced_circuit"
+    },
+    "C": {
+      "item": "minecraft:gold_block"
+    },
+    "Y": {
+      "item": "ic2:base_module"
+    }
+  },
+  "pattern": [
+    "X",
+    "Y",
+    "C"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:golden_module"
+  },
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment"
+}

@@ -5,9 +5,10 @@
     }
   ],
   "category": "equipment",
-  "type": "minecraft:crafting_shapeless",
+  "type": "ic2:batch_shapeless",
+  "output_count": 3,
   "result": {
     "id": "ic2:re_battery",
-    "count": 3
+    "count": 1
   }
 }

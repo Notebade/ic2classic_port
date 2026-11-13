@@ -1,0 +1,66 @@
+{
+  "rewards": {
+    "recipes": [
+      "ic2:air_refill_module"
+    ]
+  },
+  "criteria": {
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "ic2:air_refill_module"
+      }
+    },
+    "has_material_3": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:armor_hazmat_helmet"
+          }
+        ]
+      }
+    },
+    "has_material_1": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:complex_circuit"
+          }
+        ]
+      }
+    },
+    "has_material_2": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:base_module"
+          }
+        ]
+      }
+    },
+    "has_material_0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:cell_air"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "minecraft:recipes/root",
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_material_3",
+      "has_material_1",
+      "has_material_2",
+      "has_material_0"
+    ]
+  ]
+}
+

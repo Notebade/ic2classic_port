@@ -1,0 +1,27 @@
+{
+  "key": {
+    "X": {
+      "item": "ic2:complex_circuit"
+    },
+    "C": {
+      "item": "minecraft:milk_bucket"
+    },
+    "V": {
+      "item": "ic2:plate_iridium"
+    },
+    "Y": {
+      "item": "ic2:base_module"
+    }
+  },
+  "pattern": [
+    "XCX",
+    "VYV",
+    "XCX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:protective_module"
+  },
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment"
+}

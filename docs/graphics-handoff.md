@@ -77,3 +77,5 @@ static_boots added with native foot layer static_boots, one armor point and both
 ### Nano modular armor backend
 
 Added `nano_suit_helmet/chestplate/leggings/boots`, normal and enhanced original recipes. No client/model/GUI files changed. Public `ModularArmor` gives detached modules, resource-ID category limits, features and simulated removal; enhanced Nano slots match Quantum limits. Empty inventory stacks are bare shells; use `defaultArmor()` for battery-equipped previews. Charge uses existing electric API per-stack methods. Stored `armor_configuration` + `container` components sync normally. Configurator, modules and Quantum still in progress; this is a backend milestone only.
+
+Passive module item IDs ready: base_module, air_refill_module, charger_module, protective_module, extinguish_module, golden_module. Recipes/discovery are registered; no models/lang/creative changed. Golden uses `ic2:golden` feature; module slots remain public ModularArmor backend. Air module requires the full 2000 EU, fixing source underpayment.

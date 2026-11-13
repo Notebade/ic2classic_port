@@ -13,6 +13,10 @@ public final class RecipeAvailabilityChecks {
     private RecipeAvailabilityChecks() {}
 
     public static void run(ServerLevel level) throws Exception {
+        for (var file : level.getServer().getResourceManager().listResources("recipe", id -> id.getNamespace().equals("ic2") && id.getPath().endsWith(".json")).keySet()) {
+            var id = ResourceLocation.fromNamespaceAndPath("ic2", file.getPath().substring("recipe/".length(), file.getPath().length() - 5));
+            if (level.getRecipeManager().byKey(id).isEmpty()) throw new AssertionError("IC2 recipe resource failed to load: " + id);
+        }
         for (var recipe : level.getRecipeManager().getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING)) {
             if (!recipe.id().getNamespace().equals("ic2")) continue;
             for (var ingredient : recipe.value().getIngredients())

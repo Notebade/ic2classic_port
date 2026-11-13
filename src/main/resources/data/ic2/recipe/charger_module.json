@@ -1,0 +1,16 @@
+{
+  "ingredients": [
+    {
+      "item": "ic2:base_module"
+    },
+    {
+      "item": "ic2:charging_bench_lv"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:charger_module"
+  },
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment"
+}

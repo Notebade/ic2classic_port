@@ -13,6 +13,7 @@ public final class Equipment {
         StaticBoots.register(items);
         ArmorConfiguration.register(bus);
         ModularSuitItem.register(items);
+        PassiveArmorModule.register(items);
         EquipmentMaterials.register(bus);
         ConventionalShield.register(items);
         items.registerItem("nano_shield", NanoShield::new);

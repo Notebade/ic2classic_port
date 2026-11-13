@@ -141,6 +141,7 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
     }
     @Override public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) { return false; }
     @Override public boolean isEnchantable(ItemStack stack) { return false; }
+    @Override public boolean makesPiglinsNeutral(ItemStack stack, LivingEntity wearer) { return features(stack).contains(ArmorModule.id("golden")); }
     @Override public boolean acceptsElectricEnchantment(ItemStack stack, Holder<Enchantment> enchantment, boolean anvil) { return !enchantment.is(Enchantments.MENDING); }
     @Override public int electricEnchantability(ItemStack stack) { return 10; }
     @Override public boolean isBarVisible(ItemStack stack) { return capacity(stack) > 0; }

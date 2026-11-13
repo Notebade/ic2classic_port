@@ -40,6 +40,8 @@ public final class IC2 {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
         DeferredRegister.create(Registries.RECIPE_SERIALIZER, MOD_ID);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ic2.core.recipe.BatchShapelessRecipe>> BATCH_SHAPELESS_RECIPE =
+        RECIPE_SERIALIZERS.register("batch_shapeless", () -> ic2.core.recipe.BatchShapelessRecipe.SERIALIZER);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ic2.core.recipe.ModularArmorRecipe>> MODULAR_ARMOR_RECIPE =
         RECIPE_SERIALIZERS.register("modular_armor", () -> ic2.core.recipe.ModularArmorRecipe.serializer(false));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ic2.core.recipe.ModularArmorRecipe>> MODULAR_ARMOR_UPGRADE_RECIPE =

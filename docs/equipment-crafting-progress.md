@@ -94,3 +94,11 @@ First unit verified: .tools/equipment-first-unit-check.log (full server/addon su
 - Still open: source modules, Quantum suit, configurator, fall behavior, electrical protection audit and remaining equipment. This foundation does not close row 8. GUI/models remain with the separate graphics stage.
 - Existing recipe-load error discovered: belt recovery `re_battery_1` returns three nonstackable batteries and vanilla strict result codec rejects it. Fix required before stage completion.
 - Requested crapper/dryer/mutator tools are unavailable in this session; behavioral checks and local review used.
+
+### Five passive modules and recipe batch recovery
+
+- Implemented source IDs `base_module`, `air_refill_module`, `charger_module`, `protective_module`, `extinguish_module`, `golden_module`, original recipes and discovery. Charger enables real EU output; air adds 200 below 100 air for 2000 EU; protection removes poison/radiation/wither at 10000/20000/25000 per amplifier level; extinguishing clears fire without EU; golden exposes real piglin neutrality.
+- Source air refill checked only 1000 EU before spending 2000. Native requires all 2000, preventing underpriced air. Source ANY-category protective/extinguish modules retain broad installation compatibility (their source `canEquip` methods do not override module admission).
+- Strengthened recipe availability to require every IC2 JSON resource to exist in the loaded recipe manager. Red `.tools/equipment-recipe-loading-red.log` exposed belt recovery's rejected three-item nonstackable output.
+- Added `ic2:batch_shapeless` with a legal single result plus `output_count`; inventory transfer splits an oversized crafting batch across legal individual slots. Real Shift-crafting a charged belt consumes it and yields exactly three separate uncharged batteries, preserving original recovery semantics. An initial actual-menu test caught vanilla's one-empty-slot transfer limitation; fixed at the shared backend transfer method.
+- Green `.tools/equipment-passive-complete-check.log`: all recipes load, passive modules run through server armor ticks, real belt recovery passes. No production JAR built yet. GUI unchanged; row 8 and row 7 remain open.
