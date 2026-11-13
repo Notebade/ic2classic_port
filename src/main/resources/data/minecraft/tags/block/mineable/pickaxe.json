@@ -62,6 +62,8 @@
     "ic2:compacting_recycler",
     "ic2:miningpipe_slim",
     "ic2:pressure_alloy_furnace",
-    "ic2:pressure_alloy_furnace_structure"
+    "ic2:pressure_alloy_furnace_structure",
+    "ic2:solar_turbine",
+    "ic2:slag_generator"
   ]
 }

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XCX",
+    "VBV",
+    "XYX"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:solar_panel"
+    },
+    "X": {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    "B": {
+      "item": "ic2:turbine_blade"
+    },
+    "Y": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "V": {
+      "item": "ic2:pump"
+    }
+  },
+  "category": "misc",
+  "result": {
+    "count": 1,
+    "id": "ic2:solar_turbine"
+  }
+}

@@ -385,7 +385,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         return side == Direction.UP ? input : side == Direction.DOWN ? bottom : sides;
     }
 
-    @Override public boolean canReceiveEnergy(Direction side, MachineKind source, int packet) {
+    @Override public boolean canReceiveEnergy(Direction side, int sourceStorageOutput, int packet) {
         return isOperational() && packet <= variant.packet() && energy < variant.capacity();
     }
 

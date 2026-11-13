@@ -31,7 +31,7 @@ final class WrenchItem extends Item {
         var pos = context.getClickedPos();
         var state = level.getBlockState(pos);
         if (!(state.getBlock() instanceof MachineBlock || state.getBlock() instanceof AdvancedMachineBlock
-                || state.getBlock() instanceof PressurePartBlock) || player == null || !player.mayBuild()
+                || state.getBlock() instanceof PressurePartBlock || state.getBlock() instanceof ExtraGeneratorBlock) || player == null || !player.mayBuild()
             || !level.mayInteract(player, pos)) {
             return InteractionResult.PASS;
         }

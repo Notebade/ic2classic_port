@@ -31,6 +31,8 @@ final class MachineRecipeViews {
 
     static List<MachineRecipeView> forProcess(Process process, Level level) {
         return switch (process) {
+            case SOLAR_TURBINE -> fluidFuel(Fluids.WATER, note("solar_turbine_output"), note("solar_turbine_fill"));
+            case SLAG_GENERATOR -> registeredItems().map(MachineRecipeViews::slagFuel).flatMap(Stream::ofNullable).toList();
             case PRESSURE_ALLOY_FURNACE -> alloy().stream().map(recipe ->
                 new MachineRecipeView(recipe.sourceId(), recipe.inputs(), recipe.outputs(),
                     List.of(cost(12, 16), note("pressure_structure")))).toList();
@@ -68,6 +70,19 @@ final class MachineRecipeViews {
             case MV_WATER_MILL -> waterMill(MachineKind.MV_WATER_MILL.waterMillTier);
             case HV_WATER_MILL -> waterMill(MachineKind.HV_WATER_MILL.waterMillTier);
         };
+    }
+
+    private static MachineRecipeView slagFuel(ItemStack input) {
+        int raw = ExtraGeneratorEntity.rawFuel(input);
+        if (raw <= 0) return null;
+        boolean scrap = input.is(IC2.SCRAP.get()) || input.is(IC2.SCRAP_BOX.get());
+        int ticks = SlagGeneratorCycle.fuelTicks(raw, scrap);
+        var outputs = new ArrayList<Slot>();
+        if (!input.getCraftingRemainingItem().isEmpty()) outputs.add(item(input.getCraftingRemainingItem()));
+        if (!scrap) outputs.add(item(IC2.SCRAP.get()));
+        return new MachineRecipeView(List.of(item(input)), outputs,
+            note("fuel_output", (long) ticks * SlagGeneratorCycle.OUTPUT, ticks),
+            note(scrap ? "slag_scrap_fuel" : "slag_byproduct"));
     }
 
     private static List<MachineRecipeView> advancedRecycling(boolean slow) {

@@ -18,7 +18,7 @@ final class CreativeTabs {
     private static final Set<String> TOOLS = Set.of(
         "wrench", "electric_wrench", "cutter", "tree_tap", "electric_tree_tap", "magnet", "dead_magnet");
     private static final Set<String> GENERATORS = Set.of(
-        "generator", "geothermal_generator", "thermal_generator", "wind_turbine",
+        "generator", "solar_turbine", "slag_generator", "geothermal_generator", "thermal_generator", "wind_turbine",
         "wave_generator", "ocean_generator", "steam_turbine");
     private static final Set<String> MACHINES = Set.of(
         "macerator", "stone_macerator", "iron_furnace", "electric_furnace", "electric_blast_furnace",

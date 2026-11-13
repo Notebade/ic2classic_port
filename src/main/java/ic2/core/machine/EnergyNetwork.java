@@ -14,7 +14,7 @@ final class EnergyNetwork {
 
     private EnergyNetwork() {}
 
-    static int send(Level level, BlockPos source, int available, Predicate<Direction> emitsTo, MachineKind sourceKind) {
+    static int send(Level level, BlockPos source, int available, Predicate<Direction> emitsTo, int sourceStorageOutput) {
         var pending = new PriorityQueue<>(Comparator.comparingInt(Route::lossMilliEu).thenComparingLong(Route::order));
         var visited = new HashSet<BlockPos>();
         long order = 0;
@@ -40,7 +40,7 @@ final class EnergyNetwork {
                     continue;
                 }
                 if (!next.equals(source) && level.getBlockEntity(next) instanceof EnergySink machine
-                    && machine.canReceiveEnergy(direction.getOpposite(), sourceKind, available)) {
+                    && machine.canReceiveEnergy(direction.getOpposite(), sourceStorageOutput, available)) {
                     int accepted = machine.receiveEnergy(remaining - loss);
                     remaining -= accepted + loss;
                     if (accepted > 0) {

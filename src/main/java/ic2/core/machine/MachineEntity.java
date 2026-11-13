@@ -379,12 +379,12 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         if (steamTanks != null) {
             steamTanks.push(level, worldPosition, chambers);
         } else if (reactorOutput > 0) {
-            int remaining = reactorOutput - EnergyNetwork.send(level, worldPosition, reactorOutput, side -> true, kind);
+            int remaining = reactorOutput - EnergyNetwork.send(level, worldPosition, reactorOutput, side -> true, kind.storageOutput);
             for (BlockPos chamber : chambers) {
                 if (remaining <= 0) {
                     break;
                 }
-                remaining -= EnergyNetwork.send(level, chamber, remaining, side -> true, kind);
+                remaining -= EnergyNetwork.send(level, chamber, remaining, side -> true, kind.storageOutput);
             }
         }
     }
@@ -392,7 +392,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
     private void tickSteamTurbine() {
         turbineProduction = steamTurbine.generate(energy >= kind.capacity);
         int available = Math.min(kind.capacity, energy + turbineProduction);
-        int remaining = available - EnergyNetwork.send(level, worldPosition, Math.min(available, SteamTurbine.PACKET), side -> true, kind);
+        int remaining = available - EnergyNetwork.send(level, worldPosition, Math.min(available, SteamTurbine.PACKET), side -> true, kind.storageOutput);
         if (remaining != energy) {
             energy = remaining;
             setChanged();
@@ -722,7 +722,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         setActive(active);
         if (active) {
             var panel = (SolarPanelBlock) getBlockState().getBlock();
-            EnergyNetwork.send(level, worldPosition, panel.output(), panel::emitsTo, kind);
+            EnergyNetwork.send(level, worldPosition, panel.output(), panel::emitsTo, kind.storageOutput);
         }
     }
 
@@ -780,7 +780,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
     }
 
     private int sendEnergy(int available, Predicate<Direction> emitsTo) {
-        int sent = EnergyNetwork.send(level, worldPosition, available, emitsTo, kind);
+        int sent = EnergyNetwork.send(level, worldPosition, available, emitsTo, kind.storageOutput);
         if (sent > 0) {
             energy -= sent;
             setChanged();
@@ -1099,7 +1099,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         }
     }
 
-    public boolean canReceiveEnergy(Direction incomingSide, MachineKind sourceKind, int packetSize) {
+    public boolean canReceiveEnergy(Direction incomingSide, int sourceStorageOutput, int packetSize) {
         if (energy >= kind.capacity) {
             return false;
         }
@@ -1115,7 +1115,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
             case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> canReceiveTransformerEnergy(incomingSide, packetSize);
             // Only charge up the storage tiers, so a cable loop cannot feed energy back.
-            case BATBOX, MFE, MFSU, ESU, ISU, PESU -> sourceKind.storageOutput < kind.storageOutput && incomingSide != outputSide();
+            case BATBOX, MFE, MFSU, ESU, ISU, PESU -> sourceStorageOutput < kind.storageOutput && incomingSide != outputSide();
         };
     }
 

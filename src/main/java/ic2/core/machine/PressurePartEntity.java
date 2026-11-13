@@ -49,9 +49,9 @@ final class PressurePartEntity extends BlockEntity implements EnergySink {
             && machine.pressureContains(worldPosition) && machine.pressureFormed() ? machine : null;
     }
 
-    @Override public boolean canReceiveEnergy(Direction side, MachineKind source, int packet) {
+    @Override public boolean canReceiveEnergy(Direction side, int sourceStorageOutput, int packet) {
         var controller = controller();
-        return controller != null && controller.canReceiveEnergy(side, source, packet);
+        return controller != null && controller.canReceiveEnergy(side, sourceStorageOutput, packet);
     }
 
     @Override public int receiveEnergy(int available) {

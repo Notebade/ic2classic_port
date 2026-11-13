@@ -253,3 +253,5 @@ src/main/resources/assets/ic2/textures/block/machine/mv/compacting_recycler/
 src/main/resources/assets/ic2/textures/item/upgrades/machines/base.png
 src/main/resources/assets/ic2/textures/item/upgrades/machines/efficient_sawblade.png
 src/main/resources/assets/ic2/textures/block/misc/mining_pipe_shaft.png
+src/main/resources/assets/ic2/textures/block/electric/generator/solar_turbine/
+src/main/resources/assets/ic2/textures/block/electric/generator/slag/

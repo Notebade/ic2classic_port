@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XYX",
+    "XCX",
+    "XVX"
+  ],
+  "key": {
+    "C": {
+      "item": "ic2:recycler"
+    },
+    "X": {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    "Y": {
+      "item": "ic2:generator"
+    },
+    "V": {
+      "item": "ic2:advanced_machine_block"
+    }
+  },
+  "category": "misc",
+  "result": {
+    "count": 1,
+    "id": "ic2:slag_generator"
+  }
+}
