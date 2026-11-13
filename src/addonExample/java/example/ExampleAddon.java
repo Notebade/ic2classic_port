@@ -24,6 +24,7 @@ public final class ExampleAddon {
     static final net.neoforged.neoforge.registries.DeferredItem<TestScanner> SCANNER_TEST_TOOL = ITEMS.registerItem("scanner_test_tool", p -> new TestScanner(p.stacksTo(1)));
     static final net.neoforged.neoforge.registries.DeferredItem<TestEuItem> EU_TEST_ITEM = ITEMS.registerItem("eu_test_item", p -> new TestEuItem(p.stacksTo(1)));
     static final net.neoforged.neoforge.registries.DeferredItem<TestDynamicEuItem> DYNAMIC_EU_ITEM = ITEMS.registerItem("dynamic_eu_item", p -> new TestDynamicEuItem(p.stacksTo(1)));
+    static final net.neoforged.neoforge.registries.DeferredItem<TestArmorModule> ARMOR_TEST_MODULE = ITEMS.registerItem("armor_test_module", TestArmorModule::new);
     public ExampleAddon(IEventBus modBus) {
         if (Ic2Api.version() != 1) throw new IllegalStateException("This addon needs IC2 API v1");
         ITEMS.register(modBus);
@@ -73,6 +74,17 @@ public final class ExampleAddon {
         @Override public void setCharge(net.minecraft.world.item.ItemStack stack, int charge) {
             net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt("eu", Math.clamp(charge, 0, capacity(stack))));
         }
+    }
+    static final class TestArmorModule extends net.minecraft.world.item.Item implements ic2.api.item.ArmorModule {
+        TestArmorModule(Properties properties) { super(properties); }
+        @Override public ResourceLocation category(net.minecraft.world.item.ItemStack module) { return GENERIC; }
+        @Override public boolean supportsArmor(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor, net.minecraft.world.entity.EquipmentSlot slot) { return slot == net.minecraft.world.entity.EquipmentSlot.HEAD; }
+        @Override public ic2.api.item.ArmorEnergyModifier energyModifier(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor) { return new ic2.api.item.ArmorEnergyModifier(1000, 0, 10, true); }
+        @Override public java.util.Set<ResourceLocation> features(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor) { return java.util.Set.of(ResourceLocation.parse("exampleaddon:fixture")); }
+        private static void increment(net.minecraft.world.item.ItemStack armor, String key) { net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA, armor, tag -> tag.putInt(key, tag.getInt(key) + 1)); }
+        @Override public void installed(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor) { increment(armor, "module_installs"); }
+        @Override public void removed(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor) { increment(armor, "module_removes"); }
+        @Override public void tickModule(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor, net.minecraft.world.entity.player.Player wearer) { increment(armor, "module_ticks"); }
     }
 
     static final class TestMiningTool extends net.minecraft.world.item.Item implements ic2.api.item.MiningDrill {

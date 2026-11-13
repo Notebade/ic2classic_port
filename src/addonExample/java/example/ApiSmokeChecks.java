@@ -47,6 +47,7 @@ public final class ApiSmokeChecks {
             SolarArmorChecks.run(server.overworld());
             StaticBootChecks.run(server.overworld());
             DynamicEnergyChecks.run(server.overworld());
+            ModularArmorChecks.run(server.overworld());
             PowerTierChecks.run(server.overworld());
             NetworkDistributionChecks.run(server.overworld());
             RecipeUnlockChecks.run(server.overworld());

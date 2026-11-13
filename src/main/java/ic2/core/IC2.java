@@ -40,6 +40,10 @@ public final class IC2 {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
         DeferredRegister.create(Registries.RECIPE_SERIALIZER, MOD_ID);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ic2.core.recipe.ModularArmorRecipe>> MODULAR_ARMOR_RECIPE =
+        RECIPE_SERIALIZERS.register("modular_armor", () -> ic2.core.recipe.ModularArmorRecipe.serializer(false));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ic2.core.recipe.ModularArmorRecipe>> MODULAR_ARMOR_UPGRADE_RECIPE =
+        RECIPE_SERIALIZERS.register("modular_armor_upgrade", () -> ic2.core.recipe.ModularArmorRecipe.serializer(true));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PowerCraftingRecipe>> MACHINE_BUFFER_RECIPE =
         RECIPE_SERIALIZERS.register("machine_buffer", () -> PowerCraftingRecipe.serializer(PowerCraftingRecipe.Kind.BUFFER));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PowerCraftingRecipe>> PLASMA_CORE_RECIPE =
@@ -64,13 +68,13 @@ public final class IC2 {
         DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BATTERY_CHARGE =
         COMPONENTS.registerComponentType("battery_charge", builder -> builder
-            .persistent(Codec.intRange(0, 50_000_000)));
+            .persistent(Codec.intRange(0, Integer.MAX_VALUE)));
     public static final DeferredItem<RechargeableItem> RE_BATTERY = rechargeable("re_battery", 10_000, 100, 32);
     public static final DeferredItem<Item> SU_BATTERY = ITEMS.registerItem("su_battery", ic2.core.item.DisposableBatteryItem::new);
-    public static final DeferredItem<RechargeableItem> ENERGY_CRYSTAL = rechargeable("energy_crystal", 100_000, 250, 128);
-    public static final DeferredItem<RechargeableItem> LAPOTRON_CRYSTAL = rechargeable("lapatron_crystal", LAPOTRON_CAPACITY, 600, 512);
-    public static final DeferredItem<RechargeableItem> GLOWTRONIC_CRYSTAL = rechargeable("glowtronic_crystal", 7_500_000, 2500, 512);
-    public static final DeferredItem<RechargeableItem> UESC = rechargeable("uesc", 17_500_000, 9500, 2048);
+    public static final DeferredItem<RechargeableItem> ENERGY_CRYSTAL = rechargeable("energy_crystal", 100_000, 250, 128, 250);
+    public static final DeferredItem<RechargeableItem> LAPOTRON_CRYSTAL = rechargeable("lapatron_crystal", LAPOTRON_CAPACITY, 600, 512, 1000);
+    public static final DeferredItem<RechargeableItem> GLOWTRONIC_CRYSTAL = rechargeable("glowtronic_crystal", 7_500_000, 2500, 512, 5000);
+    public static final DeferredItem<RechargeableItem> UESC = rechargeable("uesc", 17_500_000, 9500, 2048, 10000);
     public static final DeferredItem<RechargeableItem> PESD = rechargeable("pesd", 50_000_000, 25_000, 2048);
     public static final DeferredItem<RechargeableItem> QUANTUM_ACCUMULATOR = rechargeable("quantum_accumulator", 900_000, 1000, 32);
     public static final DeferredItem<RechargeableItem> BIG_QUANTUM_ACCUMULATOR = rechargeable("quantum_accumulator_big", 5_400_000, 6000, 32);
@@ -78,7 +82,10 @@ public final class IC2 {
     public static final DeferredItem<Item> COMPLEX_CIRCUIT = ITEMS.registerSimpleItem("complex_circuit");
 
     private static DeferredItem<RechargeableItem> rechargeable(String name, int capacity, int transfer, int packet) {
-        return ITEMS.registerItem(name, properties -> new PortableBatteryItem(properties, capacity, transfer, packet),
+        return rechargeable(name, capacity, transfer, packet, -1);
+    }
+    private static DeferredItem<RechargeableItem> rechargeable(String name, int capacity, int transfer, int packet, int armorRate) {
+        return ITEMS.registerItem(name, properties -> new PortableBatteryItem(properties, capacity, transfer, packet, armorRate),
             new Item.Properties().stacksTo(1));
     }
     public static final DeferredItem<Item> COPPER_DUST = ITEMS.registerSimpleItem("dust_copper");

@@ -11,6 +11,8 @@ public final class Equipment {
         WearableBatteries.register(items);
         SolarArmor.register(items);
         StaticBoots.register(items);
+        ArmorConfiguration.register(bus);
+        ModularSuitItem.register(items);
         EquipmentMaterials.register(bus);
         ConventionalShield.register(items);
         items.registerItem("nano_shield", NanoShield::new);

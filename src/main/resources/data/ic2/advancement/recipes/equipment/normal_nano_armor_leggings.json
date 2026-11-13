@@ -1,0 +1,43 @@
+{
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_material_1",
+      "has_material_0"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ic2:normal_nano_armor_leggings"
+    ]
+  },
+  "criteria": {
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "ic2:normal_nano_armor_leggings"
+      }
+    },
+    "has_material_1": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:energy_crystal"
+          }
+        ]
+      }
+    },
+    "has_material_0": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:carbon_plate"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "minecraft:recipes/root"
+}

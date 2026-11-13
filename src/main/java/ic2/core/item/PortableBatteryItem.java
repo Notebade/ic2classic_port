@@ -9,10 +9,16 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 /** Hold use to charge one hotbar item per tick, then the offhand. */
-public final class PortableBatteryItem extends RechargeableItem {
+public final class PortableBatteryItem extends RechargeableItem implements ic2.api.item.ArmorBattery {
+    private final int armorRate;
     public PortableBatteryItem(Properties properties, int capacity, int transferRate, int packet) {
-        super(properties, capacity, transferRate, packet);
+        this(properties, capacity, transferRate, packet, -1);
     }
+    public PortableBatteryItem(Properties properties, int capacity, int transferRate, int packet, int armorRate) {
+        super(properties, capacity, transferRate, packet);
+        this.armorRate = armorRate;
+    }
+    @Override public int armorTransferRate(ItemStack stack) { return armorRate; }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {

@@ -1,0 +1,25 @@
+{
+  "pattern": [
+    " X ",
+    " C ",
+    "Y Y"
+  ],
+  "category": "equipment",
+  "type": "ic2:modular_armor_upgrade",
+  "key": {
+    "X": {
+      "item": "ic2:plate_iridium"
+    },
+    "Y": {
+      "item": "ic2:complex_circuit"
+    },
+    "C": {
+      "item": "ic2:nano_suit_boots"
+    }
+  },
+  "result": {
+    "id": "ic2:nano_suit_boots",
+    "count": 1
+  }
+}
+

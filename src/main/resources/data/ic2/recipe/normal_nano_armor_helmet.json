@@ -1,0 +1,24 @@
+{
+  "pattern": [
+    "CPC",
+    "CGC"
+  ],
+  "category": "equipment",
+  "type": "ic2:modular_armor",
+  "key": {
+    "P": {
+      "item": "ic2:energy_crystal"
+    },
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "C": {
+      "item": "ic2:carbon_plate"
+    }
+  },
+  "result": {
+    "id": "ic2:nano_suit_helmet",
+    "count": 1
+  }
+}
+

@@ -73,3 +73,7 @@ Wearable batteries added: batpack, lappack, quantum_pack (chest), industrial_bel
 solar_helmet and advanced_solar_helmet added with native head armor layers named after their IDs, one armor point and source daytime generation/recipes. Rendering/names remain graphics. No screen/client layout changed.
 
 static_boots added with native foot layer static_boots, one armor point and both recipes. Walking/carpet generation, source soft buffer ceiling and ordered armor ticks are implemented. Names/model/texture/creative grouping remain graphics; no screen/client layout changed.
+
+### Nano modular armor backend
+
+Added `nano_suit_helmet/chestplate/leggings/boots`, normal and enhanced original recipes. No client/model/GUI files changed. Public `ModularArmor` gives detached modules, resource-ID category limits, features and simulated removal; enhanced Nano slots match Quantum limits. Empty inventory stacks are bare shells; use `defaultArmor()` for battery-equipped previews. Charge uses existing electric API per-stack methods. Stored `armor_configuration` + `container` components sync normally. Configurator, modules and Quantum still in progress; this is a backend milestone only.

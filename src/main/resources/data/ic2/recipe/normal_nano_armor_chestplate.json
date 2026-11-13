@@ -1,0 +1,22 @@
+{
+  "pattern": [
+    "C C",
+    "CPC",
+    "CCC"
+  ],
+  "category": "equipment",
+  "type": "ic2:modular_armor",
+  "key": {
+    "C": {
+      "item": "ic2:carbon_plate"
+    },
+    "P": {
+      "item": "ic2:energy_crystal"
+    }
+  },
+  "result": {
+    "id": "ic2:nano_suit_chestplate",
+    "count": 1
+  }
+}
+
