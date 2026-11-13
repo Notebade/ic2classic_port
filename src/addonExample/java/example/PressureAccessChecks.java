@@ -28,6 +28,18 @@ final class PressureAccessChecks {
             require(Ic2Api.machineInfo(level, part).isPresent(), "the actual controller tick forms the pressure structure");
             var cached = level.getCapability(Capabilities.ItemHandler.BLOCK, origin, Direction.UP);
             require(cached != null && cached.getSlots() > 0, "formed pressure controller exposes inputs");
+            var player = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(level);
+            var menu = ((net.minecraft.world.MenuProvider) controller).createMenu(0, player.getInventory(), player);
+            require(menu.slots.get(1).safeInsert(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.COPPER_INGOT, 3)).isEmpty(), "pressure furnace accepts copper");
+            require(menu.slots.get(2).safeInsert(new net.minecraft.world.item.ItemStack(Ic2Api.item(ResourceLocation.parse("ic2:ingot_tin")).orElseThrow())).isEmpty(), "pressure furnace accepts tin");
+            var hot = controller.saveWithoutMetadata(level.registryAccess());
+            hot.putInt("heat", 10000); hot.putInt("energy", 10000);
+            controller.loadWithComponents(hot, level.registryAccess());
+            for (int tick = 0; tick < 12; tick++) ApiSmokeChecks.tick(level, origin, controller.getType());
+            var output = menu.slots.get(3).getItem();
+            require(output.is(Ic2Api.item(ResourceLocation.parse("ic2:ingot_bronze")).orElseThrow()) && output.getCount() == 4,
+                "formed pressure furnace actually produces four bronze from three copper and one tin");
+            require(menu.slots.get(1).getItem().isEmpty() && menu.slots.get(2).getItem().isEmpty(), "pressure alloying consumes both exact inputs");
             level.setBlockAndUpdate(origin.offset(-1, -1, 1), Blocks.AIR.defaultBlockState());
             require(Ic2Api.machineInfo(level, part).isEmpty(), "remote damage immediately revokes part telemetry");
             require(cached.getSlots() == 0, "remote damage immediately revokes cached controller automation");

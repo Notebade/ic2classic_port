@@ -256,14 +256,14 @@ public final class Machines {
         DetectorCableBlock::new, cableProperties());
     static final DeferredBlock<ComparingCableBlock> COMPARING_CABLE = BLOCKS.registerBlock("comparing_cable",
         ComparingCableBlock::new, cableProperties());
-    static final DeferredBlock<EnergyCableBlock> COPPER_CABLE = cable("copper_cable", 300, Integer.MAX_VALUE);
-    static final DeferredBlock<EnergyCableBlock> INSULATED_COPPER_CABLE = cable("copper_insulated_cable", 200, Integer.MAX_VALUE);
+    static final DeferredBlock<EnergyCableBlock> COPPER_CABLE = cable("copper_cable", 300, 32);
+    static final DeferredBlock<EnergyCableBlock> INSULATED_COPPER_CABLE = cable("copper_insulated_cable", 200, 32);
     static final DeferredBlock<EnergyCableBlock> BRONZE_CABLE = cable("bronze_cable", 700, 128);
     static final DeferredBlock<EnergyCableBlock> INSULATED_BRONZE_CABLE = cable("bronze_insulated_cable", 650, 128, 3);
     static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_BRONZE_CABLE = cable("bronze_double_insulated_cable", 600, 128, 3.5F);
-    static final DeferredBlock<EnergyCableBlock> GOLD_CABLE = cable("gold_cable", 500, Integer.MAX_VALUE);
-    static final DeferredBlock<EnergyCableBlock> INSULATED_GOLD_CABLE = cable("gold_insulated_cable", 450, Integer.MAX_VALUE);
-    static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_GOLD_CABLE = cable("gold_double_insulated_cable", 400, Integer.MAX_VALUE);
+    static final DeferredBlock<EnergyCableBlock> GOLD_CABLE = cable("gold_cable", 500, 128);
+    static final DeferredBlock<EnergyCableBlock> INSULATED_GOLD_CABLE = cable("gold_insulated_cable", 450, 128);
+    static final DeferredBlock<EnergyCableBlock> DOUBLE_INSULATED_GOLD_CABLE = cable("gold_double_insulated_cable", 400, 128);
     static final DeferredBlock<EnergyCableBlock> GLASSFIBER_CABLE = cable("glassfiber_cable", 25, 512);
     static final DeferredBlock<EnergyCableBlock> IRON_CABLE = cable("iron_cable", 1000, 2048, 3);
     static final DeferredBlock<EnergyCableBlock> INSULATED_IRON_CABLE = cable("iron_insulated_cable", 950, 2048, 4);

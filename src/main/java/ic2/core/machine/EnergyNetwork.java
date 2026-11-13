@@ -17,8 +17,9 @@ public final class EnergyNetwork {
     public static int send(Level level, BlockPos source, int available, Predicate<Direction> emitsTo, int sourceStorageOutput) {
         var pending = new PriorityQueue<>(Comparator.comparingInt(Route::lossMilliEu).thenComparingLong(Route::order));
         var visited = new HashSet<BlockPos>();
+        var supplied = new java.util.HashMap<CableVisit, Integer>();
         long order = 0;
-        pending.add(new Route(source, 0, order++, null));
+        pending.add(new Route(source, 0, order++, null, null));
         int remaining = available;
 
         while (!pending.isEmpty()) {
@@ -48,20 +49,22 @@ public final class EnergyNetwork {
                     if (accepted > 0) {
                         remaining -= accepted + loss;
                         recordTransfer(level, route.meters(), accepted, loss);
+                        if (route.cables() != null) supplied.merge(route.cables(), accepted, Integer::sum);
                     }
                 }
                 var state = level.getBlockState(next);
-                if (state.getBlock() instanceof EnergyCableBlock cable && cable.canCarry(state, available)
+                if (state.getBlock() instanceof EnergyCableBlock cable && cable.canCarry(state, 0)
                     && !visited.contains(next)) {
                     int nextLoss = route.lossMilliEu() + cable.lossMilliEu();
                     if (nextLoss / MILLIEU_PER_EU < remaining) {
                         MeterVisit meters = cable instanceof EnergyMeterCableBlock meter
                             ? new MeterVisit(meter, next, nextLoss / MILLIEU_PER_EU, route.meters()) : route.meters();
-                        pending.add(new Route(next, nextLoss, order++, meters));
+                        pending.add(new Route(next, nextLoss, order++, meters, new CableVisit(cable, next, route.cables())));
                     }
                 }
             }
         }
+        supplied.forEach((path, energy) -> CableHazards.supplied(level, path, energy));
         return available - remaining;
     }
 
@@ -72,7 +75,8 @@ public final class EnergyNetwork {
         }
     }
 
-    private record Route(BlockPos position, int lossMilliEu, long order, MeterVisit meters) {}
+    private record Route(BlockPos position, int lossMilliEu, long order, MeterVisit meters, CableVisit cables) {}
+    record CableVisit(EnergyCableBlock cable, BlockPos position, CableVisit previous) {}
 
     private record MeterVisit(EnergyMeterCableBlock meter, BlockPos position, int loss, MeterVisit previous) {}
 }

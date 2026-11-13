@@ -68,6 +68,13 @@ final class StructureChunkChecks {
     }
 
     private void advance() {
+        if (reloadVerified) {
+            if (!CableHazardChecks.pending()) {
+                com.mojang.logging.LogUtils.getLogger().info("IC2 API runtime smoke checks passed (including actual chunk unload/reload)");
+                finish();
+            }
+            return;
+        }
         age++;
         if (!unloaded) {
             if (!level.hasChunkAt(part)) {
@@ -86,6 +93,8 @@ final class StructureChunkChecks {
         require(formed(), "controller reforms after a real chunk reload");
         var restored = level.getCapability(Capabilities.FluidHandler.BLOCK, part, Direction.UP);
         require(restored != null && restored.getFluidInTank(0).getAmount() == 2000, "fluid survives actual chunk unload and reload");
+        reloadVerified = true;
+        if (CableHazardChecks.pending()) return;
         com.mojang.logging.LogUtils.getLogger().info("IC2 API runtime smoke checks passed (including actual chunk unload/reload)");
         finish();
     }
@@ -93,6 +102,7 @@ final class StructureChunkChecks {
     private boolean formed() {
         return Ic2Api.machineInfo(level, controller).orElseThrow().values().get("formed") == 1;
     }
+    private boolean reloadVerified;
 
     private void place(BlockPos pos, String id) {
         placed.add(pos);

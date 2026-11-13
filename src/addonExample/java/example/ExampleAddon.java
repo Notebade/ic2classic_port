@@ -29,6 +29,7 @@ public final class ExampleAddon {
         if (Boolean.getBoolean("ic2.api.verify")) {
             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ApiSmokeChecks::run);
             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(StructureChunkChecks::tick);
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(CableHazardChecks::tick);
         }
     }
     private void setup(FMLCommonSetupEvent event) {

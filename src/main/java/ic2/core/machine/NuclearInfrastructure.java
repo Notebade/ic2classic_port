@@ -56,6 +56,7 @@ public final class NuclearInfrastructure {
         COBBLEGEN = items.registerItem("cobblegen_upgrade", CobblegenMachineUpgradeItem::new);
         bus.addListener(NuclearInfrastructure::capabilities);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(WindWorldData::tick);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(CableHazards::tick);
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
