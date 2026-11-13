@@ -346,6 +346,27 @@ final class MachineMenu extends AbstractContainerMenu {
         return stillValid(access, player, block);
     }
 
+    private AlloyRecipeTransfer.Plan recipeTransfer(int recipeIndex) {
+        if (!isAlloySmelter() || recipeIndex < 0 || recipeIndex >= AlloyRecipes.recipes().size()) return null;
+        return AlloyRecipeTransfer.plan(AlloyRecipes.recipes().get(recipeIndex), slots.get(0).getItem(),
+            slots.get(2).getItem(), slots.subList(machineSlots, slots.size()).stream().map(Slot::getItem).toList());
+    }
+
+    boolean canLoadRecipe(int recipeIndex) {
+        return recipeTransfer(recipeIndex) != null;
+    }
+
+    @Override public boolean clickMenuButton(Player player, int recipeIndex) {
+        if (player.level().isClientSide || !stillValid(player)) return false;
+        var plan = recipeTransfer(recipeIndex);
+        if (plan == null) return false;
+        for (int i = 0; i < plan.player().size(); i++) slots.get(machineSlots + i).set(plan.player().get(i));
+        slots.get(0).set(plan.first());
+        slots.get(2).set(plan.second());
+        broadcastChanges();
+        return true;
+    }
+
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         if (machineSlots == 0) {

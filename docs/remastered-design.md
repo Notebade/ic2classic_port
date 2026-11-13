@@ -4,6 +4,37 @@ Base: `d2267319eb625c1b71c8dfe3607441f17da07a0e`, independent `ic2classic-port-g
 
 ## Current layout revision
 
+Latest search/craft revision: added a native EditBox with immediate, case-insensitive
+matching against localized output names. Five compact rows remain visible beneath
+the search field. Filtered rows retain references to the unfiltered recipe views,
+so the Create packet always uses the original server recipe index.
+
+Green rows mean one batch can be loaded from the player's 36 inventory/hotbar
+slots and the two machine inputs, with enough room to return replaced inputs.
+This is an ingredient/transfer indication, not a promise of available EU or free
+output space. The Create tooltip explains that normal EU/time processing remains.
+The button is disabled when the selected transfer cannot be planned.
+
+`AlloyRecipeTransfer` simulates on copies: collect component-compatible ingredient
+stacks, take exact counts and return unconsumed machine inputs to inventory. A
+failed plan never mutates live slots. Already loaded recipes, including reversed
+inputs, remain intact. `MachineMenu.clickMenuButton` validates recipe bounds and
+the normal menu distance/block validity on the server, recomputes the plan, then
+applies it and broadcasts changes. No recipe result is created by this handler;
+existing machine processing still consumes energy and produces the output.
+
+Revision log: first reproduced the missing Create handler with a failing client
+suite. Added transactional planning, server handling, live row availability,
+search and translated button/help text. Tested missing ingredients, split stacks,
+full inventory rollback, return of old inputs, reversed inputs, duplicate requests,
+invalid IDs, real typed Cyrillic input, uppercase matching, no-match disabling,
+filtered recipe IDs and actual client button packets. Corrected the test setup
+to teleport its player within menu range, keeping the production validity check.
+Avoided Java module split packages by testing via public menu operations instead
+of placing addon test classes in the mod's package. Full offline build and all 24
+standalone checks passed. Inspected the filtered green-row screenshot; left the
+latest isolated client running for manual verification.
+
 Latest recipe revision: replaced the single large recipe with five visible 18px
 rows in NeoForge's existing `ScrollPanel`. The panel handles wheel input, scrollbar
 dragging and clipping; the adapter supplies recipe rows, selection and hover

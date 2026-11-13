@@ -60,9 +60,31 @@ public final class RemasteredClientChecks {
         if (age == 115) {
             var panel = recipePanel(client);
             double x = (screen(client).width - 256) / 2.0 + 30;
-            double y = (screen(client).height - 240) / 2.0 + 65;
+            double y = (screen(client).height - 240) / 2.0 + 75;
             if (!screen(client).mouseScrolled(x, y, 0, -1)) throw new AssertionError("Recipe wheel ignored");
-            if (!panel.mouseClicked(x, y + 72, 0)) throw new AssertionError("Scrolled recipe row not selectable");
+            if (!panel.mouseClicked(x, y + 56, 0)) throw new AssertionError("Scrolled recipe row not selectable");
+        }
+        if (age == 127) {
+            var search = screen(client).children().stream().filter(net.minecraft.client.gui.components.EditBox.class::isInstance)
+                .map(net.minecraft.client.gui.components.EditBox.class::cast).findFirst().orElseThrow();
+            // Russian language is selected by the test launcher: live partial-name matching.
+            search.setValue("");
+            screen(client).setFocused(search);
+            if (!screen(client).charTyped('б', 0)) throw new AssertionError("Search did not accept typed letter");
+            selectBronzeRow(client);
+            if (!craftButton(client).active) throw new AssertionError("Available bronze recipe not craftable after filtering");
+            search.setValue("nothing_matches_this");
+            if (craftButton(client).active) throw new AssertionError("Empty search result still craftable");
+            search.setValue("БРОНЗ");
+            selectBronzeRow(client);
+            if (!craftButton(client).active) throw new AssertionError("Case-insensitive search lost bronze");
+            craftButton(client).onPress();
+        }
+        if (age == 129) Screenshot.grab(client.gameDirectory, "remastered-search.png", client.getMainRenderTarget(), ignored -> {});
+        if (age == 133) {
+            var search = screen(client).children().stream().filter(net.minecraft.client.gui.components.EditBox.class::isInstance)
+                .map(net.minecraft.client.gui.components.EditBox.class::cast).findFirst().orElseThrow();
+            search.setValue("");
         }
         if (age == 125) {
             for (int i = 0; i < 6; i++) screen(client).children().stream().filter(Button.class::isInstance).map(Button.class::cast)
@@ -121,6 +143,18 @@ public final class RemasteredClientChecks {
             .orElseThrow(() -> new AssertionError("Recipes need a ready-made NeoForge ScrollPanel"));
     }
 
+    private static Button craftButton(Minecraft client) {
+        return screen(client).children().stream().filter(Button.class::isInstance).map(Button.class::cast)
+            .filter(button -> button.getMessage().getString().equals("Создать")).findFirst().orElseThrow();
+    }
+
+    private static void selectBronzeRow(Minecraft client) {
+        var screen = screen(client);
+        if (!recipePanel(client).mouseClicked((screen.width - 256) / 2.0 + 30,
+                (screen.height - 240) / 2.0 + 91, 0))
+            throw new AssertionError("Filtered bronze row missing");
+    }
+
     private static Button tab(Minecraft client, int index) {
         var screen = screen(client);
         return screen.children().stream().filter(Button.class::isInstance).map(Button.class::cast)
@@ -132,6 +166,7 @@ public final class RemasteredClientChecks {
         var server = client.getSingleplayerServer();
         var level = server.overworld();
         var player = server.getPlayerList().getPlayer(client.player.getUUID());
+        player.connection.teleport(100, 80, 98, 0, 0);
         player.getInventory().clearContent();
         level.getChunkAt(POS);
         level.setBlockAndUpdate(POS, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
@@ -141,7 +176,59 @@ public final class RemasteredClientChecks {
         tag.putInt("energy", 4000);
         entity.loadWithComponents(tag, level.registryAccess());
         var menu = ((MenuProvider) entity).createMenu(1, player.getInventory(), player);
+        verifyTransfers(menu);
+        // Button IDs refer to the unfiltered server recipe order (bronze ingots = 3).
+        menu.getSlot(3).set(new ItemStack(Items.COPPER_INGOT, 3));
+        menu.getSlot(4).set(new ItemStack(Ic2Api.item(ResourceLocation.parse("ic2:ingot_tin")).orElseThrow()));
+        if (!menu.clickMenuButton(player, 3)) throw new AssertionError("Craft button did not load available recipe");
+        if (menu.getSlot(0).getItem().getCount() != 3 || menu.getSlot(2).getItem().getCount() != 1)
+            throw new AssertionError("Craft button loaded incorrect quantities");
+        if (menu.getSlot(3).hasItem() || menu.getSlot(4).hasItem()) throw new AssertionError("Craft button duplicated ingredients");
+        if (menu.getSlot(1).hasItem()) throw new AssertionError("Craft button bypassed processing");
+        if (!menu.clickMenuButton(player, 3) || menu.getSlot(0).getItem().getCount() != 3 || menu.getSlot(3).hasItem())
+            throw new AssertionError("Repeated craft request duplicated ingredients");
+        if (menu.clickMenuButton(player, -1) || menu.clickMenuButton(player, Integer.MAX_VALUE))
+            throw new AssertionError("Invalid recipe IDs accepted");
+        player.getInventory().clearContent();
         menu.getSlot(0).set(new ItemStack(Items.COPPER_INGOT, 3));
         menu.getSlot(2).set(new ItemStack(Ic2Api.item(ResourceLocation.parse("ic2:ingot_tin")).orElseThrow()));
+    }
+
+    private static void verifyTransfers(net.minecraft.world.inventory.AbstractContainerMenu menu) {
+        var player = Minecraft.getInstance().getSingleplayerServer().getPlayerList()
+            .getPlayer(Minecraft.getInstance().player.getUUID());
+        var tin = Ic2Api.item(ResourceLocation.parse("ic2:ingot_tin")).orElseThrow();
+        menu.getSlot(0).set(ItemStack.EMPTY);
+        menu.getSlot(2).set(ItemStack.EMPTY);
+        menu.getSlot(3).set(new ItemStack(Items.COPPER_INGOT, 2));
+        menu.getSlot(4).set(new ItemStack(tin));
+        if (menu.clickMenuButton(player, 3) || menu.getSlot(3).getItem().getCount() != 2)
+            throw new AssertionError("Insufficient transfer accepted or consumed source");
+        menu.getSlot(5).set(new ItemStack(Items.COPPER_INGOT));
+        if (!menu.clickMenuButton(player, 3) || menu.getSlot(0).getItem().getCount() != 3)
+            throw new AssertionError("Split-stack transfer failed");
+        for (int i = 3; i < 39; i++) menu.getSlot(i).set(new ItemStack(Items.STONE, 64));
+        menu.getSlot(3).set(new ItemStack(Items.COPPER_INGOT, 64));
+        menu.getSlot(4).set(new ItemStack(tin, 64));
+        menu.getSlot(0).set(new ItemStack(Items.REDSTONE, 2));
+        menu.getSlot(2).set(new ItemStack(Items.QUARTZ));
+        if (menu.clickMenuButton(player, 3) || menu.getSlot(3).getItem().getCount() != 64
+                || !menu.getSlot(0).getItem().is(Items.REDSTONE))
+            throw new AssertionError("Full-inventory transfer was not atomic");
+        menu.getSlot(5).set(ItemStack.EMPTY);
+        menu.getSlot(6).set(ItemStack.EMPTY);
+        if (!menu.clickMenuButton(player, 3) || menu.getSlot(3).getItem().getCount() != 61
+                || menu.getSlot(4).getItem().getCount() != 63)
+            throw new AssertionError("Replacement transfer consumed wrong quantities");
+        int returned = menu.slots.subList(3, 39).stream().map(slot -> slot.getItem())
+            .filter(stack -> stack.is(Items.REDSTONE) || stack.is(Items.QUARTZ)).mapToInt(ItemStack::getCount).sum();
+        if (returned != 3) throw new AssertionError("Old inputs lost during replacement");
+        player.getInventory().clearContent();
+        menu.getSlot(0).set(new ItemStack(tin));
+        menu.getSlot(2).set(new ItemStack(Items.COPPER_INGOT, 3));
+        if (!menu.clickMenuButton(player, 3) || !menu.getSlot(0).getItem().is(tin))
+            throw new AssertionError("Already loaded reversed recipe changed");
+        menu.getSlot(0).set(ItemStack.EMPTY);
+        menu.getSlot(2).set(ItemStack.EMPTY);
     }
 }

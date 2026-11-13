@@ -644,5 +644,8 @@
   "gui.ic2.remastered.base_stats": "Базовые характеристики",
   "gui.ic2.remastered.capacity": "Ёмкость: %s EU",
   "gui.ic2.remastered.packet_unlimited": "Входящий пакет: ограничения напряжения в логике механизма нет.",
-  "gui.ic2.remastered.recipe_seconds": "%s с"
+  "gui.ic2.remastered.recipe_seconds": "%s с",
+  "gui.ic2.remastered.search": "Название результата...",
+  "gui.ic2.remastered.create": "Создать",
+  "gui.ic2.remastered.create_hint": "Загрузить ингредиенты на одну порцию. Обработка требует EU и времени. Зелёные строки: хватает ингредиентов и места для их загрузки."
 }

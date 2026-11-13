@@ -1,9 +1,12 @@
 package ic2.core.machine;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Locale;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,9 +18,13 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
     private static final MachineKind KIND = MachineKind.ALLOY_SMELTER;
     private Tab tab = Tab.WORK;
     private int recipeIndex;
-    private List<MachineRecipeView> recipes = List.of();
+    private List<MachineRecipeView> allRecipes = List.of();
+    private final List<MachineRecipeView> recipes = new ArrayList<>();
+    private String query = "";
     private Button previous;
     private Button next;
+    private Button craft;
+    private EditBox search;
     private MachineRecipePanel recipePanel;
     private ItemStack hoveredRecipe = ItemStack.EMPTY;
 
@@ -31,19 +38,31 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
 
     @Override protected void init() {
         super.init();
-        recipes = MachineRecipeViews.forProcess(MachineRecipeView.Process.ALLOY_SMELTER, minecraft.level);
+        allRecipes = MachineRecipeViews.forProcess(MachineRecipeView.Process.ALLOY_SMELTER, minecraft.level);
+        recipes.clear();
+        recipes.addAll(allRecipes);
         recipeIndex = Math.clamp(recipeIndex, 0, Math.max(0, recipes.size() - 1));
         for (Tab choice : Tab.values()) {
             addRenderableWidget(new RemasteredButton(leftPos + 8 + choice.ordinal() * 60, topPos + 24, 59, 20,
                 text("tab." + choice.name().toLowerCase(Locale.ROOT)), ignored -> select(choice), () -> tab == choice));
         }
-        recipePanel = addRenderableWidget(new MachineRecipePanel(leftPos + 14, topPos + 51, recipes,
-            () -> recipeIndex, index -> recipeIndex = index, () -> tab == Tab.RECIPES, stack -> hoveredRecipe = stack));
+        search = addRenderableWidget(new EditBox(font, leftPos + 14, topPos + 52, 136, 14, text("search")));
+        search.setMaxLength(64);
+        search.setHint(text("search"));
+        recipePanel = addRenderableWidget(new MachineRecipePanel(leftPos + 14, topPos + 70, recipes,
+            () -> recipeIndex, index -> { recipeIndex = index; updateRecipeButtons(); }, () -> tab == Tab.RECIPES,
+            stack -> hoveredRecipe = stack, this::canCraft));
         recipePanel.reveal(recipeIndex);
-        previous = addRenderableWidget(new RemasteredButton(leftPos + 192, topPos + 130, 22, 12,
+        previous = addRenderableWidget(new RemasteredButton(leftPos + 160, topPos + 130, 16, 12,
             Component.literal("<"), ignored -> changeRecipe(-1), () -> false));
-        next = addRenderableWidget(new RemasteredButton(leftPos + 220, topPos + 130, 22, 12,
+        next = addRenderableWidget(new RemasteredButton(leftPos + 226, topPos + 130, 16, 12,
             Component.literal(">"), ignored -> changeRecipe(1), () -> false));
+        craft = addRenderableWidget(new RemasteredButton(leftPos + 178, topPos + 130, 46, 12,
+            text("create"), ignored -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId,
+                allRecipes.indexOf(recipes.get(recipeIndex))), () -> false));
+        craft.setTooltip(Tooltip.create(text("create_hint")));
+        search.setResponder(this::filterRecipes);
+        search.setValue(query);
         select(tab);
     }
 
@@ -51,7 +70,40 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
         tab = choice;
         menu.showMachineSlots(tab == Tab.WORK);
         previous.visible = next.visible = tab == Tab.RECIPES;
+        search.visible = craft.visible = tab == Tab.RECIPES;
+        if (!search.visible && search.isFocused()) setFocused(null);
+        updateRecipeButtons();
+    }
+
+    private void filterRecipes(String value) {
+        query = value;
+        var previousRecipe = recipes.isEmpty() ? null : recipes.get(recipeIndex);
+        String needle = value.strip().toLowerCase(Locale.ROOT);
+        recipes.clear();
+        allRecipes.stream().filter(recipe -> recipe.outputs().stream().flatMap(slot -> slot.items().stream())
+            .anyMatch(stack -> stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains(needle)))
+            .forEach(recipes::add);
+        recipeIndex = Math.max(0, recipes.indexOf(previousRecipe));
+        recipePanel.resetScroll();
+        recipePanel.reveal(recipeIndex);
+        updateRecipeButtons();
+    }
+
+    private boolean canCraft(int index) {
+        return index >= 0 && index < recipes.size() && menu.canLoadRecipe(allRecipes.indexOf(recipes.get(index)));
+    }
+
+    private void updateRecipeButtons() {
         previous.active = next.active = recipes.size() > 1;
+        craft.active = canCraft(recipeIndex);
+    }
+
+    @Override public boolean keyPressed(int key, int scanCode, int modifiers) {
+        if (search.visible && search.isFocused() && key != 256) {
+            search.keyPressed(key, scanCode, modifiers);
+            return true;
+        }
+        return super.keyPressed(key, scanCode, modifiers);
     }
 
     private void changeRecipe(int delta) {
@@ -68,6 +120,7 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
 
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         hoveredRecipe = ItemStack.EMPTY;
+        updateRecipeButtons();
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
         if (!hoveredRecipe.isEmpty()) graphics.renderTooltip(font, hoveredRecipe, mouseX, mouseY);
@@ -120,7 +173,7 @@ final class AlloySmelterScreen extends AbstractContainerScreen<MachineMenu> {
 
     private void recipe(GuiGraphics graphics) {
         if (recipes.isEmpty()) {
-            label(graphics, text("no_recipes"), 18, 60, RemasteredGui.MUTED);
+            graphics.drawWordWrap(font, text("no_recipes"), 160, 54, 82, RemasteredGui.MUTED);
             return;
         }
         MachineRecipeView recipe = recipes.get(recipeIndex);
