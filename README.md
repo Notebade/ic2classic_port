@@ -408,3 +408,5 @@ JEI lists the machines alongside vanilla cooking recipes. Wrenches rotate and di
 ```powershell
 .\scripts\Test-InductionCycle.ps1
 ```
+
+The standalone checks live in `src/verification/java` and run automatically through `check` / `build` as `verifyStorageControl` and `verifyInductionCycle`. They are executable Java checks rather than JUnit tests. NeoGradle default run generation is disabled; the explicitly configured client and server runs remain available.

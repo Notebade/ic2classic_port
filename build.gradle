@@ -8,6 +8,43 @@ version = '0.58.0'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+// Only the explicit client/server runs below are needed; no game-backed JUnit suite exists.
+subsystems.conventions.runs.shouldDefaultRunsBeCreated.set(false)
+
+def compileVerification = tasks.register('compileVerificationJava', JavaCompile) {
+    source = fileTree('src/verification/java') { include '**/*.java' }
+    classpath = sourceSets.main.output
+    destinationDirectory = layout.buildDirectory.dir('classes/java/verification')
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    options.release = 21
+}
+
+def standaloneChecks = [
+    verifyStorageControl: 'ic2.core.machine.StorageControlTest',
+    verifyInductionCycle: 'ic2.core.machine.InductionCycleTest'
+]
+standaloneChecks.each { taskName, entryPoint ->
+    tasks.register(taskName, Exec) {
+        group = 'verification'
+        description = "Run ${entryPoint} boundary checks."
+        dependsOn compileVerification
+        def verificationClasspath = files(compileVerification.flatMap { it.destinationDirectory }, sourceSets.main.output)
+        def launcher = javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+        // These checks use only the compiled pure logic, without a game runtime.
+        doFirst {
+            commandLine launcher.get().executablePath.asFile.absolutePath,
+                '-ea', '-cp', verificationClasspath.asPath, entryPoint
+        }
+    }
+}
+tasks.named('check') {
+    dependsOn standaloneChecks.keySet()
+}
+
 def neoForgeVersion = '21.1.219'
 def jeiVersion = '19.64.0.455'
 
