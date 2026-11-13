@@ -113,6 +113,7 @@
     "ic2:valve",
     "ic2:refined_iron_block",
     "ic2:machine_buffer",
-    "ic2:personal_chest"
+    "ic2:personal_chest",
+    "ic2:reinforced_clear_glass"
   ]
 }

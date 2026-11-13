@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:reinforced_clear_glass",
+    "count": 4
+  },
+  "key": {
+    "X": {
+      "item": "ic2:reinforced_glass"
+    }
+  },
+  "pattern": [
+    "XX",
+    "XX"
+  ],
+  "category": "equipment"
+}

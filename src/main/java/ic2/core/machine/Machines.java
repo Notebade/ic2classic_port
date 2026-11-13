@@ -143,6 +143,8 @@ public final class Machines {
     static final DeferredBlock<TransparentBlock> REINFORCED_GLASS =
         BLOCKS.registerBlock("reinforced_glass", TransparentBlock::new,
             BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS).strength(5, 150).requiresCorrectToolForDrops());
+    static final DeferredBlock<TransparentBlock> REINFORCED_CLEAR_GLASS = BLOCKS.registerBlock("reinforced_clear_glass", TransparentBlock::new,
+        BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS).strength(5, 150).requiresCorrectToolForDrops());
     static final DeferredBlock<SolarPanelBlock> SOLAR_PANEL =
         BLOCKS.registerBlock("solar_panel", properties -> new SolarPanelBlock(properties, SolarPanelBlock.BASE_OUTPUT),
             machineProperties());
@@ -390,6 +392,7 @@ public final class Machines {
         items.registerSimpleBlockItem(STEAM_TURBINE);
         items.registerSimpleBlockItem(REACTOR_PLANNER);
         items.registerSimpleBlockItem(REINFORCED_GLASS);
+        items.registerSimpleBlockItem(REINFORCED_CLEAR_GLASS);
         items.registerSimpleBlockItem(WIND_TURBINE);
         items.registerSimpleBlockItem(WAVE_GENERATOR);
         items.registerSimpleBlockItem(OCEAN_GENERATOR);

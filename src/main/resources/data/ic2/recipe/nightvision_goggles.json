@@ -1,0 +1,33 @@
+{
+  "type": "ic2:electric_shaped",
+  "result": {
+    "id": "ic2:nightvision_goggles",
+    "count": 1
+  },
+  "key": {
+    "B": {
+      "item": "ic2:rubber"
+    },
+    "C": {
+      "item": "ic2:luminator"
+    },
+    "V": {
+      "item": "ic2:reinforced_clear_glass"
+    },
+    "X": {
+      "item": "ic2:heat_exchanger_spread"
+    },
+    "N": {
+      "item": "ic2:advanced_circuit"
+    },
+    "Y": {
+      "item": "ic2:nano_suit_helmet"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "CVC",
+    "BNB"
+  ],
+  "category": "equipment"
+}
