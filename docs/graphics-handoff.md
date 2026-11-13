@@ -13,3 +13,19 @@ New gameplay registrations available to that stage:
 - Add new blocks to desired creative categories, models, blockstates, names and harvest tags as appropriate; crafting JSONs and machine JEI recipe lists are owned by gameplay work.
 
 Earlier gameplay commit `d226731` includes original pad/chunkloader screens, utility block models and source imports. Its client fixture passed 22 screens, including an actual JEI enrichment page. Gameplay work no longer edits those visuals after the user's parallel-stage instruction.
+
+## Electric enchanter backend
+
+- Registered `electric_enchanter` with horizontal `facing` and `lit`; original recipe is implemented. `ElectricEnchanting.MENU` is the server menu registration. Client screen/renderer/model/name wiring is left to the graphics stage.
+- `ElectricEnchanterMenu` keeps original seven item-slot coordinates. Player inventory starts at y=90; a synchronized **read-only hidden slot 43** carries the preview. `menu.preview()` reads it for rendering. It cannot be clicked or shift-moved into inventory.
+- `menu.value(index)`: 0 EU, 1 mode (0 enchant/1 anvil/2 disenchant), 2 stored raw XP, 3 required raw XP, 4 enchant level, 5 running (0/1), 6 progress, 7 progress target, 8 valid (0/1), 9 operation seed. Values are already reassembled from split network shorts.
+- Button IDs: 0 cycle mode; 1/2/3 deposit 1/10/100 raw XP; 4/5/6 withdraw 1/10/100 raw XP; 7 start. Withdrawal is disabled while running. Server validates menu distance and resources. Preview/start use the server player enchantment seed; clients do not send arbitrary seeds.
+- Source background: `textures/gui_sprites/blocks/machines/hv/gui_electric_enchanter.png`. Source animated book rendering remains a graphics responsibility. Gameplay tests cover all modes, exact XP/EU costs, item/book/lapis consumption, seed/preview persistence, stale capabilities, and a real addon item's `ElectricEnchantable` contract.
+
+## Electric fisher backend
+
+- Registered `electric_fisher` with horizontal `facing` and `lit`. No inventory/menu on the controller, matching the source; output goes into an inventory with more than twenty slots directly above it.
+- Structure: controller centered in a 5×5 top plane; inner eight blocks are planks, outer sixteen logs. Below: five to ten waterlogged chain blocks in the center and a complete 5×5 source-water/waterlogged prism at every chain depth. Source checks do not require a particular chain axis.
+- All twenty-four wood blocks at controller height are real EU input ports. `EnergyPortOwner` / `EuNetwork.registerPorts` implement mechanics and server-side API lookup; cable-arm visuals for these plain wood blocks remain a graphics concern. Ports are reconstructed after reload and rejected immediately when a remote structure block breaks.
+- API exposes formed state, chain length/luck, progress and thirty-two loot rolls per cycle. `lit` indicates a working powered tick. Each cycle is 300 ticks at 150 EU/t, with source Luck of the Sea III tool context and depth-based luck.
+- Real-server tests compare every actual output item/component with the exact thirty-two seeded loot-table rolls, including a mid-cycle reload, and exercise EU input through plain wood, invalid containers, starvation and broken-port revocation.

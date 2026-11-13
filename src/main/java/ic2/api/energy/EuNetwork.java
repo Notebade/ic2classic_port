@@ -20,4 +20,10 @@ public final class EuNetwork {
         return packet == 0 || faces.isEmpty() || !level.hasChunkAt(source) ? 0
             : EnergyNetwork.send(level, source, packet, faces::contains, sourceStorageOutput);
     }
+    /** Atomically replaces this loaded controller's plain-block EU ports. Never loads chunks. */
+    public static boolean registerPorts(ServerLevel level, BlockPos owner, java.util.Collection<BlockPos> ports) {
+        return ic2.api.internal.EnergyPortRegistry.register(level, owner, ports);
+    }
+    public static void unregisterPorts(ServerLevel level, BlockPos owner) { ic2.api.internal.EnergyPortRegistry.unregister(level, owner); }
+    public static java.util.Optional<BlockPos> portOwner(ServerLevel level, BlockPos port) { return ic2.api.internal.EnergyPortRegistry.owner(level, port); }
 }

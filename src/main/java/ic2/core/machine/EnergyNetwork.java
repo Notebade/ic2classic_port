@@ -39,7 +39,10 @@ public final class EnergyNetwork {
                     SectionPos.blockToSectionCoord(next.getX()), SectionPos.blockToSectionCoord(next.getZ()))) {
                     continue;
                 }
-                if (!next.equals(source) && level.getBlockEntity(next) instanceof ic2.api.energy.EnergySink machine
+                var entity = level.getBlockEntity(next);
+                var machine = entity instanceof ic2.api.energy.EnergySink sink ? sink : level instanceof net.minecraft.server.level.ServerLevel server
+                    ? ic2.api.internal.EnergyPortRegistry.resolve(server, next).orElse(null) : null;
+                if (!next.equals(source) && machine != null
                     && machine.canReceiveEnergy(direction.getOpposite(), sourceStorageOutput, available)) {
                     int accepted = Math.clamp(machine.receiveEnergy(remaining - loss), 0, remaining - loss);
                     if (accepted > 0) {

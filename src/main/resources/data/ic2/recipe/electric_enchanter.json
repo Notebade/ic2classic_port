@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "id": "ic2:electric_enchanter"
+  },
+  "key": {
+    "Y": {
+      "item": "ic2:complex_circuit"
+    },
+    "X": {
+      "item": "minecraft:anvil"
+    },
+    "C": {
+      "item": "minecraft:enchanting_table"
+    },
+    "B": {
+      "item": "ic2:mfsu"
+    },
+    "V": {
+      "item": "minecraft:bookshelf"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    " X ",
+    "YCY",
+    "VBV"
+  ]
+}

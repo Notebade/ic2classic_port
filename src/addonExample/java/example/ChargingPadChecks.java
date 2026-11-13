@@ -37,6 +37,10 @@ final class ChargingPadChecks {
             level.setBlockAndUpdate(pos, Ic2Api.block(id("chargepad_hv")).orElseThrow().defaultBlockState());
             level.getBlockEntity(pos).loadWithComponents(saved, level.registryAccess());
             require(Ic2Api.machineInfo(level, pos).orElseThrow().energyCapacity() == 2040000, "upgrades survive reload");
+            var restoredMenu = ((MenuProvider) level.getBlockEntity(pos)).createMenu(0, player.getInventory(), player);
+            restoredMenu.slots.get(3).setByPlayer(ItemStack.EMPTY);
+            require(restoredMenu.slots.get(3).safeInsert(new ItemStack(ExampleAddon.PASSIVE_TEST_UPGRADE.get(), 2)).isEmpty(), "addon passive upgrade enters the real pad slot");
+            require(Ic2Api.machineInfo(level, pos).orElseThrow().energyCapacity() == 2010000, "addon MachineUpgrade modifiers affect actual capacity");
             level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             level.setBlockAndUpdate(pos, Ic2Api.block(id("chargepad_fission")).orElseThrow().defaultBlockState());
             entity = level.getBlockEntity(pos);

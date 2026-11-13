@@ -47,6 +47,8 @@ public final class Ic2Api {
         if (!level.hasChunkAt(pos)) return Optional.empty();
         var entity = level.getBlockEntity(pos);
         if (entity instanceof MachineSnapshot.Provider provider) return Optional.of(provider.machineInfo());
-        return entity instanceof MachineSnapshot.Access access ? access.resolveMachineInfo() : Optional.empty();
+        if (entity instanceof MachineSnapshot.Access access) return access.resolveMachineInfo();
+        return ic2.api.internal.EnergyPortRegistry.resolve(level, pos).filter(owner -> owner instanceof MachineSnapshot.Provider)
+            .map(owner -> ((MachineSnapshot.Provider) owner).machineInfo());
     }
 }

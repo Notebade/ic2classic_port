@@ -205,6 +205,7 @@ final class ColossalEntity extends BlockEntity implements MenuProvider, EnergySi
         values.put("formed", live() ? 1L : 0L); values.put("structure_edge", (long) edge); values.put("recipe_lanes", (long) lanes());
         values.put("water_mb", (long) water.getFluidAmount()); values.put("steam_mb", (long) steam.getFluidAmount());
         values.put("progress_target", 6000L); values.put("processing", processing ? 1L : 0L);
+        values.put("input_packet_eu", (long) modifiers().packet()); values.put("cost_eu_per_lane", 30L);
         for (int lane = 0; lane < 8; lane++) values.put("lane_" + lane + "_progress", (long) progress[lane]);
         return MachineTelemetry.snapshot(this, energy, modifiers().capacity(), MachineSnapshot.EnergyUnit.EU, values);
     }
