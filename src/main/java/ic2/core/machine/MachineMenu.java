@@ -28,6 +28,12 @@ final class MachineMenu extends AbstractContainerMenu {
     private final ContainerData data;
     private final MachineKind storageKind;
     private final int machineSlots;
+    // Presentation only: the server continues to own every slot and its contents.
+    private boolean machineSlotsVisible = true;
+
+    void showMachineSlots(boolean visible) {
+        machineSlotsVisible = visible;
+    }
 
     MachineMenu(int id, Inventory playerInventory) {
         this(id, playerInventory, Machines.MENU.get());
@@ -184,16 +190,27 @@ final class MachineMenu extends AbstractContainerMenu {
         }
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-                addSlot(new Slot(playerInventory, column + row * 9 + 9, 8 + column * 18, 83 + row * 18));
+                addSlot(new Slot(playerInventory, column + row * 9 + 9,
+                    (isAlloySmelter() ? 48 : 8) + column * 18, (isAlloySmelter() ? 164 : 83) + row * 18));
             }
         }
         for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(playerInventory, column, 8 + column * 18, 141));
+            addSlot(new Slot(playerInventory, column, (isAlloySmelter() ? 48 : 8) + column * 18, isAlloySmelter() ? 220 : 141));
         }
     }
 
     private void addMachineSlot(ItemStackHandler inventory, int index, int x, Runnable changed) {
-        addSlot(new SlotItemHandler(inventory, index, x, 40) {
+        int slotX = isAlloySmelter() ? switch (index) {
+            case MachineEntity.INPUT_SLOT -> 100;
+            case MachineEntity.SECOND_INPUT_SLOT -> 136;
+            default -> 204;
+        } : x;
+        addSlot(new SlotItemHandler(inventory, index, slotX, isAlloySmelter() ? 65 : 40) {
+            @Override
+            public boolean isActive() {
+                return machineSlotsVisible;
+            }
+
             @Override
             public boolean mayPlace(ItemStack stack) {
                 if (isStorage()) {

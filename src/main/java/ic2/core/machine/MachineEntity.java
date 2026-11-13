@@ -1274,6 +1274,10 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
     }
 
     private int menuFluid() {
+        // The alloy smelter has no fluid tank; reuse its existing synchronized status field.
+        if (kind == MachineKind.ALLOY_SMELTER) {
+            return getBlockState().getValue(BlockStateProperties.LIT) ? 1 : 0;
+        }
         if (steamTurbine != null) {
             return steamTurbine.getFluidAmount();
         }
