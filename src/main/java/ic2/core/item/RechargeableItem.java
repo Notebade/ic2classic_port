@@ -42,11 +42,16 @@ public class RechargeableItem extends Item {
         return transferRate;
     }
 
+    protected final int minimumPacket() {
+        return minimumPacket;
+    }
+
     public int charge(ItemStack stack) {
         return Mth.clamp(stack.getOrDefault(IC2.BATTERY_CHARGE.get(), 0), 0, capacity);
     }
 
     public void setCharge(ItemStack stack, int charge) {
+        charge = Mth.clamp(charge, 0, capacity);
         if (charge == 0) {
             stack.remove(IC2.BATTERY_CHARGE.get());
         } else {

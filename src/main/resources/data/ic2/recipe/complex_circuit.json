@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "CVC",
+    "XYX"
+  ],
+  "key": {
+    "V": {
+      "item": "ic2:advanced_circuit"
+    },
+    "X": {
+      "item": "ic2:gold_double_insulated_cable_item"
+    },
+    "C": {
+      "item": "ic2:magnet"
+    },
+    "Y": {
+      "item": "ic2:pulsating_quartz"
+    }
+  },
+  "result": {
+    "id": "ic2:complex_circuit",
+    "count": 1
+  }
+}

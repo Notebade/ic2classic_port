@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XVX",
+    "YCY",
+    "XBX"
+  ],
+  "key": {
+    "B": {
+      "item": "ic2:stabilized_machine_block"
+    },
+    "V": {
+      "item": "ic2:advanced_circuit"
+    },
+    "X": {
+      "item": "ic2:iron_triple_insulated_cable_item"
+    },
+    "C": {
+      "item": "ic2:machine_block"
+    },
+    "Y": {
+      "item": "ic2:glowtronic_crystal"
+    }
+  },
+  "result": {
+    "id": "ic2:esu",
+    "count": 1
+  }
+}

@@ -41,6 +41,12 @@ try {
         $path = Join-Path $resources $destination
         New-Item -ItemType Directory -Path (Split-Path -Parent $path) -Force | Out-Null
         [IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $path, $true)
+        if ($entry.FullName.EndsWith('.png')) {
+            $animation = $archive.GetEntry("$($entry.FullName).mcmeta")
+            if ($null -ne $animation -and !(Test-Path -LiteralPath "$path.mcmeta")) {
+                [IO.Compression.ZipFileExtensions]::ExtractToFile($animation, "$path.mcmeta", $true)
+            }
+        }
     }
 } finally {
     $archive.Dispose()

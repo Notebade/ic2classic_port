@@ -98,6 +98,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private final ItemStackHandler inventory;
     private final IItemHandler automationInput;
     private final IItemHandler automationOutput;
+    private int storageRedstoneMode;
+    private boolean storageSignal;
+    private int storageComparator;
     private final IItemHandler batteryChargeSlot;
     private final IItemHandler batteryDischargeSlot;
 
@@ -239,6 +242,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case BATBOX -> Machines.BATBOX_ENTITY.get();
             case MFE -> Machines.MFE_ENTITY.get();
             case MFSU -> Machines.MFSU_ENTITY.get();
+            case ESU -> Machines.ESU_ENTITY.get();
+            case ISU -> Machines.ISU_ENTITY.get();
+            case PESU -> Machines.PESU_ENTITY.get();
             case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_ENTITY.get();
             case EXTRACTOR -> Machines.EXTRACTOR_ENTITY.get();
             case RARE_EARTH_EXTRACTOR -> Machines.RARE_EARTH_ENTITY.get();
@@ -272,7 +278,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case ALLOY_SMELTER, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER, SAWMILL -> setActive(tickProcessor());
             case RARE_EARTH_EXTRACTOR -> setActive(tickRareEarth());
             case ELECTROLYZER -> setActive(tickElectrolyzer());
-            case BATBOX, MFE, MFSU -> tickStorage();
+            case BATBOX, MFE, MFSU, ESU, ISU, PESU -> tickStorage();
         }
     }
 
@@ -696,8 +702,17 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
     private void tickStorage() {
         transferBattery(INPUT_SLOT, true);
         transferBattery(OUTPUT_SLOT, false);
-        if (energy >= kind.storageOutput) {
+        if (StorageControl.allowsOutput(storageRedstoneMode, energy, kind.capacity, kind.storageOutput,
+                level.hasNeighborSignal(worldPosition))) {
             sendEnergy(kind.storageOutput, outputSide()::equals);
+        }
+        boolean signal = storageSignal();
+        int comparator = storageComparator();
+        if (signal != storageSignal || comparator != storageComparator) {
+            storageSignal = signal;
+            storageComparator = comparator;
+            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+            level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
         }
     }
 
@@ -805,7 +820,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case PUMP -> stack.is(Items.BUCKET) || stack.is(IC2.CELL_EMPTY.get());
             case RECYCLER -> RecyclingRecipes.find(stack) != null;
             case MASS_FABRICATOR -> MassFabrication.amplifierValue(stack) > 0;
-            case BATBOX, MFE, MFSU, SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, STEAM_TURBINE, REACTOR_PLANNER,
+            case BATBOX, MFE, MFSU, ESU, ISU, PESU, SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, STEAM_TURBINE, REACTOR_PLANNER,
                 URANIUM_ENRICHER, CANNER, VACUUM_CANNER, WAVE_GENERATOR, OCEAN_GENERATOR,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> false;
         };
@@ -841,7 +856,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             }
             case GENERATOR, GEOTHERMAL, THERMAL_GENERATOR, WIND_TURBINE, WAVE_GENERATOR, OCEAN_GENERATOR,
                 WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL,
-                BATBOX, MFE, MFSU, SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, STEAM_TURBINE, REACTOR_PLANNER,
+                BATBOX, MFE, MFSU, ESU, ISU, PESU, SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, STEAM_TURBINE, REACTOR_PLANNER,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER,
                 PUMP, MASS_FABRICATOR, RARE_EARTH_EXTRACTOR, ELECTROLYZER, URANIUM_ENRICHER, CANNER, VACUUM_CANNER -> null;
         };
@@ -1002,6 +1017,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case BATBOX -> 1;
             case MFE -> 2;
             case MFSU -> 3;
+            case ESU -> 4;
+            case ISU -> 5;
+            case PESU -> 6;
             default -> throw new IllegalStateException("Expected an EU storage block");
         };
         inventory.extractItem(OUTPUT_SLOT, 1, false);
@@ -1082,7 +1100,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             case MASS_FABRICATOR -> !level.hasNeighborSignal(worldPosition);
             case LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> canReceiveTransformerEnergy(incomingSide, packetSize);
             // Only charge up the storage tiers, so a cable loop cannot feed energy back.
-            case BATBOX, MFE, MFSU -> sourceKind.storageOutput < kind.storageOutput && incomingSide != outputSide();
+            case BATBOX, MFE, MFSU, ESU, ISU, PESU -> sourceKind.storageOutput < kind.storageOutput && incomingSide != outputSide();
         };
     }
 
@@ -1100,9 +1118,21 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
         return getBlockState().getValue(BlockStateProperties.FACING);
     }
 
-    Component storageStatus() {
-        return Component.translatable("message.ic2.batbox_status", energy, kind.capacity, kind.storageOutput,
-            Component.translatable("direction.ic2." + outputSide().getName()));
+    void cycleStorageMode() {
+        storageRedstoneMode = (storageRedstoneMode + 1) % StorageControl.MODE_COUNT;
+        setChanged();
+    }
+
+    Component storageModeName() {
+        return Component.translatable("message.ic2.storage_mode." + storageRedstoneMode);
+    }
+
+    boolean storageSignal() {
+        return StorageControl.signal(storageRedstoneMode, energy, kind.capacity, kind.storageOutput);
+    }
+
+    int storageComparator() {
+        return StorageControl.comparator(energy, kind.capacity);
     }
 
     Component transformerStatus() {
@@ -1185,6 +1215,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 case BATBOX -> Machines.BATBOX_MENU.get();
                 case MFE -> Machines.MFE_MENU.get();
                 case MFSU -> Machines.MFSU_MENU.get();
+                case ESU -> Machines.ESU_MENU.get();
+                case ISU -> Machines.ISU_MENU.get();
+                case PESU -> Machines.PESU_MENU.get();
                 case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_MENU.get();
                 case URANIUM_ENRICHER -> Machines.URANIUM_ENRICHER_MENU.get();
                 case STEAM_TURBINE -> Machines.STEAM_TURBINE_MENU.get();
@@ -1232,7 +1265,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
                 : Math.max(0, thermalHeat) * ThermalProduction.DISPLAY_UNITS_PER_EU / ThermalProduction.HEAT_PER_EU;
             case WATER_MILL, LV_WATER_MILL, MV_WATER_MILL, HV_WATER_MILL -> hasWaterFuel()
                 ? kind.waterMillTier.output() * WaterMillTier.UNITS_PER_EU : Math.max(0, passiveWaterUnits);
-            case BATBOX, MFE, MFSU -> outputSide().ordinal();
+            case BATBOX, MFE, MFSU, ESU, ISU, PESU -> outputSide().ordinal();
             case SOLAR_PANEL, NUCLEAR_REACTOR, STEAM_REACTOR, REACTOR_PLANNER, GEOTHERMAL, WAVE_GENERATOR, OCEAN_GENERATOR, ELECTROLYZER,
                 LV_TRANSFORMER, MV_TRANSFORMER, HV_TRANSFORMER, EV_TRANSFORMER, IV_TRANSFORMER -> 0;
             case MASS_FABRICATOR -> amplifier;
@@ -1257,6 +1290,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             return;
         }
         tag.putInt("energy", energy);
+        if (kind.isStorage()) {
+            tag.putInt("storage_redstone_mode", storageRedstoneMode);
+        }
         tag.put("inventory", inventory.serializeNBT(registries));
         if (pumpTank != null) {
             tag.put("tank", pumpTank.writeToNBT(registries, new CompoundTag()));
@@ -1311,6 +1347,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider {
             return;
         }
         energy = Mth.clamp(tag.getInt("energy"), 0, kind.capacity);
+        if (kind.isStorage()) {
+            storageRedstoneMode = Mth.clamp(tag.getInt("storage_redstone_mode"), 0, StorageControl.MODE_COUNT - 1);
+        }
         if (pumpTank != null) {
             pumpTank.readFromNBT(registries, tag.getCompound("tank"));
         }

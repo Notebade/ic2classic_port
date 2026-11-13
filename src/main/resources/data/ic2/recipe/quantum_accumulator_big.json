@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "X": {
+      "item": "ic2:plate_iridium"
+    },
+    "C": {
+      "item": "ic2:quantum_accumulator"
+    },
+    "Y": {
+      "item": "ic2:carbon_plate"
+    }
+  },
+  "result": {
+    "id": "ic2:quantum_accumulator_big",
+    "count": 1
+  }
+}

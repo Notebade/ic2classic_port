@@ -56,6 +56,12 @@ public final class Machines {
         MENUS.register("mfe", () -> new MenuType<>(MachineMenu::mfe, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> MFSU_MENU =
         MENUS.register("mfsu", () -> new MenuType<>(MachineMenu::mfsu, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<MachineMenu>> ESU_MENU =
+        MENUS.register("esu", () -> new MenuType<>(MachineMenu::esu, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<MachineMenu>> ISU_MENU =
+        MENUS.register("isu", () -> new MenuType<>(MachineMenu::isu, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<MachineMenu>> PESU_MENU =
+        MENUS.register("pesu", () -> new MenuType<>(MachineMenu::pesu, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> ALLOY_SMELTER_MENU =
         MENUS.register("alloy_smelter", () -> new MenuType<>(MachineMenu::alloySmelter, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> URANIUM_ENRICHER_MENU =
@@ -203,6 +209,12 @@ public final class Machines {
         BLOCKS.registerBlock("mfe", properties -> new EnergyStorageBlock(properties, MachineKind.MFE), machineProperties());
     static final DeferredBlock<EnergyStorageBlock> MFSU =
         BLOCKS.registerBlock("mfsu", properties -> new EnergyStorageBlock(properties, MachineKind.MFSU), machineProperties());
+    static final DeferredBlock<EnergyStorageBlock> ESU =
+        BLOCKS.registerBlock("esu", properties -> new EnergyStorageBlock(properties, MachineKind.ESU), machineProperties());
+    static final DeferredBlock<EnergyStorageBlock> ISU =
+        BLOCKS.registerBlock("isu", properties -> new EnergyStorageBlock(properties, MachineKind.ISU), machineProperties());
+    static final DeferredBlock<EnergyStorageBlock> PESU =
+        BLOCKS.registerBlock("pesu", properties -> new EnergyStorageBlock(properties, MachineKind.PESU), machineProperties());
     static final DeferredBlock<ActiveMachineBlock> ALLOY_SMELTER =
         BLOCKS.registerBlock("alloy_smelter", properties -> new ActiveMachineBlock(properties, MachineKind.ALLOY_SMELTER),
             machineProperties());
@@ -323,6 +335,12 @@ public final class Machines {
         ENTITIES.register("mfe", () -> entityType(MFE.get()));
     static final Supplier<BlockEntityType<MachineEntity>> MFSU_ENTITY =
         ENTITIES.register("mfsu", () -> entityType(MFSU.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> ESU_ENTITY =
+        ENTITIES.register("esu", () -> entityType(ESU.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> ISU_ENTITY =
+        ENTITIES.register("isu", () -> entityType(ISU.get()));
+    static final Supplier<BlockEntityType<MachineEntity>> PESU_ENTITY =
+        ENTITIES.register("pesu", () -> entityType(PESU.get()));
     static final Supplier<BlockEntityType<MachineEntity>> ALLOY_SMELTER_ENTITY =
         ENTITIES.register("alloy_smelter", () -> entityType(ALLOY_SMELTER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> RARE_EARTH_ENTITY =
@@ -395,6 +413,9 @@ public final class Machines {
         items.registerSimpleBlockItem(BATBOX);
         items.registerSimpleBlockItem(MFE);
         items.registerSimpleBlockItem(MFSU);
+        items.registerSimpleBlockItem(ESU);
+        items.registerSimpleBlockItem(ISU);
+        items.registerSimpleBlockItem(PESU);
         items.registerSimpleBlockItem(ALLOY_SMELTER);
         items.registerSimpleBlockItem(RARE_EARTH_EXTRACTOR);
         items.registerSimpleBlockItem(URANIUM_ENRICHER);
@@ -504,6 +525,9 @@ public final class Machines {
                 event.accept(BATBOX.get());
                 event.accept(MFE.get());
                 event.accept(MFSU.get());
+                event.accept(ESU.get());
+                event.accept(ISU.get());
+                event.accept(PESU.get());
                 event.accept(ALLOY_SMELTER.get());
                 event.accept(RARE_EARTH_EXTRACTOR.get());
                 event.accept(URANIUM_ENRICHER.get());
@@ -542,6 +566,9 @@ public final class Machines {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BATBOX_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MFE_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MFSU_ENTITY.get(), MachineEntity::automation);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ESU_ENTITY.get(), MachineEntity::automation);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ISU_ENTITY.get(), MachineEntity::automation);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PESU_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ALLOY_SMELTER_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, RARE_EARTH_ENTITY.get(), MachineEntity::automation);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, URANIUM_ENRICHER_ENTITY.get(), MachineEntity::automation);

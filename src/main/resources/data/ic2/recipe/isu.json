@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "LCL",
+    "LML",
+    "LAL"
+  ],
+  "key": {
+    "L": {
+      "item": "ic2:uesc"
+    },
+    "M": {
+      "item": "ic2:esu"
+    },
+    "A": {
+      "item": "ic2:stabilized_machine_block"
+    },
+    "C": {
+      "item": "ic2:plate_iridium"
+    }
+  },
+  "result": {
+    "id": "ic2:isu",
+    "count": 1
+  }
+}

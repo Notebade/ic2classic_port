@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "CVC",
+    "XYX"
+  ],
+  "key": {
+    "V": {
+      "item": "ic2:glowtronic_crystal"
+    },
+    "X": {
+      "item": "ic2:carbon_plate"
+    },
+    "C": {
+      "item": "ic2:plate_iridium"
+    },
+    "Y": {
+      "item": "ic2:plate_advanced_alloy"
+    }
+  },
+  "result": {
+    "id": "ic2:uesc",
+    "count": 1
+  }
+}

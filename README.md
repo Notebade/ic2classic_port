@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.56.1-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.57.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.56.1` |
+| Project version | `0.57.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -374,3 +374,23 @@ Crafting for other machines, full machine recipe lists, advanced network tiers, 
 The original mod is distributed under **All Rights Reserved**. This repository contains the prototype implementation, models referencing locally imported textures, and build configuration. [Original mod license](https://www.curseforge.com/minecraft/mc-mods/ic2-classic/license).
 
 IV Transformer supports 8,192/32,768 EU packets and a 65,536 EU buffer. Redstone switches step-up mode. HV solar crafting uses eight MV panels and an IV Transformer; the IV survival recipe awaits its original late-game materials.
+
+### Extended EU storage and portable batteries (0.57.0)
+
+| Storage | Capacity (EU) | Output packet (EU) |
+|---|---:|---:|
+| ESU | 75,000,000 | 2,048 |
+| ISU | 500,000,000 | 8,192 |
+| PESU | 1,000,000,000 | 32,768 |
+
+All six storage tiers support the existing two-slot charging interface, top/bottom hopper automation, directional EU output, and persistent charge. Shift-right-click with an empty hand cycles eight original redstone modes: no output, full, partially filled, at least half, at most half, below one packet, stop EU output while powered, and output only when full while powered. Comparators report charge independently of the selected mode.
+
+Glowtronic Crystals store 7,500,000 EU, UESCs 17,500,000 EU, PESDs 50,000,000 EU, Quantum Accumulators 900,000 EU, and Large Quantum Accumulators 5,400,000 EU. Hold right-click with any battery to transfer energy to compatible hotbar items, then the offhand; empty batteries and batteries with no eligible target stop using automatically. Tools cannot supply energy.
+
+The Alloy Furnace makes Pulsating Quartz from two redstone dust and one quartz. Pulsating Quartz and magnets unlock the original Complex Circuit and Glowtronic Crystal recipes, followed by ESU and ISU crafting. Both Quantum Accumulator recipes are available. PESD and PESU are currently available through Creative; their survival recipes await the plasma and reinforced/iridium stone branches. Original battery armor modules and storage slot expansions remain unported.
+
+Run the standalone storage boundary tests without building a mod JAR:
+
+```powershell
+.\scripts\Test-StorageControl.ps1
+```

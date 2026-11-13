@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/battery/glowtronic_crystal_0"
+  },
+  "parent": "minecraft:item/generated"
+}

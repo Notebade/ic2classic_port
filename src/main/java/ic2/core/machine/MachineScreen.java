@@ -39,6 +39,9 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         event.register(Machines.BATBOX_MENU.get(), MachineScreen::new);
         event.register(Machines.MFE_MENU.get(), MachineScreen::new);
         event.register(Machines.MFSU_MENU.get(), MachineScreen::new);
+        event.register(Machines.ESU_MENU.get(), MachineScreen::new);
+        event.register(Machines.ISU_MENU.get(), MachineScreen::new);
+        event.register(Machines.PESU_MENU.get(), MachineScreen::new);
         event.register(Machines.ALLOY_SMELTER_MENU.get(), MachineScreen::new);
         event.register(Machines.RARE_EARTH_MENU.get(), MachineScreen::new);
         event.register(Machines.URANIUM_ENRICHER_MENU.get(), MachineScreen::new);

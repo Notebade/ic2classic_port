@@ -228,3 +228,13 @@ src/main/resources/assets/ic2/textures/item/cable/comparing.png
 # Imported original HV solar textures
 src/main/resources/assets/ic2/textures/block/electric/generator/hv_solar_panel/
 src/main/resources/assets/ic2/textures/block/electric/transformer/iv/
+src/main/resources/assets/ic2/textures/block/electric/energy_storage/esu/
+src/main/resources/assets/ic2/textures/block/electric/energy_storage/isu/
+src/main/resources/assets/ic2/textures/block/electric/energy_storage/pesu/
+src/main/resources/assets/ic2/textures/item/battery/glowtronic_crystal_*.png
+src/main/resources/assets/ic2/textures/item/battery/uesc_*.png
+src/main/resources/assets/ic2/textures/item/battery/pesd.png
+src/main/resources/assets/ic2/textures/item/battery/quantum_accumulator.png
+src/main/resources/assets/ic2/textures/item/battery/big_quantum_accumulator.png
+src/main/resources/assets/ic2/textures/item/misc/complex_circuit.png
+src/main/resources/assets/ic2/textures/item/misc/pulsating_quartz.png*

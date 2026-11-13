@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "CVC",
+    "CBC"
+  ],
+  "key": {
+    "B": {
+      "item": "ic2:plate_iridium"
+    },
+    "V": {
+      "item": "ic2:lapatron_crystal"
+    },
+    "X": {
+      "item": "ic2:carbon_plate"
+    },
+    "C": {
+      "item": "ic2:rubber"
+    },
+    "Y": {
+      "item": "ic2:glassfiber_cable_item"
+    }
+  },
+  "result": {
+    "id": "ic2:quantum_accumulator",
+    "count": 1
+  }
+}

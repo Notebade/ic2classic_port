@@ -10,6 +10,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 final class AlloyRecipes {
     private static final List<Recipe> RECIPES = List.of(
+        new Recipe(Ingredient.of(Items.REDSTONE), 2, Ingredient.of(Items.QUARTZ), IC2.PULSATING_QUARTZ.get(), 1),
         new Recipe(Ingredient.of(Items.COPPER_INGOT), 3, Ingredient.of(IC2.TIN_INGOT.get()), IC2.BRONZE_INGOT.get(), 4),
         new Recipe(Ingredient.of(IC2.COPPER_DUST.get()), 3, Ingredient.of(IC2.TIN_DUST.get()), IC2.BRONZE_INGOT.get(), 4),
         new Recipe(Ingredient.of(IC2.ALUMINIUM_DUST.get()), 1, Ingredient.of(ItemTags.SAND), IC2.ALUMINIUM_INGOT.get(), 1)

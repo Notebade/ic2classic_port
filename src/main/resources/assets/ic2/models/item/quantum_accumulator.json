@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/battery/quantum_accumulator"
+  },
+  "parent": "minecraft:item/generated"
+}

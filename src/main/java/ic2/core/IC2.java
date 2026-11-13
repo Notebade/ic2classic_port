@@ -3,6 +3,7 @@ package ic2.core;
 import com.mojang.serialization.Codec;
 import ic2.core.item.FluidCellItem;
 import ic2.core.item.RechargeableItem;
+import ic2.core.item.PortableBatteryItem;
 import ic2.core.item.ReactorReflectorItem;
 import ic2.core.item.ScrapBoxItem;
 import ic2.core.item.UraniumFuelRod;
@@ -44,16 +45,22 @@ public final class IC2 {
         DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BATTERY_CHARGE =
         COMPONENTS.registerComponentType("battery_charge", builder -> builder
-            .persistent(Codec.intRange(0, LAPOTRON_CAPACITY)));
-    public static final DeferredItem<RechargeableItem> RE_BATTERY =
-        ITEMS.registerItem("re_battery", properties -> new RechargeableItem(properties, 10_000, 100, 32),
+            .persistent(Codec.intRange(0, 50_000_000)));
+    public static final DeferredItem<RechargeableItem> RE_BATTERY = rechargeable("re_battery", 10_000, 100, 32);
+    public static final DeferredItem<RechargeableItem> ENERGY_CRYSTAL = rechargeable("energy_crystal", 100_000, 250, 128);
+    public static final DeferredItem<RechargeableItem> LAPOTRON_CRYSTAL = rechargeable("lapatron_crystal", LAPOTRON_CAPACITY, 600, 512);
+    public static final DeferredItem<RechargeableItem> GLOWTRONIC_CRYSTAL = rechargeable("glowtronic_crystal", 7_500_000, 2500, 512);
+    public static final DeferredItem<RechargeableItem> UESC = rechargeable("uesc", 17_500_000, 9500, 2048);
+    public static final DeferredItem<RechargeableItem> PESD = rechargeable("pesd", 50_000_000, 25_000, 2048);
+    public static final DeferredItem<RechargeableItem> QUANTUM_ACCUMULATOR = rechargeable("quantum_accumulator", 900_000, 1000, 32);
+    public static final DeferredItem<RechargeableItem> BIG_QUANTUM_ACCUMULATOR = rechargeable("quantum_accumulator_big", 5_400_000, 6000, 32);
+    public static final DeferredItem<Item> PULSATING_QUARTZ = ITEMS.registerSimpleItem("pulsating_quartz");
+    public static final DeferredItem<Item> COMPLEX_CIRCUIT = ITEMS.registerSimpleItem("complex_circuit");
+
+    private static DeferredItem<RechargeableItem> rechargeable(String name, int capacity, int transfer, int packet) {
+        return ITEMS.registerItem(name, properties -> new PortableBatteryItem(properties, capacity, transfer, packet),
             new Item.Properties().stacksTo(1));
-    public static final DeferredItem<RechargeableItem> ENERGY_CRYSTAL =
-        ITEMS.registerItem("energy_crystal", properties -> new RechargeableItem(properties, 100_000, 250, 128),
-            new Item.Properties().stacksTo(1));
-    public static final DeferredItem<RechargeableItem> LAPOTRON_CRYSTAL =
-        ITEMS.registerItem("lapatron_crystal", properties -> new RechargeableItem(properties, LAPOTRON_CAPACITY, 600, 512),
-            new Item.Properties().stacksTo(1));
+    }
     public static final DeferredItem<Item> COPPER_DUST = ITEMS.registerSimpleItem("dust_copper");
     public static final DeferredItem<Item> RUBBER = ITEMS.registerSimpleItem("rubber");
     public static final DeferredItem<Item> STICKY_RESIN = ITEMS.registerSimpleItem("sticky_resin");

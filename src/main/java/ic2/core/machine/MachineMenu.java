@@ -44,6 +44,15 @@ final class MachineMenu extends AbstractContainerMenu {
     static MachineMenu mfsu(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.MFSU_MENU.get());
     }
+    static MachineMenu esu(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.ESU_MENU.get());
+    }
+    static MachineMenu isu(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.ISU_MENU.get());
+    }
+    static MachineMenu pesu(int id, Inventory playerInventory) {
+        return new MachineMenu(id, playerInventory, Machines.PESU_MENU.get());
+    }
 
     static MachineMenu fabricator(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.FABRICATOR_MENU.get());
@@ -141,6 +150,12 @@ final class MachineMenu extends AbstractContainerMenu {
             storageKind = MachineKind.MFE;
         } else if (type == Machines.MFSU_MENU.get()) {
             storageKind = MachineKind.MFSU;
+        } else if (type == Machines.ESU_MENU.get()) {
+            storageKind = MachineKind.ESU;
+        } else if (type == Machines.ISU_MENU.get()) {
+            storageKind = MachineKind.ISU;
+        } else if (type == Machines.PESU_MENU.get()) {
+            storageKind = MachineKind.PESU;
         } else {
             storageKind = null;
         }
