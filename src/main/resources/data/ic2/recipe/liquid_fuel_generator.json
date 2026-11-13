@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "V": {
+      "item": "ic2:generator"
+    },
+    "Y": {
+      "tag": "c:glass_blocks"
+    },
+    "C": {
+      "item": "ic2:turbine_blade"
+    },
+    "X": {
+      "item": "ic2:ingot_silver"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "XYX",
+    "YCY",
+    "XVX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:liquid_fuel_generator"
+  }
+}

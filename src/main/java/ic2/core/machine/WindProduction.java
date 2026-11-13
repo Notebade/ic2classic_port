@@ -20,7 +20,7 @@ final class WindProduction {
         return (int) (OUTPUT_LIMIT * windSpeed(level) * freeAir / FULL_AIR_SPACE);
     }
 
-    private static double windSpeed(ServerLevel level) {
+    static double windSpeed(ServerLevel level) {
         long time = level.getGameTime();
         long period = Math.floorDiv(time, WIND_PERIOD);
         long seed = level.getSeed() ^ level.dimension().location().hashCode();

@@ -33,6 +33,8 @@ public final class PowerMachines {
     }
     static final DeferredBlock<Block> REINFORCED_STONE = BLOCKS.registerSimpleBlock("reinforced_stone", properties().strength(80, 1800));
     static final DeferredBlock<Block> IRIDIUM_STONE = BLOCKS.registerSimpleBlock("iridium_stone", properties().strength(100, 3000));
+    static final DeferredBlock<net.minecraft.world.level.block.IronBarsBlock> IRON_FENCE = BLOCKS.registerBlock("iron_fence",
+        net.minecraft.world.level.block.IronBarsBlock::new, properties().noOcclusion());
     static final DeferredBlock<PowerPartBlock> FUSION_VALVE = part("fusion_reactor_valve");
     static final DeferredBlock<PowerPartBlock> TUNNEL_CASING = part("steam_tunnel_structure");
     static final DeferredBlock<PowerPartBlock> TUNNEL_VALVE = part("steam_tunnel_valve");
@@ -63,7 +65,7 @@ public final class PowerMachines {
     public static void register(IEventBus bus, DeferredRegister.Items items) {
         BLOCKS.register(bus); ENTITIES.register(bus); MENUS.register(bus);
         MACHINES.values().forEach(items::registerSimpleBlockItem);
-        for (var block : new DeferredBlock<?>[]{REINFORCED_STONE, IRIDIUM_STONE, FUSION_VALVE, TUNNEL_CASING, TUNNEL_VALVE, BOILER_CASING, MACHINE_TANK, PERSONAL_TANK}) items.registerSimpleBlockItem(block);
+        for (var block : new DeferredBlock<?>[]{REINFORCED_STONE, IRIDIUM_STONE, FUSION_VALVE, TUNNEL_CASING, TUNNEL_VALVE, BOILER_CASING, MACHINE_TANK, PERSONAL_TANK, IRON_FENCE}) items.registerSimpleBlockItem(block);
         items.registerSimpleBlockItem("super_cable_item", SUPER_CABLE);
         items.registerSimpleBlockItem("plasma_cable_item", PLASMA_CABLE);
         PLASMA_CELL = items.registerSimpleItem("cell_plasma");
@@ -71,6 +73,8 @@ public final class PowerMachines {
         UNCOMPRESSED_SUPER = items.registerSimpleItem("uncompressed_super_cable");
         POLISHED_GOLD = items.registerSimpleItem("ingot_polished_gold");
         BoilerFuel.register(items);
+        WindRotor.register(items);
+        GeneratorFluids.register(bus, items);
         bus.addListener(PowerMachines::capabilities);
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {
@@ -89,7 +93,9 @@ public final class PowerMachines {
         PLASMAFIER("plasmafier", 2048, PlasmaCycle.CAPACITY, 3),
         FUSION("fusion_reactor", 0, 0, 7),
         TUNNEL("steam_tunnel", 0, 10000, 0),
-        BOILER("fuel_boiler", 0, 0, 6);
+        BOILER("fuel_boiler", 0, 0, 6),
+        WINDMILL("windmill", 0, 4000, 1),
+        LIQUID_FUEL("liquid_fuel_generator", 0, 10000, 3);
         final String id;
         final int input, capacity, slots;
         Kind(String id, int input, int capacity, int slots) { this.id = id; this.input = input; this.capacity = capacity; this.slots = slots; }

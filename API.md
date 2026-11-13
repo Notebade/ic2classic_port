@@ -10,8 +10,8 @@
 
 ```groovy
 dependencies {
-    compileOnly files('libs/ic2-classic-re-0.65.0.jar')
-    runtimeOnly files('libs/ic2-classic-re-0.65.0.jar')
+    compileOnly files('libs/ic2-classic-re-0.66.0.jar')
+    runtimeOnly files('libs/ic2-classic-re-0.66.0.jar')
 }
 ```
 
@@ -23,7 +23,7 @@ dependencies {
 [[dependencies.exampleaddon]]
 modId = "ic2"
 type = "required"
-versionRange = "[0.65.0,0.66.0)"
+versionRange = "[0.65.0,0.67.0)"
 ordering = "AFTER"
 side = "BOTH"
 ```
@@ -81,6 +81,9 @@ Ic2Api.machineInfo(level, pos).ifPresent(info -> {
 | `output_eu` | Последний рассчитанный выход ядерного реактора в EU за его цикл. |
 | `output_eu_hundredths` | Выход дополнительного генератора в сотых EU/т. |
 | `fuel_ticks` | Оставшиеся тики горения. |
+| `speed_thousandths` | Скорость ротора мельницы, умноженная на 1000. |
+| `free_air_permille` | Доля доступного воздуха мельницы в тысячных. |
+| `fuel_max_ticks` | Длительность текущей заправки жидкотопливного генератора в тиках. |
 | `fuel_units` | Внутренний запас топлива котла. Это не тики. |
 | `fuel_mb`, `water_mb`, `steam_mb`, `lava_mb`, `plasma_mb` | Объём соответствующего запаса в мВ. `lava_mb` термояда включает резерв 10000 мВ. |
 | `water_units` | Солнечная турбина: внутренние водяные единицы оригинала, две единицы на внешний мВ. |
@@ -207,3 +210,5 @@ var fe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side);
 ```
 
 Скрипт компилирует и упаковывает только временный тестовый аддон. Основной JAR IC2 не собирает. Использует отдельный мир runs/addon-api-check, слушает только 127.0.0.1 на временном порту, после проверок останавливает сервер и удаляет тестовый JAR. Результат — в runs/addon-api-check/logs/latest.log. Клиентские assets при этом не скачиваются. Проверка включается свойством ic2.api.verify; не включайте его с примером аддона в обычном игровом мире.
+
+В 0.66.0 API v1 дополнен данными мельницы и жидкотопливного генератора. У мельницы output_eu_hundredths означает потенциальный выход при текущей скорости, у жидкотопливного генератора — выработку последнего тика (0 при паузе). Скрипт серверной проверки также проверяет новые генераторы, капсулы и сохранение их состояния.

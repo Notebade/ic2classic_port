@@ -31,6 +31,14 @@ final class MachineRecipeViews {
 
     static List<MachineRecipeView> forProcess(Process process, Level level) {
         return switch (process) {
+            case WINDMILL -> registeredItems().filter(stack -> stack.getItem() instanceof WindRotor).map(stack -> {
+                var rotor = ((WindRotor) stack.getItem()).kind;
+                return new MachineRecipeView(List.of(item(stack)), List.of(), note("wind_rotor", rotor.radius, rotor.effectiveness, rotor.durability));
+            }).toList();
+            case LIQUID_FUEL_GENERATOR -> java.util.Arrays.stream(GeneratorFluids.Fuel.values()).flatMap(profile -> Stream.of(
+                new MachineRecipeView(List.of(fluid(profile.fluid.get())), List.of(), note("fuel_output", profile.ticks * profile.output, profile.ticks)),
+                new MachineRecipeView(List.of(item(profile.cell.get())), List.of(item(IC2.CELL_EMPTY.get())),
+                    note("fuel_output", profile.ticks * profile.output, profile.ticks)))).toList();
             case SOLAR_TURBINE -> fluidFuel(Fluids.WATER, note("solar_turbine_output"), note("solar_turbine_fill"));
             case SLAG_GENERATOR -> registeredItems().map(MachineRecipeViews::slagFuel).flatMap(Stream::ofNullable).toList();
             case PRESSURE_ALLOY_FURNACE -> alloy().stream().map(recipe ->

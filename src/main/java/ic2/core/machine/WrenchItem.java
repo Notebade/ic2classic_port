@@ -42,7 +42,8 @@ final class WrenchItem extends Item {
             : net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
         Direction target = selectedFace(context, player.isShiftKeyDown());
         boolean hasFacing = state.hasProperty(facing);
-        if (state.getBlock() instanceof PowerMachineBlock block && block.kind.multiblock() && target.getAxis().isVertical()) return InteractionResult.PASS;
+        if (state.getBlock() instanceof PowerMachineBlock block && (block.kind.multiblock() || block.kind == PowerMachines.Kind.WINDMILL)
+                && target.getAxis().isVertical()) return InteractionResult.PASS;
         if (hasFacing && !facing.getPossibleValues().contains(target)) {
             return InteractionResult.PASS;
         }

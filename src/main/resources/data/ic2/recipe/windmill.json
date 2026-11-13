@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "V": {
+      "item": "ic2:iron_fence"
+    },
+    "Y": {
+      "item": "ic2:transformer_hv"
+    },
+    "B": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "C": {
+      "item": "ic2:wind_turbine"
+    },
+    "X": {
+      "item": "ic2:complex_circuit"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    " X ",
+    "YCV",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:windmill"
+  }
+}

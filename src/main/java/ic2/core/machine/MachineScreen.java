@@ -29,6 +29,14 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             @Override public ResourceLocation getStillTexture() { return texture; }
             @Override public ResourceLocation getFlowingTexture() { return texture; }
         }, SteamFluids.type());
+        for (var fuel : GeneratorFluids.Fuel.values()) {
+            var sprite = ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "block/fluids/" + fuel.texture);
+            event.registerFluidType(new IClientFluidTypeExtensions() {
+                @Override public ResourceLocation getStillTexture() { return sprite; }
+                @Override public ResourceLocation getFlowingTexture() { return sprite; }
+                @Override public int getTintColor() { return fuel.tint; }
+            }, fuel.type.get());
+        }
     }
 
     @SubscribeEvent

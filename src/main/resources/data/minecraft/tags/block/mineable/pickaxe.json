@@ -82,6 +82,9 @@
     "ic2:steam_tunnel",
     "ic2:steam_tunnel_structure",
     "ic2:steam_tunnel_valve",
-    "ic2:super_cable"
+    "ic2:super_cable",
+    "ic2:windmill",
+    "ic2:liquid_fuel_generator",
+    "ic2:iron_fence"
   ]
 }

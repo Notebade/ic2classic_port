@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "X": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "Y": {
+      "item": "ic2:machine_block"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XXX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:iron_rotor"
+  }
+}

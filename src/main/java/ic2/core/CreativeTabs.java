@@ -19,7 +19,7 @@ final class CreativeTabs {
         "wrench", "electric_wrench", "cutter", "tree_tap", "electric_tree_tap", "magnet", "dead_magnet");
     private static final Set<String> GENERATORS = Set.of(
         "generator", "solar_turbine", "slag_generator", "geothermal_generator", "thermal_generator", "wind_turbine",
-        "wave_generator", "ocean_generator", "steam_turbine", "fuel_boiler", "steam_tunnel", "steam_tunnel_structure", "steam_tunnel_valve", "fuel_boiler_structure");
+        "wave_generator", "ocean_generator", "steam_turbine", "fuel_boiler", "steam_tunnel", "steam_tunnel_structure", "steam_tunnel_valve", "fuel_boiler_structure", "windmill", "liquid_fuel_generator");
     private static final Set<String> MACHINES = Set.of(
         "macerator", "stone_macerator", "iron_furnace", "electric_furnace", "electric_blast_furnace",
         "rotary_macerator", "centrifugal_extractor", "singularity_compressor", "electric_smoker", "induction_furnace", "induction_blast_furnace", "induction_smoker", "sawmill", "alloy_smelter", "pressure_alloy_furnace", "extractor", "rare_earth_extractor",
@@ -58,7 +58,7 @@ final class CreativeTabs {
         if (TOOLS.contains(name) || name.startsWith("armor_")) {
             return "tools";
         }
-        if (GENERATORS.contains(name) || name.startsWith("solar_panel") || name.startsWith("water_mill")) {
+        if (GENERATORS.contains(name) || name.endsWith("_rotor") || name.startsWith("solar_panel") || name.startsWith("water_mill")) {
             return "generators";
         }
         if (MACHINES.contains(name)) {

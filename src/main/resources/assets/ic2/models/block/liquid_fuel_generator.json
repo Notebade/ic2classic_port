@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "north": "ic2:block/electric/generator/liquid_fuel/inactive_north",
+    "west": "ic2:block/electric/generator/liquid_fuel/inactive_west",
+    "east": "ic2:block/electric/generator/liquid_fuel/inactive_east",
+    "down": "ic2:block/electric/generator/liquid_fuel/inactive_down",
+    "particle": "ic2:block/electric/generator/liquid_fuel/inactive_north",
+    "up": "ic2:block/electric/generator/liquid_fuel/inactive_up",
+    "south": "ic2:block/electric/generator/liquid_fuel/inactive_south"
+  },
+  "parent": "minecraft:block/cube"
+}

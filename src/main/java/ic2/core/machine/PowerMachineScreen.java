@@ -58,6 +58,17 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
             case FUSION -> { line(graphics, 1, "heat", menu.value(1)); line(graphics, 2, "feed", menu.value(5)); line(graphics, 3, "lava", menu.value(4)); line(graphics, 5, "fusion_slots"); }
             case TUNNEL -> { line(graphics, 1, "steam", menu.value(3)); line(graphics, 2, "water", menu.value(2)); line(graphics, 3, "eu", menu.value(0), menu.value(12)); }
             case BOILER -> { line(graphics, 1, "heat", menu.value(1)); line(graphics, 2, "steam", menu.value(3)); line(graphics, 3, "water", menu.value(2)); line(graphics, 4, "fuel", menu.value(11)); line(graphics, 5, "boiler_slots"); }
+            case WINDMILL -> {
+                line(graphics, 1, "wind_speed", menu.value(13)); line(graphics, 2, "wind_air", menu.value(14) / 10);
+                line(graphics, 3, "generator_output", String.format(java.util.Locale.ROOT, "%.2f", menu.value(15) / 100.0));
+                if (menu.value(16) >= 0) line(graphics, 4, "rotor_life", menu.value(16));
+                line(graphics, 5, "rotor_slot");
+            }
+            case LIQUID_FUEL -> {
+                line(graphics, 1, "liquid_tank", menu.value(14)); line(graphics, 2, "fuel_remaining", menu.value(13));
+                line(graphics, 3, "generator_output", String.format(java.util.Locale.ROOT, "%.2f", menu.value(15) / 100.0));
+                line(graphics, 5, "liquid_slots");
+            }
         }
         graphics.drawString(font, playerInventoryTitle, 8, 122, 0x404040, false);
     }

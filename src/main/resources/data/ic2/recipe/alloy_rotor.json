@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "M": {
+      "item": "ic2:machine_block"
+    },
+    "A": {
+      "item": "ic2:ingot_advanced_alloy"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "AAA",
+    "AMA",
+    "AAA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:mixed_alloy_rotor"
+  }
+}

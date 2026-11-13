@@ -1,0 +1,45 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "ic2:block/iron_fence_post"
+      }
+    },
+    {
+      "apply": {
+        "y": 270,
+        "model": "ic2:block/iron_fence_arm"
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 180,
+        "model": "ic2:block/iron_fence_arm"
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 0,
+        "model": "ic2:block/iron_fence_arm"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "y": 90,
+        "model": "ic2:block/iron_fence_arm"
+      },
+      "when": {
+        "east": "true"
+      }
+    }
+  ]
+}

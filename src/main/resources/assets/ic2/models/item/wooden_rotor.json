@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/blades/rotors/wooden"
+  },
+  "parent": "minecraft:item/generated"
+}

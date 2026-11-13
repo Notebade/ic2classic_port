@@ -46,6 +46,8 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
             case FUSION -> { values.put("heat", (long) heat); values.put("lava_mb", (long) lava); values.put("material_units", (long) material); }
             case BOILER -> { values.put("heat", (long) heat); values.put("water_mb", (long) water); values.put("steam_mb", (long) steam); values.put("fuel_units", (long) fuel); }
             case TUNNEL -> { values.put("water_mb", (long) water); values.put("steam_mb", (long) steam); }
+            case WINDMILL -> windmill.telemetry(values);
+            case LIQUID_FUEL -> liquidFuel.telemetry(values);
         }
         var unit = kind.flux() ? MachineSnapshot.EnergyUnit.FE : kind.capacity == 0
             ? MachineSnapshot.EnergyUnit.NONE : MachineSnapshot.EnergyUnit.EU;
@@ -56,10 +58,16 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
     private int packet = 32, packets = 1, clock;
     private double fusionRemainder, productionRate = 1;
     private boolean structure;
+    final WindmillEngine windmill = kind == PowerMachines.Kind.WINDMILL ? new WindmillEngine() : null;
     final ItemStackHandler inventory = new ItemStackHandler(kind.slots) {
         @Override public boolean isItemValid(int slot, ItemStack stack) { return accepts(slot, stack); }
-        @Override protected void onContentsChanged(int slot) { setChanged(); }
+        @Override protected void onContentsChanged(int slot) {
+            setChanged();
+            if (kind == PowerMachines.Kind.WINDMILL && level != null && !level.isClientSide)
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
     };
+    private final LiquidFuelEngine liquidFuel = kind == PowerMachines.Kind.LIQUID_FUEL ? new LiquidFuelEngine(this::setChanged, inventory) : null;
     private final IItemHandler automation = new IItemHandler() {
         @Override public int getSlots() { return inventory.getSlots(); }
         @Override public ItemStack getStackInSlot(int slot) { return inventory.getStackInSlot(slot); }
@@ -85,7 +93,7 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
         @Override public boolean canReceive() { return false; }
     };
     final ContainerData data = new ContainerData() {
-        @Override public int getCount() { return 26; }
+        @Override public int getCount() { return 34; }
         @Override public int get(int index) {
             int value = metric(index / 2);
             return index % 2 == 0 ? value & 65535 : value >>> 16;
@@ -101,14 +109,24 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
         return switch (index) {
             case 0 -> energy; case 1 -> heat; case 2 -> water; case 3 -> steam; case 4 -> lava;
             case 5 -> material; case 6 -> plasma; case 7 -> reserve; case 8 -> packet; case 9 -> packets;
-            case 10 -> structure ? 1 : 0; case 11 -> fuel; case 12 -> capacity(); default -> 0;
+            case 10 -> structure ? 1 : 0; case 11 -> fuel; case 12 -> capacity();
+            case 13 -> windmill != null ? windmill.speedThousandths() : liquidFuel != null ? liquidFuel.remaining() : 0;
+            case 14 -> windmill != null ? windmill.freePermille() : liquidFuel != null ? liquidFuel.tank.getFluidAmount() : 0;
+            case 15 -> windmill != null ? windmill.outputHundredths() : liquidFuel != null && liquidFuel.running() ? liquidFuel.output() * 100 : 0;
+            case 16 -> kind == PowerMachines.Kind.WINDMILL && inventory.getStackInSlot(0).isDamageableItem()
+                ? inventory.getStackInSlot(0).getMaxDamage() - inventory.getStackInSlot(0).getDamageValue() : -1;
+            default -> 0;
         };
     }
-    IItemHandler automation(Direction side) { return kind.flux() && side != Direction.UP ? null : automation; }
+    IItemHandler automation(Direction side) {
+        return liquidFuel != null ? liquidFuel.automation(side) : kind.flux() && side != Direction.UP ? null : automation;
+    }
     IEnergyStorage feHandler(Direction side) { return kind.flux() && (side == null || side == front()) ? fe : null; }
     private boolean accepts(int slot, ItemStack stack) {
         if (kind.flux()) return stack.getCapability(Capabilities.EnergyStorage.ITEM) != null;
         return switch (kind) {
+            case WINDMILL -> stack.getItem() instanceof WindRotor;
+            case LIQUID_FUEL -> LiquidFuelEngine.accepts(slot, stack);
             case PLASMAFIER -> slot == 0 ? stack.is(IC2.UU_MATTER.get()) : slot == 1 && stack.is(IC2.CELL_EMPTY.get());
             case FUSION -> slot < 6 ? stack.getItem() instanceof UraniumFuelRod : stack.is(Items.COBBLESTONE) || stack.is(Items.NETHERRACK);
             case BOILER -> slot == 0 ? FluidUtil.getFluidContained(stack).filter(f -> f.is(Fluids.WATER)).isPresent()
@@ -119,6 +137,7 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
     private boolean extractable(int slot) {
         if (kind.flux()) return true;
         return switch (kind) {
+            case WINDMILL -> true;
             case PLASMAFIER -> slot == 2;
             case FUSION -> slot < 6 && !(inventory.getStackInSlot(slot).getItem() instanceof UraniumFuelRod);
             case BOILER -> slot == 1 || slot == 3;
@@ -138,6 +157,8 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
             case FUSION -> tickFusion();
             case TUNNEL -> tickTunnel();
             case BOILER -> tickBoiler();
+            case WINDMILL -> tickWindmill();
+            case LIQUID_FUEL -> tickLiquidFuel();
         };
         active(running);
         setChanged();
@@ -145,6 +166,17 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
     private void active(boolean active) {
         if (getBlockState().getValue(BlockStateProperties.LIT) != active)
             level.setBlock(worldPosition, getBlockState().setValue(BlockStateProperties.LIT, active), Block.UPDATE_CLIENTS);
+    }
+    private boolean tickWindmill() {
+        energy = windmill.tick((net.minecraft.server.level.ServerLevel) level, worldPosition, front(), inventory, clock, energy);
+        energy -= EnergyNetwork.send(level, worldPosition, Math.min(energy, 512), side -> side != front(), 0);
+        if (clock % 20 == 0) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        return windmill.spinning();
+    }
+    private boolean tickLiquidFuel() {
+        energy = liquidFuel.tick(energy, inventory);
+        energy -= EnergyNetwork.send(level, worldPosition, Math.min(energy, liquidFuel.packet()), side -> true, 0);
+        return liquidFuel.running();
     }
     private boolean tickTransformer() {
         int before = energy;
@@ -322,7 +354,7 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
         for (var cell : cells()) if (level.getBlockEntity(position(cell)) instanceof PowerPartEntity part) part.claim(worldPosition);
         return true;
     }
-    IFluidHandler fluidHandler() { return kind.multiblock() ? fluids : null; }
+    IFluidHandler fluidHandler() { return liquidFuel != null ? liquidFuel.tank : kind.multiblock() ? fluids : null; }
     private final IFluidHandler fluids = new IFluidHandler() {
         @Override public int getTanks() { return kind == PowerMachines.Kind.FUSION ? 1 : 2; }
         @Override public FluidStack getFluidInTank(int tank) {
@@ -396,6 +428,8 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
         tag.put("inventory", inventory.serializeNBT(lookup));
         tag.putIntArray("state", new int[]{energy, heat, reserve, plasma, water, steam, lava, material, fuel, remainder, packet, packets, clock});
         tag.putDouble("fusion_remainder", fusionRemainder); tag.putDouble("production_rate", productionRate);
+        if (windmill != null) tag.put("windmill", windmill.save());
+        if (liquidFuel != null) tag.put("liquid_fuel", liquidFuel.save(lookup));
     }
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider lookup) {
         super.loadAdditional(tag, lookup); inventory.deserializeNBT(lookup, tag.getCompound("inventory"));
@@ -412,5 +446,13 @@ final class PowerMachineEntity extends BlockEntity implements MenuProvider, Ener
         }
         double saved = tag.getDouble("fusion_remainder"); fusionRemainder = Double.isFinite(saved) ? Mth.clamp(saved, 0, 10000) : 0;
         productionRate = tag.getDouble("production_rate") == 1.5 ? 1.5 : 1;
+        if (windmill != null) windmill.load(tag.getCompound("windmill"));
+        if (liquidFuel != null) liquidFuel.load(tag.getCompound("liquid_fuel"), lookup);
+    }
+    @Override public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return windmill != null ? net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this) : null;
+    }
+    @Override public CompoundTag getUpdateTag(HolderLookup.Provider lookup) {
+        return windmill != null ? saveWithoutMetadata(lookup) : super.getUpdateTag(lookup);
     }
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "M": {
+      "item": "ic2:machine_block"
+    },
+    "C": {
+      "item": "ic2:carbon_plate"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "CCC",
+    "CMC",
+    "CCC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:carbon_rotor"
+  }
+}

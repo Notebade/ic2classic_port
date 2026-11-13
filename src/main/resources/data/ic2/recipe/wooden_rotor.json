@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "SIS",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:wooden_rotor"
+  }
+}

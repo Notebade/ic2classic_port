@@ -25,6 +25,10 @@ $runtimeTextures = @{
     'assets/ic2/textures/mob_effect/radiation.png' = 'assets/ic2/textures/mob_effect/radiation.png'
     'assets/ic2/textures/block/fluids/steam_still.png' = 'assets/ic2/textures/block/fluids/steam_still.png'
     'assets/ic2/textures/block/fluids/steam_still.png.mcmeta' = 'assets/ic2/textures/block/fluids/steam_still.png.mcmeta'
+    'assets/ic2/textures/block/fluids/woodgas_still.png' = 'assets/ic2/textures/block/fluids/woodgas_still.png'
+    'assets/ic2/textures/block/fluids/woodgas_still.png.mcmeta' = 'assets/ic2/textures/block/fluids/woodgas_still.png.mcmeta'
+    'assets/ic2/textures/block/fluids/base_fluid_still.png' = 'assets/ic2/textures/block/fluids/base_fluid_still.png'
+    'assets/ic2/textures/block/fluids/base_fluid_still.png.mcmeta' = 'assets/ic2/textures/block/fluids/base_fluid_still.png.mcmeta'
 }
 $textureNames = @((@($textureNames) + @($runtimeTextures.Keys)) | Sort-Object -Unique)
 

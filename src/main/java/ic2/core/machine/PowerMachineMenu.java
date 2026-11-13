@@ -17,7 +17,7 @@ final class PowerMachineMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final PowerMachineEntity machine;
     PowerMachineMenu(int id, Inventory player, PowerMachines.Kind kind) {
-        this(id, player, kind, new ItemStackHandler(kind.slots), new SimpleContainerData(26), ContainerLevelAccess.NULL, null);
+        this(id, player, kind, new ItemStackHandler(kind.slots), new SimpleContainerData(34), ContainerLevelAccess.NULL, null);
     }
     PowerMachineMenu(int id, Inventory player, PowerMachines.Kind kind, ItemStackHandler inventory, ContainerData data,
                      ContainerLevelAccess access, PowerMachineEntity machine) {
@@ -27,7 +27,7 @@ final class PowerMachineMenu extends AbstractContainerMenu {
             final int index = slot;
             addSlot(new SlotItemHandler(inventory, slot, 8 + slot * 22, 100) {
                 @Override public boolean mayPlace(ItemStack stack) {
-                    return !(kind == PowerMachines.Kind.PLASMAFIER && index == 2 || kind == PowerMachines.Kind.BOILER && (index == 1 || index == 3))
+                    return !((kind == PowerMachines.Kind.PLASMAFIER || kind == PowerMachines.Kind.LIQUID_FUEL) && index == 2 || kind == PowerMachines.Kind.BOILER && (index == 1 || index == 3))
                         && super.mayPlace(stack);
                 }
             });

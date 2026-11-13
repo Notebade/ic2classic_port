@@ -52,12 +52,74 @@ public final class ApiSmokeChecks {
                 level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
                 level.setBlockAndUpdate(pos.above(), Blocks.AIR.defaultBlockState());
             }
+            verifyGenerators(level, pos);
             LOGGER.info("IC2 API runtime smoke checks passed");
         } catch (Throwable error) {
             LOGGER.error("IC2 API runtime smoke checks FAILED", error);
         } finally {
             server.halt(false);
         }
+    }
+    private static void verifyGenerators(net.minecraft.server.level.ServerLevel level, BlockPos pos) {
+        var lookup = level.registryAccess();
+        try {
+            level.setBlockAndUpdate(pos, Ic2Api.block(ResourceLocation.parse("ic2:windmill")).orElseThrow().defaultBlockState());
+            var rotorSlot = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, pos, Direction.UP);
+            var rotor = new ItemStack(Ic2Api.item(ResourceLocation.parse("ic2:wooden_rotor")).orElseThrow());
+            require(rotorSlot != null && rotorSlot.insertItem(0, rotor, false).isEmpty(), "windmill accepts a rotor through automation");
+            tick(level, pos, level.getBlockEntity(pos).getType());
+            var wind = Ic2Api.machineInfo(level, pos).orElseThrow();
+            require(wind.energyCapacity() == 4000 && wind.values().get("free_air_permille") > 0, "windmill samples connected air without a client");
+            require(rotorSlot.extractItem(0, 1, false).getItem() == rotor.getItem(), "rotor can be replaced through automation");
+            tick(level, pos, level.getBlockEntity(pos).getType());
+            require(Ic2Api.machineInfo(level, pos).orElseThrow().values().get("speed_thousandths") == 0, "removing rotor stops windmill");
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            String[] fluids = {"woodgas", "bio_fuel", "alcohol"};
+            int[] output = {10, 128, 50};
+            for (int index = 0; index < fluids.length; index++) {
+                level.setBlockAndUpdate(pos, Ic2Api.block(ResourceLocation.parse("ic2:liquid_fuel_generator")).orElseThrow().defaultBlockState());
+                var tank = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, pos, Direction.UP);
+                var profile = Ic2Api.fluid(ResourceLocation.parse("ic2:" + fluids[index])).orElseThrow();
+                require(tank != null && tank.fill(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000),
+                    net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE) == 0, "generator rejects water");
+                require(tank.fill(new net.neoforged.neoforge.fluids.FluidStack(profile, 16000),
+                    net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE) == 16000, "generator accepts its liquid fuel");
+                tick(level, pos, level.getBlockEntity(pos).getType());
+                var before = Ic2Api.machineInfo(level, pos).orElseThrow();
+                require(before.energyStored() == output[index] && before.values().get("fuel_ticks") > 0, "fuel converts to the configured EU rate");
+                if (fluids[index].equals("alcohol")) {
+                    for (int count = 0; count < 199; count++) tick(level, pos, level.getBlockEntity(pos).getType());
+                    before = Ic2Api.machineInfo(level, pos).orElseThrow();
+                    require(before.energyStored() == 10000, "generator reaches full EU buffer");
+                    for (int count = 0; count < 10; count++) tick(level, pos, level.getBlockEntity(pos).getType());
+                    require(Ic2Api.machineInfo(level, pos).orElseThrow().values().get("fuel_ticks").equals(before.values().get("fuel_ticks")), "full EU buffer pauses real burning fuel");
+                }
+                var saved = level.getBlockEntity(pos).saveWithFullMetadata(lookup);
+                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                level.setBlockAndUpdate(pos, Ic2Api.block(ResourceLocation.parse("ic2:liquid_fuel_generator")).orElseThrow().defaultBlockState());
+                level.getBlockEntity(pos).loadWithComponents(saved, lookup);
+                var restored = Ic2Api.machineInfo(level, pos).orElseThrow();
+                require(restored.energyStored() == before.energyStored() && restored.values().get("fuel_ticks").equals(before.values().get("fuel_ticks")), "EU and burning fuel survive reload");
+                require(restored.values().get("fuel_mb").equals(before.values().get("fuel_mb")) && restored.values().get("fuel_mb") == 15000, "liquid tank survives reload");
+                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            }
+            level.setBlockAndUpdate(pos, Ic2Api.block(ResourceLocation.parse("ic2:liquid_fuel_generator")).orElseThrow().defaultBlockState());
+            var slots = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, pos, Direction.UP);
+            var cell = new ItemStack(Ic2Api.item(ResourceLocation.parse("ic2:cell_woodgas")).orElseThrow());
+            require(slots != null && slots.insertItem(0, cell, false).isEmpty(), "fuel cell enters the side input");
+            tick(level, pos, level.getBlockEntity(pos).getType());
+            require(slots.getStackInSlot(1).is(Ic2Api.item(ResourceLocation.parse("ic2:cell_empty")).orElseThrow()), "fuel cell returns an empty cell");
+            require(Ic2Api.machineInfo(level, pos).orElseThrow().values().get("fuel_mb") == 1000, "container transfer preserves fluid amount");
+        } finally { level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState()); }
+    }
+    private static <T extends net.minecraft.world.level.block.entity.BlockEntity> void tick(net.minecraft.server.level.ServerLevel level,
+            BlockPos pos, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        var entity = type.getBlockEntity(level, pos);
+        if (entity == null || !(entity.getBlockState().getBlock() instanceof net.minecraft.world.level.block.EntityBlock block))
+            throw new AssertionError("Missing machine ticker fixture");
+        var ticker = block.getTicker(level, entity.getBlockState(), type);
+        if (ticker == null) throw new AssertionError("Missing server ticker");
+        ticker.tick(level, pos, entity.getBlockState(), entity);
     }
     private static void require(boolean value, String message) { if (!value) throw new AssertionError(message); }
 }

@@ -65,6 +65,8 @@ record MachineRecipeView(ResourceLocation sourceId, List<Slot> inputs, List<Slot
         GENERATOR(Machines.GENERATOR),
         SOLAR_TURBINE(ExtraGenerators.SOLAR),
         SLAG_GENERATOR(ExtraGenerators.SLAG),
+        WINDMILL(PowerMachines.MACHINES.get(PowerMachines.Kind.WINDMILL)),
+        LIQUID_FUEL_GENERATOR(PowerMachines.MACHINES.get(PowerMachines.Kind.LIQUID_FUEL)),
         WATER_MILL(Machines.WATER_MILL),
         LV_WATER_MILL(Machines.LV_WATER_MILL),
         MV_WATER_MILL(Machines.MV_WATER_MILL),

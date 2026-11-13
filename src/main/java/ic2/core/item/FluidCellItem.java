@@ -38,7 +38,7 @@ public final class FluidCellItem extends Item {
         if (fluid == Fluids.LAVA) {
             return new ItemStack(IC2.CELL_LAVA.get());
         }
-        return ItemStack.EMPTY;
+        return ic2.core.machine.GeneratorFluids.filledCell(fluid);
     }
 
     @Override
@@ -76,7 +76,7 @@ public final class FluidCellItem extends Item {
         BlockState state = level.getBlockState(pos);
         BlockPos target = state.getBlock() instanceof LiquidBlockContainer container
             && container.canPlaceLiquid(player, level, pos, state, fluid) ? pos : adjacent;
-        BucketItem bucket = (BucketItem) fluid.getBucket();
+        if (!(fluid.getBucket() instanceof BucketItem bucket)) return InteractionResultHolder.pass(held);
         if (!bucket.emptyContents(player, level, target, hit, held)) {
             return InteractionResultHolder.fail(held);
         }
@@ -115,7 +115,7 @@ public final class FluidCellItem extends Item {
 
         @Override
         public boolean canFillFluidType(FluidStack stack) {
-            return stack.getFluid() == Fluids.WATER || stack.getFluid() == Fluids.LAVA;
+            return !filledStack(stack.getFluid()).isEmpty();
         }
 
         @Override

@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "north": "ic2:block/electric/generator/windmill/north",
+    "west": "ic2:block/electric/generator/windmill/west",
+    "east": "ic2:block/electric/generator/windmill/east",
+    "down": "ic2:block/electric/generator/windmill/down",
+    "particle": "ic2:block/electric/generator/windmill/north",
+    "up": "ic2:block/electric/generator/windmill/up",
+    "south": "ic2:block/electric/generator/windmill/south"
+  },
+  "parent": "minecraft:block/cube"
+}

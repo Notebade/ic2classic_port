@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/blades/rotors/composite"
+  },
+  "parent": "minecraft:item/generated"
+}

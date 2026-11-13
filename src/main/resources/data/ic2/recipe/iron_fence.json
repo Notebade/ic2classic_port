@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "I": {
+      "item": "ic2:ingot_refined_iron"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "III",
+    "III"
+  ],
+  "result": {
+    "count": 12,
+    "id": "ic2:iron_fence"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "I": {
+      "item": "ic2:plate_iridium"
+    },
+    "R": {
+      "item": "ic2:carbon_rotor"
+    }
+  },
+  "category": "misc",
+  "pattern": [
+    "III",
+    "IRI",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ic2:iridium_rotor"
+  }
+}
