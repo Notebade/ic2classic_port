@@ -1,5 +1,7 @@
 package ic2.core.machine;
 
+import ic2.api.machine.MachineSnapshot;
+
 import ic2.core.IC2;
 import ic2.core.item.UraniumFuelRod;
 import java.util.List;
@@ -33,7 +35,22 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-final class PowerMachineEntity extends BlockEntity implements MenuProvider, EnergySink {
+final class PowerMachineEntity extends BlockEntity implements MenuProvider, EnergySink, MachineSnapshot.Provider {
+    @Override public MachineSnapshot machineInfo() {
+        var values = new java.util.HashMap<String, Long>();
+        if (kind.multiblock()) values.put("formed", structure ? 1L : 0L);
+        switch (kind) {
+            case TRANSFORMER -> { values.put("packet_eu", (long) packet); values.put("packets_per_tick", (long) packets); }
+            case FLUX_LV, FLUX_MV, FLUX_HV -> values.put("input_packet_eu", (long) kind.input);
+            case PLASMAFIER -> { values.put("plasma_mb", (long) plasma); values.put("uu_reserve", (long) reserve); }
+            case FUSION -> { values.put("heat", (long) heat); values.put("lava_mb", (long) lava); values.put("material_units", (long) material); }
+            case BOILER -> { values.put("heat", (long) heat); values.put("water_mb", (long) water); values.put("steam_mb", (long) steam); values.put("fuel_units", (long) fuel); }
+            case TUNNEL -> { values.put("water_mb", (long) water); values.put("steam_mb", (long) steam); }
+        }
+        var unit = kind.flux() ? MachineSnapshot.EnergyUnit.FE : kind.capacity == 0
+            ? MachineSnapshot.EnergyUnit.NONE : MachineSnapshot.EnergyUnit.EU;
+        return MachineTelemetry.snapshot(this, energy, capacity(), unit, values);
+    }
     final PowerMachines.Kind kind = ((PowerMachineBlock) getBlockState().getBlock()).kind;
     private int energy, heat, reserve, plasma, water, steam, lava, material, fuel, remainder;
     private int packet = 32, packets = 1, clock;

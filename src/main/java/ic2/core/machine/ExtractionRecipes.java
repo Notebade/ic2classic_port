@@ -47,6 +47,13 @@ final class ExtractionRecipes {
     private ExtractionRecipes() {}
 
     static Recipe find(ItemStack stack) {
+        Recipe builtin = builtin(stack);
+        if (builtin != null) return builtin;
+        return ic2.api.recipe.Ic2Recipes.additions(ic2.api.recipe.ProcessingRecipe.Process.EXTRACTION).stream()
+            .filter(recipe -> stack.is(recipe.input())).findFirst().map(recipe -> new Recipe(recipe.output(), recipe.outputCount())).orElse(null);
+    }
+
+    static Recipe builtin(ItemStack stack) {
         if (stack.isEmpty()) {
             return null;
         }

@@ -1,5 +1,7 @@
 package ic2.core.machine;
 
+import ic2.api.machine.MachineSnapshot;
+
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -11,7 +13,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 /** Initial single-fluid tank support for the boiler chain. */
-final class PowerTankEntity extends BlockEntity {
+final class PowerTankEntity extends BlockEntity implements MachineSnapshot.Provider {
+    @Override public MachineSnapshot machineInfo() {
+        return MachineTelemetry.snapshot(this, 0, 0, MachineSnapshot.EnergyUnit.NONE,
+            java.util.Map.of("fluid_mb", (long) tank.getFluidAmount(), "fluid_capacity_mb", (long) tank.getCapacity()));
+    }
     private UUID owner;
     final FluidTank tank = new FluidTank(128000) {
         @Override protected void onContentsChanged() { setChanged(); }

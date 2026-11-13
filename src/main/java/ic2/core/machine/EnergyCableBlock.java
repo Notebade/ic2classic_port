@@ -78,6 +78,7 @@ class EnergyCableBlock extends PipeBlock {
     private boolean connectsTo(BlockState state) {
         return state.getBlock() instanceof EnergyCableBlock || state.getBlock() instanceof MachineBlock
             || state.getBlock() instanceof AdvancedMachineBlock || state.getBlock() instanceof PressurePartBlock
-            || state.getBlock() instanceof ExtraGeneratorBlock || state.getBlock() instanceof PowerMachineBlock;
+            || state.getBlock() instanceof ExtraGeneratorBlock || state.getBlock() instanceof PowerMachineBlock
+            || state.getBlock() instanceof ic2.api.energy.EnergyConnectable;
     }
 }

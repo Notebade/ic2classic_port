@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.64.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.65.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.64.0` |
+| Project version | `0.65.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -470,3 +470,7 @@ Both generators have original primary crafting recipes, textures, translations, 
 Adds an adjustable transformer, three one-way EU-to-FE converters, plasmafier, hollow fusion reactor, fuel boiler and steam tunnel, structure ports, two basic tanks, superconductor/plasma cables and PESD/PESU/IV crafting. The fuel chain includes compression, extraction and refillable cans. Counted crafting consumes the original per-slot amounts for plasma cores and boiler casings.
 
 See [assembly, operating values and current limitations](docs/energy-fusion.md). Tank/valve recipes and can filling are temporarily adapted; windmills, liquid-fuel generation, redirectors and charging infrastructure remain. Superconductor production still needs the unported refinery. Original presentation and in-world behavior require further validation.
+
+### Addon API v1 (0.65.0)
+
+Public ic2.api interfaces expose registry lookups, immutable server-side machine telemetry, compression/extraction recipe additions and EU network integration for addon machines. Read [API.md](API.md) for lifecycle rules, units, dependency setup and examples. A separate example addon is compile-checked by check and excluded from the IC2 JAR. scripts/Test-AddonApi.ps1 verifies the API with an actual addon on an isolated dedicated server.

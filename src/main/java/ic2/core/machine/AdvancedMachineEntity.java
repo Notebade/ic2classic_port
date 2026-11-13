@@ -1,5 +1,7 @@
 package ic2.core.machine;
 
+import ic2.api.machine.MachineSnapshot;
+
 import ic2.core.item.RechargeableItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,7 +30,12 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
-final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, EnergySink {
+final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, EnergySink, MachineSnapshot.Provider {
+    @Override public MachineSnapshot machineInfo() {
+        return MachineTelemetry.snapshot(this, energy, variant.capacity(), MachineSnapshot.EnergyUnit.EU,
+            java.util.Map.of("heat", (long) heat, "progress_units", (long) progress, "progress_target", (long) duration,
+                "processing", processing ? 1L : 0L));
+    }
     final AdvancedMachines.Variant variant = ((AdvancedMachineBlock) getBlockState().getBlock()).variant;
     private int energy;
     private int heat;

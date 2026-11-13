@@ -1,5 +1,7 @@
 package ic2.core.machine;
 
+import ic2.api.machine.MachineSnapshot;
+
 import ic2.core.IC2;
 import ic2.core.Radiation;
 import ic2.core.item.FluidCellItem;
@@ -48,7 +50,19 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
-final class MachineEntity extends BlockEntity implements MenuProvider, EnergySink {
+final class MachineEntity extends BlockEntity implements MenuProvider, EnergySink, MachineSnapshot.Provider {
+    @Override public MachineSnapshot machineInfo() {
+        var values = new java.util.HashMap<String, Long>();
+        values.put("progress_units", (long) progress);
+        values.put("progress_target", (long) kind.recipeTicks);
+        values.put("fuel_ticks", (long) burnTicks);
+        if (kind.isReactor()) {
+            values.put("heat", (long) reactorHeat); values.put("heat_capacity", (long) reactorMaxHeat);
+            values.put("output_eu", (long) reactorOutput);
+        }
+        if (fuelTank != null) values.put("fuel_mb", (long) fuelTank.getFluidAmount());
+        return MachineTelemetry.snapshot(this, energy, kind.capacity, MachineSnapshot.EnergyUnit.EU, values);
+    }
     static final int INPUT_SLOT = 0;
     static final int OUTPUT_SLOT = 1;
     static final int SLOT_COUNT = 2;

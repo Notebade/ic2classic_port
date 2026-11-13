@@ -149,6 +149,8 @@ public final class IC2 {
         Radiation.register(modBus);
         CreativeTabs.register(modBus);
         modBus.addListener(IC2::registerCapabilities);
+        modBus.addListener((net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent event) ->
+            event.enqueueWork(ic2.api.internal.RecipeRegistration::close));
         modBus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(ScrapBoxItem::registerDispenser));
     }
 

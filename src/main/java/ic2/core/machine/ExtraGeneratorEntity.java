@@ -1,5 +1,7 @@
 package ic2.core.machine;
 
+import ic2.api.machine.MachineSnapshot;
+
 import ic2.core.IC2;
 import ic2.core.item.RechargeableItem;
 import net.minecraft.core.BlockPos;
@@ -30,7 +32,12 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
-final class ExtraGeneratorEntity extends BlockEntity implements MenuProvider {
+final class ExtraGeneratorEntity extends BlockEntity implements MenuProvider, MachineSnapshot.Provider {
+    @Override public MachineSnapshot machineInfo() {
+        return MachineTelemetry.snapshot(this, energy, type.maxStored(), MachineSnapshot.EnergyUnit.EU,
+            type == ExtraGenerators.Type.SOLAR ? java.util.Map.of("heat", (long) solar.heat(), "water_units", (long) solar.water(), "output_eu_hundredths", (long) outputHundredths)
+                : java.util.Map.of("fuel_ticks", (long) remainingFuel, "output_eu_hundredths", (long) outputHundredths));
+    }
     final ExtraGenerators.Type type = ((ExtraGeneratorBlock) getBlockState().getBlock()).type;
     private SolarTurbineCycle.State solar = new SolarTurbineCycle.State(0, 0, 0, 0);
     private int energy;

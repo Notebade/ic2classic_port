@@ -9,12 +9,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.Level;
 
-final class EnergyNetwork {
+public final class EnergyNetwork {
     private static final int MILLIEU_PER_EU = 1000;
 
     private EnergyNetwork() {}
 
-    static int send(Level level, BlockPos source, int available, Predicate<Direction> emitsTo, int sourceStorageOutput) {
+    public static int send(Level level, BlockPos source, int available, Predicate<Direction> emitsTo, int sourceStorageOutput) {
         var pending = new PriorityQueue<>(Comparator.comparingInt(Route::lossMilliEu).thenComparingLong(Route::order));
         var visited = new HashSet<BlockPos>();
         long order = 0;
@@ -39,9 +39,9 @@ final class EnergyNetwork {
                     SectionPos.blockToSectionCoord(next.getX()), SectionPos.blockToSectionCoord(next.getZ()))) {
                     continue;
                 }
-                if (!next.equals(source) && level.getBlockEntity(next) instanceof EnergySink machine
+                if (!next.equals(source) && level.getBlockEntity(next) instanceof ic2.api.energy.EnergySink machine
                     && machine.canReceiveEnergy(direction.getOpposite(), sourceStorageOutput, available)) {
-                    int accepted = machine.receiveEnergy(remaining - loss);
+                    int accepted = Math.clamp(machine.receiveEnergy(remaining - loss), 0, remaining - loss);
                     if (accepted > 0) {
                         remaining -= accepted + loss;
                         recordTransfer(level, route.meters(), accepted, loss);

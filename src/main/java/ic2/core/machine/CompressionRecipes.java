@@ -35,8 +35,12 @@ final class CompressionRecipes {
     private CompressionRecipes() {}
 
     static Recipe find(ItemStack input) {
-        return RECIPES.get(input.getItem());
+        Recipe builtin = builtin(input);
+        if (builtin != null) return builtin;
+        return ic2.api.recipe.Ic2Recipes.additions(ic2.api.recipe.ProcessingRecipe.Process.COMPRESSION).stream()
+            .filter(recipe -> input.is(recipe.input())).findFirst().map(recipe -> new Recipe(recipe.inputCount(), recipe.output())).orElse(null);
     }
+    static Recipe builtin(ItemStack input) { return RECIPES.get(input.getItem()); }
 
     record Recipe(int inputCount, Item output) {}
 }

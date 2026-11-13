@@ -4,9 +4,18 @@ plugins {
 }
 
 group = 'ic2'
-version = '0.64.0'
+version = '0.65.0'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+// Compile a separate consumer against the public API; never package example addon classes.
+def compileAddonExample = tasks.register('compileAddonExampleJava', JavaCompile) {
+    source = fileTree('src/addonExample/java') { include '**/*.java' }
+    classpath = sourceSets.main.output + sourceSets.main.compileClasspath
+    destinationDirectory = layout.buildDirectory.dir('classes/java/addonExample')
+    javaCompiler = javaToolchains.compilerFor { languageVersion = JavaLanguageVersion.of(21) }
+    options.release = 21
+}
 
 // Only the explicit client/server runs below are needed; no game-backed JUnit suite exists.
 subsystems.conventions.runs.shouldDefaultRunsBeCreated.set(false)
@@ -32,7 +41,8 @@ def standaloneChecks = [
     verifyAlloyInputs: 'ic2.core.machine.AlloyInputAmountsTest',
     verifySolarTurbineCycle: 'ic2.core.machine.SolarTurbineCycleTest',
     verifySlagGeneratorCycle: 'ic2.core.machine.SlagGeneratorCycleTest',
-    verifyEnergyExpansion: 'ic2.core.machine.EnergyExpansionTest'
+    verifyEnergyExpansion: 'ic2.core.machine.EnergyExpansionTest',
+    verifyAddonRegistry: 'ic2.api.internal.ExtensionRegistryTest'
 ]
 standaloneChecks.each { taskName, entryPoint ->
     tasks.register(taskName, Exec) {
@@ -52,6 +62,7 @@ standaloneChecks.each { taskName, entryPoint ->
 }
 tasks.named('check') {
     dependsOn standaloneChecks.keySet()
+    dependsOn compileAddonExample
 }
 
 def neoForgeVersion = '21.1.219'
