@@ -17,10 +17,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 
-final class InductionBlock extends Block implements EntityBlock {
-    final InductionMachines.Variant variant;
+final class AdvancedMachineBlock extends Block implements EntityBlock {
+    final AdvancedMachines.Variant variant;
 
-    InductionBlock(Properties properties, InductionMachines.Variant variant) {
+    AdvancedMachineBlock(Properties properties, AdvancedMachines.Variant variant) {
         super(properties);
         this.variant = variant;
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.LIT, false));
@@ -50,18 +50,18 @@ final class InductionBlock extends Block implements EntityBlock {
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new InductionEntity(pos, state);
+        return new AdvancedMachineEntity(pos, state);
     }
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return !level.isClientSide && type == InductionMachines.ENTITY.get()
-            ? (world, pos, current, entity) -> ((InductionEntity) entity).tick() : null;
+        return !level.isClientSide && type == AdvancedMachines.ENTITY.get()
+            ? (world, pos, current, entity) -> ((AdvancedMachineEntity) entity).tick() : null;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof InductionEntity machine) {
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof AdvancedMachineEntity machine) {
             player.openMenu(machine);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
@@ -70,7 +70,7 @@ final class InductionBlock extends Block implements EntityBlock {
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState replacement, boolean moved) {
         if (!level.isClientSide && !state.is(replacement.getBlock())
-                && level.getBlockEntity(pos) instanceof InductionEntity machine) {
+                && level.getBlockEntity(pos) instanceof AdvancedMachineEntity machine) {
             machine.dropContents();
         }
         super.onRemove(state, level, pos, replacement, moved);

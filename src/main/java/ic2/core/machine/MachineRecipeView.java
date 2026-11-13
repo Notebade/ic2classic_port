@@ -41,6 +41,9 @@ record MachineRecipeView(ResourceLocation sourceId, List<Slot> inputs, List<Slot
     enum Process {
         STONE_MACERATOR(Machines.STONE_MACERATOR),
         MACERATOR(Machines.MACERATOR),
+        ROTARY_MACERATOR(AdvancedMachines.ROTARY),
+        CENTRIFUGAL_EXTRACTOR(AdvancedMachines.CENTRIFUGAL),
+        SINGULARITY_COMPRESSOR(AdvancedMachines.SINGULARITY),
         IRON_FURNACE(Machines.IRON_FURNACE),
         ELECTRIC_FURNACE(Machines.ELECTRIC_FURNACE),
         ELECTRIC_BLAST_FURNACE(Machines.ELECTRIC_BLAST_FURNACE),

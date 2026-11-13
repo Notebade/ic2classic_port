@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XCX"
+  ],
+  "key": {
+    "X": {
+      "item": "ic2:scrap_metal_blade"
+    },
+    "C": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "Y": {
+      "item": "ic2:macerator"
+    }
+  },
+  "result": {
+    "id": "ic2:rotary_macerator",
+    "count": 1
+  }
+}

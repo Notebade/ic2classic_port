@@ -1,0 +1,20 @@
+{
+  "result": {
+    "id": "ic2:scrap_metal_blade",
+    "count": 1
+  },
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XXX"
+  ],
+  "key": {
+    "Y": {
+      "item": "ic2:scrap_metal_chunk"
+    },
+    "X": {
+      "item": "minecraft:flint"
+    }
+  },
+  "type": "minecraft:crafting_shaped"
+}

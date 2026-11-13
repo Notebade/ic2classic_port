@@ -52,6 +52,9 @@
     "ic2:pesu",
     "ic2:solar_panel_hv",
     "ic2:solar_panel_hv_compressed",
-    "ic2:transformer_iv"
+    "ic2:transformer_iv",
+    "ic2:rotary_macerator",
+    "ic2:centrifugal_extractor",
+    "ic2:singularity_compressor"
   ]
 }

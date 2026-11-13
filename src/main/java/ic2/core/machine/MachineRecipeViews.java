@@ -31,6 +31,9 @@ final class MachineRecipeViews {
 
     static List<MachineRecipeView> forProcess(Process process, Level level) {
         return switch (process) {
+            case ROTARY_MACERATOR -> advanced(forProcess(Process.MACERATOR, level));
+            case CENTRIFUGAL_EXTRACTOR -> advanced(forProcess(Process.EXTRACTOR, level));
+            case SINGULARITY_COMPRESSOR -> advanced(forProcess(Process.COMPRESSOR, level));
             case STONE_MACERATOR -> cooking(level, Machines.MACERATING.get(), ticks -> Math.max(1, ticks), 0);
             case MACERATOR -> cooking(level, Machines.MACERATING.get(), ticks -> Math.max(1, ticks), MachineKind.MACERATOR.energyPerTick);
             case IRON_FURNACE -> cooking(level, RecipeType.SMELTING, IronFurnaceBlockEntity::cookingTicks, 0);
@@ -56,6 +59,16 @@ final class MachineRecipeViews {
             case MV_WATER_MILL -> waterMill(MachineKind.MV_WATER_MILL.waterMillTier);
             case HV_WATER_MILL -> waterMill(MachineKind.HV_WATER_MILL.waterMillTier);
         };
+    }
+
+    private static List<MachineRecipeView> advanced(List<MachineRecipeView> recipes) {
+        return recipes.stream().map(recipe -> {
+            var notes = new ArrayList<Component>();
+            notes.add(note("advanced_energy"));
+            notes.add(note("advanced_speed"));
+            notes.addAll(recipe.notes().subList(Math.min(1, recipe.notes().size()), recipe.notes().size()));
+            return new MachineRecipeView(recipe.sourceId(), recipe.inputs(), recipe.outputs(), notes);
+        }).toList();
     }
 
     private static Stream<ItemStack> registeredItems() {

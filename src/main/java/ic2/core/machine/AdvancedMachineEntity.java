@@ -28,10 +28,10 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
-final class InductionEntity extends BlockEntity implements MenuProvider, EnergySink {
+final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, EnergySink {
     static final int CAPACITY = 10000;
     static final int PACKET = 128;
-    private final InductionMachines.Variant variant;
+    final AdvancedMachines.Variant variant = ((AdvancedMachineBlock) getBlockState().getBlock()).variant;
     private int energy;
     private int heat;
     private int progress;
@@ -40,16 +40,16 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
     private boolean processing;
     private float experience;
     private final ItemStack[] trackedInputs = {ItemStack.EMPTY, ItemStack.EMPTY};
-    final ItemStackHandler inventory = new ItemStackHandler(5) {
+    final ItemStackHandler inventory = new ItemStackHandler(variant.layout.slots()) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return slot == 0 ? RechargeableItem.supports(stack, PACKET, false)
-                : slot < 3 && recipe(stack) != null;
+                : variant.layout.isInput(slot) && recipe(stack) != null;
         }
 
         @Override
         protected void onContentsChanged(int slot) {
-            if (slot == 1 || slot == 2) {
+            if (variant.layout.isInput(slot)) {
                 ItemStack next = getStackInSlot(slot);
                 if (!ItemStack.isSameItemSameComponents(trackedInputs[slot - 1], next)) progress = 0;
                 trackedInputs[slot - 1] = next.copyWithCount(1);
@@ -57,10 +57,10 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
             setChanged();
         }
     };
-    private final RangedWrapper input = new RangedWrapper(inventory, 1, 3) {
+    private final RangedWrapper input = new RangedWrapper(inventory, 1, variant.layout.inputs() + 1) {
         @Override public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
     };
-    private final RangedWrapper output = new RangedWrapper(inventory, 3, 5);
+    private final RangedWrapper output = new RangedWrapper(inventory, variant.layout.inputs() + 1, variant.layout.slots());
     private final BatterySlot battery = new BatterySlot(inventory, 0, false);
     private final IItemHandler bottom = new CombinedInvWrapper(output, battery);
     private final IItemHandler sides = new CombinedInvWrapper(battery, input, output);
@@ -79,15 +79,14 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
         }
     };
 
-    InductionEntity(BlockPos pos, BlockState state) {
-        super(InductionMachines.ENTITY.get(), pos, state);
-        variant = ((InductionBlock) state.getBlock()).variant;
+    AdvancedMachineEntity(BlockPos pos, BlockState state) {
+        super(AdvancedMachines.ENTITY.get(), pos, state);
     }
 
     void tick() {
         dischargeBattery();
-        Cooking first = availableRecipe(1);
-        Cooking second = availableRecipe(2);
+        ProcessingRecipe first = availableRecipe(1);
+        ProcessingRecipe second = variant.layout.supportsSplit() ? availableRecipe(2) : null;
         boolean work = first != null || second != null;
         if (work) duration = Math.max(first == null ? 0 : first.duration(), second == null ? 0 : second.duration());
         var step = InductionCycle.step(heat, progress, energy, work, level.hasNeighborSignal(worldPosition), variant.cost, duration);
@@ -97,8 +96,10 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
         progress = step.progress();
         processing = step.processing();
         if (step.finished()) {
-            process(split || !inventory.getStackInSlot(1).isEmpty() ? 1 : 2);
-            process(split || !inventory.getStackInSlot(2).isEmpty() ? 2 : 1);
+            for (int pass = 0; pass < variant.layout.inputs(); pass++) {
+                process(variant.layout.inputForPass(pass, split, inventory.getStackInSlot(1).isEmpty(),
+                    variant.layout.supportsSplit() && inventory.getStackInSlot(2).isEmpty()));
+            }
         }
         BlockState state = getBlockState();
         if (state.getValue(BlockStateProperties.LIT) != step.heating()) {
@@ -107,26 +108,52 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
         if (changed) setChanged();
     }
 
-    private Cooking recipe(ItemStack stack) {
-        if (level == null || stack.isEmpty()) return null;
+    private ProcessingRecipe recipe(ItemStack stack) {
+        if (level == null) return null;
+        if (stack.isEmpty()) {
+            PumpTank pump = variant == AdvancedMachines.Variant.SINGULARITY
+                ? MachineEntity.findWaterSource(level, worldPosition) : null;
+            return pump == null ? null : new ProcessingRecipe(new ItemStack(net.minecraft.world.item.Items.SNOWBALL), 120000, 0, 0, pump);
+        }
+        return switch (variant) {
+            case ROTARY -> level.getRecipeManager().getRecipeFor(Machines.MACERATING.get(), new SingleRecipeInput(stack), level)
+                .map(holder -> new ProcessingRecipe(holder.value().assemble(new SingleRecipeInput(stack), level.registryAccess()),
+                    recipeDuration(holder.value().getCookingTime(), 300), holder.value().getExperience())).orElse(null);
+            case CENTRIFUGAL -> {
+                ItemStack result = ExtractionRecipes.result(stack);
+                yield result.isEmpty() ? null : new ProcessingRecipe(result, 120000, 0);
+            }
+            case SINGULARITY -> {
+                var recipe = CompressionRecipes.find(stack);
+                yield recipe == null ? null : new ProcessingRecipe(new ItemStack(recipe.output()), 120000, 0, recipe.inputCount(), null);
+            }
+            default -> cookingRecipe(stack);
+        };
+    }
+
+    private static int recipeDuration(int ticks, int multiplier) {
+        return (int) Math.min(Integer.MAX_VALUE, Math.max(1L, ticks) * multiplier);
+    }
+
+    private ProcessingRecipe cookingRecipe(ItemStack stack) {
         var input = new SingleRecipeInput(stack);
         return level.getRecipeManager().getRecipeFor(variant.recipes, input, level).map(holder -> {
             var recipe = holder.value();
-            int time = (int) Math.min(Integer.MAX_VALUE, Math.max(1L, recipe.getCookingTime()) * 600L);
-            return new Cooking(recipe.assemble(input, level.registryAccess()), time, recipe.getExperience());
+            int time = recipeDuration(recipe.getCookingTime(), 600);
+            return new ProcessingRecipe(recipe.assemble(input, level.registryAccess()), time, recipe.getExperience());
         }).orElse(null);
     }
 
-    private Cooking availableRecipe(int slot) {
-        Cooking recipe = recipe(inventory.getStackInSlot(slot));
-        return recipe != null && !recipe.output().isEmpty()
+    private ProcessingRecipe availableRecipe(int slot) {
+        ProcessingRecipe recipe = recipe(inventory.getStackInSlot(slot));
+        return recipe != null && inventory.getStackInSlot(slot).getCount() >= recipe.inputCount() && !recipe.output().isEmpty()
             && room(slot, recipe.output()) >= recipe.output().getCount() ? recipe : null;
     }
 
     private int room(int inputSlot, ItemStack result) {
         if (result.isEmpty()) return 0;
         int room = 0;
-        for (int slot = split ? inputSlot + 2 : 3; slot <= (split ? inputSlot + 2 : 4); slot++) {
+        for (int slot = variant.layout.firstOutput(inputSlot, split); slot <= variant.layout.lastOutput(inputSlot, split); slot++) {
             ItemStack current = inventory.getStackInSlot(slot);
             if (current.isEmpty() || ItemStack.isSameItemSameComponents(current, result)) {
                 room += Math.min(inventory.getSlotLimit(slot), result.getMaxStackSize()) - current.getCount();
@@ -136,10 +163,10 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
     }
 
     private void process(int inputSlot) {
-        Cooking recipe = availableRecipe(inputSlot);
+        ProcessingRecipe recipe = availableRecipe(inputSlot);
         if (recipe == null) return;
         ItemStack result = recipe.output().copy();
-        for (int slot = split ? inputSlot + 2 : 3; slot <= (split ? inputSlot + 2 : 4); slot++) {
+        for (int slot = variant.layout.firstOutput(inputSlot, split); slot <= variant.layout.lastOutput(inputSlot, split); slot++) {
             ItemStack current = inventory.getStackInSlot(slot);
             if (!current.isEmpty() && !ItemStack.isSameItemSameComponents(current, result)) continue;
             int moved = Math.min(result.getCount(), Math.min(inventory.getSlotLimit(slot), result.getMaxStackSize()) - current.getCount());
@@ -148,7 +175,8 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
                 result.shrink(moved);
             }
         }
-        inventory.extractItem(inputSlot, 1, false);
+        if (recipe.pump() == null) inventory.extractItem(inputSlot, recipe.inputCount(), false);
+        else recipe.pump().drain(PumpTank.BUCKET, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
         experience += recipe.experience();
     }
 
@@ -167,6 +195,7 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
     }
 
     void toggleSplit() {
+        if (!variant.layout.supportsSplit()) return;
         split = !split;
         progress = 0;
         setChanged();
@@ -206,7 +235,7 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
     @Override public Component getDisplayName() { return getBlockState().getBlock().getName(); }
 
     @Override public AbstractContainerMenu createMenu(int id, Inventory player, Player owner) {
-        return new InductionMenu(id, player, inventory, data, ContainerLevelAccess.create(level, worldPosition), this);
+        return new AdvancedMachineMenu(id, player, inventory, data, ContainerLevelAccess.create(level, worldPosition), this, variant);
     }
 
     @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
@@ -223,7 +252,7 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         inventory.deserializeNBT(registries, tag.getCompound("inventory"));
-        for (int i = 0; i < 2; i++) trackedInputs[i] = inventory.getStackInSlot(i + 1).copyWithCount(1);
+        for (int i = 0; i < variant.layout.inputs(); i++) trackedInputs[i] = inventory.getStackInSlot(i + 1).copyWithCount(1);
         energy = Mth.clamp(tag.getInt("energy"), 0, CAPACITY);
         heat = Mth.clamp(tag.getInt("heat"), 0, InductionCycle.MAX_HEAT);
         duration = Math.max(1, tag.getInt("duration"));
@@ -232,5 +261,7 @@ final class InductionEntity extends BlockEntity implements MenuProvider, EnergyS
         experience = Math.max(0, tag.getFloat("experience"));
     }
 
-    private record Cooking(ItemStack output, int duration, float experience) {}
+    private record ProcessingRecipe(ItemStack output, int duration, float experience, int inputCount, PumpTank pump) {
+        ProcessingRecipe(ItemStack output, int duration, float experience) { this(output, duration, experience, 1, null); }
+    }
 }

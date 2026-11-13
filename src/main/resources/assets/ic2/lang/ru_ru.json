@@ -1,4 +1,13 @@
 {
+  "gui.ic2.advanced_speed": "Скорость: %s%%",
+  "jei.ic2.advanced_energy": "Обработка: 16 EU/т",
+  "gui.ic2.advanced_pressure": "Давление: %s%%",
+  "block.ic2.singularity_compressor": "Сингулярный компрессор",
+  "block.ic2.centrifugal_extractor": "Центрифужный экстрактор",
+  "item.ic2.scrap_metal_chunk": "Спрессованный металлолом",
+  "item.ic2.scrap_metal_blade": "Лезвие из металлолома",
+  "jei.ic2.advanced_speed": "Время зависит от скорости",
+  "block.ic2.rotary_macerator": "Роторный дробитель",
   "gui.ic2.induction_energy": "%s / 10000 EU",
   "gui.ic2.induction_split": "Раздельный выход",
   "block.ic2.induction_smoker": "Индукционная коптильня",

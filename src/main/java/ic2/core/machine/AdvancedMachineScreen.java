@@ -12,16 +12,19 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 @EventBusSubscriber(modid = IC2.MOD_ID, value = Dist.CLIENT)
-final class InductionScreen extends AbstractContainerScreen<InductionMenu> {
+final class AdvancedMachineScreen extends AbstractContainerScreen<AdvancedMachineMenu> {
     private Button splitButton;
 
-    InductionScreen(InductionMenu menu, Inventory player, Component title) {
+    AdvancedMachineScreen(AdvancedMachineMenu menu, Inventory player, Component title) {
         super(menu, player, title);
     }
 
     @SubscribeEvent
     public static void register(RegisterMenuScreensEvent event) {
-        event.register(InductionMachines.MENU.get(), InductionScreen::new);
+        event.register(AdvancedMachines.MENU.get(), AdvancedMachineScreen::new);
+        event.register(AdvancedMachines.ROTARY_MENU.get(), AdvancedMachineScreen::new);
+        event.register(AdvancedMachines.CENTRIFUGAL_MENU.get(), AdvancedMachineScreen::new);
+        event.register(AdvancedMachines.SINGULARITY_MENU.get(), AdvancedMachineScreen::new);
     }
 
     @Override protected void init() {
@@ -29,6 +32,7 @@ final class InductionScreen extends AbstractContainerScreen<InductionMenu> {
         splitButton = addRenderableWidget(Button.builder(splitName(), button ->
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 0))
             .bounds(leftPos + 64, topPos + 56, 104, 18).build());
+        splitButton.visible = menu.variant.layout.supportsSplit();
     }
 
     private Component splitName() {
@@ -52,13 +56,18 @@ final class InductionScreen extends AbstractContainerScreen<InductionMenu> {
             graphics.fill(leftPos + slot.x - 1, topPos + slot.y - 1, leftPos + slot.x + 17, topPos + slot.y + 17, 0xff555555);
             graphics.fill(leftPos + slot.x, topPos + slot.y, leftPos + slot.x + 16, topPos + slot.y + 16, 0xff8b8b8b);
         }
-        graphics.fill(leftPos + 83, topPos + 35, leftPos + 107, topPos + 49, 0xff555555);
-        graphics.fill(leftPos + 83, topPos + 35, leftPos + 83 + 24 * menu.progress() / 1000, topPos + 49, 0xffffb84d);
+        graphics.fill(leftPos + 67, topPos + 35, leftPos + 91, topPos + 49, 0xff555555);
+        graphics.fill(leftPos + 67, topPos + 35, leftPos + 67 + 24 * menu.progress() / 1000, topPos + 49, 0xffffb84d);
     }
 
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, 8, 6, 0x404040, false);
-        graphics.drawString(font, Component.translatable("gui.ic2.induction_heat", menu.heat() / 100), 88, 19, 0x404040, false);
+        String metric = switch (menu.variant) {
+            case ROTARY, CENTRIFUGAL -> "gui.ic2.advanced_speed";
+            case SINGULARITY -> "gui.ic2.advanced_pressure";
+            default -> "gui.ic2.induction_heat";
+        };
+        graphics.drawString(font, Component.translatable(metric, menu.heat() / 100), 88, 19, 0x404040, false);
         graphics.drawString(font, Component.translatable("gui.ic2.induction_energy", menu.energy()), 8, 73, 0x404040, false);
     }
 }

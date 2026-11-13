@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.58.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.59.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.58.0` |
+| Project version | `0.59.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -410,3 +410,19 @@ JEI lists the machines alongside vanilla cooking recipes. Wrenches rotate and di
 ```
 
 The standalone checks live in `src/verification/java` and run automatically through `check` / `build` as `verifyStorageControl` and `verifyInductionCycle`. They are executable Java checks rather than JUnit tests. NeoGradle default run generation is disabled; the explicitly configured client and server runs remain available.
+
+### Advanced processors (0.59.0)
+
+Rotary Macerator, Centrifugal Extractor and Singularity Compressor use the existing maceration, extraction and compression recipes. Their inventory layouts match the original: one input and respectively two, three or one output slots, plus a battery discharge slot. Output is pooled automatically; only induction furnaces offer the split/shared toggle. All six advanced machines share one implementation while retaining the existing induction block, menu and block-entity registry identifiers.
+
+Each new processor stores 10,000 EU and accepts packets up to 128 EU. Speed/pressure rises from 0 to 10,000 by one per tick while working or maintained by redstone, at 1 EU/t; processing costs another 15 EU/t. Without heating/spin-up, speed falls by four per tick. A standard operation at maximum speed takes 12 ticks and processes one recipe, never two. Rotary Macerator data-pack cooking times scale this duration. The Singularity Compressor consumes the full compression input count, or 1,000 mB water from an adjacent Pump to produce a snowball when the input is empty.
+
+Craft the machines by surrounding the basic machine and an Advanced Machine Casing with seven Scrap Metal Blades, Electrolyzed Water Cells or obsidian respectively. Make a Scrap Metal Chunk by compressing eight Scrap Metal, then surround it with eight flint to craft a blade. The alternate Rotary Macerator recipe using stacked Obsidian Blades remains unported.
+
+Battery charging tiers, side automation, wrench handling, saved progress and accumulated XP follow the advanced furnace implementation. JEI has separate categories showing the advanced EU cost and variable speed rather than the basic machine's fixed duration. Original upgrade slots, sounds and additional original machine recipe lists remain pending. These new machines have not yet been verified in-game.
+
+Check compilation and all three standalone suites without packaging a JAR:
+
+```powershell
+.\gradlew.bat check --offline
+```

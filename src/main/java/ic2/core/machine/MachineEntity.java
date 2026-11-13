@@ -896,7 +896,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
 
     private boolean tickProcessor() {
         ItemStack input = inventory.getStackInSlot(INPUT_SLOT);
-        PumpTank waterSource = kind == MachineKind.COMPRESSOR && input.isEmpty() ? findWaterSource() : null;
+        PumpTank waterSource = kind == MachineKind.COMPRESSOR && input.isEmpty() ? findWaterSource(level, worldPosition) : null;
         Work work = waterSource == null ? workFor(input) : new Work(0, new ItemStack(Items.SNOWBALL));
         if (work == null || work.output().isEmpty() || input.getCount() < work.inputCount()) {
             if (progress != 0) {
@@ -1050,9 +1050,9 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         }
     }
 
-    private PumpTank findWaterSource() {
+    static PumpTank findWaterSource(Level level, BlockPos position) {
         for (Direction direction : Direction.values()) {
-            BlockPos neighbor = worldPosition.relative(direction);
+            BlockPos neighbor = position.relative(direction);
             if (level.isLoaded(neighbor) && level.getBlockEntity(neighbor) instanceof MachineEntity machine
                 && machine.pumpTank != null && machine.pumpTank.getFluidAmount() >= PumpTank.BUCKET
                 && machine.pumpTank.getFluid().getFluid() == Fluids.WATER) {

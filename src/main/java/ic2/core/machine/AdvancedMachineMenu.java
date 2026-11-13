@@ -11,27 +11,34 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
-final class InductionMenu extends AbstractContainerMenu {
+final class AdvancedMachineMenu extends AbstractContainerMenu {
     private final ContainerData data;
     private final ContainerLevelAccess access;
-    private final InductionEntity machine;
+    private final AdvancedMachineEntity machine;
+    final AdvancedMachines.Variant variant;
 
-    InductionMenu(int id, Inventory player) {
-        this(id, player, new ItemStackHandler(5), new SimpleContainerData(5), ContainerLevelAccess.NULL, null);
+    AdvancedMachineMenu(int id, Inventory player) {
+        this(id, player, AdvancedMachines.Variant.FURNACE);
     }
 
-    InductionMenu(int id, Inventory player, ItemStackHandler inventory, ContainerData data,
-                  ContainerLevelAccess access, InductionEntity machine) {
-        super(InductionMachines.MENU.get(), id);
+    AdvancedMachineMenu(int id, Inventory player, AdvancedMachines.Variant variant) {
+        this(id, player, new ItemStackHandler(variant.layout.slots()), new SimpleContainerData(5), ContainerLevelAccess.NULL, null, variant);
+    }
+
+    AdvancedMachineMenu(int id, Inventory player, ItemStackHandler inventory, ContainerData data,
+                  ContainerLevelAccess access, AdvancedMachineEntity machine, AdvancedMachines.Variant variant) {
+        super(variant.menu(), id);
+        this.variant = variant;
         this.data = data;
         this.access = access;
         this.machine = machine;
         addDataSlots(data);
         addSlot(new SlotItemHandler(inventory, 0, 26, 53));
         addSlot(new SlotItemHandler(inventory, 1, 47, 17));
-        addSlot(new SlotItemHandler(inventory, 2, 65, 17));
-        for (int index = 3; index < 5; index++) {
-            addSlot(new SlotItemHandler(inventory, index, 113 + (index - 3) * 18, 35) {
+        if (variant.layout.supportsSplit()) addSlot(new SlotItemHandler(inventory, 2, 65, 17));
+        int firstOutput = variant.layout.inputs() + 1;
+        for (int index = firstOutput; index < variant.layout.slots(); index++) {
+            addSlot(new SlotItemHandler(inventory, index, 95 + (index - firstOutput) * 18, 35) {
                 @Override public boolean mayPlace(ItemStack stack) { return false; }
                 @Override public void onTake(Player owner, ItemStack stack) {
                     if (machine != null) machine.awardExperience(owner.position());
@@ -52,13 +59,13 @@ final class InductionMenu extends AbstractContainerMenu {
     boolean split() { return data.get(3) != 0; }
 
     @Override public boolean clickMenuButton(Player player, int id) {
-        if (id != 0 || !stillValid(player)) return false;
+        if (id != 0 || !variant.layout.supportsSplit() || !stillValid(player)) return false;
         if (machine != null) machine.toggleSplit();
         return true;
     }
 
     @Override public boolean stillValid(Player player) {
-        return access.evaluate((level, pos) -> level.getBlockState(pos).getBlock() instanceof InductionBlock
+        return access.evaluate((level, pos) -> level.getBlockState(pos).getBlock() instanceof AdvancedMachineBlock
             && player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64, true);
     }
 
@@ -67,8 +74,9 @@ final class InductionMenu extends AbstractContainerMenu {
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack stack = slot.getItem();
         ItemStack before = stack.copy();
-        boolean moved = index < 5 ? moveItemStackTo(stack, 5, slots.size(), true)
-            : moveItemStackTo(stack, 0, 1, false) || moveItemStackTo(stack, 1, 3, false);
+        int machineSlots = variant.layout.slots();
+        boolean moved = index < machineSlots ? moveItemStackTo(stack, machineSlots, slots.size(), true)
+            : moveItemStackTo(stack, 0, 1, false) || moveItemStackTo(stack, 1, variant.layout.inputs() + 1, false);
         if (!moved) return ItemStack.EMPTY;
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
         else slot.setChanged();

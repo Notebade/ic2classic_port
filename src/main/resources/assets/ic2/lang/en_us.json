@@ -1,4 +1,13 @@
 {
+  "gui.ic2.advanced_speed": "Speed: %s%%",
+  "jei.ic2.advanced_energy": "Processing: 16 EU/t",
+  "gui.ic2.advanced_pressure": "Pressure: %s%%",
+  "block.ic2.singularity_compressor": "Singularity Compressor",
+  "block.ic2.centrifugal_extractor": "Centrifugal Extractor",
+  "item.ic2.scrap_metal_chunk": "Scrap Metal Chunk",
+  "item.ic2.scrap_metal_blade": "Scrap Metal Blade",
+  "jei.ic2.advanced_speed": "Time depends on speed",
+  "block.ic2.rotary_macerator": "Rotary Macerator",
   "gui.ic2.induction_energy": "%s / 10000 EU",
   "gui.ic2.induction_split": "Separate outputs",
   "block.ic2.induction_smoker": "Induction Smoker",

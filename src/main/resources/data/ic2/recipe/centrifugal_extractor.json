@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XXX",
+    "XYX",
+    "XCX"
+  ],
+  "key": {
+    "X": {
+      "item": "ic2:cell_electrolyzed_water"
+    },
+    "C": {
+      "item": "ic2:advanced_machine_block"
+    },
+    "Y": {
+      "item": "ic2:extractor"
+    }
+  },
+  "result": {
+    "id": "ic2:centrifugal_extractor",
+    "count": 1
+  }
+}
