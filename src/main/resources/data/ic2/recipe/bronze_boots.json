@@ -1,9 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "result": {
-    "count": 1,
-    "id": "ic2:armor_bronze_boots"
-  },
+  "category": "equipment",
   "key": {
     "B": {
       "tag": "c:ingots/bronze"
@@ -13,5 +9,9 @@
     "B B",
     "B B"
   ],
-  "category": "equipment"
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:armor_bronze_boots"
+  }
 }

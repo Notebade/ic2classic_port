@@ -1,9 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "result": {
-    "count": 1,
-    "id": "ic2:armor_composite_helmet"
-  },
+  "category": "equipment",
   "key": {
     "I": {
       "item": "minecraft:iron_helmet"
@@ -20,5 +16,9 @@
     "AIA",
     " L "
   ],
-  "category": "equipment"
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:armor_composite_helmet"
+  }
 }

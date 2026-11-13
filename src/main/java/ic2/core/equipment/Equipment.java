@@ -10,5 +10,6 @@ public final class Equipment {
         ConventionalArmor.register(bus, items);
         ConventionalShield.register(items);
         items.registerItem("nano_shield", NanoShield::new);
+        PoweredDrill.register(items);
     }
 }

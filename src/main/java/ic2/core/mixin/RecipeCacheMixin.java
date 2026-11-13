@@ -22,7 +22,7 @@ abstract class RecipeCacheMixin {
             CallbackInfoReturnable<Optional<RecipeHolder<CraftingRecipe>>> callback) {
         // The cache omits original slot offsets and stack counts.
         for (ItemStack stack : input.items()) {
-            if (stack.is(IC2.UU_MATTER.get()) || ReactorFuelCellRecipe.isCountedIngredient(stack)) {
+            if (stack.getCount() > 1 || stack.is(IC2.UU_MATTER.get()) || ReactorFuelCellRecipe.isCountedIngredient(stack)) {
                 callback.setReturnValue(level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, level));
                 return;
             }

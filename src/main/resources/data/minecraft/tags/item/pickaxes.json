@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "ic2:tool_pickaxe_bronze",
-    "ic2:tool_pickaxe_aluminium"
+    "ic2:tool_pickaxe_aluminium",
+    "ic2:diamond_drill",
+    "ic2:advanced_drill",
+    "ic2:rock_cutter_drill"
   ]
 }

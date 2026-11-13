@@ -1,9 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "result": {
-    "count": 1,
-    "id": "ic2:armor_composite_chest"
-  },
+  "category": "equipment",
   "key": {
     "I": {
       "item": "minecraft:iron_chestplate"
@@ -20,5 +16,9 @@
     "ALA",
     "AIA"
   ],
-  "category": "equipment"
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:armor_composite_chest"
+  }
 }

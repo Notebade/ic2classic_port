@@ -314,3 +314,9 @@ recipeFinished receives a detached result or ItemStack.EMPTY for chance-failed/p
 ## Обычная экипировка (этап 8, в работе)
 
 Через `Ic2Api.item(id)` доступны `tool_{axe,hoe,pickaxe,shovel,sword}_{bronze,aluminium}`, `armor_{bronze,composite}_{helmet,chest,leggings,boots}` и `{bronze,aluminium,composite,nano}_shield`. Обычные предметы используют стандартные контракты Minecraft `TieredItem`, `ArmorItem`, `ShieldItem`, ремонт и теги инструментов/брони. Нанощит реализует `ic2.api.item.ElectricItem`: 100000 EU, 300 EU/передачу, пакет от 128 EU; отдача энергии запрещена, блокирование требует 50 EU, износ расходует 50 EU за единицу. Заряд изменяйте через интерфейс, без зависимости от `ic2.core` или внутреннего компонента. API остаётся v1. Остальная экипировка и пункт 7 ещё переносятся.
+
+### Режимы инструментов
+
+`ic2.api.item.ConfigurableTool`: `modes()` перечисляет устойчивые строковые значения; `mode(stack)` читает режим; `setMode(stack, mode)` возвращает false для чужого предмета/неизвестного режима без изменения данных. Меняйте на сервере. Для `diamond_drill`/`rock_cutter_drill`: normal/dirt; для `advanced_drill`: single/area. Режим сохраняется с ItemStack, переключение — Shift+ПКМ. Все три варианта реализуют MiningDrill, ElectricItem и ElectricEnchantable. В шахтёре MiningDrill выполняет одиночную операцию без разрушения 3×3.
+
+Рецепты `ic2:sized_shaped` используют стандартные поля shaped-рецепта плюс `counts`: объект `{ "minecraft:end_crystal": 3 }`, количества 1–64 по item ID. Проверяется каждая ячейка; форма, отражение, результат и компоненты стандартные. Указанные количества списываются в верстаке и ванильном Crafter. API остаётся v1.

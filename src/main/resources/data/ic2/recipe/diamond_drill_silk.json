@@ -1,0 +1,40 @@
+{
+  "pattern": [
+    "XYX",
+    "CVC",
+    "BNB"
+  ],
+  "key": {
+    "V": {
+      "item": "ic2:diamond_drill"
+    },
+    "X": {
+      "item": "ic2:plate_iridium"
+    },
+    "Y": {
+      "item": "minecraft:shears"
+    },
+    "N": {
+      "item": "ic2:magnet"
+    },
+    "C": {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    "B": {
+      "item": "ic2:upgrade_base"
+    }
+  },
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "result": {
+    "id": "ic2:diamond_drill",
+    "count": 1,
+    "components": {
+      "minecraft:enchantments": {
+        "levels": {
+          "minecraft:silk_touch": 1
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "pattern": [
+    " D ",
+    "DVD"
+  ],
+  "key": {
+    "D": {
+      "tag": "c:gems/diamond"
+    },
+    "V": {
+      "item": "ic2:drill"
+    }
+  },
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "result": {
+    "id": "ic2:diamond_drill",
+    "count": 1
+  }
+}

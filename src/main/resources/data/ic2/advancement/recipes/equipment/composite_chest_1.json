@@ -1,54 +1,54 @@
 {
-  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "ic2:composite_chest_1"
+    ]
+  },
+  "requirements": [
+    [
+      "has_material_2",
+      "has_material_0",
+      "has_material_1",
+      "has_the_recipe"
+    ]
+  ],
   "criteria": {
     "has_material_2": {
-      "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": "minecraft:leather_chestplate"
           }
         ]
-      }
-    },
-    "has_the_recipe": {
-      "trigger": "minecraft:recipe_unlocked",
-      "conditions": {
-        "recipe": "ic2:composite_chest_1"
-      }
-    },
-    "has_material_1": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "items": [
-          {
-            "items": "ic2:plate_advanced_alloy"
-          }
-        ]
-      }
+      },
+      "trigger": "minecraft:inventory_changed"
     },
     "has_material_0": {
-      "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": "minecraft:iron_chestplate"
           }
         ]
-      }
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_material_1": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:plate_advanced_alloy"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ic2:composite_chest_1"
+      },
+      "trigger": "minecraft:recipe_unlocked"
     }
   },
-  "requirements": [
-    [
-      "has_material_2",
-      "has_the_recipe",
-      "has_material_1",
-      "has_material_0"
-    ]
-  ],
-  "rewards": {
-    "recipes": [
-      "ic2:composite_chest_1"
-    ]
-  }
+  "parent": "minecraft:recipes/root"
 }

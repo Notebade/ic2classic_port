@@ -1,9 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "result": {
-    "count": 1,
-    "id": "ic2:armor_composite_boots"
-  },
+  "category": "equipment",
   "key": {
     "I": {
       "item": "minecraft:iron_boots"
@@ -19,5 +15,9 @@
     "AIA",
     "ALA"
   ],
-  "category": "equipment"
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "count": 1,
+    "id": "ic2:armor_composite_boots"
+  }
 }

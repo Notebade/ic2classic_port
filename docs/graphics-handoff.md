@@ -59,3 +59,5 @@ Earlier gameplay commit `d226731` includes original pad/chunkloader screens, uti
 ## Equipment migration in progress
 
 Bronze/aluminium tools: tool_{axe,hoe,pickaxe,shovel,sword}_{bronze,aluminium}. Armor: armor_{bronze,composite}_{helmet,chest,leggings,boots}. Shields: bronze_shield, aluminium_shield, composite_shield, nano_shield. Mechanics, recipes, discovery and enchantment tags are supplied. Client textures/models/language, armor layers, shield transforms and creative classification remain with the graphics stage; no client GUI was changed.
+
+Drill IDs diamond_drill, advanced_drill, rock_cutter_drill added. Public ConfigurableTool exposes modes; current server gesture Shift+right-click, no new key bindings/screens. Source rock-cutter tag and recipes are present. Sized-shape recipe diamond_drill_fortune adds a counts map; JEI presentation of per-slot counts remains the graphics stage (native result includes Fortune III).

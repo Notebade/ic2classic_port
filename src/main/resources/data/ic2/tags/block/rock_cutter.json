@@ -1,0 +1,14 @@
+{
+  "values": [
+    "minecraft:stone",
+    "minecraft:diorite",
+    "minecraft:andesite",
+    "minecraft:granite",
+    "minecraft:obsidian",
+    "minecraft:crying_obsidian",
+    "minecraft:blackstone",
+    "minecraft:basalt",
+    "minecraft:deepslate"
+  ],
+  "replace": false
+}

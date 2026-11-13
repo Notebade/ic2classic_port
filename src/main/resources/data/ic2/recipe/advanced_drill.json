@@ -1,0 +1,33 @@
+{
+  "pattern": [
+    "XYX",
+    "CVC",
+    "BNB"
+  ],
+  "key": {
+    "V": {
+      "item": "ic2:diamond_drill"
+    },
+    "X": {
+      "item": "ic2:complex_circuit"
+    },
+    "Y": {
+      "item": "ic2:advanced_field_expansion_pad_upgrade"
+    },
+    "N": {
+      "item": "ic2:plasma_core"
+    },
+    "C": {
+      "item": "ic2:plate_iridium"
+    },
+    "B": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "result": {
+    "id": "ic2:advanced_drill",
+    "count": 1
+  }
+}

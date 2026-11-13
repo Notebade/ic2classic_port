@@ -15,3 +15,12 @@ Client screens, rendering, language and creative classification remain with the 
 Rows 8 and 7 remain open. No whole-stage completion or shutdown until both are finished.
 
 First unit verified: .tools/equipment-first-unit-check.log (full server/addon suite, real recipe lookup) and .tools/equipment-first-unit-build.log (check + compileAddonExampleJava). No client assets changed. Nano shield enchantment damage follows the native ItemStack wear path; it never loses durability.
+
+## Drill variants and counted recipes
+
+- Added diamond, advanced and rock-cutter drills using original EU cost, charging tier, speed and machine mining boosts. Configurable modes persist; sneaking right-click cycles them. ConfigurableTool is the addon contract for mode discovery/change.
+- Advanced area mining uses the native server block-destruction path. Real 3x3 test protects one block through BreakEvent, verifies eight removals and exactly 640 EU spent. No neighbor chunk loading. Rock-cutter tag uses the source nine blocks.
+- Restored normal, silk-touch and Fortune III source recipes. Fortune requires five advanced circuits, three end crystals per crystal slot and five magnets. Added reusable ic2:sized_shaped so native crafting and vanilla Crafter consume original counts; cache bypass handles counted stacks.
+- Red: .tools/equipment-drills-red.log and .tools/equipment-fortune-red.log. Green: .tools/equipment-drills-final-check.log and .tools/equipment-fortune-take-check.log. Actual CraftingMenu take verifies full ingredient consumption and Fortune III assembly.
+- Source drill/scanner probing and audio remain for the equipment audit; row 8 stays open.
+- Auto-review rejected reverting JSON field-order churn because it might discard uncommitted recipes. Kept the files; no restore was executed.
