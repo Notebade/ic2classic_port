@@ -1,0 +1,19 @@
+{
+  "category": "equipment",
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "ic2:base_module"
+    },
+    {
+      "item": "minecraft:piston"
+    },
+    {
+      "item": "ic2:upgrade_overclocker"
+    }
+  ],
+  "result": {
+    "id": "ic2:jump_boost_module",
+    "count": 1
+  }
+}

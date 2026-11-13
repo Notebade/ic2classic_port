@@ -155,6 +155,7 @@ public final class IC2 {
 
     public IC2(IEventBus modBus, net.neoforged.fml.ModContainer container) {
         container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, ic2.core.machine.GenerationConfig.SPEC);
+        container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, ic2.core.equipment.EquipmentConfig.SPEC, "ic2-equipment-server.toml");
         COMPONENTS.register(modBus);
         ITEMS.register(modBus);
         RECIPE_SERIALIZERS.register(modBus);

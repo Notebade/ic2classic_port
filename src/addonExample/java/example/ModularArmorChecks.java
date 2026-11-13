@@ -35,6 +35,7 @@ final class ModularArmorChecks {
         checkCrafting(level);
         PassiveModuleChecks.run(level);
         NightVisionChecks.run(level);
+        MovementModuleChecks.run(level);
     }
     private static void checkCrafting(ServerLevel level) {
         var cell = stack("energy_crystal"); ((ElectricItem) cell.getItem()).setCharge(cell, 4321);

@@ -1,0 +1,27 @@
+{
+  "category": "equipment",
+  "result": {
+    "id": "ic2:speed_boost_module",
+    "count": 1
+  },
+  "key": {
+    "X": {
+      "item": "ic2:upgrade_overclocker"
+    },
+    "V": {
+      "item": "ic2:plate_iridium"
+    },
+    "Y": {
+      "item": "ic2:base_module"
+    },
+    "C": {
+      "item": "ic2:complex_circuit"
+    }
+  },
+  "pattern": [
+    "XCX",
+    "VYV",
+    "XCX"
+  ],
+  "type": "minecraft:crafting_shaped"
+}

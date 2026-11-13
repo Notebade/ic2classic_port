@@ -1,0 +1,27 @@
+{
+  "category": "equipment",
+  "result": {
+    "id": "ic2:parachute_module",
+    "count": 1
+  },
+  "key": {
+    "X": {
+      "tag": "minecraft:wool_carpets"
+    },
+    "V": {
+      "item": "ic2:circuit"
+    },
+    "Y": {
+      "item": "minecraft:stick"
+    },
+    "C": {
+      "item": "ic2:base_module"
+    }
+  },
+  "pattern": [
+    "XXX",
+    "YVY",
+    " C "
+  ],
+  "type": "minecraft:crafting_shaped"
+}

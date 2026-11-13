@@ -110,3 +110,13 @@ First unit verified: .tools/equipment-first-unit-check.log (full server/addon su
 - HUD+Mode switches worn goggles with source twenty-tick cooldown, requiring no open server menu. Shift-use offers held toggling through the existing ConfigurableTool API. Module setting stays with the installed module and survives removal, avoiding hidden parent-state leftovers.
 - Original recipe and missing clear reinforced glass dependency added, including its four-from-four source recipe and Silk Touch loot. Appearance belongs to graphics stage.
 - Red `.tools/equipment-nightvision-red.log`: missing goggles. Green `.tools/equipment-nightvision-complete-check.log`: separate/module behavior, parent/independent EU, disabled/empty behavior, input mask/expiry and repeated-key cooldown. Fixture corrections: consumed module stacks become empty, so recipe assertion now compares a fresh goggles stack; world time setter belongs to ServerLevelData.
+
+### Four movement modules
+
+- Source IDs jump_boost_module, speed_boost_module, step_assist_module, parachute_module with source categories/slot restrictions and original shaped recipes plus alternate jump recipe.
+- Jump reserves one boost for 1000 EU while grounded, then applies original default 1.75 initial horizontal multiplier / 0.15 decaying vertical force while Jump+Boost is held. Speed adds source ground/water/air acceleration for sprint or Boost+Forward, charging 1000 per ten active ticks.
+- `ic2-equipment-server.toml` exposes source `originalQuantumBehavior=false`; true restores 3.5 initial multiplier, 0.3 vertical and 0.25 air acceleration.
+- Step assist adds one transient +0.6 native STEP_HEIGHT modifier regardless of duplicate modules; refresh revokes it after module removal or unequip. Source periodic climbing cost 250 EU. It cannot leave a permanent saved player attribute.
+- Parachute: Jump+Sneak activates while falling, limits descent to -0.2, applies 0.02 forward acceleration, clears fall distance and resets the server floating counter. Landing/water or held combination after five ticks disables it.
+- Red `.tools/equipment-movement-red.log` missing jump module; green `.tools/equipment-movement-check.log` real player velocity/reserve EU, ten-tick speed EU, real step attribute add/remove and parachute activation/landing. Added alternate jump recipe after the run; covered by next full recipe-load run.
+- Water walker remains pending its original carbon-boat recipe dependency. Quantum, storage, active utility modules and remaining row 8 still open; row 7 not started.

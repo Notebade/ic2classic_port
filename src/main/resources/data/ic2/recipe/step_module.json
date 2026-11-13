@@ -1,0 +1,26 @@
+{
+  "category": "equipment",
+  "result": {
+    "id": "ic2:step_assist_module",
+    "count": 1
+  },
+  "key": {
+    "X": {
+      "item": "minecraft:piston"
+    },
+    "V": {
+      "item": "ic2:base_module"
+    },
+    "Y": {
+      "tag": "minecraft:stairs"
+    },
+    "C": {
+      "item": "ic2:complex_circuit"
+    }
+  },
+  "pattern": [
+    "XY",
+    "CV"
+  ],
+  "type": "minecraft:crafting_shaped"
+}

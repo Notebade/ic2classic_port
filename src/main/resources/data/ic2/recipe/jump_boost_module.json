@@ -1,0 +1,27 @@
+{
+  "category": "equipment",
+  "result": {
+    "id": "ic2:jump_boost_module",
+    "count": 1
+  },
+  "key": {
+    "X": {
+      "item": "ic2:complex_circuit"
+    },
+    "V": {
+      "item": "ic2:base_module"
+    },
+    "B": {
+      "item": "minecraft:piston"
+    },
+    "C": {
+      "item": "ic2:plate_iridium"
+    }
+  },
+  "pattern": [
+    " X ",
+    "CVC",
+    "BBB"
+  ],
+  "type": "minecraft:crafting_shaped"
+}

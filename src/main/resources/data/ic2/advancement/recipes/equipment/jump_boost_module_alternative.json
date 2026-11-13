@@ -1,0 +1,25 @@
+{
+  "requirements": [
+    [
+      "has_material"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ic2:jump_boost_module_alternative"
+    ]
+  },
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_material": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "ic2:base_module"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -16,6 +16,7 @@ public final class Equipment {
         ModularSuitItem.register(items);
         PassiveArmorModule.register(items);
         NightVisionGoggles.register(items);
+        MovementArmorModule.register(items);
         EquipmentMaterials.register(bus);
         ConventionalShield.register(items);
         items.registerItem("nano_shield", NanoShield::new);
@@ -36,5 +37,6 @@ public final class Equipment {
             var stack = player.getItemBySlot(slot);
             if (stack.getCount() == 1 && stack.getItem() instanceof ic2.api.item.ArmorTickItem item) item.tickArmor(stack, player, slot);
         }
+        MovementArmorModule.refreshStep(player);
     }
 }
