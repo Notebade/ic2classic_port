@@ -394,3 +394,5 @@ Run the standalone storage boundary tests without building a mod JAR:
 ```powershell
 .\scripts\Test-StorageControl.ps1
 ```
+
+If an IDE client shows new items with missing models or untranslated names, run `.\scripts\Sync-DevResources.ps1` and press F3+T. The IDE launch reads `build/resources/main`; compiling Java alone does not refresh these assets. The script validates JSON and expands mod metadata without building a JAR.
