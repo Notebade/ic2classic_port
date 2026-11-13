@@ -72,6 +72,11 @@ final class MachineRecipeViews {
             case COMPRESSOR -> compressor();
             case ALLOY_SMELTER -> alloy();
             case URANIUM_ENRICHER -> UraniumEnrichment.recipeViews();
+            case COLOSSAL_FURNACE -> colossal(Process.ELECTRIC_FURNACE, level, false);
+            case COLOSSAL_MACERATOR -> colossal(Process.MACERATOR, level, false);
+            case COLOSSAL_EXTRACTOR -> colossal(Process.EXTRACTOR, level, false);
+            case COLOSSAL_COMPRESSOR -> colossal(Process.COMPRESSOR, level, false);
+            case COLOSSAL_RECYCLER -> colossal(Process.RECYCLER, level, true);
             case SAWMILL -> sawmill(level);
             case RECYCLER -> recycling();
             case ELECTROLYZER -> registeredItems().flatMap(MachineRecipeViews::electrolysis).toList();
@@ -278,6 +283,23 @@ final class MachineRecipeViews {
 
     private static Component cost(int ticks, int euPerTick) {
         return euPerTick == 0 ? note("ticks", ticks) : note("cost", ticks, (long) ticks * euPerTick);
+    }
+
+    private static List<MachineRecipeView> colossal(Process source, Level level, boolean recycler) {
+        return forProcess(source, level).stream().map(recipe -> {
+            var inputs = new ArrayList<>(recipe.inputs());
+            inputs.add(new Slot(List.of(), new net.neoforged.neoforge.fluids.FluidStack(Fluids.WATER, 50)));
+            var outputs = new ArrayList<>(recipe.outputs());
+            outputs.add(new Slot(List.of(), new net.neoforged.neoforge.fluids.FluidStack(SteamFluids.steam(), 25)));
+            Component detail;
+            if (recycler) {
+                var rule = RecyclingRecipes.find(recipe.inputs().getFirst().items().getFirst());
+                String chance = String.format(Locale.ROOT, "%.1f", Math.min(100, 500.0 / rule.chanceDenominator()));
+                detail = Component.translatableWithFallback("jei.ic2.colossal_recycler_chance", "Output chance: %s%%", chance);
+            } else detail = Component.translatableWithFallback("jei.ic2.colossal_water_reserve", "Reserve per lane: 100 mB water, 25 mB steam space.");
+            return new MachineRecipeView(recipe.sourceId(), List.copyOf(inputs), List.copyOf(outputs),
+                List.of(cost(recycler ? 1 : 6, 30), Component.translatableWithFallback("jei.ic2.colossal_lanes", "2/3/4 cubes: 2/4/8 parallel lanes."), detail));
+        }).toList();
     }
 
     static Component note(String id, Object... arguments) {

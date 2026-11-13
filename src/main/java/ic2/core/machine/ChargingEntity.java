@@ -194,31 +194,13 @@ final class ChargingEntity extends BlockEntity implements MenuProvider, EnergySi
         for (int i = 1; i <= kind.projectionSlots(); i++) if (inventory.getStackInSlot(i).getItem() instanceof PadUpgradeItem upgrade) flags |= 1 << upgrade.kind.ordinal();
         return flags;
     }
-    private record Modifiers(int capacity, int packet, int transfer) {}
-
-    private Modifiers modifiers() {
-        if (!kind.pad()) return new Modifiers(kind.capacity, kind.packet, kind.packet);
-        long extraStorage = 0, extraTier = 0;
-        double storage = 1, speed = 1;
-        for (int slot = 1 + kind.projectionSlots(); slot < inventory.getSlots(); slot++) {
-            var stack = inventory.getStackInSlot(slot);
-            if (!(stack.getItem() instanceof ic2.api.machine.MachineUpgrade upgrade)) continue;
-            int count = stack.getCount();
-            extraStorage += (long) Math.max(0, upgrade.extraEnergyStorage(stack)) * count;
-            extraTier += (long) Math.max(0, upgrade.extraTier(stack)) * count;
-            storage *= Math.pow(positive(upgrade.storageMultiplier(stack)), count);
-            speed *= Math.pow(positive(upgrade.speedMultiplier(stack)), count);
-        }
-        int base = (int) Math.min(Integer.MAX_VALUE, kind.capacity + extraStorage);
-        return new Modifiers(MachineUpgradeRules.scale(base, storage),
-            MachineUpgradeRules.packet(kind.tier(), (int) Math.min(13, extraTier)),
-            MachineUpgradeRules.scale(kind.packet, speed));
+    private MachineModifiers modifiers() {
+        return kind.pad() ? MachineModifiers.read(inventory, 1 + kind.projectionSlots(), kind.capacity, kind.tier())
+            : new MachineModifiers(kind.capacity, kind.packet, 1, 1);
     }
-
-    private static double positive(double value) { return Double.isNaN(value) || value < 0 ? 1 : value; }
     private int capacity() { return modifiers().capacity(); }
     private int inputPacket() { return modifiers().packet(); }
-    private int transferLimit() { return modifiers().transfer(); }
+    private int transferLimit() { return MachineUpgradeRules.scale(kind.packet, modifiers().speed()); }
     private void fissionFuel() {
         if (kind != ChargingDevices.Kind.PAD_FISSION || energy >= capacity()) return;
         if (nuclearTicks > 0) { nuclearTicks--; energy = Math.min(capacity(), energy + nuclearProduction); setChanged(); return; }

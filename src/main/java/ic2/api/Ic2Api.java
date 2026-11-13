@@ -45,7 +45,8 @@ public final class Ic2Api {
         Objects.requireNonNull(level, "level"); Objects.requireNonNull(pos, "pos");
         if (!level.getServer().isSameThread()) throw new IllegalStateException("Read machine data on the server thread");
         if (!level.hasChunkAt(pos)) return Optional.empty();
-        return level.getBlockEntity(pos) instanceof MachineSnapshot.Provider provider
-            ? Optional.of(provider.machineInfo()) : Optional.empty();
+        var entity = level.getBlockEntity(pos);
+        if (entity instanceof MachineSnapshot.Provider provider) return Optional.of(provider.machineInfo());
+        return entity instanceof MachineSnapshot.Access access ? access.resolveMachineInfo() : Optional.empty();
     }
 }

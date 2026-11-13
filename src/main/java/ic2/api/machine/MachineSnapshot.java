@@ -17,4 +17,8 @@ public record MachineSnapshot(ResourceLocation blockId, boolean active, long ene
     public interface Provider {
         MachineSnapshot machineInfo();
     }
+    /** Optional telemetry for a linked part whose loaded controller may be unavailable. */
+    public interface Access {
+        java.util.Optional<MachineSnapshot> resolveMachineInfo();
+    }
 }

@@ -24,3 +24,12 @@ Task: fully finish backlog rows 3 and 4, retain addon API availability, update r
 ## Remaining
 
 Five colossal processing machines, electric enchanter and electric fisher; upgrades/sounds/layout verification for existing advanced machines; charged electrolyzer and pressure-furnace final game checks; full row-3 network/source comparison, charging-device layouts/JEI and remaining visuals. Finish client QA, persisted-ticket restart validation and API coverage audit. Then reconcile `осталось.md` and produce the final local commit; no push.
+
+## Colossal processing follow-up
+
+- Added five working controllers and the shared base block. Source-oriented solid cubes extend inward, right and down from the top-corner controller; edges 2/3/4 unlock 2/4/8 independent lanes. Each lane consumes 30 EU/t, reaches 6000 progress in six ticks (recycler: one), consumes 50 mB water and produces 25 mB steam. Startup reserve is 10% of capacity; per-lane fluid reserve checks and progress rollback are implemented.
+- Added original crafting patterns and machine JEI recipes, storage/tier modifiers, charge item support, output XP, state persistence and owner-checked linked capability forwarding. Shared `MachineModifiers` now also serves pads without duplicating modifier aggregation.
+- Added `MachineSnapshot.Access` for optional linked-controller reads. Colossal parts, existing power parts and pressure-furnace parts now expose loaded live controllers; broken, removed and unloaded links return empty. Pressure parts also reject stale entity references explicitly.
+- `.tools/colossal-server-check.log` passed real production for all five machines in all three cube sizes, every parallel lane, EU/water/steam accounting, simulated filling, linked API lookup and immediate rejection through cached capabilities after a different part breaks.
+- User assigned graphics/GUI to a parallel stage after the initial colossal menu/screen drafts were written. Subsequent work avoids visual files; `docs/graphics-handoff.md` records new IDs, states, expected paths and recipe label semantics for that stage. Visual completion is no longer claimed by this gameplay unit.
+- Remaining machine implementations are electric enchanter and electric fisher; the broader upgrade/network/restart/API verification items remain open.

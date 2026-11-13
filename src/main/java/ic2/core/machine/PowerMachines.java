@@ -82,6 +82,7 @@ public final class PowerMachines {
         StorageInfrastructure.register(bus, items);
         UtilityMachines.register(bus, items);
         Chunkloading.register(bus, items);
+        ColossalMachines.register(bus, items);
         bus.addListener(PowerMachines::capabilities);
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {

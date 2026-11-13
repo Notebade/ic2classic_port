@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 
-final class PressurePartEntity extends BlockEntity implements EnergySink {
+final class PressurePartEntity extends BlockEntity implements EnergySink, ic2.api.machine.MachineSnapshot.Access {
     private BlockPos owner;
 
     PressurePartEntity(BlockPos pos, BlockState state) { super(AdvancedMachines.PRESSURE_PART_ENTITY.get(), pos, state); }
@@ -30,7 +30,7 @@ final class PressurePartEntity extends BlockEntity implements EnergySink {
     }
 
     AdvancedMachineEntity controller() {
-        if (level == null || level.isClientSide) return null;
+        if (level == null || level.isClientSide || isRemoved() || !level.hasChunkAt(worldPosition) || level.getBlockEntity(worldPosition) != this) return null;
         if (owner != null && level.isLoaded(owner)) {
             AdvancedMachineEntity found = candidate(owner);
             if (found != null) return found;
@@ -47,6 +47,9 @@ final class PressurePartEntity extends BlockEntity implements EnergySink {
     private AdvancedMachineEntity candidate(BlockPos pos) {
         return level.getBlockEntity(pos) instanceof AdvancedMachineEntity machine
             && machine.pressureContains(worldPosition) && machine.pressureFormed() ? machine : null;
+    }
+    @Override public java.util.Optional<ic2.api.machine.MachineSnapshot> resolveMachineInfo() {
+        return java.util.Optional.ofNullable(controller()).map(AdvancedMachineEntity::machineInfo);
     }
 
     @Override public boolean canReceiveEnergy(Direction side, int sourceStorageOutput, int packet) {

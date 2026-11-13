@@ -1,0 +1,24 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XCX",
+    "XYX"
+  ],
+  "result": {
+    "id": "ic2:colossal_macerator",
+    "count": 1
+  },
+  "key": {
+    "X": {
+      "item": "ic2:scrap_metal_blade"
+    },
+    "C": {
+      "item": "ic2:rotary_macerator"
+    },
+    "Y": {
+      "item": "ic2:colossal_base"
+    }
+  }
+}

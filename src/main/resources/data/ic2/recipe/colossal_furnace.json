@@ -1,0 +1,24 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XCX",
+    "XYX"
+  ],
+  "result": {
+    "id": "ic2:colossal_furnace",
+    "count": 1
+  },
+  "key": {
+    "X": {
+      "item": "minecraft:copper_ingot"
+    },
+    "C": {
+      "item": "ic2:induction_furnace"
+    },
+    "Y": {
+      "item": "ic2:colossal_base"
+    }
+  }
+}

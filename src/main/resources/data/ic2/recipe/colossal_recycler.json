@@ -1,0 +1,24 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XXX",
+    "XCX",
+    "XYX"
+  ],
+  "result": {
+    "id": "ic2:colossal_recycler",
+    "count": 1
+  },
+  "key": {
+    "X": {
+      "item": "minecraft:sticky_piston"
+    },
+    "C": {
+      "item": "ic2:compacting_recycler"
+    },
+    "Y": {
+      "item": "ic2:colossal_base"
+    }
+  }
+}

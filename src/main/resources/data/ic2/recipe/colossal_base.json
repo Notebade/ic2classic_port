@@ -1,0 +1,27 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " X ",
+    "YCY",
+    " V "
+  ],
+  "result": {
+    "id": "ic2:colossal_base",
+    "count": 4
+  },
+  "key": {
+    "X": {
+      "item": "ic2:turbine_blade"
+    },
+    "C": {
+      "item": "ic2:stabilized_machine_block"
+    },
+    "V": {
+      "item": "ic2:complex_circuit"
+    },
+    "Y": {
+      "item": "ic2:plate_iridium"
+    }
+  }
+}

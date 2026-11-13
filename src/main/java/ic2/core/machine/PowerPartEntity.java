@@ -11,7 +11,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 
-final class PowerPartEntity extends BlockEntity {
+final class PowerPartEntity extends BlockEntity implements ic2.api.machine.MachineSnapshot.Access {
     private BlockPos owner;
     PowerPartEntity(BlockPos pos, BlockState state) { super(PowerMachines.PART_ENTITY.get(), pos, state); }
     boolean canClaim(BlockPos pos) {
@@ -26,6 +26,9 @@ final class PowerPartEntity extends BlockEntity {
         if (level == null || isRemoved() || owner == null || !level.hasChunkAt(worldPosition)
             || level.getBlockEntity(worldPosition) != this || !level.isLoaded(owner)) return null;
         return level.getBlockEntity(owner) instanceof PowerMachineEntity machine && machine.contains(worldPosition) && machine.formed() ? machine : null;
+    }
+    @Override public java.util.Optional<ic2.api.machine.MachineSnapshot> resolveMachineInfo() {
+        return java.util.Optional.ofNullable(controller()).map(PowerMachineEntity::machineInfo);
     }
     // Resolve at operation time so a cached capability cannot access a broken or reassigned structure.
     IItemHandler items(Direction side) {
