@@ -74,6 +74,7 @@ final class AdvancedMachineMenu extends AbstractContainerMenu {
     }
 
     @Override public boolean stillValid(Player player) {
+        if (machine != null && !machine.isOperational()) return false;
         return access.evaluate((level, pos) -> level.getBlockState(pos).getBlock() instanceof AdvancedMachineBlock
             && player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64, true);
     }

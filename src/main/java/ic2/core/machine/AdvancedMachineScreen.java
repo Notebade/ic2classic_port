@@ -28,6 +28,7 @@ final class AdvancedMachineScreen extends AbstractContainerScreen<AdvancedMachin
         event.register(AdvancedMachines.RARE_EARTH_MENU.get(), AdvancedMachineScreen::new);
         event.register(AdvancedMachines.COMPACTING_MENU.get(), AdvancedMachineScreen::new);
         event.register(AdvancedMachines.SLOW_MENU.get(), AdvancedMachineScreen::new);
+        event.register(AdvancedMachines.PRESSURE_MENU.get(), AdvancedMachineScreen::new);
     }
 
     @Override protected void init() {

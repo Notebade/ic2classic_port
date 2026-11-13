@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "name": "ic2:pressure_alloy_furnace_structure",
+          "type": "minecraft:item"
+        }
+      ]
+    }
+  ]
+}

@@ -30,9 +30,14 @@ public final class AdvancedMachines {
     static final DeferredBlock<AdvancedMachineBlock> RARE_EARTH = block("centrifugal_rare_earth_extractor", Variant.RARE_EARTH);
     static final DeferredBlock<AdvancedMachineBlock> COMPACTING = block("compacting_recycler", Variant.COMPACTING);
     static final DeferredBlock<AdvancedMachineBlock> SLOW = block("slow_grinder", Variant.SLOW);
+    static final DeferredBlock<AdvancedMachineBlock> PRESSURE = block("pressure_alloy_furnace", Variant.PRESSURE);
+    static final DeferredBlock<PressurePartBlock> PRESSURE_PART = BLOCKS.registerBlock("pressure_alloy_furnace_structure",
+        PressurePartBlock::new, BlockBehaviour.Properties.of().strength(3.5F).sound(SoundType.METAL).requiresCorrectToolForDrops());
     static final Supplier<BlockEntityType<AdvancedMachineEntity>> ENTITY = ENTITIES.register("induction_furnace",
         () -> BlockEntityType.Builder.of(AdvancedMachineEntity::new, FURNACE.get(), BLAST.get(), SMOKER.get(),
-            ROTARY.get(), CENTRIFUGAL.get(), SINGULARITY.get(), RARE_EARTH.get(), COMPACTING.get(), SLOW.get()).build(null));
+            ROTARY.get(), CENTRIFUGAL.get(), SINGULARITY.get(), RARE_EARTH.get(), COMPACTING.get(), SLOW.get(), PRESSURE.get()).build(null));
+    static final Supplier<BlockEntityType<PressurePartEntity>> PRESSURE_PART_ENTITY = ENTITIES.register("pressure_alloy_furnace_structure",
+        () -> BlockEntityType.Builder.of(PressurePartEntity::new, PRESSURE_PART.get()).build(null));
     static final Supplier<MenuType<AdvancedMachineMenu>> MENU = MENUS.register("induction_furnace",
         () -> new MenuType<>(AdvancedMachineMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<AdvancedMachineMenu>> ROTARY_MENU = menu("rotary_macerator", Variant.ROTARY);
@@ -41,6 +46,7 @@ public final class AdvancedMachines {
     static final Supplier<MenuType<AdvancedMachineMenu>> RARE_EARTH_MENU = menu("centrifugal_rare_earth_extractor", Variant.RARE_EARTH);
     static final Supplier<MenuType<AdvancedMachineMenu>> COMPACTING_MENU = menu("compacting_recycler", Variant.COMPACTING);
     static final Supplier<MenuType<AdvancedMachineMenu>> SLOW_MENU = menu("slow_grinder", Variant.SLOW);
+    static final Supplier<MenuType<AdvancedMachineMenu>> PRESSURE_MENU = menu("pressure_alloy_furnace", Variant.PRESSURE);
 
     private AdvancedMachines() {}
 
@@ -57,6 +63,8 @@ public final class AdvancedMachines {
         items.registerSimpleBlockItem(RARE_EARTH);
         items.registerSimpleBlockItem(COMPACTING);
         items.registerSimpleBlockItem(SLOW);
+        items.registerSimpleBlockItem(PRESSURE);
+        items.registerSimpleBlockItem(PRESSURE_PART);
         bus.addListener(AdvancedMachines::capabilities);
     }
 
@@ -67,6 +75,7 @@ public final class AdvancedMachines {
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ENTITY.get(), AdvancedMachineEntity::automation);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PRESSURE_PART_ENTITY.get(), PressurePartEntity::automation);
     }
 
     private static Supplier<MenuType<AdvancedMachineMenu>> menu(String id, Variant variant) {
@@ -77,7 +86,8 @@ public final class AdvancedMachines {
     enum Variant {
         FURNACE(RecipeType.SMELTING, 15), BLAST(RecipeType.BLASTING, 29), SMOKER(RecipeType.SMOKING, 29),
         ROTARY(2), CENTRIFUGAL(3), SINGULARITY(1), RARE_EARTH(1),
-        COMPACTING(new ProcessingLayout(1, 1), 10), SLOW(new ProcessingLayout(9, 1), 10);
+        COMPACTING(new ProcessingLayout(1, 1), 10), SLOW(new ProcessingLayout(9, 1), 10),
+        PRESSURE(new ProcessingLayout(2, 1), 15);
 
         final RecipeType<? extends AbstractCookingRecipe> recipes;
         final int cost;
@@ -107,10 +117,12 @@ public final class AdvancedMachines {
                 case RARE_EARTH -> RARE_EARTH_MENU.get();
                 case COMPACTING -> COMPACTING_MENU.get();
                 case SLOW -> SLOW_MENU.get();
+                case PRESSURE -> PRESSURE_MENU.get();
                 default -> MENU.get();
             };
         }
 
         int capacity() { return this == RARE_EARTH ? 5120 : this == SLOW ? 1000 : 10000; }
+        int packet() { return this == PRESSURE ? 512 : 128; }
     }
 }

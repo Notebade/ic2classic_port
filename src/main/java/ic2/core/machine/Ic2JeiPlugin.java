@@ -64,6 +64,7 @@ public final class Ic2JeiPlugin implements IModPlugin {
         registration.addIngredientInfo(Machines.OCEAN_GENERATOR.get(), MachineRecipeViews.note("ocean_generator"));
         registration.addIngredientInfo(Machines.NUCLEAR_REACTOR.get(), MachineRecipeViews.note("nuclear_reactor"));
         registration.addIngredientInfo(Machines.CHARGED_ELECTROLYZER.get(), MachineRecipeViews.note("charged_electrolyzer"));
+        registration.addIngredientInfo(AdvancedMachines.PRESSURE.get(), MachineRecipeViews.note("pressure_build"));
     }
 
     @Override

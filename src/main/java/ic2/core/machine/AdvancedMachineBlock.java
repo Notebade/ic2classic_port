@@ -62,7 +62,8 @@ final class AdvancedMachineBlock extends Block implements EntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof AdvancedMachineEntity machine) {
-            player.openMenu(machine);
+            if (machine.isOperational()) player.openMenu(machine);
+            else player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.ic2.pressure_incomplete"), true);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

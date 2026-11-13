@@ -10,6 +10,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 final class AlloyRecipes {
     private static final List<Recipe> RECIPES = List.of(
+        new Recipe(Ingredient.of(Items.NETHERITE_SCRAP), 2, Ingredient.of(Items.GOLD_INGOT), 2, Items.NETHERITE_INGOT, 1),
+        new Recipe(Ingredient.of(Items.COPPER_BLOCK), 1, Ingredient.of(IC2.TIN_INGOT.get()), 3, IC2.BRONZE_INGOT.get(), 12),
         new Recipe(Ingredient.of(Items.REDSTONE), 2, Ingredient.of(Items.QUARTZ), IC2.PULSATING_QUARTZ.get(), 1),
         new Recipe(Ingredient.of(Items.COPPER_INGOT), 3, Ingredient.of(IC2.TIN_INGOT.get()), IC2.BRONZE_INGOT.get(), 4),
         new Recipe(Ingredient.of(IC2.COPPER_DUST.get()), 3, Ingredient.of(IC2.TIN_DUST.get()), IC2.BRONZE_INGOT.get(), 4),
@@ -31,22 +33,29 @@ final class AlloyRecipes {
     static Batch find(ItemStack first, ItemStack second) {
         for (Recipe recipe : RECIPES) {
             if (recipe.matches(first, second)) {
-                return recipe.batch(recipe.firstCount(), 1);
+                return recipe.batch(false);
             }
             if (recipe.matches(second, first)) {
-                return recipe.batch(1, recipe.firstCount());
+                return recipe.batch(true);
             }
         }
         return null;
     }
 
-    record Recipe(Ingredient first, int firstCount, Ingredient second, Item output, int outputCount) {
-        boolean matches(ItemStack firstStack, ItemStack secondStack) {
-            return firstStack.getCount() >= firstCount && first.test(firstStack) && second.test(secondStack);
+    record Recipe(Ingredient first, int firstCount, Ingredient second, int secondCount, Item output, int outputCount) {
+        Recipe(Ingredient first, int firstCount, Ingredient second, Item output, int outputCount) {
+            this(first, firstCount, second, 1, output, outputCount);
         }
 
-        Batch batch(int firstAmount, int secondAmount) {
-            return new Batch(firstAmount, secondAmount, new ItemStack(output, outputCount));
+        boolean matches(ItemStack firstStack, ItemStack secondStack) {
+            return new AlloyInputAmounts(firstCount, secondCount).fits(firstStack.getCount(), secondStack.getCount())
+                && first.test(firstStack) && second.test(secondStack);
+        }
+
+        Batch batch(boolean reversed) {
+            var amounts = new AlloyInputAmounts(firstCount, secondCount);
+            if (reversed) amounts = amounts.reversed();
+            return new Batch(amounts.first(), amounts.second(), new ItemStack(output, outputCount));
         }
     }
 

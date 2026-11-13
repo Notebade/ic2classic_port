@@ -29,7 +29,6 @@ import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
 final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, EnergySink {
-    static final int PACKET = 128;
     final AdvancedMachines.Variant variant = ((AdvancedMachineBlock) getBlockState().getBlock()).variant;
     private int energy;
     private int heat;
@@ -41,12 +40,16 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     private RareEarthProgress rareEarth = new RareEarthProgress("", 0);
     private int grinderMode = 1;
     private int queueTick;
+    private boolean pressureWasFormed;
+    private Direction pressureFacing;
     private final ItemStack[] trackedInputs = emptyInputs(variant.layout.inputs());
     final ItemStackHandler inventory = new ItemStackHandler(variant.layout.slots()) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
-            return slot == 0 ? RechargeableItem.supports(stack, PACKET, false)
-                : variant.layout.isInput(slot) && recipe(stack) != null;
+            if (slot == 0) return RechargeableItem.supports(stack, variant.packet(), false);
+            if (!variant.layout.isInput(slot)) return false;
+            return variant == AdvancedMachines.Variant.PRESSURE
+                ? AlloyRecipes.accepts(stack, getStackInSlot(slot == 1 ? 2 : 1)) : recipe(stack) != null;
         }
 
         @Override
@@ -89,6 +92,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     }
 
     void tick() {
+        if (variant == AdvancedMachines.Variant.PRESSURE && !updatePressureStructure()) return;
         dischargeBattery();
         if (variant == AdvancedMachines.Variant.SLOW) {
             tickSlowGrinder();
@@ -116,6 +120,59 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         }
         updateLit(step.heating());
         if (changed) setChanged();
+    }
+
+    boolean isOperational() { return variant != AdvancedMachines.Variant.PRESSURE || pressureFormed(); }
+
+    private java.util.List<BlockPos> pressurePositions() {
+        Direction front = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+        return PressureStructure.offsets(front.getStepX(), front.getStepZ()).stream()
+            .map(offset -> worldPosition.offset(offset.x(), offset.y(), offset.z())).toList();
+    }
+
+    boolean pressureContains(BlockPos part) {
+        return variant == AdvancedMachines.Variant.PRESSURE && pressurePositions().contains(part);
+    }
+
+    boolean pressureShapeValid() {
+        return variant == AdvancedMachines.Variant.PRESSURE && level != null && pressurePositions().stream()
+            .allMatch(pos -> level.isLoaded(pos) && level.getBlockState(pos).is(AdvancedMachines.PRESSURE_PART.get()));
+    }
+
+    boolean pressureFormed() {
+        if (level == null || level.isClientSide || !pressureShapeValid()) return false;
+        var parts = new java.util.ArrayList<PressurePartEntity>(7);
+        for (BlockPos pos : pressurePositions()) {
+            if (!(level.getBlockEntity(pos) instanceof PressurePartEntity part) || !part.canClaim(worldPosition)) return false;
+            parts.add(part);
+        }
+        for (var part : parts) part.claim(worldPosition);
+        return true;
+    }
+
+    private boolean updatePressureStructure() {
+        boolean formed = pressureFormed();
+        if (formed != pressureWasFormed) {
+            pressureWasFormed = formed;
+            level.invalidateCapabilities(worldPosition);
+            for (BlockPos pos : pressurePositions()) {
+                if (level.isLoaded(pos)) level.invalidateCapabilities(pos);
+            }
+        }
+        Direction facing = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+        if (!formed || pressureFacing != null && pressureFacing != facing) {
+            if (heat != 0 || progress != 0) {
+                heat = 0;
+                progress = 0;
+                setChanged();
+            }
+        }
+        pressureFacing = facing;
+        if (!formed) {
+            processing = false;
+            updateLit(false);
+        }
+        return formed;
     }
 
     private static ItemStack[] emptyInputs(int count) {
@@ -203,6 +260,10 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
             return pump == null ? null : new ProcessingRecipe(new ItemStack(net.minecraft.world.item.Items.SNOWBALL), 120000, 0, 0, pump);
         }
         return switch (variant) {
+            case PRESSURE -> {
+                var batch = AlloyRecipes.find(stack, inventory.getStackInSlot(2));
+                yield batch == null ? null : new ProcessingRecipe(batch.output(), 120000, 0, batch.firstCount(), null, 1, batch.secondCount());
+            }
             case COMPACTING, SLOW -> {
                 var recipe = RecyclingRecipes.find(stack);
                 int time = variant == AdvancedMachines.Variant.SLOW ? 100 + (recipe == null ? 0 : recipe.extraTicks())
@@ -278,12 +339,13 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         }
         if (recipe.pump() == null) inventory.extractItem(inputSlot, recipe.inputCount(), false);
         else recipe.pump().drain(PumpTank.BUCKET, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        if (recipe.secondInputCount() > 0) inventory.extractItem(2, recipe.secondInputCount(), false);
         experience += recipe.experience();
     }
 
     private void dischargeBattery() {
         ItemStack stack = inventory.getStackInSlot(0);
-        if (!RechargeableItem.supports(stack, PACKET, false)) return;
+        if (!RechargeableItem.supports(stack, variant.packet(), false)) return;
         RechargeableItem cell = (RechargeableItem) stack.getItem();
         int stored = cell.charge(stack);
         int moved = Math.min(Math.min(stored, cell.transferRate()), variant.capacity() - energy);
@@ -319,14 +381,16 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     }
 
     IItemHandler automation(Direction side) {
+        if (!isOperational()) return null;
         return side == Direction.UP ? input : side == Direction.DOWN ? bottom : sides;
     }
 
     @Override public boolean canReceiveEnergy(Direction side, MachineKind source, int packet) {
-        return packet <= PACKET && energy < variant.capacity();
+        return isOperational() && packet <= variant.packet() && energy < variant.capacity();
     }
 
     @Override public int receiveEnergy(int available) {
+        if (!isOperational()) return 0;
         int received = Math.min(available, variant.capacity() - energy);
         energy += received;
         if (received > 0) setChanged();
@@ -372,7 +436,10 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
         }
     }
 
-    private record ProcessingRecipe(ItemStack output, int duration, float experience, int inputCount, PumpTank pump, int chanceDenominator) {
+    private record ProcessingRecipe(ItemStack output, int duration, float experience, int inputCount, PumpTank pump, int chanceDenominator, int secondInputCount) {
+        ProcessingRecipe(ItemStack output, int duration, float experience, int inputCount, PumpTank pump, int chanceDenominator) {
+            this(output, duration, experience, inputCount, pump, chanceDenominator, 0);
+        }
         ProcessingRecipe(ItemStack output, int duration, float experience, int inputCount, PumpTank pump) {
             this(output, duration, experience, inputCount, pump, 1);
         }

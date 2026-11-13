@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'ic2'
-version = '0.61.0'
+version = '0.62.0'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -27,7 +27,9 @@ def standaloneChecks = [
     verifyProcessingLayouts: 'ic2.core.machine.ProcessingLayoutTest',
     verifyRareEarthProgress: 'ic2.core.machine.RareEarthProgressTest',
     verifyElectrolyzerControl: 'ic2.core.machine.ElectrolyzerControlTest',
-    verifyRecyclerControl: 'ic2.core.machine.RecyclerControlTest'
+    verifyRecyclerControl: 'ic2.core.machine.RecyclerControlTest',
+    verifyPressureStructure: 'ic2.core.machine.PressureStructureTest',
+    verifyAlloyInputs: 'ic2.core.machine.AlloyInputAmountsTest'
 ]
 standaloneChecks.each { taskName, entryPoint ->
     tasks.register(taskName, Exec) {

@@ -1,0 +1,27 @@
+{
+  "result": {
+    "count": 1,
+    "id": "ic2:pressure_alloy_furnace"
+  },
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "ic2:alloy_smelter"
+    },
+    "Y": {
+      "item": "ic2:complex_circuit"
+    },
+    "V": {
+      "item": "ic2:pressure_alloy_furnace_structure"
+    },
+    "X": {
+      "item": "minecraft:nether_bricks"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "XCX",
+    "XVX"
+  ]
+}

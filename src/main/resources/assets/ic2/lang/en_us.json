@@ -1,4 +1,9 @@
 {
+  "jei.ic2.pressure_build": "Build a 2x2x2 cube with a controller at the upper front-left corner (viewed from its front) and seven Pressure Furnace Casings to its right, behind and below. Supply EU, items or open its menu through any casing. Breaking the structure resets heat and stops processing. Redstone at the controller maintains heat.",
+  "message.ic2.pressure_incomplete": "Requires a 2x2x2 cube: controller at the upper front-left corner, plus seven casings.",
+  "jei.ic2.pressure_structure": "At full heat; needs 2x2x2",
+  "block.ic2.pressure_alloy_furnace": "Pressure Alloy Furnace",
+  "block.ic2.pressure_alloy_furnace_structure": "Pressure Furnace Casing",
   "block.ic2.slow_grinder": "Slow Grinder",
   "block.ic2.miningpipe_slim": "Mining Pipe",
   "gui.ic2.grinder_chance": "Chance: %s%%",

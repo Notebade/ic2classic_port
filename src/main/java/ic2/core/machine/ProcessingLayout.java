@@ -4,14 +4,14 @@ package ic2.core.machine;
 record ProcessingLayout(int inputs, int outputs) {
     ProcessingLayout {
         if (inputs != 1 && inputs != 2 && inputs != 9 || outputs < 1
-                || inputs == 2 && outputs != 2 || inputs == 9 && outputs != 1) {
+                || inputs == 2 && outputs != 1 && outputs != 2 || inputs == 9 && outputs != 1) {
             throw new IllegalArgumentException("Unsupported machine inventory layout");
         }
     }
 
     int slots() { return 1 + inputs + outputs; }
     boolean isInput(int slot) { return slot > 0 && slot <= inputs; }
-    boolean supportsSplit() { return inputs == 2; }
+    boolean supportsSplit() { return inputs == 2 && outputs == 2; }
     int processingPasses() { return supportsSplit() ? 2 : 1; }
     int firstOutput(int input, boolean split) { return split && supportsSplit() ? inputs + input : inputs + 1; }
     int lastOutput(int input, boolean split) { return split && supportsSplit() ? inputs + input : slots() - 1; }

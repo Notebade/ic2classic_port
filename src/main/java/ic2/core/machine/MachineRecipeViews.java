@@ -31,6 +31,9 @@ final class MachineRecipeViews {
 
     static List<MachineRecipeView> forProcess(Process process, Level level) {
         return switch (process) {
+            case PRESSURE_ALLOY_FURNACE -> alloy().stream().map(recipe ->
+                new MachineRecipeView(recipe.sourceId(), recipe.inputs(), recipe.outputs(),
+                    List.of(cost(12, 16), note("pressure_structure")))).toList();
             case COMPACTING_RECYCLER -> advancedRecycling(false);
             case SLOW_GRINDER -> advancedRecycling(true);
             case CHARGED_ELECTROLYZER -> forProcess(Process.ELECTROLYZER, level);
@@ -140,7 +143,7 @@ final class MachineRecipeViews {
 
     private static List<MachineRecipeView> alloy() {
         return AlloyRecipes.recipes().stream().map(recipe -> new MachineRecipeView(
-            List.of(ingredient(recipe.first(), recipe.firstCount()), ingredient(recipe.second(), 1)),
+            List.of(ingredient(recipe.first(), recipe.firstCount()), ingredient(recipe.second(), recipe.secondCount())),
             List.of(item(new ItemStack(recipe.output(), recipe.outputCount()))),
             cost(MachineKind.ALLOY_SMELTER.recipeTicks, MachineKind.ALLOY_SMELTER.energyPerTick))).toList();
     }

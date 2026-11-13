@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.61.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.62.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.61.0` |
+| Project version | `0.62.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -444,3 +444,13 @@ The Compacting Recycler stores 10,000 EU and accepts packets up to 128 EU. Its s
 Primary original crafting chains are included: seven pistons upgrade a Recycler and Advanced Machine Casing into a Compacting Recycler. The Slow Grinder uses an Efficient Sawblade, two Advanced Circuits, a Recycler and an Advanced Machine Casing. Six refined iron and a Treetap make eight Mining Pipes; pipes, circuits and insulated wire produce Upgrade Bases in copper (three) or silver (five) variants. Sticks, a Scrap Metal Blade, pistons and an Upgrade Base make an Efficient Sawblade. Mining Pipes cannot be placed by hand, matching the original; Miner placement/retraction is not ported. The Efficient Sawblade currently serves as a crafting component: installing it as a Sawmill upgrade and its repair recipe remain pending.
 
 All assets, mining tags, localization and saved-state fields are included. Six standalone suites run through Gradle check, including queued inventory layouts, rotation limits, mode probabilities, EU costs and both compacting durations. In-game verification, original sounds and installed machine upgrades remain pending.
+
+### Pressure Alloy Furnace (0.62.0)
+
+Build a 2x2x2 cube from one Pressure Alloy Furnace controller and seven Pressure Furnace Casings. Viewed from the controller's front, the controller is the upper front-left corner; the cube extends to the right, backward and downward. All four horizontal orientations are supported. The controller recipe consumes one casing, so two casing crafts (four each) supply the controller ingredient plus the seven placed casings.
+
+The completed structure stores 10,000 EU and accepts packets up to 512 EU. EU, sided item automation and menu access work through the controller or any linked casing. One casing cannot belong to two complete furnaces. Breaking, unloading or rotating the structure into an invalid arrangement stops operation and clears heat/progress while preserving EU and inventory. Cached casing item handlers re-check their controller on each operation. No neighboring chunks are forcibly loaded.
+
+Two ingredient slots feed one shared output and one battery discharge slot. Heating uses 1 EU/t, processing another 15 EU/t, with the same 0-10,000 heat range and redstone maintenance as the Induction Furnace. A standard alloy batch takes 12 ticks at full heat. It uses the Alloy Furnace recipe set, including recipes added in this version: two Netherite Scraps plus two gold ingots yield one Netherite Ingot (the original IC2 recipe), and one copper block plus three tin ingots yield twelve bronze ingots. Both furnaces now enforce and display the count of each ingredient and accept reversed input slots.
+
+Primary controller and casing crafts, original texture references, translations, mining tags, wrench handling and JEI assembly guidance are included. Formed casings currently retain the original unformed machine-casing appearance rather than the original connected multiblock artwork. Original upgrades and sounds remain pending. Compilation and eight standalone suites pass through Gradle check; live multiblock behavior, relinking and chunk-boundary operation still require in-game validation.
