@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "down": "ic2:block/electric/transformer/adjustable/inactive_down",
+    "up": "ic2:block/electric/transformer/adjustable/inactive_up",
+    "north": "ic2:block/electric/transformer/adjustable/inactive_north",
+    "south": "ic2:block/electric/transformer/adjustable/inactive_south",
+    "west": "ic2:block/electric/transformer/adjustable/inactive_west",
+    "east": "ic2:block/electric/transformer/adjustable/inactive_east",
+    "particle": "ic2:block/electric/transformer/adjustable/inactive_north"
+  },
+  "parent": "minecraft:block/cube"
+}

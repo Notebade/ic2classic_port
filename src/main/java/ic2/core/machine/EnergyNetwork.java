@@ -42,8 +42,8 @@ final class EnergyNetwork {
                 if (!next.equals(source) && level.getBlockEntity(next) instanceof EnergySink machine
                     && machine.canReceiveEnergy(direction.getOpposite(), sourceStorageOutput, available)) {
                     int accepted = machine.receiveEnergy(remaining - loss);
-                    remaining -= accepted + loss;
                     if (accepted > 0) {
+                        remaining -= accepted + loss;
                         recordTransfer(level, route.meters(), accepted, loss);
                     }
                 }

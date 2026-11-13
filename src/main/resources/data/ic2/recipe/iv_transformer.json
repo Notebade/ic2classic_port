@@ -1,0 +1,30 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "Y": {
+      "item": "ic2:plasma_cable_item"
+    },
+    "X": {
+      "item": "ic2:iridium_stone"
+    },
+    "C": {
+      "item": "ic2:advanced_circuit"
+    },
+    "B": {
+      "item": "ic2:pesd"
+    },
+    "V": {
+      "item": "ic2:transformer_ev"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:transformer_iv"
+  },
+  "pattern": [
+    "XYX",
+    "CVB",
+    "XYX"
+  ]
+}

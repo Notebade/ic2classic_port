@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/dust/hydrated_coal"
+  },
+  "parent": "minecraft:item/generated"
+}

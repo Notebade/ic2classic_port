@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "down": "ic2:block/machine/luv/fusion_reactor/down",
+    "up": "ic2:block/machine/luv/fusion_reactor/up",
+    "north": "ic2:block/machine/luv/fusion_reactor/north",
+    "south": "ic2:block/machine/luv/fusion_reactor/south",
+    "west": "ic2:block/machine/luv/fusion_reactor/west",
+    "east": "ic2:block/machine/luv/fusion_reactor/east",
+    "particle": "ic2:block/machine/luv/fusion_reactor/north"
+  },
+  "parent": "minecraft:block/cube"
+}

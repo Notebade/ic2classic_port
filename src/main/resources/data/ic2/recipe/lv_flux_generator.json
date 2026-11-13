@@ -1,0 +1,27 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "Y": {
+      "item": "ic2:transformer_lv"
+    },
+    "X": {
+      "item": "minecraft:copper_ingot"
+    },
+    "C": {
+      "item": "minecraft:iron_ingot"
+    },
+    "V": {
+      "item": "minecraft:redstone_block"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:lv_flux_generator"
+  },
+  "pattern": [
+    " X ",
+    "YCV",
+    " X "
+  ]
+}

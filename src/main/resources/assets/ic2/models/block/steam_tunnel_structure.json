@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "all": "ic2:block/electric/generator/steam_tunnel/structure/full"
+  },
+  "parent": "minecraft:block/cube_all"
+}

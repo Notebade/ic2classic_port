@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/misc/plant_ball"
+  },
+  "parent": "minecraft:item/generated"
+}

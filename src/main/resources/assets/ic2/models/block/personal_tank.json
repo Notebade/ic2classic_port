@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "up": "ic2:block/personal/tank/up",
+    "north": "ic2:block/personal/tank/north",
+    "down": "ic2:block/personal/tank/down",
+    "particle": "ic2:block/personal/tank/north",
+    "east": "ic2:block/personal/tank/east",
+    "south": "ic2:block/personal/tank/south",
+    "west": "ic2:block/personal/tank/west"
+  },
+  "parent": "minecraft:block/cube"
+}

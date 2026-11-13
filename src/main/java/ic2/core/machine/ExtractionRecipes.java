@@ -11,6 +11,8 @@ import net.neoforged.neoforge.common.Tags;
 
 final class ExtractionRecipes {
     private static final Map<Item, Recipe> ITEMS = Map.ofEntries(
+        Map.entry(BoilerFuel.HYDRATED_CELL.get(), new Recipe(BoilerFuel.COAL_CELL.get(), 1)),
+        Map.entry(BoilerFuel.RAW_BIO_CELL.get(), new Recipe(BoilerFuel.BIO_CELL.get(), 1)),
         Map.entry(IC2.STICKY_RESIN.get(), new Recipe(IC2.RUBBER.get(), 3)),
         Map.entry(Items.GRAVEL, new Recipe(Items.FLINT, 2)),
         Map.entry(Items.POPPY, new Recipe(Items.RED_DYE, 3)),

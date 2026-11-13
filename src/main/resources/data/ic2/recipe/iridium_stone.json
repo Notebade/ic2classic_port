@@ -1,0 +1,21 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "ic2:plate_iridium"
+    },
+    "S": {
+      "item": "ic2:reinforced_stone"
+    }
+  },
+  "result": {
+    "count": 8,
+    "id": "ic2:iridium_stone"
+  },
+  "pattern": [
+    "SSS",
+    "SAS",
+    "SSS"
+  ]
+}

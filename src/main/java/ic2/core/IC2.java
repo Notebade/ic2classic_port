@@ -11,6 +11,8 @@ import ic2.core.item.ReactorPulseCell;
 import ic2.core.machine.Machines;
 import ic2.core.machine.AdvancedMachines;
 import ic2.core.machine.ExtraGenerators;
+import ic2.core.machine.PowerMachines;
+import ic2.core.recipe.PowerCraftingRecipe;
 import ic2.core.item.ScrapFuelItem;
 import ic2.core.recipe.ReactorComponentRepair;
 import ic2.core.recipe.ReactorFuelCellRecipe;
@@ -38,6 +40,12 @@ public final class IC2 {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
         DeferredRegister.create(Registries.RECIPE_SERIALIZER, MOD_ID);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PowerCraftingRecipe>> PLASMA_CORE_RECIPE =
+        RECIPE_SERIALIZERS.register("plasma_core", () -> PowerCraftingRecipe.serializer(PowerCraftingRecipe.Kind.CORE));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PowerCraftingRecipe>> BOILER_CASING_RECIPE =
+        RECIPE_SERIALIZERS.register("fuel_boiler_structure", () -> PowerCraftingRecipe.serializer(PowerCraftingRecipe.Kind.BOILER));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PowerCraftingRecipe>> FUEL_CAN_RECIPE =
+        RECIPE_SERIALIZERS.register("fuel_can_fill", () -> PowerCraftingRecipe.serializer(PowerCraftingRecipe.Kind.FUEL));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<UuMatterRecipe>> UU_MATTER_RECIPE =
         RECIPE_SERIALIZERS.register("uu_matter", () -> UuMatterRecipe.SERIALIZER);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ReactorComponentRepair>> REACTOR_COMPONENT_REPAIR =
@@ -134,6 +142,7 @@ public final class IC2 {
         Machines.register(modBus, ITEMS);
         AdvancedMachines.register(modBus, ITEMS);
         ExtraGenerators.register(modBus, ITEMS);
+        PowerMachines.register(modBus, ITEMS);
         Rubberwood.register(modBus, ITEMS);
         Materials.register(modBus, ITEMS);
         Hazmat.register(modBus, ITEMS);

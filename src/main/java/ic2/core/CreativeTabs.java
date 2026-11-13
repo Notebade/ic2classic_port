@@ -19,16 +19,16 @@ final class CreativeTabs {
         "wrench", "electric_wrench", "cutter", "tree_tap", "electric_tree_tap", "magnet", "dead_magnet");
     private static final Set<String> GENERATORS = Set.of(
         "generator", "solar_turbine", "slag_generator", "geothermal_generator", "thermal_generator", "wind_turbine",
-        "wave_generator", "ocean_generator", "steam_turbine");
+        "wave_generator", "ocean_generator", "steam_turbine", "fuel_boiler", "steam_tunnel", "steam_tunnel_structure", "steam_tunnel_valve", "fuel_boiler_structure");
     private static final Set<String> MACHINES = Set.of(
         "macerator", "stone_macerator", "iron_furnace", "electric_furnace", "electric_blast_furnace",
         "rotary_macerator", "centrifugal_extractor", "singularity_compressor", "electric_smoker", "induction_furnace", "induction_blast_furnace", "induction_smoker", "sawmill", "alloy_smelter", "pressure_alloy_furnace", "extractor", "rare_earth_extractor",
-        "electrolyzer", "charged_electrolyzer", "centrifugal_rare_earth_extractor", "compressor", "pump", "recycler", "slow_grinder", "compacting_recycler", "mass_fabricator", "canner", "vacuum_canner");
+        "electrolyzer", "charged_electrolyzer", "centrifugal_rare_earth_extractor", "compressor", "pump", "recycler", "slow_grinder", "compacting_recycler", "mass_fabricator", "canner", "vacuum_canner", "plasmafier", "machine_tank", "personal_tank");
     private static final Set<String> ENERGY = Set.of(
         "batbox", "mfe", "mfsu", "esu", "isu", "pesu", "glowtronic_crystal", "uesc", "pesd", "quantum_accumulator", "quantum_accumulator_big", "re_battery", "energy_crystal", "lapatron_crystal");
     private static final Set<String> NUCLEAR = Set.of(
         "nuclear_reactor", "steam_reactor", "steam_reactor_chamber", "uranium_enricher",
-        "prepared_fuel_cell", "cell_fuel");
+        "prepared_fuel_cell", "cell_fuel", "fusion_reactor", "fusion_reactor_valve");
 
     static void register(IEventBus bus) {
         tab("tools", "wrench");
@@ -64,7 +64,8 @@ final class CreativeTabs {
         if (MACHINES.contains(name)) {
             return "machines";
         }
-        if (ENERGY.contains(name) || name.endsWith("_cable_item") || name.startsWith("transformer_")) {
+        if (ENERGY.contains(name) || name.endsWith("_cable_item") || name.startsWith("transformer_")
+            || name.equals("adjustable_transformer") || name.endsWith("_flux_generator")) {
             return "energy";
         }
         if (NUCLEAR.contains(name) || name.startsWith("reactor_") || name.startsWith("uranium_rod")

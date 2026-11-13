@@ -1,0 +1,24 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "Y": {
+      "item": "ic2:ingot_refined_iron"
+    },
+    "X": {
+      "item": "ic2:carbon_plate"
+    },
+    "C": {
+      "item": "ic2:plasma_core"
+    }
+  },
+  "result": {
+    "count": 4,
+    "id": "ic2:plasma_cable_item"
+  },
+  "pattern": [
+    "XXX",
+    "YCY",
+    "XXX"
+  ]
+}

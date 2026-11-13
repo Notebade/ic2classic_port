@@ -64,6 +64,24 @@
     "ic2:pressure_alloy_furnace",
     "ic2:pressure_alloy_furnace_structure",
     "ic2:solar_turbine",
-    "ic2:slag_generator"
+    "ic2:slag_generator",
+    "ic2:adjustable_transformer",
+    "ic2:fuel_boiler",
+    "ic2:fuel_boiler_structure",
+    "ic2:fusion_reactor",
+    "ic2:fusion_reactor_valve",
+    "ic2:hv_flux_generator",
+    "ic2:iridium_stone",
+    "ic2:lv_flux_generator",
+    "ic2:machine_tank",
+    "ic2:mv_flux_generator",
+    "ic2:personal_tank",
+    "ic2:plasma_cable",
+    "ic2:plasmafier",
+    "ic2:reinforced_stone",
+    "ic2:steam_tunnel",
+    "ic2:steam_tunnel_structure",
+    "ic2:steam_tunnel_valve",
+    "ic2:super_cable"
   ]
 }

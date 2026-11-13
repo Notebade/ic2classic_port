@@ -10,6 +10,9 @@ import net.minecraft.world.item.Items;
 
 final class CompressionRecipes {
     private static final Map<Item, Recipe> RECIPES = Map.ofEntries(
+        entry(PowerMachines.UNCOMPRESSED_SUPER.get(), new Recipe(1, PowerMachines.SUPER_CABLE.get().asItem())),
+        entry(BoilerFuel.HYDRATED_DUST.get(), new Recipe(1, BoilerFuel.COMPRESSED_COAL.get())),
+        entry(BoilerFuel.PLANT_BALL.get(), new Recipe(1, BoilerFuel.COMPRESSED_PLANT.get())),
         entry(IC2.SCRAP_METAL.get(), new Recipe(8, IC2.SCRAP_METAL_CHUNK.get())),
         entry(Items.SAND, new Recipe(1, Items.SANDSTONE)),
         entry(Items.RED_SAND, new Recipe(1, Items.RED_SANDSTONE)),

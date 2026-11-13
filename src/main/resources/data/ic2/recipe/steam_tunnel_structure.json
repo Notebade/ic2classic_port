@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "result": {
+    "count": 1,
+    "id": "ic2:steam_tunnel_structure"
+  },
+  "ingredient": {
+    "item": "ic2:machine_block"
+  }
+}

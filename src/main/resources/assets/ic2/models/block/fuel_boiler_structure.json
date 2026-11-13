@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "all": "ic2:block/electric/generator/fuel_boiler/inactive_south"
+  },
+  "parent": "minecraft:block/cube_all"
+}

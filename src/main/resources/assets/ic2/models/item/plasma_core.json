@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/misc/plasma_core"
+  },
+  "parent": "minecraft:item/generated"
+}

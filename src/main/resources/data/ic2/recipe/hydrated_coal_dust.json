@@ -1,0 +1,16 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shapeless",
+  "result": {
+    "count": 1,
+    "id": "ic2:dust_hydrated_coal"
+  },
+  "ingredients": [
+    {
+      "item": "ic2:dust_coal"
+    },
+    {
+      "item": "minecraft:water_bucket"
+    }
+  ]
+}

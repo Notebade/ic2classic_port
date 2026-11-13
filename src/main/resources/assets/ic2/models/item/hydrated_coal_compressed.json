@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/misc/compressed_coal"
+  },
+  "parent": "minecraft:item/generated"
+}

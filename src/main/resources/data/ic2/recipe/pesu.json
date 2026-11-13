@@ -1,0 +1,24 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "Y": {
+      "item": "ic2:plate_iridium"
+    },
+    "X": {
+      "item": "ic2:iridium_stone"
+    },
+    "C": {
+      "item": "ic2:pesd"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:pesu"
+  },
+  "pattern": [
+    "XYX",
+    "CCC",
+    "XYX"
+  ]
+}

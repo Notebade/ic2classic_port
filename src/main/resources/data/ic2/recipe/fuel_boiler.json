@@ -1,0 +1,33 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "ic2:plate_iridium"
+    },
+    "C": {
+      "item": "ic2:plating_heat_capacity"
+    },
+    "Y": {
+      "item": "ic2:fluid_export_upgrade_simple"
+    },
+    "V": {
+      "item": "ic2:personal_tank"
+    },
+    "X": {
+      "item": "ic2:advanced_circuit"
+    },
+    "N": {
+      "item": "ic2:fuel_boiler_structure"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:fuel_boiler"
+  },
+  "pattern": [
+    "XYX",
+    "CVC",
+    "BNB"
+  ]
+}

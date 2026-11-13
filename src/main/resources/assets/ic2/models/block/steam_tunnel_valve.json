@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "all": "ic2:block/misc/valve"
+  },
+  "parent": "minecraft:block/cube_all"
+}

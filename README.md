@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.63.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.64.0-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.63.0` |
+| Project version | `0.64.0` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -455,7 +455,7 @@ Two ingredient slots feed one shared output and one battery discharge slot. Heat
 
 Primary controller and casing crafts, original texture references, translations, mining tags, wrench handling and JEI assembly guidance are included. Formed casings currently retain the original unformed machine-casing appearance rather than the original connected multiblock artwork. Original upgrades and sounds remain pending. Compilation and eight standalone suites pass through Gradle check; live multiblock behavior, relinking and chunk-boundary operation still require in-game validation.
 
-### Solar Turbine and Slag Generator (0.63.0)
+### Solar Turbine and Slag Generator (0.64.0)
 
 The Solar Turbine heats by 2 units/tick in sunlight up to 24,000 heat and cools by 1/tick without sunlight. Sunlight is sampled on load and every 128 ticks using the existing biome/weather/sky rules. Water and stored heat generate energy even at night. With the original default multiplier, output is `water * heat / 30,000,000` EU/t, up to 32 EU/t; fractional EU and water consumption are accumulated exactly and saved. Its nominal energy buffer is 100 EU; the original final generation can overshoot it to 131 EU. It charges LV items and emits packets up to 32 EU on every side.
 
@@ -464,3 +464,9 @@ As in the original, incoming water doubles into internal tank units: 20,000 mB i
 The Slag Generator emits 60 EU/t, stores 8,000 EU and charges items up to the 128 EU tier. Furnace fuel duration is divided by 16: coal lasts 100 ticks and yields 6,000 EU. Scrap retains its original 350 furnace burn ticks, then receives the additional tenfold slag-fuel reduction: two ticks / 120 EU, with no scrap byproduct. Lava is excluded by the original fuel lookup. Other fuels produce one Scrap every randomly selected 80-239 burning ticks. Once ignited, fuel continues burning at a full EU buffer; new fuel waits until at least 60 EU of space is available. Excess Scrap is discarded when its output is blocked, matching the original. Fuel containers and their remainders are preserved.
 
 Both generators have original primary crafting recipes, textures, translations, mining tags, wrench support, charging slots, sided automation and JEI categories. The UI shows EU, production and heat/water or remaining fuel. The EU routing interface now passes the source storage-output value directly, allowing these generators to use the existing network without pretending to be another machine type. Original sounds and configurable production multipliers remain pending. Ten standalone suites pass through Gradle check; live generator, pipe and weather behavior still require in-game validation.
+
+### Energy, steam and fusion (0.64.0)
+
+Adds an adjustable transformer, three one-way EU-to-FE converters, plasmafier, hollow fusion reactor, fuel boiler and steam tunnel, structure ports, two basic tanks, superconductor/plasma cables and PESD/PESU/IV crafting. The fuel chain includes compression, extraction and refillable cans. Counted crafting consumes the original per-slot amounts for plasma cores and boiler casings.
+
+See [assembly, operating values and current limitations](docs/energy-fusion.md). Tank/valve recipes and can filling are temporarily adapted; windmills, liquid-fuel generation, redirectors and charging infrastructure remain. Superconductor production still needs the unported refinery. Original presentation and in-world behavior require further validation.

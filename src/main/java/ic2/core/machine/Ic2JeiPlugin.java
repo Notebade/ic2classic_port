@@ -3,6 +3,7 @@ package ic2.core.machine;
 import ic2.core.IC2;
 import ic2.core.machine.MachineRecipeView.Process;
 import ic2.core.recipe.UuMatterRecipe;
+import ic2.core.recipe.PowerCraftingRecipe;
 import java.util.List;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -67,11 +68,29 @@ public final class Ic2JeiPlugin implements IModPlugin {
         registration.addIngredientInfo(AdvancedMachines.PRESSURE.get(), MachineRecipeViews.note("pressure_build"));
         registration.addIngredientInfo(ExtraGenerators.SOLAR.get(), MachineRecipeViews.note("solar_turbine_info"));
         registration.addIngredientInfo(ExtraGenerators.SLAG.get(), MachineRecipeViews.note("slag_generator_info"));
+        for (var kind : PowerMachines.Kind.values()) registration.addIngredientInfo(kind.block(), MachineRecipeViews.note("power_" + kind.id));
+        registration.addIngredientInfo(PowerMachines.PLASMA_CORE.get(), MachineRecipeViews.note("power_core_counts"));
+        registration.addIngredientInfo(PowerMachines.SUPER_CABLE.get(), MachineRecipeViews.note("power_super"));
+        registration.addRecipes(RecipeTypes.CRAFTING, level.getRecipeManager()
+            .getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream()
+            .filter(holder -> holder.value() instanceof PowerCraftingRecipe).toList());
     }
 
     @Override
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
         registration.getCraftingCategory().addExtension(UuMatterRecipe.class, new UuCrafting());
+        registration.getCraftingCategory().addExtension(PowerCraftingRecipe.class, new PowerCrafting());
+    }
+
+    private static final class PowerCrafting implements ICraftingCategoryExtension<PowerCraftingRecipe> {
+        @Override public void setRecipe(RecipeHolder<PowerCraftingRecipe> holder, IRecipeLayoutBuilder builder,
+                                       ICraftingGridHelper grid, IFocusGroup focuses) {
+            var recipe = holder.value();
+            grid.createAndSetInputs(builder, recipe.displayInputs(), recipe.displayWidth(), recipe.displayHeight());
+            grid.createAndSetOutputs(builder, List.of(recipe.getResultItem(Minecraft.getInstance().level.registryAccess())));
+        }
+        @Override public int getWidth(RecipeHolder<PowerCraftingRecipe> holder) { return holder.value().displayWidth(); }
+        @Override public int getHeight(RecipeHolder<PowerCraftingRecipe> holder) { return holder.value().displayHeight(); }
     }
 
     private static final class UuCrafting implements ICraftingCategoryExtension<UuMatterRecipe> {

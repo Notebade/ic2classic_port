@@ -1,0 +1,30 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "N": {
+      "item": "ic2:steam_reactor"
+    },
+    "P": {
+      "item": "ic2:plasma_core"
+    },
+    "C": {
+      "item": "ic2:complex_circuit"
+    },
+    "R": {
+      "item": "ic2:reinforced_stone"
+    },
+    "F": {
+      "item": "ic2:fuel_boiler"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:fusion_reactor"
+  },
+  "pattern": [
+    "RCR",
+    "PNP",
+    "RFR"
+  ]
+}

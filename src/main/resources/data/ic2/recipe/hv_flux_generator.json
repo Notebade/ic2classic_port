@@ -1,0 +1,30 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "Y": {
+      "item": "ic2:transformer_hv"
+    },
+    "X": {
+      "item": "minecraft:copper_ingot"
+    },
+    "C": {
+      "item": "minecraft:iron_ingot"
+    },
+    "D": {
+      "item": "ic2:advanced_circuit"
+    },
+    "V": {
+      "item": "minecraft:redstone_block"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:hv_flux_generator"
+  },
+  "pattern": [
+    "DXD",
+    "YCV",
+    "DXD"
+  ]
+}

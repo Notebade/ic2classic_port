@@ -53,4 +53,9 @@ public enum UraniumType {
     public int explosionPower() {
         return explosionPower;
     }
+
+    public int fusionHeat() {
+        return switch (this) { case STANDARD -> 5; case BLAZE -> 25; case CHARCOAL -> 1;
+            case ENDER_PEARL -> 3; case NETHER_STAR -> 20; case REDSTONE -> 10; };
+    }
 }

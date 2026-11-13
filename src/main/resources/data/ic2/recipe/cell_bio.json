@@ -1,0 +1,16 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shapeless",
+  "result": {
+    "count": 1,
+    "id": "ic2:cell_bio"
+  },
+  "ingredients": [
+    {
+      "item": "ic2:cell_empty"
+    },
+    {
+      "item": "ic2:plant_ball_compressed"
+    }
+  ]
+}

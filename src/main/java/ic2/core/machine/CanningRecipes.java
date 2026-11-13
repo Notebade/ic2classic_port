@@ -37,7 +37,8 @@ final class CanningRecipes {
     }
 
     static boolean acceptsMaterial(ItemStack stack) {
-        return isUranium(stack) || stack.is(Items.REDSTONE) || stack.is(Items.LAPIS_LAZULI) || stack.is(COAL_DUSTS);
+        return isUranium(stack) || stack.is(BoilerFuel.COMPRESSED_COAL.get()) || stack.is(BoilerFuel.COMPRESSED_PLANT.get())
+            || stack.is(Items.REDSTONE) || stack.is(Items.LAPIS_LAZULI) || stack.is(COAL_DUSTS);
     }
 
     private static boolean isUranium(ItemStack stack) {
@@ -47,6 +48,10 @@ final class CanningRecipes {
     Batch find(ItemStack container, ItemStack material, Level level) {
         if (container.isEmpty() || material.isEmpty() || level == null) {
             return null;
+        }
+        if (container.is(IC2.CELL_EMPTY.get())) {
+            if (material.is(BoilerFuel.COMPRESSED_COAL.get())) return new Batch(new ItemStack(BoilerFuel.HYDRATED_CELL.get()), 1, false);
+            if (material.is(BoilerFuel.COMPRESSED_PLANT.get())) return new Batch(new ItemStack(BoilerFuel.RAW_BIO_CELL.get()), 1, false);
         }
         if (container.is(IC2.CELL_EMPTY.get()) && isUranium(material)) {
             var input = CraftingInput.of(2, 1, List.of(container.copyWithCount(1), material.copyWithCount(1)));

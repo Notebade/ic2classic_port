@@ -1,0 +1,14 @@
+{
+  "textures": {
+    "layer0": "ic2:item/tools/empty_fuel_can"
+  },
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "predicate": {
+        "ic2:fueled": 1
+      },
+      "model": "ic2:item/fuel_can_filled"
+    }
+  ]
+}

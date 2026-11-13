@@ -1,0 +1,30 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "Y": {
+      "item": "ic2:circuit"
+    },
+    "X": {
+      "item": "minecraft:copper_ingot"
+    },
+    "C": {
+      "item": "minecraft:piston"
+    },
+    "B": {
+      "item": "minecraft:redstone_torch"
+    },
+    "V": {
+      "item": "minecraft:bucket"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:fluid_export_upgrade_simple"
+  },
+  "pattern": [
+    "XCX",
+    "YVY",
+    "XBX"
+  ]
+}

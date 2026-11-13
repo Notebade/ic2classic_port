@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "down": "ic2:block/electric/flux/lv/down",
+    "up": "ic2:block/electric/flux/lv/up",
+    "north": "ic2:block/electric/flux/lv/north",
+    "south": "ic2:block/electric/flux/lv/south",
+    "west": "ic2:block/electric/flux/lv/west",
+    "east": "ic2:block/electric/flux/lv/east",
+    "particle": "ic2:block/electric/flux/lv/north"
+  },
+  "parent": "minecraft:block/cube"
+}

@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/cells/plasma"
+  },
+  "parent": "minecraft:item/generated"
+}

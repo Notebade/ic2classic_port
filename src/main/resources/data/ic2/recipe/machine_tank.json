@@ -1,0 +1,21 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "M": {
+      "item": "ic2:machine_block"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:machine_tank"
+  },
+  "pattern": [
+    "GGG",
+    "GMG",
+    "GGG"
+  ]
+}

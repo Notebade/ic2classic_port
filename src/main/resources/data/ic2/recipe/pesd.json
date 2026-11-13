@@ -1,0 +1,27 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "Y": {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    "X": {
+      "item": "ic2:carbon_plate"
+    },
+    "C": {
+      "item": "ic2:plate_iridium"
+    },
+    "V": {
+      "item": "ic2:plasma_core"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:pesd"
+  },
+  "pattern": [
+    "XYX",
+    "CVC",
+    "XYX"
+  ]
+}

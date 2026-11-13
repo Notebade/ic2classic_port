@@ -1,0 +1,40 @@
+{
+  "textures": {
+    "particle": "ic2:block/electric/cable/plasma/blank",
+    "cable": "ic2:block/electric/cable/plasma/blank"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        2,
+        2
+      ],
+      "to": [
+        14,
+        14,
+        14
+      ],
+      "faces": {
+        "down": {
+          "texture": "#cable"
+        },
+        "up": {
+          "texture": "#cable"
+        },
+        "north": {
+          "texture": "#cable"
+        },
+        "south": {
+          "texture": "#cable"
+        },
+        "west": {
+          "texture": "#cable"
+        },
+        "east": {
+          "texture": "#cable"
+        }
+      }
+    }
+  ]
+}

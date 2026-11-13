@@ -1,0 +1,27 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "Y": {
+      "item": "ic2:steam_turbine"
+    },
+    "X": {
+      "item": "ic2:circuit"
+    },
+    "C": {
+      "item": "ic2:stabilized_machine_block"
+    },
+    "V": {
+      "item": "ic2:machine_tank"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:steam_tunnel"
+  },
+  "pattern": [
+    "XYX",
+    "YCY",
+    "VYV"
+  ]
+}

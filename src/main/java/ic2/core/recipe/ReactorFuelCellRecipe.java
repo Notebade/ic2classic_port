@@ -10,7 +10,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.Level;
 
-public final class ReactorFuelCellRecipe extends CustomRecipe {
+public final class ReactorFuelCellRecipe extends CustomRecipe implements CountedCrafting {
+    @Override public int consumed(ItemStack stack) { return consumption(stack); }
     public static final RecipeSerializer<ReactorFuelCellRecipe> SERIALIZER =
         new SimpleCraftingRecipeSerializer<>(ReactorFuelCellRecipe::new);
     private static final int DUST_COUNT = 8;

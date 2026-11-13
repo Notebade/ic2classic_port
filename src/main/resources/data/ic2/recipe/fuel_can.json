@@ -1,0 +1,18 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "T": {
+      "item": "ic2:ingot_tin"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:fuel_can"
+  },
+  "pattern": [
+    " TT",
+    "T T",
+    "TTT"
+  ]
+}

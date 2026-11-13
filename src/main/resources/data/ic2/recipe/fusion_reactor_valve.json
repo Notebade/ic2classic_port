@@ -1,0 +1,24 @@
+{
+  "category": "misc",
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "Y": {
+      "item": "minecraft:bucket"
+    },
+    "X": {
+      "item": "ic2:reinforced_stone"
+    },
+    "V": {
+      "item": "ic2:machine_block"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "ic2:fusion_reactor_valve"
+  },
+  "pattern": [
+    " X ",
+    "YVY",
+    " X "
+  ]
+}

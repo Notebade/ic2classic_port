@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "all": "ic2:block/personal/iridium_stone"
+  },
+  "parent": "minecraft:block/cube_all"
+}
