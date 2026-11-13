@@ -47,3 +47,7 @@ Earlier gameplay commit `d226731` includes original pad/chunkloader screens, uti
 
 - Registered miner, backend menu miner: four source roles 0 battery, 1 scanner, 2 pipes/backfill, 3 drill. Six data values: EU, progress (200 max), blocked flag, capacity (10000), queued target count, pipe tip Y. Existing extraction_machine menu remains three slots/four values. Both use the common ExtractionMenu backend; separate client menu factories preserve their sizes.
 - Physical miningpipe_slim shafts and miningpipe bottom now work through the machine. The bottom is internal, has no creative item and drops a shaft. Add names/models/creative classification and screen registration in the graphics stage. No client screen or language/model files were modified here.
+
+## Ranged pump backend
+
+- Registered ranged_pump and its backend menu: three source roles (battery, pipes/backfill, fluid scanner), four data values (EU, progress/5, tank mB, capacity/5000). Source crafting path through accelerated pump/miner is complete, as is the original electric_fisher recipe. Common ExtractionMenu supplies the backend; no client screen/model/language files were changed.

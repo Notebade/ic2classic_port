@@ -288,3 +288,7 @@ A block entity implementing `ic2.api.machine.FluidPump` accepts a complete `Flui
 ### Native miner
 
 The miner now consumes the public MiningDrill/WorldScanner contracts, including real items from a separately compiled addon. Inventory roles: 0 battery, 1 non-fluid scanner, 2 pipes/backfill blocks, 3 drill. Addon drill progress and machine EU are bounded at the controller boundary; tool-owned consumption is a separate completed-use callback. Native machine telemetry: input_packet_eu=128, progress_units/target=200, blocked, queued_targets, pipe_tip_y; capacity=10000 EU. Cached item access rejects a removed controller. Break protection is checked before working and before world mutation. Adjacent prepared FluidPump implementations enable source-fluid mining.
+
+### Native ranged pump
+
+`ranged_pump` accepts WorldScanner items with scansFluids=true. Slots: 0 battery, 1 pipes/backfill, 2 scanner. Its snapshot reports input_packet_eu=128, progress_units/target=5, fluid_mb, queued_targets, searching and pipe_tip_y; capacity=5000 EU. The tank is extraction-only and DOWN fluid/item access is disabled. Search uses up to 32 positions per controller tick and loaded chunks only. Target/queue/progress persist; an incomplete derived search restarts after reload. The source fisher acquisition recipe is now present with its real ranged-pump dependency.

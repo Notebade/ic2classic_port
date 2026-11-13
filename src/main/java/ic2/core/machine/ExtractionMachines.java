@@ -18,6 +18,10 @@ final class ExtractionMachines {
     private static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, IC2.MOD_ID);
     static final DeferredBlock<ExtractionBlock> FAST_PUMP = BLOCKS.registerBlock("overclocked_pump", ExtractionBlock::new, PowerMachines.properties());
     static final DeferredBlock<MinerBlock> MINER = BLOCKS.registerBlock("miner", MinerBlock::new, PowerMachines.properties());
+    static final DeferredBlock<RangedPumpBlock> RANGED_PUMP = BLOCKS.registerBlock("ranged_pump", RangedPumpBlock::new, PowerMachines.properties());
+    static final Supplier<BlockEntityType<RangedPumpEntity>> RANGED_ENTITY = ENTITIES.register("ranged_pump", () -> BlockEntityType.Builder.of(RangedPumpEntity::new, RANGED_PUMP.get()).build(null));
+    static final Supplier<MenuType<ExtractionMenu>> RANGED_MENU = MENUS.register("ranged_pump", () -> new MenuType<>((id, player) ->
+        new ExtractionMenu(ExtractionMachines.RANGED_MENU.get(), id, player, null, new net.neoforged.neoforge.items.ItemStackHandler(3), new net.minecraft.world.inventory.SimpleContainerData(4), -1), FeatureFlags.DEFAULT_FLAGS));
     static final DeferredBlock<MiningPipeBlock> PIPE_TIP = BLOCKS.registerBlock("miningpipe", p -> new MiningPipeBlock(p, false), PowerMachines.properties().noOcclusion());
     static final Supplier<BlockEntityType<MinerEntity>> MINER_ENTITY = ENTITIES.register("miner", () -> BlockEntityType.Builder.of(MinerEntity::new, MINER.get()).build(null));
     static final Supplier<MenuType<ExtractionMenu>> MINER_MENU = MENUS.register("miner", () -> new MenuType<>((id, player) ->
@@ -28,11 +32,14 @@ final class ExtractionMachines {
         MiningTools.register(items);
         BLOCKS.register(bus); ENTITIES.register(bus); MENUS.register(bus); items.registerSimpleBlockItem(FAST_PUMP);
         items.registerSimpleBlockItem(MINER);
+        items.registerSimpleBlockItem(RANGED_PUMP);
         bus.addListener(ExtractionMachines::capabilities);
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ENTITY.get(), ExtractionEntity::automation);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ENTITY.get(), ExtractionEntity::fluidOutput);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MINER_ENTITY.get(), MinerEntity::automation);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, RANGED_ENTITY.get(), RangedPumpEntity::automation);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, RANGED_ENTITY.get(), RangedPumpEntity::fluidOutput);
     }
 }

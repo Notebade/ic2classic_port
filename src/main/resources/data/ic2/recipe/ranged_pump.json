@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped", "category": "misc",
+  "pattern": ["XYX", "CVC", "XBX"],
+  "key": {
+    "X": {"item": "ic2:plate_advanced_alloy"}, "Y": {"item": "ic2:overclocked_pump"},
+    "C": {"item": "ic2:advanced_circuit"}, "V": {"item": "ic2:miner"}, "B": {"item": "ic2:magnet"}
+  },
+  "result": {"id": "ic2:ranged_pump", "count": 1}
+}

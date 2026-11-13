@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped", "category": "misc",
+  "pattern": ["XYX", "CVC", "BNB"],
+  "key": {
+    "X": {"item": "ic2:complex_circuit"}, "Y": {"item": "minecraft:hopper"}, "C": {"item": "minecraft:fishing_rod"},
+    "V": {"item": "ic2:plasma_core"}, "B": {"item": "ic2:stabilized_machine_block"}, "N": {"item": "ic2:ranged_pump"}
+  },
+  "result": {"id": "ic2:electric_fisher", "count": 1}
+}

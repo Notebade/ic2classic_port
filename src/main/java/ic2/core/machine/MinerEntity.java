@@ -62,13 +62,9 @@ final class MinerEntity extends BlockEntity implements EnergySink, MachineSnapsh
     };
     MinerEntity(BlockPos pos, BlockState state) { super(ExtractionMachines.MINER_ENTITY.get(), pos, state); }
     private boolean live() { return level != null && !isRemoved() && level.hasChunkAt(worldPosition) && level.getBlockEntity(worldPosition) == this; }
-    private ItemStack pipeStack() { return new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("ic2:miningpipe_slim"))); }
+    private ItemStack pipeStack() { return MiningWorld.pipe(); }
     private boolean hasPipe() { return inventory.getStackInSlot(2).is(pipeStack().getItem()); }
-    private BlockPos tip() {
-        var pos = worldPosition.below();
-        while (pos.getY() >= level.getMinBuildHeight() && level.hasChunkAt(pos) && level.getBlockState(pos).getBlock() instanceof MiningPipeBlock) pos = pos.below();
-        return pos.above();
-    }
+    private BlockPos tip() { return MiningWorld.tip(level, worldPosition); }
     @Override public void tick() {
         if (!live()) return;
         chargeTools();
@@ -160,9 +156,7 @@ final class MinerEntity extends BlockEntity implements EnergySink, MachineSnapsh
         drill.consumeUse(tool);
         if (working.getX() == worldPosition.getX() && working.getZ() == worldPosition.getZ()) {
             if (!hasPipe()) { blocked = true; return; }
-            var previous = working.above();
-            if (level.getBlockState(previous).getBlock() instanceof MiningPipeBlock) level.setBlock(previous, Block.byItem(pipeStack().getItem()).defaultBlockState(), 2 | 16);
-            level.setBlock(working, ExtractionMachines.PIPE_TIP.get().defaultBlockState(), 2 | 16);
+            MiningWorld.install(level, working);
             inventory.extractItem(2, 1, false); energy -= 10;
         }
         if (working.equals(desired)) desired = null;
@@ -184,26 +178,10 @@ final class MinerEntity extends BlockEntity implements EnergySink, MachineSnapsh
         }
         setChanged();
     }
-    private void retract() {
-        var pos = tip();
-        send(pipeStack());
-        var fill = inventory.getStackInSlot(2);
-        var state = !hasPipe() && fill.getItem() instanceof BlockItem block ? block.getBlock().defaultBlockState() : Blocks.AIR.defaultBlockState();
-        level.setBlock(pos, state, 2 | 16);
-        if (!state.isAir()) inventory.extractItem(2, 1, false);
-        if (level.getBlockState(pos.above()).getBlock() instanceof MiningPipeBlock) level.setBlock(pos.above(), ExtractionMachines.PIPE_TIP.get().defaultBlockState(), 2 | 16);
-    }
-    private void send(ItemStack stack) {
-        for (var side : Direction.Plane.HORIZONTAL) {
-            var pos = worldPosition.relative(side);
-            if (!level.hasChunkAt(pos)) continue;
-            var handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, side.getOpposite());
-            if (handler != null) stack = ItemHandlerHelper.insertItemStacked(handler, stack, false);
-            if (stack.isEmpty()) return;
-        }
-        Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), stack);
-    }
-    IItemHandler automation(Direction side) { return !live() || side == Direction.DOWN || side == Direction.UP ? null : GuardedCapabilities.items(() -> live() ? inventory : null); }
+    private void retract() { MiningWorld.retract(level, worldPosition, inventory, 2); }
+    private void send(ItemStack stack) { MiningWorld.send(level, worldPosition, stack); }
+    IItemHandler automation(Direction side) { return !live() || side == Direction.DOWN || side == Direction.UP ? null : GuardedCapabilities.items(() -> live()
+        ? new net.neoforged.neoforge.items.wrapper.CombinedInvWrapper(new BatterySlot(inventory, 0, false), new net.neoforged.neoforge.items.wrapper.RangedWrapper(inventory, 1, 4)) : null); }
     @Override public boolean canReceiveEnergy(Direction side, int output, int packet) { return live() && packet > 0 && packet <= 128 && energy < 10000; }
     @Override public int receiveEnergy(int amount) { if (!live()) return 0; int received = Math.clamp(amount, 0, 10000 - energy); energy += received; if (received > 0) setChanged(); return received; }
     @Override public MachineSnapshot machineInfo() { return MachineTelemetry.snapshot(this, energy, 10000, MachineSnapshot.EnergyUnit.EU,
