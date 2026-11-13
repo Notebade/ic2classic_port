@@ -39,4 +39,10 @@ final class PumpTank extends FluidTank {
         super.fill(bucket, FluidAction.EXECUTE);
         return true;
     }
+
+    boolean acceptCollected(FluidStack fluid, boolean simulate) {
+        if (fluid.isEmpty() || super.fill(fluid, FluidAction.SIMULATE) != fluid.getAmount()) return false;
+        if (!simulate) super.fill(fluid, FluidAction.EXECUTE);
+        return true;
+    }
 }

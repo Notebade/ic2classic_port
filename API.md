@@ -276,3 +276,7 @@ var fe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side);
 ### EU cable hazards
 
 `EuNetwork.send` includes real conductor breakdown and nearby electric injury for energy actually accepted by a sink. An offered packet with no demand does not burn wires or shock entities. Per-path exposure takes the largest exposed-cable value; packets accumulate until the next level tick, then deal ceil(exposure/64) electricity damage. Creative/spectator/dead entities and full hazmat suits are excluded. The return value still includes actual delivered EU plus cable losses; callers must debit it exactly once. Cable traversal and side effects do not load chunks.
+
+### Prepared world-fluid pumps
+
+A block entity implementing `ic2.api.machine.FluidPump` accepts a complete `FluidStack` through `pumpFluid(fluid, simulate)`. Native basic and accelerated pumps require their charged cycle and sufficient tank room. A successful simulation leaves state unchanged; successful execution fills the tank and resets progress. It never removes the world fluid block: the miner must validate/remove its source after acceptance. Call only on the server thread. Unsupported native machines return false; removed pump instances reject calls. Accelerated-pump telemetry: input_packet_eu=128, progress_units/target=25, fluid_mb; capacity=2500 EU.

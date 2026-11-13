@@ -35,3 +35,8 @@ Earlier gameplay commit `d226731` includes original pad/chunkloader screens, uti
 - Advanced inventories now contain their original slots plus two upgrade slots. Backend menu data retains indices 0–6 and extends to 13: 7 energy high word, 8/9 capacity low/high, 10/11 input packet low/high, 12 sound multiplier permille. `AdvancedMachineMenu.energy()`, `capacity()` and `packet()` reconstruct the values. Upgrade slots currently use (134,53)/(152,53); final screen layout belongs to the graphics stage.
 - New item IDs needing names/models: upgrade_simple_import, upgrade_simple_export, upgrade_redstone_inverter, upgrade_redstone_sensitivity, upgrade_loudness, upgrade_muffler, upgrade_mute. Existing fluid_import_upgrade_simple/fluid_export_upgrade_simple and cobblegen_upgrade retain their IDs and now work in compatible slots.
 - Transport direction is selected by using the upgrade on a block face (Shift reverses); unset direction disables transport. Sound registration/import and actual client audio checks are complete. No screen rendering or model files were modified in this unit.
+
+## Extraction dependency backend
+
+- New block overclocked_pump, common backend menu extraction_machine (three slots): 0 battery, 1 empty container, 2 output. Four data values: EU, progress (25 max), tank mB, capacity (2500). No client Screen/model/lang changes were made. Add this machine's creative classification, names, visuals and menu registration in the graphics stage.
+- Item automation: top container input; horizontal discharged battery/output; down disabled. Fluid automation: extraction only, down disabled. Source GUI/background belongs to the original accelerated-pump family. Native public FluidPump handoff is implemented and tested.

@@ -85,6 +85,7 @@ public final class PowerMachines {
         ColossalMachines.register(bus, items);
         ElectricEnchanting.register(bus, items);
         ElectricFishing.register(bus, items);
+        ExtractionMachines.register(bus, items);
         bus.addListener(PowerMachines::capabilities);
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {

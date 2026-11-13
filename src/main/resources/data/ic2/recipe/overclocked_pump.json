@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["XYX", "YCY", "XVX"],
+  "key": {
+    "X": {"item": "ic2:heat_storage_single"},
+    "Y": {"item": "ic2:upgrade_overclocker"},
+    "C": {"item": "ic2:pump"},
+    "V": {"item": "ic2:advanced_machine_block"}
+  },
+  "result": {"id": "ic2:overclocked_pump", "count": 1}
+}

@@ -50,7 +50,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
-final class MachineEntity extends BlockEntity implements MenuProvider, EnergySink, MachineSnapshot.Provider {
+final class MachineEntity extends BlockEntity implements MenuProvider, EnergySink, MachineSnapshot.Provider, ic2.api.machine.FluidPump {
     @Override public MachineSnapshot machineInfo() {
         var values = new java.util.HashMap<String, Long>();
         if(reactorPlanner!=null)reactorPlanner.telemetry(values);
@@ -1223,6 +1223,13 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
 
     IFluidHandler fluidOutput(Direction side) {
         return side == Direction.DOWN ? null : pumpTank;
+    }
+
+    @Override public boolean pumpFluid(FluidStack fluid, boolean simulate) {
+        if (pumpTank == null || level == null || isRemoved() || !level.hasChunkAt(worldPosition)
+            || level.getBlockEntity(worldPosition) != this || progress < kind.recipeTicks || !pumpTank.acceptCollected(fluid, simulate)) return false;
+        if (!simulate) { progress = 0; setChanged(); }
+        return true;
     }
 
     IFluidHandler fuelFluid(Direction side) {
