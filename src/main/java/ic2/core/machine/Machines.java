@@ -153,6 +153,12 @@ public final class Machines {
     static final DeferredBlock<CompressedSolarPanelBlock> COMPRESSED_MV_SOLAR_PANEL =
         BLOCKS.registerBlock("solar_panel_mv_compressed",
             properties -> new CompressedSolarPanelBlock(properties, SolarPanelBlock.MV_OUTPUT), machineProperties().noOcclusion());
+    static final DeferredBlock<SolarPanelBlock> HV_SOLAR_PANEL =
+        BLOCKS.registerBlock("solar_panel_hv", properties -> new SolarPanelBlock(properties, SolarPanelBlock.HV_OUTPUT),
+            machineProperties());
+    static final DeferredBlock<CompressedSolarPanelBlock> COMPRESSED_HV_SOLAR_PANEL =
+        BLOCKS.registerBlock("solar_panel_hv_compressed",
+            properties -> new CompressedSolarPanelBlock(properties, SolarPanelBlock.HV_OUTPUT), machineProperties().noOcclusion());
     static final DeferredBlock<TransformerBlock> LV_TRANSFORMER =
         BLOCKS.registerBlock("transformer_lv",
             properties -> new TransformerBlock(properties, MachineKind.LV_TRANSFORMER, TransformerBlock.LV_HIGH_PACKET),
@@ -281,7 +287,7 @@ public final class Machines {
         ENTITIES.register("reactor_planner", () -> entityType(REACTOR_PLANNER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> SOLAR_PANEL_ENTITY =
         ENTITIES.register("solar_panel", () -> entityType(SOLAR_PANEL.get(), COMPRESSED_SOLAR_PANEL.get(),
-            LV_SOLAR_PANEL.get(), COMPRESSED_LV_SOLAR_PANEL.get(), MV_SOLAR_PANEL.get(), COMPRESSED_MV_SOLAR_PANEL.get()));
+            LV_SOLAR_PANEL.get(), COMPRESSED_LV_SOLAR_PANEL.get(), MV_SOLAR_PANEL.get(), COMPRESSED_MV_SOLAR_PANEL.get(), HV_SOLAR_PANEL.get(), COMPRESSED_HV_SOLAR_PANEL.get()));
     static final Supplier<BlockEntityType<MachineEntity>> LV_TRANSFORMER_ENTITY =
         ENTITIES.register("transformer_lv", () -> entityType(LV_TRANSFORMER.get()));
     static final Supplier<BlockEntityType<MachineEntity>> MV_TRANSFORMER_ENTITY =
@@ -366,6 +372,8 @@ public final class Machines {
         items.registerSimpleBlockItem(COMPRESSED_LV_SOLAR_PANEL);
         items.registerSimpleBlockItem(MV_SOLAR_PANEL);
         items.registerSimpleBlockItem(COMPRESSED_MV_SOLAR_PANEL);
+        items.registerSimpleBlockItem(HV_SOLAR_PANEL);
+        items.registerSimpleBlockItem(COMPRESSED_HV_SOLAR_PANEL);
         items.registerSimpleBlockItem(LV_TRANSFORMER);
         items.registerSimpleBlockItem(MV_TRANSFORMER);
         items.registerSimpleBlockItem(HV_TRANSFORMER);
@@ -450,6 +458,8 @@ public final class Machines {
                 event.accept(COMPRESSED_LV_SOLAR_PANEL.get());
                 event.accept(MV_SOLAR_PANEL.get());
                 event.accept(COMPRESSED_MV_SOLAR_PANEL.get());
+                event.accept(HV_SOLAR_PANEL.get());
+                event.accept(COMPRESSED_HV_SOLAR_PANEL.get());
                 event.accept(LV_TRANSFORMER.get());
                 event.accept(MV_TRANSFORMER.get());
                 event.accept(HV_TRANSFORMER.get());

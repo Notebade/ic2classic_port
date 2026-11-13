@@ -1,0 +1,11 @@
+{
+  "parent": "ic2:block/solar_panel_half",
+  "textures": {
+    "down": "ic2:block/electric/generator/hv_solar_panel/active_down",
+    "up": "ic2:block/electric/generator/hv_solar_panel/active_up",
+    "north": "ic2:block/electric/generator/hv_solar_panel/active_north",
+    "south": "ic2:block/electric/generator/hv_solar_panel/active_south",
+    "west": "ic2:block/electric/generator/hv_solar_panel/active_west",
+    "east": "ic2:block/electric/generator/hv_solar_panel/active_east"
+  }
+}

@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.56.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.56.1-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.56.0` |
+| Project version | `0.56.1` |
 | Project status | In development |
 
 ### Generator Comparison
@@ -120,6 +120,8 @@ An inactive reactor fuel cell becomes a Fuel Cell after absorbing enough neutron
 Connect a Steam Turbine directly to the reactor or a chamber. It consumes up to 128 mB of steam per tick, produces up to 64 EU/t at full speed, and stores up to 4,000 EU. Its EU output is sent in packets of up to 128 EU.
 
 ### Reactor Planner and Card
+
+Creative items are grouped into six IC 2 tabs: Tools and Protection, Generators, Machines, Energy, Nuclear, and Materials.
 
 Click H to add 500 starting heat or Shift-click to subtract it. The setting is saved with the layout and copied by the Reactor Card.
 
