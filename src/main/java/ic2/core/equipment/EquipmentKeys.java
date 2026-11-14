@@ -22,6 +22,7 @@ public final class EquipmentKeys {
     private static EquipmentInput last = EquipmentInput.NONE;
     private static int ticks;
     static boolean altDown() { return ALT.isDown(); }
+    static boolean modeDown() { return MODE.isDown(); }
     static boolean sideInventoryDown() { return SIDE_INVENTORY.isDown(); }
     @SubscribeEvent public static void register(RegisterKeyMappingsEvent event) {
         event.register(MODE); event.register(HUD); event.register(BOOST); event.register(ALT);

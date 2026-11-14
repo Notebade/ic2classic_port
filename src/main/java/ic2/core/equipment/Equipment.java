@@ -28,6 +28,7 @@ public final class Equipment {
         NanoSaber.register(bus, items);
         MiningLaser.register(bus, items);
         ConstructionFoam.register(bus, items);
+        ObscuratorItem.register(bus, items);
         PoweredDrill.register(items);
         items.registerItem("electric_hoe", p -> new PoweredHoe(p, false));
         items.registerItem("advanced_hoe", p -> new PoweredHoe(p, true));

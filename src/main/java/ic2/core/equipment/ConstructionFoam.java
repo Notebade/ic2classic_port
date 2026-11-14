@@ -21,13 +21,15 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 final class ConstructionFoam {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks("ic2");
-    private static final net.neoforged.neoforge.registries.DeferredBlock<Block> HARDENED =
-        BLOCKS.registerSimpleBlock("construction_foam", BlockBehaviour.Properties.of().strength(2));
+    private static final net.neoforged.neoforge.registries.DeferredBlock<FoamTextureBlock> HARDENED =
+        BLOCKS.registerBlock("construction_foam", FoamTextureBlock::new, BlockBehaviour.Properties.of().strength(2));
+    static Block hardenedBlock() { return HARDENED.get(); }
     private static final net.neoforged.neoforge.registries.DeferredBlock<Wet> WET =
         BLOCKS.registerBlock("wet_construction_foam", Wet::new, BlockBehaviour.Properties.of().strength(.1f, 10)
             .sound(net.minecraft.world.level.block.SoundType.WOOL).noCollission().noOcclusion().randomTicks());
     static void register(IEventBus bus, DeferredRegister.Items items) {
         BLOCKS.register(bus);
+        FoamTextureEntity.register(bus);
         items.registerSimpleBlockItem(HARDENED); items.registerSimpleBlockItem(WET);
         items.registerSimpleItem("cf_pellet");
         items.registerItem("electric_sprayer", p -> new Sprayer(p, true));

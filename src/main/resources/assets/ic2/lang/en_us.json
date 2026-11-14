@@ -684,5 +684,19 @@
   "key.ic2.inv": "Side Inventory Key",
   "key.ic2.hud": "Hud Expand Key",
   "key.ic2.toggle": "Toggle Key",
-  "key.categories.ic2": "IndustrialCraft 2 Classic"
+  "key.categories.ic2": "IndustrialCraft 2 Classic",
+  "item.ic2.obscurator": "Obscurator",
+  "tooltip.item.ic2.obscurator.block": "Stored Block: %s",
+  "tooltip.item.ic2.obscurator.change.copy": "Copy a Texture of a Block",
+  "tooltip.item.ic2.obscurator.change.layer": "Change the Current Layer",
+  "tooltip.item.ic2.obscurator.change.paste": "Paste a Texture onto a CFoam Block",
+  "tooltip.item.ic2.obscurator.change.paste_all_sides": "Paste a Texture on all sides of a CFoam Block",
+  "tooltip.item.ic2.obscurator.change.range": "Change Range",
+  "tooltip.item.ic2.obscurator.change.rotation": "Change the Current Layer Rotation",
+  "tooltip.item.ic2.obscurator.layer": "Current Layers: %s",
+  "tooltip.item.ic2.obscurator.layers": "Layers: %s",
+  "tooltip.item.ic2.obscurator.range": "Obscurator Area: %1$sx%1$s Blocks",
+  "tooltip.item.ic2.obscurator.rotation": "Layer Rotation: %s°",
+  "tooltip.item.ic2.obscurator.side": "Side: %s",
+  "tooltip.item.ic2.painter.range": "Range: %s Block(s)"
 }

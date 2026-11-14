@@ -18,6 +18,7 @@ final class UtilityToolChecks {
     static void run(ServerLevel level) {
         NanoSaberChecks.run(level);
         FoodCanEffectsChecks.run(level);
+        ObscuratorChecks.run(level);
         FoamChecks.run(level);
         checkChainsaws(level);
         for (boolean advanced : new boolean[]{false, true}) {

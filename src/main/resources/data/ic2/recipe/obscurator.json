@@ -1,0 +1,11 @@
+{
+  "type": "ic2:electric_shaped",
+  "category": "equipment",
+  "pattern": ["XCX", "YVB", "NMN"],
+  "key": {
+    "X": {"item": "minecraft:painting"}, "C": {"tag": "c:glass_blocks"},
+    "Y": {"item": "minecraft:sticky_piston"}, "V": {"item": "ic2:energy_crystal"}, "B": {"item": "minecraft:piston"},
+    "N": {"item": "minecraft:stone_button"}, "M": {"item": "ic2:plate_advanced_alloy"}
+  },
+  "result": {"id": "ic2:obscurator"}
+}

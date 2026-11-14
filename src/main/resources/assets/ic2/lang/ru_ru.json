@@ -684,5 +684,19 @@
   "key.ic2.inv": "Клавиша дополнительного инвентаря",
   "key.ic2.hud": "Клавиша открытия HUD",
   "key.ic2.toggle": "Клавиша переключения",
-  "key.categories.ic2": "IndustrialCraft 2 Classic"
+  "key.categories.ic2": "IndustrialCraft 2 Classic",
+  "item.ic2.obscurator": "Хамелеон",
+  "tooltip.item.ic2.obscurator.block": "Сохраненный блок: %s",
+  "tooltip.item.ic2.obscurator.change.copy": "Копировать текстуру блока",
+  "tooltip.item.ic2.obscurator.change.layer": "Изменить текущий слой",
+  "tooltip.item.ic2.obscurator.change.paste": "Вставьте текстуру в блок строительной пены",
+  "tooltip.item.ic2.obscurator.change.paste_all_sides": "Вставьте текстуру со всех сторон блока строительной пены",
+  "tooltip.item.ic2.obscurator.change.range": "Изменить диапазон",
+  "tooltip.item.ic2.obscurator.change.rotation": "Изменить вращение текущего слоя",
+  "tooltip.item.ic2.obscurator.layer": "Текущие слои: %s",
+  "tooltip.item.ic2.obscurator.layers": "Слои: %s",
+  "tooltip.item.ic2.obscurator.range": "Область хамелеона: %1$sx%1$s блоков",
+  "tooltip.item.ic2.obscurator.rotation": "Поворот слоя: %s°",
+  "tooltip.item.ic2.obscurator.side": "Сторона: %s",
+  "tooltip.item.ic2.painter.range": "Диапазон: %s блоков"
 }
