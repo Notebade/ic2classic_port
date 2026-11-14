@@ -58,6 +58,7 @@ final class ModularArmorChecks {
         var item = (ModularArmor) stack("nano_suit_helmet").getItem(); var armor = item.defaultArmor();
         var modules = new ItemStack(ExampleAddon.ARMOR_TEST_MODULE.get(), 3);
         require(item.install(armor, ArmorModule.GENERIC, modules) && item.install(armor, ArmorModule.GENERIC, modules), "native armor installs a separately compiled addon module");
+        require(item.modules(armor).get(1).stack().getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag().getInt("installed") == 1, "addon installation callback changes persist on the owned module");
         require(!item.install(armor, ArmorModule.GENERIC, modules) && modules.getCount() == 1, "source nano generic slot limit rejects a third module without consuming it");
         require(item.capacity(armor) == 102000 && item.transferRate(armor) == 270 && item.canProvideEnergy(armor) && item.features(armor).contains(ResourceLocation.parse("exampleaddon:fixture")), "addon modifiers change actual per-stack armor storage and provider state");
         var player = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(level); var saved = player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).copy();
@@ -66,11 +67,13 @@ final class ModularArmorChecks {
             net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(player));
             var data = armor.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag();
             require(data.getInt("module_installs") == 2 && data.getInt("module_ticks") == 2, "addon lifecycle and real worn module ticks are called exactly once");
+            require(item.modules(armor).get(1).stack().getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag().getInt("ticks") == 1, "addon tick callback state persists on its owned module");
         } finally { player.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, saved); }
         require(item.setEnhanced(armor, true) && item.install(armor, ArmorModule.GENERIC, modules), "enhanced nano helmet accepts the third source generic slot");
         require(!item.setEnhanced(armor, false) && item.enhanced(armor), "downgrade cannot discard installed modules");
         var removed = item.removeModule(armor, 1, false);
         require(removed.is(ExampleAddon.ARMOR_TEST_MODULE.get()) && item.capacity(armor) == 102000, "addon removal updates cached power modifiers");
+        require(removed.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag().getInt("removed") == 1, "addon removal callback changes persist on the returned item");
         var restored = ItemStack.parse(level.registryAccess(), armor.save(level.registryAccess())).orElseThrow();
         require(item.capacity(restored) == 102000 && item.enhanced(restored) && item.modules(restored).size() == 3 && item.features(restored).equals(item.features(armor)), "module custody, addon modifiers and enhancement survive real stack serialization");
         item.setCharge(armor, 102000);

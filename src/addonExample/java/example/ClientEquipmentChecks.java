@@ -9,18 +9,20 @@ import net.minecraft.world.item.ItemStack;
 
 /** Real network/client checks run alongside the isolated audio fixture, without opening equipment screens. */
 final class ClientEquipmentChecks {
+    private static volatile java.util.UUID boatId;
     static void tick(Minecraft client, int age) {
         var server = client.getSingleplayerServer();
         if (age == 1) server.execute(() -> {
             var player = server.getPlayerList().getPlayer(client.player.getUUID()); var goggles = stack("nightvision_goggles");
             ((ElectricItem) goggles.getItem()).setCharge(goggles, 1000); player.setItemSlot(EquipmentSlot.HEAD, goggles);
             var type = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse("ic2:carbon_boat"));
-            var boat = type.create(server.overworld()); boat.setPos(100.5, 80, 99.5); server.overworld().addFreshEntity(boat);
+            var boat = type.create(server.overworld()); boat.setPos(100.5, 80, 99.5); boatId = boat.getUUID();
+            require(server.overworld().addFreshEntity(boat), "server adds the verification carbon boat");
         });
         if (age == 50) {
             boolean found = false;
             for (var entity : client.level.entitiesForRendering()) {
-                if (!net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).equals(ResourceLocation.parse("ic2:carbon_boat"))) continue;
+                if (!entity.getUUID().equals(boatId)) continue;
                 net.minecraft.client.renderer.entity.EntityRenderer<?> renderer = client.getEntityRenderDispatcher().getRenderer(entity);
                 require(renderer instanceof net.minecraft.client.renderer.entity.BoatRenderer, "native carbon boat spawn packet resolves a valid client renderer"); found = true;
             }

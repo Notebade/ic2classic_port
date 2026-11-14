@@ -82,7 +82,11 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
         long charge = (long) charge(armor) + moved;
         if (charge > configuration.capacity()) return false;
         ArmorModules.write(armor, entries, configuration); setCharge(armor, (int) charge); module.shrink(1);
-        if (installed.getItem() instanceof ArmorModule item) item.installed(installed, armor);
+        if (installed.getItem() instanceof ArmorModule item) {
+            item.installed(installed, armor);
+            entries.set(entries.size() - 1, new InstalledArmorModule(category, installed));
+            ArmorModules.write(armor, entries, configuration);
+        }
         return true;
     }
     @Override public ItemStack removeModule(ItemStack armor, int index, boolean simulate) {

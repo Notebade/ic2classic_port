@@ -89,9 +89,9 @@ public final class ExampleAddon {
         @Override public boolean supportsArmor(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor, net.minecraft.world.entity.EquipmentSlot slot) { return slot == net.minecraft.world.entity.EquipmentSlot.HEAD; }
         @Override public ic2.api.item.ArmorEnergyModifier energyModifier(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor) { return new ic2.api.item.ArmorEnergyModifier(1000, 0, 10, true); }
         @Override public java.util.Set<ResourceLocation> features(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor) { return java.util.Set.of(ResourceLocation.parse("exampleaddon:fixture")); }
-        @Override public void installed(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor) { increment(armor, "module_installs"); }
-        @Override public void removed(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor) { increment(armor, "module_removes"); }
-        @Override public void tickModule(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor, net.minecraft.world.entity.player.Player wearer) { increment(armor, "module_ticks"); }
+        @Override public void installed(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor) { increment(armor, "module_installs"); increment(module, "installed"); }
+        @Override public void removed(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor) { increment(armor, "module_removes"); increment(module, "removed"); }
+        @Override public void tickModule(net.minecraft.world.item.ItemStack module, net.minecraft.world.item.ItemStack armor, net.minecraft.world.entity.player.Player wearer) { increment(armor, "module_ticks"); increment(module, "ticks"); }
     }
 
     static final class TestMiningTool extends net.minecraft.world.item.Item implements ic2.api.item.MiningDrill {

@@ -6,7 +6,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-/** Declarative module parameters are pure. Lifecycle callbacks run only on committed server mutations. */
+/** Declarative parameters are pure and captured before installation callbacks. Callbacks may change operational state,
+ * but must not change electrical modifiers. Live equipment mutations belong on the server; tickModule is server-only. */
 public interface ArmorModule {
     ResourceLocation BATTERY = id("battery"), HUD = id("hud"), ANY = id("any"), GENERIC = id("generic"),
         CHARGER = id("charge"), STORAGE = id("storage"), BACK = id("back_slot"), MOVEMENT = id("movement");
