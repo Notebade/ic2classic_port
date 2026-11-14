@@ -30,7 +30,10 @@ final class PowerMachineMenu extends AbstractContainerMenu implements Processing
             final int index = slot;
             int x = layout == null ? 8 + slot * 22 : layout.slots().get(slot).x();
             int y = layout == null ? 100 : layout.slots().get(slot).y();
-            if (generatorPanel()) {
+            if (steamPanel()) {
+                x = 119 + slot % 2 * 28;
+                y = 40 + slot / 2 * 22;
+            } else if (generatorPanel()) {
                 x = kind == PowerMachines.Kind.WINDMILL ? 133 : slot == 0 ? 148 : 112;
                 y = kind == PowerMachines.Kind.WINDMILL || slot == 0 ? 58 : slot == 1 ? 42 : 74;
             }
@@ -45,7 +48,8 @@ final class PowerMachineMenu extends AbstractContainerMenu implements Processing
                 }
             });
         }
-        int inventoryY = generatorPanel() ? 107 : processing() ? AlloyGuiLayout.INVENTORY_SLOTS_Y : layout == null ? 132 : layout.inventoryY();
+        int inventoryY = steamPanel() ? 124 : generatorPanel() ? 107
+            : processing() ? AlloyGuiLayout.INVENTORY_SLOTS_Y : layout == null ? 132 : layout.inventoryY();
         int inventoryX = processing() ? AlloyGuiLayout.SLOT_X : 8;
         for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, inventoryX + col * 18, inventoryY + row * 18));
         for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, inventoryX + col * 18, processing() ? AlloyGuiLayout.HOTBAR_Y : inventoryY + 58));
@@ -53,6 +57,9 @@ final class PowerMachineMenu extends AbstractContainerMenu implements Processing
     int value(int index) { return data.get(index * 2) & 65535 | data.get(index * 2 + 1) << 16; }
     boolean generatorPanel() {
         return kind == PowerMachines.Kind.WINDMILL || kind == PowerMachines.Kind.LIQUID_FUEL;
+    }
+    boolean steamPanel() {
+        return kind == PowerMachines.Kind.BOILER || kind == PowerMachines.Kind.TUNNEL;
     }
     @Override public boolean clickMenuButton(Player player, int button) {
         if (processing() && button >= 1000) return ProcessingTransfer.handle(this, this, player, button);
