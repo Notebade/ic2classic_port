@@ -31,13 +31,22 @@ final class CanningRecipes {
         return ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, path);
     }
 
+    private static Item can(String path) {
+        return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(id(path));
+    }
+
+    private static int portions(ItemStack food) {
+        var properties = food.getFoodProperties(null);
+        return properties == null ? food.is(Items.CAKE) ? 6 : 0 : Math.max(1, (properties.nutrition() + 1) / 2);
+    }
+
     static boolean acceptsContainer(ItemStack stack) {
-        return stack.is(IC2.CELL_EMPTY.get()) || stack.getItem() instanceof ReactorHeatItem.Condensator
+        return stack.is(can("tin_can")) || stack.is(IC2.CELL_EMPTY.get()) || stack.getItem() instanceof ReactorHeatItem.Condensator
             || stack.getItem() instanceof ReactorReflectorItem reflector && reflector.repairable();
     }
 
     static boolean acceptsMaterial(ItemStack stack) {
-        return isUranium(stack) || stack.is(BoilerFuel.COMPRESSED_COAL.get()) || stack.is(BoilerFuel.COMPRESSED_PLANT.get())
+        return portions(stack) > 0 || isUranium(stack) || stack.is(BoilerFuel.COMPRESSED_COAL.get()) || stack.is(BoilerFuel.COMPRESSED_PLANT.get())
             || stack.is(Items.REDSTONE) || stack.is(Items.LAPIS_LAZULI) || stack.is(COAL_DUSTS);
     }
 
@@ -48,6 +57,11 @@ final class CanningRecipes {
     Batch find(ItemStack container, ItemStack material, Level level) {
         if (container.isEmpty() || material.isEmpty() || level == null) {
             return null;
+        }
+        if (container.is(can("tin_can"))) {
+            int count = portions(material);
+            return count > 0 && container.getCount() >= count
+                ? new Batch(new ItemStack(can(ic2.core.equipment.FoodCans.outputId(material)), count), 1, false, count, count * 50) : null;
         }
         if (container.is(IC2.CELL_EMPTY.get())) {
             if (material.is(BoilerFuel.COMPRESSED_COAL.get())) return new Batch(new ItemStack(BoilerFuel.HYDRATED_CELL.get()), 1, false);
@@ -73,5 +87,9 @@ final class CanningRecipes {
         return null;
     }
 
-    record Batch(ItemStack output, int materialCount, boolean repair) {}
+    record Batch(ItemStack output, int materialCount, boolean repair, int containers, int ticks) {
+        Batch(ItemStack output, int materialCount, boolean repair) {
+            this(output, materialCount, repair, 1, 0);
+        }
+    }
 }

@@ -49,7 +49,10 @@ public final class LaserClientCheck {
             server.execute(() -> {
                 var player = server.getPlayerList().getPlayer(id);
                 var pos = player.blockPosition();
-                if (index == 0) checkTap(player, pos.offset(4, 170 - pos.getY(), 0));
+                if (index == 0) {
+                    checkTap(player, pos.offset(4, 170 - pos.getY(), 0));
+                    checkChorusCan(player, pos.atY(170));
+                }
                 player.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
                 player.teleportTo(pos.getX() + .5, 170, pos.getZ() + .5);
                 player.setYRot(0);
@@ -139,6 +142,28 @@ public final class LaserClientCheck {
         } finally {
             level.setBlockAndUpdate(pos, oldCollector);
             level.setBlockAndUpdate(source, oldLog);
+        }
+    }
+
+    private static void checkChorusCan(net.minecraft.server.level.ServerPlayer player, BlockPos pos) {
+        var level = player.serverLevel();
+        var previous = player.position();
+        var platform = new java.util.LinkedHashMap<BlockPos, net.minecraft.world.level.block.state.BlockState>();
+        try {
+            for (var tile : BlockPos.betweenClosed(pos.offset(-8, -1, -8), pos.offset(8, -1, 8))) {
+                platform.put(tile.immutable(), level.getBlockState(tile));
+                level.setBlockAndUpdate(tile, Blocks.STONE.defaultBlockState());
+            }
+            player.teleportTo(pos.getX() + .5, pos.getY(), pos.getZ() + .5);
+            var origin = player.position();
+            var can = new ItemStack(Ic2Api.item(ResourceLocation.parse("ic2:filled_tin_can_chorus_fruit")).orElseThrow());
+            var empty = Ic2Api.item(ResourceLocation.parse("ic2:tin_can")).orElseThrow();
+            require(can.finishUsingItem(level, player).is(empty), "chorus can returns empty can");
+            require(player.position().distanceToSqr(origin) > 0, "chorus can teleports onto the platform");
+            com.mojang.logging.LogUtils.getLogger().info("IC2 chorus can client world checks passed");
+        } finally {
+            platform.forEach(level::setBlockAndUpdate);
+            player.teleportTo(previous.x, previous.y, previous.z);
         }
     }
 

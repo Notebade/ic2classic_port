@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["T T", "TTT"],
+  "key": {"T": {"tag": "c:ingots/tin"}},
+  "result": {"id": "ic2:tin_can", "count": 4}
+}

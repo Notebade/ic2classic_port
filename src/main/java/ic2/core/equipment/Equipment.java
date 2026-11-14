@@ -15,6 +15,7 @@ public final class Equipment {
         ArmorConfiguration.register(bus);
         ModularSuitItem.register(items);
         PassiveArmorModule.register(items);
+        FoodCans.register(items);
         NightVisionGoggles.register(items);
         MovementArmorModule.register(items);
         CarbonBoats.register(bus, items);

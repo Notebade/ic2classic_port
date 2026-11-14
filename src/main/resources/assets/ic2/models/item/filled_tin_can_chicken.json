@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/food_and_drink/tincan/chicken_tin_can"
+  },
+  "parent": "minecraft:item/generated"
+}

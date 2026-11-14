@@ -316,15 +316,16 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
     private void tickCanner() {
         var batch = canning.find(inventory.getStackInSlot(INPUT_SLOT), secondInput(), level);
         boolean canWork = batch != null && (repairsInPlace(batch) || canAddOutput(batch.output()));
+        int ticks = batch != null && batch.ticks() > 0 ? batch.ticks() : kind.recipeTicks;
         boolean spinning = kind == MachineKind.VACUUM_CANNER && tickCannerMotor(canWork);
         boolean working = canWork && energy >= kind.energyPerTick;
         if (working) {
             energy -= kind.energyPerTick;
-            if (progress >= kind.recipeTicks) {
+            if (progress >= ticks) {
                 finishCanning(batch);
             } else {
                 int step = kind == MachineKind.VACUUM_CANNER ? cannerSpeed / CanningRecipes.SPEED_DIVISOR : 1;
-                progress = Math.min(kind.recipeTicks, progress + step);
+                progress = Math.min(ticks, progress + step);
             }
             setChanged();
         } else if (progress > 0) {
@@ -358,7 +359,7 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
         if (repairsInPlace(batch)) {
             inventory.setStackInSlot(INPUT_SLOT, batch.output());
         } else {
-            inventory.extractItem(INPUT_SLOT, 1, false);
+            inventory.extractItem(INPUT_SLOT, batch.containers(), false);
             addOutput(batch.output());
         }
         progress = 0;
