@@ -625,5 +625,17 @@
   "gui.ic2.chunkloader.processing_off": "Processing: off",
   "gui.ic2.chunkloader.mode_0": "Access: public",
   "gui.ic2.chunkloader.mode_1": "Access: owner and team",
-  "gui.ic2.chunkloader.mode_2": "Access: owner only"
+  "gui.ic2.chunkloader.mode_2": "Access: owner only",
+  "item.ic2.mining_laser": "Mining Laser",
+  "tooltip.item.ic2.mining_laser.no_energy": "Not enough EU to fire",
+  "tooltip.item.ic2.mining_laser.mode.mining": "Mining",
+  "tooltip.item.ic2.mining_laser.mode.low_focus": "Low Focus",
+  "tooltip.item.ic2.mining_laser.mode.long_range": "Long Range",
+  "tooltip.item.ic2.mining_laser.mode.horizontal": "Horizontal",
+  "tooltip.item.ic2.mining_laser.mode.super_heat": "Super Heat",
+  "tooltip.item.ic2.mining_laser.mode.scatter": "Scatter",
+  "tooltip.item.ic2.mining_laser.mode.explosive": "Explosive",
+  "tooltip.item.ic2.mining_laser.mode.tracking": "Tracking",
+  "tooltip.item.ic2.mining_laser.error.no_target": "No target found",
+  "tooltip.item.ic2.mining_laser.error.steep": "Target block is too high or too low"
 }

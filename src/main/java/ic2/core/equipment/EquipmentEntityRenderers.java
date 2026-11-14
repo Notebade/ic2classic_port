@@ -9,6 +9,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 @EventBusSubscriber(modid = "ic2", value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public final class EquipmentEntityRenderers {
     @SubscribeEvent public static void register(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(LaserShot.TYPE.get(), LaserShotRenderer::new);
         event.registerEntityRenderer(CarbonBoats.TYPE.get(), context -> new net.minecraft.client.renderer.entity.BoatRenderer(context, false));
     }
 }

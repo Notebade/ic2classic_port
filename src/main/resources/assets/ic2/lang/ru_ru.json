@@ -625,5 +625,17 @@
   "gui.ic2.chunkloader.processing_off": "Обработка: выкл.",
   "gui.ic2.chunkloader.mode_0": "Доступ: публичный",
   "gui.ic2.chunkloader.mode_1": "Доступ: владелец и команда",
-  "gui.ic2.chunkloader.mode_2": "Доступ: только владелец"
+  "gui.ic2.chunkloader.mode_2": "Доступ: только владелец",
+  "item.ic2.mining_laser": "Шахтёрский лазер",
+  "tooltip.item.ic2.mining_laser.no_energy": "Для выстрела не хватает энергии",
+  "tooltip.item.ic2.mining_laser.mode.mining": "Добыча",
+  "tooltip.item.ic2.mining_laser.mode.low_focus": "Низкая мощность",
+  "tooltip.item.ic2.mining_laser.mode.long_range": "Дальний выстрел",
+  "tooltip.item.ic2.mining_laser.mode.horizontal": "Горизонтальный выстрел",
+  "tooltip.item.ic2.mining_laser.mode.super_heat": "Плавка",
+  "tooltip.item.ic2.mining_laser.mode.scatter": "Рассеивание",
+  "tooltip.item.ic2.mining_laser.mode.explosive": "Взрывной",
+  "tooltip.item.ic2.mining_laser.mode.tracking": "Наведение",
+  "tooltip.item.ic2.mining_laser.error.no_target": "Цель не найдена",
+  "tooltip.item.ic2.mining_laser.error.steep": "Блок слишком высоко или низко"
 }

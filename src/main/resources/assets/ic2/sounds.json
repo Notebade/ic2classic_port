@@ -77,10 +77,39 @@
       "ic2:machines/base/extractor_operating"
     ]
   },
-  "battery_charging": { "sounds": ["ic2:tools/battery"] },
+  "battery_charging": {
+    "sounds": [
+      "ic2:tools/battery"
+    ]
+  },
   "machine_interruption": {
     "sounds": [
       "ic2:machines/base/interruption"
+    ]
+  },
+  "tools.mininglaser.normal": {
+    "sounds": [
+      "ic2:tools/mininglaser/normal"
+    ]
+  },
+  "tools.mininglaser.low_focus": {
+    "sounds": [
+      "ic2:tools/mininglaser/low_focus"
+    ]
+  },
+  "tools.mininglaser.long_range": {
+    "sounds": [
+      "ic2:tools/mininglaser/long_range"
+    ]
+  },
+  "tools.mininglaser.scatter": {
+    "sounds": [
+      "ic2:tools/mininglaser/scatter"
+    ]
+  },
+  "tools.mininglaser.explosive": {
+    "sounds": [
+      "ic2:tools/mininglaser/explosive"
     ]
   }
 }
