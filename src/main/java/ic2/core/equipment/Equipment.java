@@ -14,12 +14,15 @@ public final class Equipment {
         StaticBoots.register(items);
         ArmorConfiguration.register(bus);
         ModularSuitItem.register(items);
+        bus.addListener(ModularSuitItem::commonSetup);
         PassiveArmorModule.register(items);
-        items.registerItem("sonar_module", SonarModule::new);
-        FoodCans.register(items);
-        HelmetLight.register(bus, items);
         items.registerItem("food_storage_module", FoodStorageModule::new);
         FoodStorageMenu.register(bus);
+        FoodCans.register(items);
+        HelmetLight.register(bus, items);
+        items.registerItem("sonar_module", SonarModule::new);
+        TankModule.register(bus, items);
+        ArmorConfigurator.register(bus, items);
         NightVisionGoggles.register(items);
         MovementArmorModule.register(items);
         CarbonBoats.register(bus, items);

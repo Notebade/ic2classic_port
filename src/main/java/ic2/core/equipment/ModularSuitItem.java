@@ -29,12 +29,28 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
     private static final TagKey<DamageType> MAGIC = TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.parse("ic2:armor_magic"));
     private static final net.minecraft.resources.ResourceKey<DamageType> ELECTRICITY = net.minecraft.resources.ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.parse("ic2:electricity"));
     private final Type piece;
+    private final boolean quantum;
     static java.util.function.BooleanSupplier clientSideInventory = () -> false;
-    ModularSuitItem(Holder<ArmorMaterial> material, Type piece, Properties properties) { super(material, piece, properties); this.piece = piece; }
+    private ModularSuitItem(Holder<ArmorMaterial> material, Type piece, Properties properties, boolean quantum) {
+        super(material, piece, properties);
+        this.piece = piece;
+        this.quantum = quantum;
+    }
     static void register(DeferredRegister.Items items) {
+        var nanoMaterial = EquipmentMaterials.electricSuit("nano", false);
+        var quantumMaterial = EquipmentMaterials.electricSuit("quantum", true);
         for (var type : List.of(Type.HELMET, Type.CHESTPLATE, Type.LEGGINGS, Type.BOOTS)) {
-            items.registerItem("nano_suit_" + type.getName(), p -> new ModularSuitItem(ArmorMaterials.DIAMOND, type, p), new Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+            items.registerItem("nano_suit_" + type.getName(), p -> new ModularSuitItem(nanoMaterial, type, p, false), new Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+            items.registerItem("quantum_suit_" + type.getName(), p -> new ModularSuitItem(quantumMaterial, type, p, true), new Properties().stacksTo(1).rarity(Rarity.RARE));
         }
+    }
+    static void commonSetup(net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            for (var type : List.of(Type.HELMET, Type.CHESTPLATE, Type.LEGGINGS, Type.BOOTS)) {
+                var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(ArmorModule.id("quantum_suit_" + type.getName()));
+                net.minecraft.core.cauldron.CauldronInteraction.WATER.map().put(item, net.minecraft.core.cauldron.CauldronInteraction.DYED_ITEM);
+            }
+        });
     }
     @Override public EquipmentSlot equipmentSlot() { return piece.getSlot(); }
     @Override public int capacity() { return 0; }
@@ -54,6 +70,17 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
     private Map<ResourceLocation, Integer> limits(boolean enhanced) {
         var slots = new LinkedHashMap<ResourceLocation, Integer>();
         slots.put(ArmorModule.BATTERY, 1); slots.put(ArmorModule.CHARGER, 1);
+        if (quantum) {
+            slots.put(ArmorModule.GENERIC, piece == Type.HELMET ? 3 : 1);
+            if (piece == Type.HELMET) slots.put(ArmorModule.HUD, 9);
+            switch (piece) {
+                case CHESTPLATE -> { slots.put(ArmorModule.STORAGE, 2); slots.put(ArmorModule.BACK, 1); }
+                case LEGGINGS -> { slots.put(ArmorModule.STORAGE, 2); slots.put(ArmorModule.MOVEMENT, 1); }
+                case BOOTS -> slots.put(ArmorModule.MOVEMENT, 2);
+                default -> { }
+            }
+            return Map.copyOf(slots);
+        }
         switch (piece) {
             case HELMET -> { slots.put(ArmorModule.HUD, 9); slots.put(ArmorModule.GENERIC, enhanced ? 3 : 2); }
             case CHESTPLATE -> { slots.put(ArmorModule.STORAGE, enhanced ? 2 : 1); slots.put(ArmorModule.BACK, 1); }
@@ -68,6 +95,7 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
         if (!armor.is(this) || armor.getCount() != 1 || module.isEmpty()) return false;
         var declared = ArmorModules.type(module);
         if (declared == null || !declared.equals(category) && !declared.equals(ArmorModule.ANY)) return false;
+        if (declared.equals(ArmorModule.ANY) && category.equals(ArmorModule.HUD)) return false;
         long count = modules(armor).stream().filter(m -> m.category().equals(category)).count();
         if (count >= moduleLimits(armor).getOrDefault(category, 0)) return false;
         return !(module.getItem() instanceof ArmorModule item) || item.supportsArmor(module, armor, equipmentSlot());
@@ -116,6 +144,7 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
         if (index < 0 || index >= entries.size()) return ItemStack.EMPTY;
         var removed = entries.remove(index).stack(); int stored = charge(armor), moved = 0;
         if (removed.getItem() instanceof FoodStorageModule && FoodStorageModule.hasContents(armor)) return ItemStack.EMPTY;
+        if (removed.getItem() instanceof TankModule && TankModule.containsFluid(armor)) return ItemStack.EMPTY;
         if (ArmorModules.shares(removed, armor) && removed.getItem() instanceof ElectricItem battery) {
             moved = Math.min(stored, battery.capacity(removed) - battery.charge(removed));
             battery.setCharge(removed, battery.charge(removed) + moved);
@@ -137,8 +166,28 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
         ArmorModules.write(armor, entries, ArmorModules.derive(armor, entries, enhanced)); return true;
     }
     @Override public ItemStack defaultArmor() {
-        var result = new ItemStack(this); install(result, ArmorModule.BATTERY, new ItemStack(IC2.ENERGY_CRYSTAL.get())); return result;
+        var result = new ItemStack(this);
+        install(result, ArmorModule.BATTERY, new ItemStack(quantum ? IC2.LAPOTRON_CRYSTAL.get() : IC2.ENERGY_CRYSTAL.get()));
+        if (quantum) switch (piece) {
+            case HELMET -> {
+                installDefault(result, ArmorModule.GENERIC, "auto_feeder_module");
+                installDefault(result, ArmorModule.GENERIC, "air_refill_module");
+                installDefault(result, ArmorModule.GENERIC, "protective_module");
+            }
+            case CHESTPLATE -> installDefault(result, ArmorModule.GENERIC, "extinguish_module");
+            case LEGGINGS -> installDefault(result, ArmorModule.MOVEMENT, "speed_boost_module");
+            case BOOTS -> installDefault(result, ArmorModule.MOVEMENT, "jump_boost_module");
+            default -> { }
+        }
+        return result;
     }
+    private void installDefault(ItemStack armor, ResourceLocation category, String id) {
+        var module = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(ArmorModule.id(id));
+        if (!install(armor, category, new ItemStack(module))) {
+            throw new IllegalStateException("Invalid default module " + id + " for " + piece);
+        }
+    }
+    private int energyPerDamage() { return quantum ? 900 : 800; }
     @Override public void tickArmor(ItemStack armor, Player wearer, EquipmentSlot slot) {
         if (slot != equipmentSlot()) return;
         var entries = new ArrayList<>(modules(armor)); boolean changed = false;
@@ -159,24 +208,33 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
         return !source.is(MAGIC) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypeTags.BYPASSES_ENCHANTMENTS);
     }
     @Override public Absorption absorption(ItemStack stack, LivingEntity wearer, DamageSource source, double damage, EquipmentSlot slot) {
+        if (source.is(DamageTypes.LAVA) && charge(stack) >= 1000 && features(stack).contains(ArmorModule.id("lava_protection"))) {
+            return new Absorption(10, 1, Integer.MAX_VALUE);
+        }
         if (!protects(source, wearer)) return Absorption.NONE;
         if (source.is(ELECTRICITY) && EquipmentConfig.SPECIAL_ELECTRIC.get()) return new Absorption(0, 1, Integer.MAX_VALUE);
         double share = switch (slot) { case HEAD -> .15; case CHEST -> .4; case LEGS, FEET -> .3; default -> 0; };
-        return new Absorption(0, .9 * share * EquipmentConfig.ARMOR_ABSORPTION.get(), (int) (charge(stack) / (800 * EquipmentConfig.ARMOR_ENERGY_COST.get())));
+        double ratio = quantum ? (piece == Type.BOOTS ? 1.1 : 1.0) : .9;
+        return new Absorption(0, ratio * share * EquipmentConfig.ARMOR_ABSORPTION.get(), (int) (charge(stack) / (energyPerDamage() * EquipmentConfig.ARMOR_ENERGY_COST.get())));
     }
     @Override public void absorbed(ItemStack stack, LivingEntity wearer, DamageSource source, int damage, EquipmentSlot slot, Wear kind) {
+        if (source.is(DamageTypes.LAVA) && kind == Wear.ABSORBED && charge(stack) >= 1000
+                && features(stack).contains(ArmorModule.id("lava_protection"))) {
+            setCharge(stack, charge(stack) - 1000);
+            return;
+        }
         if (source.is(ELECTRICITY) && EquipmentConfig.SPECIAL_ELECTRIC.get()) {
             if (capacity(stack) > charge(stack)) { setCharge(stack, (int) Math.min(capacity(stack), (long) charge(stack) + damage)); return; }
             if (wearer.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ElectricItem && !wearer.level().isEmptyBlock(wearer.blockPosition().below())) return;
         }
-        int cost = (int) Math.min(Integer.MAX_VALUE, damage * 800.0 * EquipmentConfig.ARMOR_ENERGY_COST.get());
+        int cost = (int) Math.min(Integer.MAX_VALUE, (double) damage * energyPerDamage() * EquipmentConfig.ARMOR_ENERGY_COST.get());
         setCharge(stack, charge(stack) - ElectricEquipment.energyCost(stack, cost));
     }
     @Override public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) { return false; }
     @Override public int absorbFall(ItemStack stack, Player wearer, int damage, boolean simulate) {
         if (!stack.is(this) || piece != Type.BOOTS || stack.getCount() != 1 || damage <= 0) return 0;
-        int absorbed = Math.min(damage, Math.min(enhanced(stack) ? Integer.MAX_VALUE : 11, charge(stack) / 800));
-        if (!simulate && absorbed > 0) setCharge(stack, charge(stack) - absorbed * 800);
+        int absorbed = Math.min(damage, Math.min(quantum || enhanced(stack) ? Integer.MAX_VALUE : 11, charge(stack) / energyPerDamage()));
+        if (!simulate && absorbed > 0) setCharge(stack, charge(stack) - absorbed * energyPerDamage());
         return absorbed;
     }
     @Override public boolean isEnchantable(ItemStack stack) { return false; }
@@ -186,4 +244,8 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
     @Override public boolean isBarVisible(ItemStack stack) { return capacity(stack) > 0; }
     @Override public int getBarWidth(ItemStack stack) { return capacity(stack) == 0 ? 0 : Math.round(13F * charge(stack) / capacity(stack)); }
     @Override public int getBarColor(ItemStack stack) { return 0x42CDEA; }
+    @Override public void appendHoverText(ItemStack stack, TooltipContext context, List<net.minecraft.network.chat.Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
+        TankModule.appendTooltip(stack, tooltip);
+    }
 }

@@ -1,0 +1,29 @@
+{
+  "pattern": [
+    "AnA",
+    "ILI",
+    "IXI"
+  ],
+  "type": "ic2:modular_armor",
+  "key": {
+    "n": {
+      "item": "ic2:nano_suit_chestplate"
+    },
+    "I": {
+      "item": "ic2:plate_iridium"
+    },
+    "L": {
+      "item": "ic2:lapatron_crystal"
+    },
+    "A": {
+      "item": "ic2:plate_advanced_alloy"
+    },
+    "X": {
+      "item": "ic2:extinguish_module"
+    }
+  },
+  "category": "equipment",
+  "result": {
+    "id": "ic2:quantum_suit_chestplate"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "pattern": [
+    " X ",
+    "InI",
+    "RLR"
+  ],
+  "type": "ic2:modular_armor",
+  "key": {
+    "n": {
+      "item": "ic2:nano_suit_boots"
+    },
+    "I": {
+      "item": "ic2:plate_iridium"
+    },
+    "L": {
+      "item": "ic2:lapatron_crystal"
+    },
+    "R": {
+      "item": "ic2:armor_hazmat_boots"
+    },
+    "X": {
+      "item": "ic2:jump_boost_module"
+    }
+  },
+  "category": "equipment",
+  "result": {
+    "id": "ic2:quantum_suit_boots"
+  }
+}

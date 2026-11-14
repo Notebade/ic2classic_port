@@ -46,6 +46,8 @@ public final class IC2 {
         RECIPE_SERIALIZERS.register("modular_armor", () -> ic2.core.recipe.ModularArmorRecipe.serializer(false));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ic2.core.recipe.ModularArmorRecipe>> MODULAR_ARMOR_UPGRADE_RECIPE =
         RECIPE_SERIALIZERS.register("modular_armor_upgrade", () -> ic2.core.recipe.ModularArmorRecipe.serializer(true));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ic2.core.recipe.ModularArmorConversionRecipe>> MODULAR_ARMOR_CONVERSION_RECIPE =
+        RECIPE_SERIALIZERS.register("modular_armor_conversion", () -> ic2.core.recipe.ModularArmorConversionRecipe.SERIALIZER);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PowerCraftingRecipe>> MACHINE_BUFFER_RECIPE =
         RECIPE_SERIALIZERS.register("machine_buffer", () -> PowerCraftingRecipe.serializer(PowerCraftingRecipe.Kind.BUFFER));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<PowerCraftingRecipe>> PLASMA_CORE_RECIPE =

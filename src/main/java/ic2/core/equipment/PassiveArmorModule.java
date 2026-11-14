@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 final class PassiveArmorModule extends Item implements ArmorModule {
-    private enum Kind { AIR, CHARGER, PROTECTION, EXTINGUISH, GOLD, FEED, ENERGY_HUD, SHIELD }
+    private enum Kind { AIR, CHARGER, PROTECTION, EXTINGUISH, GOLD, FEED, LAVA, ENERGY_HUD, SHIELD }
     private final Kind kind;
     private PassiveArmorModule(Properties properties, Kind kind) { super(properties); this.kind = kind; }
     static void register(DeferredRegister.Items items) {
@@ -25,11 +25,12 @@ final class PassiveArmorModule extends Item implements ArmorModule {
         items.registerItem("extinguish_module", p -> new PassiveArmorModule(p, Kind.EXTINGUISH));
         items.registerItem("golden_module", p -> new PassiveArmorModule(p, Kind.GOLD));
         items.registerItem("auto_feeder_module", p -> new PassiveArmorModule(p, Kind.FEED));
+        items.registerItem("lava_module", p -> new PassiveArmorModule(p, Kind.LAVA));
         items.registerItem("energy_hud_module", p -> new PassiveArmorModule(p, Kind.ENERGY_HUD));
         items.registerItem("energy_shield_overlay_module", p -> new PassiveArmorModule(p, Kind.SHIELD));
     }
     @Override public ResourceLocation category(ItemStack module) {
-        return switch (kind) { case CHARGER -> CHARGER; case PROTECTION, EXTINGUISH -> ANY; case ENERGY_HUD, SHIELD -> HUD; default -> GENERIC; };
+        return switch (kind) { case CHARGER -> CHARGER; case PROTECTION, EXTINGUISH, LAVA -> ANY; case ENERGY_HUD, SHIELD -> HUD; default -> GENERIC; };
     }
     @Override public boolean supportsArmor(ItemStack module, ItemStack armor, EquipmentSlot slot) {
         return (kind != Kind.AIR && kind != Kind.FEED && kind != Kind.ENERGY_HUD && kind != Kind.SHIELD) || slot == EquipmentSlot.HEAD;
@@ -38,6 +39,7 @@ final class PassiveArmorModule extends Item implements ArmorModule {
     @Override public Set<ResourceLocation> features(ItemStack module, ItemStack armor) {
         return switch (kind) {
             case GOLD -> Set.of(ArmorModule.id("golden"));
+            case LAVA -> Set.of(ArmorModule.id("lava_protection"));
             case ENERGY_HUD -> Set.of(ArmorModule.id("energy_hud"));
             case SHIELD -> module.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
                 net.minecraft.world.item.component.CustomData.EMPTY).copyTag().getBoolean("always")

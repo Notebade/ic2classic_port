@@ -1,0 +1,29 @@
+{
+  "pattern": [
+    "MLM",
+    "InI",
+    "G G"
+  ],
+  "type": "ic2:modular_armor_conversion",
+  "key": {
+    "n": {
+      "item": "ic2:nano_suit_leggings"
+    },
+    "I": {
+      "item": "ic2:plate_iridium"
+    },
+    "L": {
+      "item": "ic2:base_module"
+    },
+    "M": {
+      "item": "ic2:machine_block"
+    },
+    "G": {
+      "item": "minecraft:glowstone_dust"
+    }
+  },
+  "category": "equipment",
+  "result": {
+    "id": "ic2:quantum_suit_leggings"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "textures": {
+    "down": "ic2:block/machine/nv/armor_configurator/down",
+    "south": "ic2:block/machine/nv/armor_configurator/south",
+    "particle": "ic2:block/machine/nv/armor_configurator/north",
+    "north": "ic2:block/machine/nv/armor_configurator/north",
+    "east": "ic2:block/machine/nv/armor_configurator/east",
+    "up": "ic2:block/machine/nv/armor_configurator/up",
+    "west": "ic2:block/machine/nv/armor_configurator/west"
+  },
+  "parent": "minecraft:block/cube"
+}

@@ -22,5 +22,15 @@ final class EquipmentMaterials {
         return MATERIALS.register(id, () -> new ArmorMaterial(values, 0, SoundEvents.ARMOR_EQUIP_IRON, () -> Ingredient.EMPTY,
             List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath("ic2", id))), 0, 0));
     }
+    static Holder<ArmorMaterial> electricSuit(String id, boolean dyeable) {
+        var asset = ResourceLocation.fromNamespaceAndPath("ic2", id);
+        return MATERIALS.register(id, () -> {
+            var base = net.minecraft.world.item.ArmorMaterials.DIAMOND.value();
+            var layers = dyeable ? List.of(new ArmorMaterial.Layer(asset, "", true), new ArmorMaterial.Layer(asset, "_overlay", false))
+                : List.of(new ArmorMaterial.Layer(asset));
+            return new ArmorMaterial(base.defense(), base.enchantmentValue(), base.equipSound(), () -> Ingredient.EMPTY,
+                layers, base.toughness(), base.knockbackResistance());
+        });
+    }
     static void register(IEventBus bus) { MATERIALS.register(bus); }
 }

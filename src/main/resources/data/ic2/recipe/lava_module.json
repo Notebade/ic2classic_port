@@ -1,0 +1,1 @@
+{"type":"minecraft:crafting_shaped","category":"equipment","pattern":["XY","CV"],"key":{"X":{"item":"ic2:tank_storage_module"},"Y":{"item":"ic2:extinguish_module"},"C":{"item":"ic2:complex_circuit"},"V":{"item":"ic2:plate_iridium"}},"result":{"id":"ic2:lava_module"}}

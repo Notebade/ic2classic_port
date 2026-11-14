@@ -1,0 +1,35 @@
+{
+  "pattern": [
+    "XnY",
+    "ILI",
+    "CGC"
+  ],
+  "type": "ic2:modular_armor",
+  "key": {
+    "n": {
+      "item": "ic2:nano_suit_helmet"
+    },
+    "I": {
+      "item": "ic2:plate_iridium"
+    },
+    "L": {
+      "item": "ic2:lapatron_crystal"
+    },
+    "C": {
+      "item": "ic2:advanced_circuit"
+    },
+    "G": {
+      "item": "ic2:reinforced_glass"
+    },
+    "Y": {
+      "item": "ic2:air_refill_module"
+    },
+    "X": {
+      "item": "ic2:auto_feeder_module"
+    }
+  },
+  "category": "equipment",
+  "result": {
+    "id": "ic2:quantum_suit_helmet"
+  }
+}

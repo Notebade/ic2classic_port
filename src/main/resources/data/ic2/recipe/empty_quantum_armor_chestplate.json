@@ -1,0 +1,26 @@
+{
+  "pattern": [
+    "AnA",
+    "ILI",
+    "IAI"
+  ],
+  "type": "ic2:modular_armor_conversion",
+  "key": {
+    "n": {
+      "item": "ic2:nano_suit_chestplate"
+    },
+    "I": {
+      "item": "ic2:plate_iridium"
+    },
+    "L": {
+      "item": "ic2:base_module"
+    },
+    "A": {
+      "item": "ic2:plate_advanced_alloy"
+    }
+  },
+  "category": "equipment",
+  "result": {
+    "id": "ic2:quantum_suit_chestplate"
+  }
+}

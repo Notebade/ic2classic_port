@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [{"item":"ic2:base_module"}, {"item":"ic2:machine_tank"}],
+  "result": {"id":"ic2:tank_storage_module"}
+}

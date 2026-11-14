@@ -1,0 +1,1 @@
+{"type":"minecraft:crafting_shaped","category":"equipment","pattern":["XYX","XVX"," B "],"key":{"X":{"item":"ic2:carbon_plate"},"Y":{"item":"minecraft:crafting_table"},"V":{"item":"ic2:circuit"},"B":{"item":"ic2:machine_block"}},"result":{"id":"ic2:armor_configurator"}}
