@@ -21,7 +21,7 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
     PowerMachineScreen(PowerMachineMenu menu, Inventory player, Component title) {
         super(menu, player, title);
         layout = GenerationLayout.forId(menu.kind.id);
-        imageHeight = layout == null ? 214 : layout.height();
+        imageHeight = menu.generatorPanel() ? 189 : layout == null ? 214 : layout.height();
     }
     @SubscribeEvent public static void register(RegisterMenuScreensEvent event) {
         for (var entry : PowerMachines.SCREENS.entrySet()) {
@@ -66,6 +66,19 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
             graphics.renderComponentTooltip(font, details, mouseX, mouseY);
     }
     @Override protected void renderBg(GuiGraphics graphics, float tick, int mouseX, int mouseY) {
+        if (menu.generatorPanel()) {
+            RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+            graphics.fill(leftPos + 7, topPos + 18, leftPos + 169, topPos + 35, 0xff252d37);
+            RemasteredGui.lightning(graphics, leftPos + 9, topPos + 20);
+            RemasteredGui.bar(graphics, leftPos + 23, topPos + 30, 142, 3, menu.value(0), menu.value(12), RemasteredGui.GREEN);
+            graphics.fill(leftPos + 7, topPos + 38, leftPos + 104, topPos + 94, 0xff252d37);
+            graphics.fill(leftPos + 108, topPos + 38, leftPos + 169, topPos + 94, 0xff737e8b);
+            if (menu.kind == PowerMachines.Kind.LIQUID_FUEL) {
+                RemasteredGui.bar(graphics, leftPos + 11, topPos + 86, 89, 4, menu.value(14), 16000, RemasteredGui.ORANGE);
+            }
+            for (var slot : menu.slots) RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            return;
+        }
         if (layout != null) {
             var texture = ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, layout.texture());
             graphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight);
@@ -140,6 +153,21 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
                 line(graphics, 2, "barrel_stage", menu.value(19));
                 line(graphics, 3, "chemical_progress", menu.value(17) == 0 ? 0 : (int) (menu.value(13) * 100L / menu.value(17)));
             }
+        }
+        if (menu.generatorPanel()) {
+            graphics.drawString(font, Component.translatable("gui.ic2.power_eu", menu.value(0), menu.value(12)),
+                23, 20, RemasteredGui.TEXT, false);
+            int y = 41;
+            int bottom = menu.kind == PowerMachines.Kind.LIQUID_FUEL ? 84 : 93;
+            for (Component metric : details.subList(1, details.size() - 1)) {
+                for (var text : font.split(metric, 89)) {
+                    if (y + font.lineHeight > bottom) break;
+                    graphics.drawString(font, text, 11, y, RemasteredGui.TEXT, false);
+                    y += font.lineHeight;
+                }
+            }
+            graphics.drawString(font, playerInventoryTitle, 8, 96, 0x404040, false);
+            return;
         }
         graphics.drawString(font, playerInventoryTitle, 8, layout == null ? 122 : layout.inventoryY() - 10, 0x404040, false);
     }
