@@ -1,0 +1,11 @@
+{
+  "type": "ic2:sized_shaped",
+  "category": "equipment",
+  "pattern": ["XYX", "CVC", "BNB"],
+  "key": {
+    "X": {"item": "ic2:upgrade_efficiency"}, "Y": {"item": "ic2:obscurator"}, "C": {"item": "ic2:plasma_core"},
+    "V": {"item": "ic2:precision_wrench"}, "B": {"item": "ic2:electric_vent_advanced"}, "N": {"item": "ic2:advanced_circuit"}
+  },
+  "counts": {"ic2:upgrade_efficiency": 10, "ic2:plasma_core": 5, "ic2:advanced_circuit": 10},
+  "result": {"id": "ic2:precision_wrench", "components": {"minecraft:custom_data": {"lossless": true}}}
+}

@@ -19,6 +19,7 @@ final class UtilityToolChecks {
         NanoSaberChecks.run(level);
         FoodCanEffectsChecks.run(level);
         ObscuratorChecks.run(level);
+        PrecisionWrenchChecks.run(level);
         FoamChecks.run(level);
         checkChainsaws(level);
         for (boolean advanced : new boolean[]{false, true}) {

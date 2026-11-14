@@ -698,5 +698,13 @@
   "tooltip.item.ic2.obscurator.range": "Obscurator Area: %1$sx%1$s Blocks",
   "tooltip.item.ic2.obscurator.rotation": "Layer Rotation: %s°",
   "tooltip.item.ic2.obscurator.side": "Side: %s",
-  "tooltip.item.ic2.painter.range": "Range: %s Block(s)"
+  "tooltip.item.ic2.painter.range": "Range: %s Block(s)",
+  "item.ic2.precision_wrench": "Precision Wrench",
+  "tooltip.item.ic2.electric_wrench.losslessWrenchInfiniteUses": "Completely Lossless",
+  "tooltip.item.ic2.electric_wrench.losslessWrenchModeOff": "Lossless Mode Disabled",
+  "tooltip.item.ic2.electric_wrench.losslessWrenchModeOn": "Lossless Mode Enabled",
+  "tooltip.item.ic2.electric_wrench.losslessWrenchUses": "Lossless uses Left: %s",
+  "tooltip.item.ic2.electric_wrench.losslessVanilla": "Lossless in Vanilla IC2Classic, addons may Vary",
+  "tooltip.item.ic2.electric_wrench.toggleLosslessMode": "Enable/Disable Lossless Mode",
+  "tooltip.item.ic2.electric_wrench.machine_saved": "Machine Saved, Lossless uses Left: %s"
 }

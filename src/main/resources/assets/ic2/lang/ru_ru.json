@@ -698,5 +698,11 @@
   "tooltip.item.ic2.obscurator.range": "Область хамелеона: %1$sx%1$s блоков",
   "tooltip.item.ic2.obscurator.rotation": "Поворот слоя: %s°",
   "tooltip.item.ic2.obscurator.side": "Сторона: %s",
-  "tooltip.item.ic2.painter.range": "Диапазон: %s блоков"
+  "tooltip.item.ic2.painter.range": "Диапазон: %s блоков",
+  "item.ic2.precision_wrench": "Точный гаечный ключ",
+  "tooltip.item.ic2.electric_wrench.losslessWrenchInfiniteUses": "Полностью без потерь",
+  "tooltip.item.ic2.electric_wrench.losslessWrenchModeOff": "Режим без потерь отключен",
+  "tooltip.item.ic2.electric_wrench.losslessWrenchModeOn": "Режим без потерь включен",
+  "tooltip.item.ic2.electric_wrench.losslessWrenchUses": "Осталось использования без потерь: %s",
+  "tooltip.item.ic2.electric_wrench.toggleLosslessMode": "Включить/отключить режим Без потерь"
 }

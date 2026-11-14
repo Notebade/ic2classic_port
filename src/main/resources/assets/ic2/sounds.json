@@ -141,5 +141,10 @@
     "sounds": [
       "ic2:tools/treetap"
     ]
+  },
+  "tools.wrench": {
+    "sounds": [
+      "ic2:tools/wrench"
+    ]
   }
 }

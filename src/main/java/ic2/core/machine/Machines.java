@@ -374,6 +374,7 @@ public final class Machines {
         ENTITIES.register("mass_fabricator", () -> entityType(MASS_FABRICATOR.get()));
 
     public static void register(IEventBus bus, DeferredRegister.Items items) {
+        WrenchItem.register(bus);
         SteamFluids.register(bus);
         BLOCKS.register(bus);
         ENTITIES.register(bus);
