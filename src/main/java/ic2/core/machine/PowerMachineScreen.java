@@ -21,7 +21,8 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
     PowerMachineScreen(PowerMachineMenu menu, Inventory player, Component title) {
         super(menu, player, title);
         layout = GenerationLayout.forId(menu.kind.id);
-        imageHeight = menu.steamPanel() ? 206 : menu.generatorPanel() ? 189 : layout == null ? 214 : layout.height();
+        if (menu.plasmaPanel()) imageWidth = 232;
+        imageHeight = menu.plasmaPanel() ? 214 : menu.steamPanel() ? 206 : menu.generatorPanel() ? 189 : layout == null ? 214 : layout.height();
     }
     @SubscribeEvent public static void register(RegisterMenuScreensEvent event) {
         for (var entry : PowerMachines.SCREENS.entrySet()) {
@@ -61,11 +62,20 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
     }
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float tick) {
         super.render(graphics, mouseX, mouseY, tick); renderTooltip(graphics, mouseX, mouseY);
-        if (layout != null && hoveredSlot == null && mouseX >= leftPos + 8 && mouseX < leftPos + 168
+        if (!menu.plasmaPanel() && layout != null && hoveredSlot == null && mouseX >= leftPos + 8 && mouseX < leftPos + 168
             && mouseY >= topPos + 14 && mouseY < topPos + layout.inventoryY() - 10)
             graphics.renderComponentTooltip(font, details, mouseX, mouseY);
     }
     @Override protected void renderBg(GuiGraphics graphics, float tick, int mouseX, int mouseY) {
+        if (menu.plasmaPanel()) {
+            RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+            graphics.fill(leftPos + 7, topPos + 19, leftPos + 106, topPos + 118, 0xff252d37);
+            graphics.fill(leftPos + 110, topPos + 19, leftPos + 225, topPos + 118, 0xffc5c1b2);
+            graphics.fill(leftPos + 110, topPos + 19, leftPos + 225, topPos + 21, 0xff9153a7);
+            drawPlasmaMetrics(graphics, false);
+            for (var slot : menu.slots) RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            return;
+        }
         if (menu.steamPanel()) {
             boolean boiler = menu.kind == PowerMachines.Kind.BOILER;
             RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
@@ -126,6 +136,11 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         details.clear();
         graphics.drawString(font, title, 8, 6, 0x404040, false);
+        if (menu.plasmaPanel()) {
+            drawPlasmaMetrics(graphics, true);
+            graphics.drawString(font, playerInventoryTitle, 36, 121, 0x404040, false);
+            return;
+        }
         if (menu.steamPanel()) {
             boolean formed = menu.value(10) == 1;
             graphics.drawString(font, Component.translatable(formed ? "gui.ic2.power_formed" : "gui.ic2.power_incomplete"),
@@ -188,6 +203,28 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
             return;
         }
         graphics.drawString(font, playerInventoryTitle, 8, layout == null ? 122 : layout.inventoryY() - 10, 0x404040, false);
+    }
+
+    private void drawPlasmaMetrics(GuiGraphics graphics, boolean labels) {
+        if (menu.kind == PowerMachines.Kind.FUSION) {
+            boolean formed = menu.value(10) == 1;
+            if (labels) {
+                Component state = Component.translatable(formed ? "gui.ic2.power_formed" : "gui.ic2.power_incomplete");
+                int y = 24;
+                for (var line : font.split(state, 90)) {
+                    if (y >= 42) break;
+                    graphics.drawString(font, line, 11, y, formed ? RemasteredGui.GREEN : RemasteredGui.ORANGE, false);
+                    y += 9;
+                }
+            }
+            steamMetric(graphics, labels, 48, 90, "heat", 1, 48000, RemasteredGui.ORANGE);
+            steamMetric(graphics, labels, 68, 90, "lava", 4, 522000, 0xffed6532);
+            if (labels) steamMetric(graphics, true, 90, 90, "feed", 5, 0, RemasteredGui.TEXT);
+        } else {
+            steamMetric(graphics, labels, 31, 90, "plasma", 6, 10000, 0xffbd57ff);
+            steamMetric(graphics, labels, 57, 90, "reserve", 7, 149, 0xffbd57ff);
+            steamMetric(graphics, labels, 83, 90, "eu", 0, menu.value(12), RemasteredGui.GREEN);
+        }
     }
 
     private void drawSteamMetrics(GuiGraphics graphics, boolean boiler, boolean labels) {
