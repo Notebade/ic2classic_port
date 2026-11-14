@@ -652,5 +652,13 @@
   "tooltip.item.ic2.sonar_module.enable": "Включить сканирование нижнего диапазона",
   "tooltip.item.ic2.sonar_module.long_scan": "Запустить сканирование на большие расстояния",
   "tooltip.item.ic2.sonar_module.disable": "Отключить сканирование нижнего диапазона",
-  "tooltip.item.ic2.sonar_module.enabled": "Сканирование нижнего диапазона включено"
+  "tooltip.item.ic2.sonar_module.enabled": "Сканирование нижнего диапазона включено",
+  "item.ic2.electric_sprayer": "Электрический распылитель строительной пены",
+  "tooltip.item.ic2.electric_sprayer.range": "Диапазон: %s блоков",
+  "tooltip.ic2.foam.stored": "Пена: %s / %s",
+  "info.item.ic2.electric_sprayer.range": "Диапазон распыления: %s блоков",
+  "tooltip.item.ic2.electric_sprayer.change_range": "Переключить диапазон",
+  "tooltip.item.ic2.electric_sprayer.stored": "Хранится строительной пены: %s",
+  "item.ic2.cf_pellet": "Гранула строительной пены",
+  "item.ic2.cf_pack": "Ранец с пеной"
 }

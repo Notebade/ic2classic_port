@@ -24,6 +24,7 @@ public final class Equipment {
         ConventionalShield.register(items);
         items.registerItem("nano_shield", NanoShield::new);
         MiningLaser.register(bus, items);
+        ConstructionFoam.register(bus, items);
         PoweredDrill.register(items);
         items.registerItem("electric_hoe", p -> new PoweredHoe(p, false));
         items.registerItem("advanced_hoe", p -> new PoweredHoe(p, true));

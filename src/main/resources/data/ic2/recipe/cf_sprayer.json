@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SS ",
+    "Ss ",
+    "  S"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:cobblestones"
+    },
+    "s": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "ic2:cf_sprayer",
+    "components": {
+      "minecraft:damage": 1600
+    }
+  }
+}

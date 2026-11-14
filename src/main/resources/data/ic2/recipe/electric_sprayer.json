@@ -1,0 +1,1 @@
+{"type":"ic2:electric_shaped","pattern":["  W"," C ","B  "],"key":{"W":{"item":"ic2:cf_sprayer"},"C":{"item":"ic2:circuit"},"B":{"item":"ic2:re_battery"}},"result":{"id":"ic2:electric_sprayer"}}

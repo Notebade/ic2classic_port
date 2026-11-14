@@ -40,7 +40,12 @@ final class CompressionRecipes {
         return ic2.api.recipe.Ic2Recipes.additions(ic2.api.recipe.ProcessingRecipe.Process.COMPRESSION).stream()
             .filter(recipe -> input.is(recipe.input())).findFirst().map(recipe -> new Recipe(recipe.inputCount(), recipe.output())).orElse(null);
     }
-    static Recipe builtin(ItemStack input) { return RECIPES.get(input.getItem()); }
+    static Recipe builtin(ItemStack input) {
+        var registry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
+        if (input.is(registry.get(net.minecraft.resources.ResourceLocation.parse("ic2:wet_construction_foam"))))
+            return new Recipe(1, registry.get(net.minecraft.resources.ResourceLocation.parse("ic2:cf_pellet")));
+        return RECIPES.get(input.getItem());
+    }
 
     record Recipe(int inputCount, Item output) {}
 }

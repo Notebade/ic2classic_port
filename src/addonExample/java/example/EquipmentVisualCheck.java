@@ -21,7 +21,7 @@ public final class EquipmentVisualCheck {
     private static boolean prepared;
     private static volatile boolean ready;
     @SubscribeEvent public static void tick(ClientTickEvent.Post event) {
-        if (!Boolean.getBoolean("ic2.visual.verify")) return;
+        if (!Boolean.getBoolean("ic2.visual.verify") || !System.getProperty("ic2.equipment.case", "sonar").equals("sonar")) return;
         var client = Minecraft.getInstance();
         var server = client.getSingleplayerServer();
         if (client.player == null || server == null || client.isPaused()) return;

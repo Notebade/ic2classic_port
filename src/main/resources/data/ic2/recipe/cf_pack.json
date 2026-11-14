@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SCS",
+    "FTF",
+    "F F"
+  ],
+  "key": {
+    "S": {
+      "item": "ic2:cf_sprayer"
+    },
+    "C": {
+      "item": "ic2:circuit"
+    },
+    "T": {
+      "tag": "c:ingots/tin"
+    },
+    "F": {
+      "item": "ic2:fuel_can"
+    }
+  },
+  "result": {
+    "id": "ic2:cf_pack",
+    "components": {
+      "minecraft:damage": 3400
+    }
+  }
+}

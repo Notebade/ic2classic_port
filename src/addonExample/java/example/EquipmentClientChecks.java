@@ -17,6 +17,7 @@ public final class EquipmentClientChecks {
     private static List<Case> cases() {
         String selection = System.getProperty("ic2.equipment.case", "all");
         if (selection.equals("sonar")) return List.of(new Case("sonar", 480, ModularArmorChecks::checkSonar));
+        if (selection.equals("foam")) return List.of(new Case("foam", 480, FoamChecks::run));
         var all = List.of(
             new Case("mining tools", 480, MiningToolChecks::run),
             new Case("portable energy", 480, PortableEnergyChecks::run),

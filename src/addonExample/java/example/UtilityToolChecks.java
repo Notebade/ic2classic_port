@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 
 final class UtilityToolChecks {
     static void run(ServerLevel level) {
+        FoamChecks.run(level);
         checkChainsaws(level);
         for (boolean advanced : new boolean[]{false, true}) {
             String id = advanced ? "advanced_hoe" : "electric_hoe";

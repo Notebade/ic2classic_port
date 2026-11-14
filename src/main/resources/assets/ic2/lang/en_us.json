@@ -652,5 +652,13 @@
   "tooltip.item.ic2.sonar_module.enable": "Enable Low Range Scan",
   "tooltip.item.ic2.sonar_module.long_scan": "Run Long Range Scan",
   "tooltip.item.ic2.sonar_module.disable": "Disable Low Range Scan",
-  "tooltip.item.ic2.sonar_module.enabled": "Low Range Scan Enabled"
+  "tooltip.item.ic2.sonar_module.enabled": "Low Range Scan Enabled",
+  "item.ic2.electric_sprayer": "Electric CFoam Sprayer",
+  "tooltip.item.ic2.electric_sprayer.range": "Range: %s Block(s)",
+  "tooltip.ic2.foam.stored": "Foam: %s / %s",
+  "info.item.ic2.electric_sprayer.range": "Sprayer Range: %s Block(s)",
+  "tooltip.item.ic2.electric_sprayer.change_range": "Toggle the Range",
+  "tooltip.item.ic2.electric_sprayer.stored": "CFoam Stored: %s",
+  "item.ic2.cf_pellet": "CF Pellet",
+  "item.ic2.cf_pack": "CFoam Backpack"
 }

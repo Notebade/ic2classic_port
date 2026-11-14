@@ -42,12 +42,13 @@ final class CanningRecipes {
 
     static boolean acceptsContainer(ItemStack stack) {
         return stack.is(can("tin_can")) || stack.is(IC2.CELL_EMPTY.get()) || stack.getItem() instanceof ReactorHeatItem.Condensator
+            || stack.getItem() instanceof ic2.api.item.FoamContainer
             || stack.getItem() instanceof ReactorReflectorItem reflector && reflector.repairable();
     }
 
     static boolean acceptsMaterial(ItemStack stack) {
         return portions(stack) > 0 || isUranium(stack) || stack.is(BoilerFuel.COMPRESSED_COAL.get()) || stack.is(BoilerFuel.COMPRESSED_PLANT.get())
-            || stack.is(Items.REDSTONE) || stack.is(Items.LAPIS_LAZULI) || stack.is(COAL_DUSTS);
+            || stack.is(Items.REDSTONE) || stack.is(Items.LAPIS_LAZULI) || stack.is(COAL_DUSTS) || stack.is(can("cf_pellet"));
     }
 
     private static boolean isUranium(ItemStack stack) {
@@ -57,6 +58,11 @@ final class CanningRecipes {
     Batch find(ItemStack container, ItemStack material, Level level) {
         if (container.isEmpty() || material.isEmpty() || level == null) {
             return null;
+        }
+        if (container.getItem() instanceof ic2.api.item.FoamContainer foam && material.is(can("cf_pellet")) && foam.canRefill(container)) {
+            var filled = container.copyWithCount(1);
+            foam.setFoam(filled, foam.storedFoam(filled) + foam.refillAmount());
+            return new Batch(filled, 1, true, 1, 50);
         }
         if (container.is(can("tin_can"))) {
             int count = portions(material);
