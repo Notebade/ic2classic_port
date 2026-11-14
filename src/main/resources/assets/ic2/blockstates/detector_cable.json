@@ -2,7 +2,8 @@
   "multipart": [
     {
       "when": {
-        "powered": "false"
+        "powered": "false",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_unpowered_center"
@@ -11,7 +12,8 @@
     {
       "when": {
         "powered": "false",
-        "north": "true"
+        "north": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_unpowered_arm"
@@ -20,7 +22,8 @@
     {
       "when": {
         "powered": "false",
-        "east": "true"
+        "east": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_unpowered_arm",
@@ -30,7 +33,8 @@
     {
       "when": {
         "powered": "false",
-        "south": "true"
+        "south": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_unpowered_arm",
@@ -40,7 +44,8 @@
     {
       "when": {
         "powered": "false",
-        "west": "true"
+        "west": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_unpowered_arm",
@@ -50,7 +55,8 @@
     {
       "when": {
         "powered": "false",
-        "up": "true"
+        "up": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_unpowered_arm",
@@ -60,7 +66,8 @@
     {
       "when": {
         "powered": "false",
-        "down": "true"
+        "down": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_unpowered_arm",
@@ -69,7 +76,8 @@
     },
     {
       "when": {
-        "powered": "true"
+        "powered": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_powered_center"
@@ -78,7 +86,8 @@
     {
       "when": {
         "powered": "true",
-        "north": "true"
+        "north": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_powered_arm"
@@ -87,7 +96,8 @@
     {
       "when": {
         "powered": "true",
-        "east": "true"
+        "east": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_powered_arm",
@@ -97,7 +107,8 @@
     {
       "when": {
         "powered": "true",
-        "south": "true"
+        "south": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_powered_arm",
@@ -107,7 +118,8 @@
     {
       "when": {
         "powered": "true",
-        "west": "true"
+        "west": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_powered_arm",
@@ -117,7 +129,8 @@
     {
       "when": {
         "powered": "true",
-        "up": "true"
+        "up": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_powered_arm",
@@ -127,11 +140,28 @@
     {
       "when": {
         "powered": "true",
-        "down": "true"
+        "down": "true",
+        "foamed": "0"
       },
       "apply": {
         "model": "ic2:block/detector_cable_powered_arm",
         "x": 90
+      }
+    },
+    {
+      "apply": {
+        "model": "ic2:block/cable_foam_wet"
+      },
+      "when": {
+        "foamed": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "ic2:block/construction_foam"
+      },
+      "when": {
+        "foamed": "2"
       }
     }
   ]

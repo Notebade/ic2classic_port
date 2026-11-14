@@ -40,8 +40,12 @@ public final class ObscuratorClient {
     @SubscribeEvent public static void models(ModelEvent.ModifyBakingResult event) {
         var foam = ResourceLocation.parse("ic2:construction_foam");
         var obscurator = ResourceLocation.parse("ic2:obscurator");
-        event.getModels().replaceAll((id, model) -> id.id().equals(foam) ? new FoamModel(model)
-            : id.id().equals(obscurator) ? new ToolModel(model) : model);
+        event.getModels().replaceAll((id, model) -> {
+            boolean coveredCable = id.variant().contains("foamed=2")
+                && net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(id.id()) instanceof ic2.api.item.FoamTarget;
+            return id.id().equals(foam) || coveredCable ? new FoamModel(model)
+                : id.id().equals(obscurator) ? new ToolModel(model) : model;
+        });
     }
     private static BakedQuad surfaceQuad(BakedQuad source, Direction side, int rotation, int tint, org.joml.Vector3f min, org.joml.Vector3f max) {
         var face = new BlockElementFace(null, -1, "", new BlockFaceUV(new float[]{0, 0, 16, 16}, rotation * 90));

@@ -25,6 +25,7 @@ public final class EquipmentClientChecks {
         if (selection.equals("obscurator")) return List.of(new Case("obscurator", 1500, ObscuratorChecks::run));
         if (selection.equals("wrench")) return List.of(new Case("wrench", 480, PrecisionWrenchChecks::run));
         if (selection.equals("jetpacks")) return List.of(new Case("jetpacks", 750, JetpackChecks::run));
+        if (selection.equals("cable_foam")) return List.of(new Case("cable foam", 1600, CableFoamChecks::run));
         var all = List.of(
             new Case("mining tools", 480, MiningToolChecks::run),
             new Case("portable energy", 480, PortableEnergyChecks::run),

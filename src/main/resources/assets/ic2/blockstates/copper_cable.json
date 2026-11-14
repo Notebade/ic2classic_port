@@ -3,6 +3,9 @@
     {
       "apply": {
         "model": "ic2:block/copper_cable_center"
+      },
+      "when": {
+        "foamed": "0"
       }
     },
     {
@@ -12,7 +15,8 @@
         "model": "ic2:block/copper_cable_arm"
       },
       "when": {
-        "north": "true"
+        "north": "true",
+        "foamed": "0"
       }
     },
     {
@@ -22,7 +26,8 @@
         "model": "ic2:block/copper_cable_arm"
       },
       "when": {
-        "east": "true"
+        "east": "true",
+        "foamed": "0"
       }
     },
     {
@@ -32,7 +37,8 @@
         "model": "ic2:block/copper_cable_arm"
       },
       "when": {
-        "south": "true"
+        "south": "true",
+        "foamed": "0"
       }
     },
     {
@@ -42,7 +48,8 @@
         "model": "ic2:block/copper_cable_arm"
       },
       "when": {
-        "west": "true"
+        "west": "true",
+        "foamed": "0"
       }
     },
     {
@@ -52,7 +59,8 @@
         "model": "ic2:block/copper_cable_arm"
       },
       "when": {
-        "up": "true"
+        "up": "true",
+        "foamed": "0"
       }
     },
     {
@@ -62,7 +70,24 @@
         "model": "ic2:block/copper_cable_arm"
       },
       "when": {
-        "down": "true"
+        "down": "true",
+        "foamed": "0"
+      }
+    },
+    {
+      "apply": {
+        "model": "ic2:block/cable_foam_wet"
+      },
+      "when": {
+        "foamed": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "ic2:block/construction_foam"
+      },
+      "when": {
+        "foamed": "2"
       }
     }
   ]

@@ -30,12 +30,22 @@ final class ConstructionFoam {
     static void register(IEventBus bus, DeferredRegister.Items items) {
         BLOCKS.register(bus);
         FoamTextureEntity.register(bus);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST, ConstructionFoam::checkTarget);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST, ConstructionFoam::placeTarget);
         items.registerSimpleBlockItem(HARDENED); items.registerSimpleBlockItem(WET);
         items.registerSimpleItem("cf_pellet");
         items.registerItem("electric_sprayer", p -> new Sprayer(p, true));
         items.registerItem("cf_sprayer", p -> new Sprayer(p, false));
         var material = EquipmentMaterials.simple("cf_pack", net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, 0);
         items.registerItem("cf_pack", p -> new Pack(material, p));
+    }
+    private static void checkTarget(ic2.api.event.FoamEvent.Check event) {
+        if (!event.isCustomPlacement() && event.getState().getBlock() instanceof FoamTarget target && target.foamLevel(event.getState()) == 0)
+            event.setCustomTarget(target.foamTargetType());
+    }
+    private static void placeTarget(ic2.api.event.FoamEvent.Place event) {
+        if (event.getLevel() instanceof ServerLevel server && event.getState().getBlock() instanceof FoamTarget target
+                && target.applyFoam(server, event.getPos())) event.setCanceled(true);
     }
     private static final class Wet extends Block {
         Wet(Properties properties) { super(properties); }
@@ -113,21 +123,31 @@ final class ConstructionFoam {
             var provider = provider(player, stack, limit);
             if (provider.isEmpty()) return InteractionResult.FAIL;
             var origin = new net.minecraft.world.item.context.BlockPlaceContext(context).getClickedPos();
-            if (!canPlace(context, origin)) return InteractionResult.FAIL;
+            var initial = check(context, origin);
+            if (initial == null) return InteractionResult.FAIL;
             if (!(level instanceof ServerLevel server)) return InteractionResult.SUCCESS;
             var queue = new ArrayDeque<BlockPos>(); var visited = new HashSet<BlockPos>();
-            var directions = directions(player); queue.add(origin); int placed = 0;
-            while (!queue.isEmpty() && placed < limit) {
+            var directions = directions(player); queue.add(origin);
+            var selected = new LinkedHashSet<BlockPos>();
+            while (!queue.isEmpty() && selected.size() < limit) {
                 var pos = queue.removeFirst();
-                if (!visited.add(pos) || !canPlace(context, pos)) continue;
+                if (!visited.add(pos)) continue;
+                var check = pos.equals(origin) ? initial : check(context, pos);
+                if (check == null || initial.getType() != ic2.api.event.FoamEvent.TargetType.ANY && check.getType() != initial.getType()) continue;
+                selected.add(pos);
+                var spread = check.isCustomPlacement() ? new ArrayList<>(List.of(Direction.values())) : new ArrayList<>(directions);
+                Collections.shuffle(spread, new Random(server.random.nextLong()));
+                for (var direction : spread) queue.addLast(pos.relative(direction));
+            }
+            int placed = 0;
+            for (var pos : selected) {
                 var snapshot = net.neoforged.neoforge.common.util.BlockSnapshot.create(server.dimension(), server, pos);
-                if (!server.setBlockAndUpdate(pos, WET.get().defaultBlockState())) continue;
+                var placement = net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new ic2.api.event.FoamEvent.Place(server, pos));
+                if ((!placement.isCanceled() || placement.shouldPlaceFoam()) && !server.setBlockAndUpdate(pos, WET.get().defaultBlockState())) continue;
                 var event = new net.neoforged.neoforge.event.level.BlockEvent.EntityPlaceEvent(snapshot,
                     server.getBlockState(pos.relative(context.getClickedFace().getOpposite())), player);
                 if (net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(event).isCanceled()) { snapshot.restore(); continue; }
                 placed++;
-                Collections.shuffle(directions, new Random(server.random.nextLong()));
-                for (var direction : directions) queue.addLast(pos.relative(direction));
             }
             if (placed == 0) return InteractionResult.FAIL;
             var foam = (FoamContainer) provider.getItem();
@@ -136,12 +156,14 @@ final class ConstructionFoam {
             player.awardStat(net.minecraft.stats.Stats.ITEM_USED.get(this));
             return InteractionResult.SUCCESS;
         }
-        private static boolean canPlace(UseOnContext context, BlockPos pos) {
+        private static ic2.api.event.FoamEvent.Check check(UseOnContext context, BlockPos pos) {
             var level = context.getLevel(); var player = context.getPlayer();
             if (!level.isInWorldBounds(pos) || !level.hasChunkAt(pos) || !level.mayInteract(player, pos)
-                    || !player.mayUseItemAt(pos, context.getClickedFace(), context.getItemInHand())) return false;
+                    || !player.mayUseItemAt(pos, context.getClickedFace(), context.getItemInHand())) return null;
+            var check = net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new ic2.api.event.FoamEvent.Check(level, pos));
+            if (check.isCanceled()) return null;
             var state = level.getBlockState(pos);
-            return state.isAir() || state.is(Blocks.FIRE) || state.liquid();
+            return check.isCustomPlacement() || state.isAir() || state.is(Blocks.FIRE) || state.liquid() ? check : null;
         }
         private ItemStack provider(net.minecraft.world.entity.player.Player player, ItemStack sprayer, int amount) {
             for (var worn : player.getArmorSlots())

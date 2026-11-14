@@ -24,6 +24,7 @@ public final class FoamChecks {
         } finally { event.getServer().halt(false); }
     }
     static void run(ServerLevel level) {
+        CableFoamChecks.run(level);
         var sprayer = stack("electric_sprayer");
         require(sprayer.getItem() instanceof ConfigurableTool, "electric sprayer exposes all six original modes");
         var modes = (ConfigurableTool) sprayer.getItem();

@@ -10,10 +10,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-final class ComparingCableEntity extends BlockEntity implements MenuProvider {
+final class ComparingCableEntity extends ic2.core.equipment.FoamTextureEntity implements MenuProvider {
     static final int MAX_THRESHOLD = 8192;
     static final int MINIMUM = 0;
     static final int MAXIMUM = 1;
