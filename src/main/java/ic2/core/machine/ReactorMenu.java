@@ -62,7 +62,7 @@ final class ReactorMenu extends AbstractContainerMenu {
         for (int row = 0; row < ReactorRules.ROWS; row++) {
             for (int column = 0; column < ReactorRules.COLUMNS; column++) {
                 int slot = row * ReactorRules.COLUMNS + column;
-                addSlot(new SlotItemHandler(inventory, slot, 8 + column * 18, 39 + row * 18) {
+                addSlot(new SlotItemHandler(inventory, slot, 112 + column * 18, 32 + row * 18) {
                     @Override
                     public boolean isActive() {
                         return getSlotIndex() % ReactorRules.COLUMNS < width();
@@ -78,11 +78,11 @@ final class ReactorMenu extends AbstractContainerMenu {
         int inventoryOffset = steam ? 12 : 0;
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-                addSlot(new Slot(player, 9 + row * 9 + column, 8 + column * 18, 156 + inventoryOffset + row * 18));
+                addSlot(new Slot(player, 9 + row * 9 + column, 60 + column * 18, 156 + inventoryOffset + row * 18));
             }
         }
         for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(player, column, 8 + column * 18, 214 + inventoryOffset));
+            addSlot(new Slot(player, column, 60 + column * 18, 214 + inventoryOffset));
         }
     }
 

@@ -16,22 +16,31 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
-final class MachineMenu extends AbstractContainerMenu {
+final class MachineMenu extends AbstractContainerMenu implements ProcessingMenu {
     private static final int ENERGY_LOW = 0;
     private static final int ENERGY_HIGH = 1;
     private static final int WORK_LOW = 2;
     private static final int WORK_HIGH = 3;
     private static final int FLUID = 4;
-    private static final int DATA_COUNT = 5;
+    private static final int DATA_COUNT = 6;
+    private static final int KIND = 5;
+    private final RecipeCatalog recipeCatalog = new RecipeCatalog();
     private final ContainerLevelAccess access;
     private final Block block;
     private final ContainerData data;
     private final MachineKind storageKind;
     private final int machineSlots;
+    // Presentation only: the server continues to own every slot and its contents.
+    private boolean machineSlotsVisible = true;
+
+    public void showMachineSlots(boolean visible) {
+        machineSlotsVisible = visible;
+    }
 
     MachineMenu(int id, Inventory playerInventory) {
         this(id, playerInventory, Machines.MENU.get());
     }
+    static MachineMenu processing(int id, Inventory inventory) { return new MachineMenu(id, inventory, Machines.PROCESSING_MENU.get()); }
 
     static MachineMenu batbox(int id, Inventory playerInventory) {
         return new MachineMenu(id, playerInventory, Machines.BATBOX_MENU.get());
@@ -142,7 +151,8 @@ final class MachineMenu extends AbstractContainerMenu {
     MachineMenu(int id, Inventory playerInventory, ItemStackHandler inventory, ContainerLevelAccess access,
                 Block block, IntSupplier energy, IntSupplier work, IntSupplier fluid, Runnable changed,
                 MenuType<MachineMenu> type) {
-        this(id, playerInventory, inventory, access, block, readOnly(energy, work, fluid), changed, type);
+        this(id, playerInventory, inventory, access, block,
+            readOnly(energy, work, fluid, block instanceof MachineBlock machine ? machine.kind() : MachineKind.MACERATOR), changed, type);
     }
 
     private MachineMenu(int id, Inventory playerInventory, ItemStackHandler inventory, ContainerLevelAccess access,
@@ -184,16 +194,30 @@ final class MachineMenu extends AbstractContainerMenu {
         }
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-                addSlot(new Slot(playerInventory, column + row * 9 + 9, 8 + column * 18, 83 + row * 18));
+                addSlot(new Slot(playerInventory, column + row * 9 + 9,
+                    (remastered() ? AlloyGuiLayout.SLOT_X : 8) + column * 18,
+                    (remastered() ? AlloyGuiLayout.INVENTORY_SLOTS_Y : 83) + row * 18));
             }
         }
         for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(playerInventory, column, 8 + column * 18, 141));
+            addSlot(new Slot(playerInventory, column,
+                (remastered() ? AlloyGuiLayout.SLOT_X : 8) + column * 18,
+                remastered() ? AlloyGuiLayout.HOTBAR_Y : 141));
         }
     }
 
     private void addMachineSlot(ItemStackHandler inventory, int index, int x, Runnable changed) {
-        addSlot(new SlotItemHandler(inventory, index, x, 40) {
+        int slotX = remastered() ? switch (index) {
+            case MachineEntity.INPUT_SLOT -> 100;
+            case MachineEntity.SECOND_INPUT_SLOT -> 136;
+            default -> 204;
+        } : x;
+        addSlot(new SlotItemHandler(inventory, index, slotX, remastered() ? 65 : 40) {
+            @Override
+            public boolean isActive() {
+                return machineSlotsVisible;
+            }
+
             @Override
             public boolean mayPlace(ItemStack stack) {
                 if (isStorage()) {
@@ -221,7 +245,7 @@ final class MachineMenu extends AbstractContainerMenu {
         });
     }
 
-    private static ContainerData readOnly(IntSupplier energy, IntSupplier work, IntSupplier fluid) {
+    private static ContainerData readOnly(IntSupplier energy, IntSupplier work, IntSupplier fluid, MachineKind kind) {
         return new ContainerData() {
             @Override
             public int get(int index) {
@@ -232,6 +256,7 @@ final class MachineMenu extends AbstractContainerMenu {
                     case WORK_LOW -> work.getAsInt() & 0xffff;
                     case WORK_HIGH -> work.getAsInt() >>> 16;
                     case FLUID -> fluid.getAsInt();
+                    case KIND -> kind.ordinal();
                     default -> throw new IndexOutOfBoundsException(index);
                 };
             }
@@ -324,6 +349,80 @@ final class MachineMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(access, player, block);
+    }
+
+    static int recipeButton(int recipeIndex, boolean maximum) {
+        return recipeIndex + (maximum ? AlloyRecipes.recipes().size() : 0);
+    }
+
+    private AlloyRecipeTransfer.Plan recipeTransfer(int recipeIndex, boolean maximum) {
+        if (!isAlloySmelter() || recipeIndex < 0 || recipeIndex >= AlloyRecipes.recipes().size()) return null;
+        var recipe = AlloyRecipes.recipes().get(recipeIndex);
+        var first = slots.get(0).getItem();
+        var second = slots.get(2).getItem();
+        var player = slots.subList(machineSlots, slots.size()).stream().map(Slot::getItem).toList();
+        return maximum ? AlloyRecipeTransfer.maximum(recipe, first, second, player)
+            : AlloyRecipeTransfer.plan(recipe, first, second, player);
+    }
+
+    boolean canLoadRecipe(int recipeIndex) {
+        return recipeTransfer(recipeIndex, false) != null;
+    }
+
+    @Override public boolean clickMenuButton(Player player, int button) {
+        if (button >= 1000) return ProcessingTransfer.handle(this, this, player, button);
+        if (player.level().isClientSide || !stillValid(player)) return false;
+        int count = AlloyRecipes.recipes().size();
+        if (button < 0 || button >= count * 2) return false;
+        var plan = recipeTransfer(button % count, button >= count);
+        if (plan == null) return false;
+        for (int i = 0; i < plan.player().size(); i++) slots.get(machineSlots + i).set(plan.player().get(i));
+        slots.get(0).set(plan.first());
+        slots.get(2).set(plan.second());
+        broadcastChanges();
+        return true;
+    }
+
+    boolean remastered() {
+        return getType() == Machines.PROCESSING_MENU.get() || isAlloySmelter() || isRareEarth() || isUraniumEnricher()
+            || isCanner(getType()) || isElectrolyzer() || isFabricator();
+    }
+
+    MachineKind processingKind() {
+        if (isAlloySmelter()) return MachineKind.ALLOY_SMELTER;
+        return MachineKind.values()[Math.clamp(data.get(KIND), 0, MachineKind.values().length - 1)];
+    }
+
+    @Override public MachineRecipeView.Process process() {
+        if (!remastered()) return null;
+        try { return MachineRecipeView.Process.valueOf(processingKind().name()); }
+        catch (IllegalArgumentException ignored) { return null; }
+    }
+    @Override public RecipeCatalog recipeCatalog() { return recipeCatalog; }
+    @Override public java.util.List<MachineRecipeView> recipeViews(net.minecraft.world.level.Level level) {
+        return isAlloySmelter() ? MachineRecipeViews.forProcess(MachineRecipeView.Process.ALLOY_SMELTER, level)
+            : ProcessingMenu.super.recipeViews(level);
+    }
+    @Override public int machineSlotCount() { return machineSlots; }
+    @Override public java.util.List<Integer> recipeInputs(MachineRecipeView recipe) {
+        if (isElectrolyzer() && recipe.notes().stream().anyMatch(note -> note.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents key
+                && key.getKey().equals("jei.ic2.electrolysis_discharge"))) return java.util.List.of(1);
+        return recipe.inputs().size() == 2 && hasSecondInput(getType()) ? java.util.List.of(0, 2) : java.util.List.of(0);
+    }
+    @Override public int storedEnergy() { return energy(); }
+    @Override public boolean acceptsTransfer(MachineRecipeView recipe, java.util.List<ItemStack> inputs, net.minecraft.world.level.Level level) {
+        return ProcessingMenu.super.acceptsTransfer(recipe, inputs, level)
+            && (!isCanner(getType()) || inputs.size() == 2 && new CanningRecipes().find(inputs.get(0), inputs.get(1), level) != null);
+    }
+    @Override public int energyCapacity() { return processingKind().capacity; }
+    @Override public int workProgress() { return isFabricator() ? energy() : work(); }
+    @Override public int workTotal() { return isFabricator() ? MassFabrication.MATTER_COST
+        : isUraniumEnricher() ? UraniumEnrichment.INGOT_TICKS : Math.max(1, processingKind().recipeTicks); }
+    @Override public java.util.List<net.minecraft.network.chat.Component> workDetails() {
+        var lines = new java.util.ArrayList<net.minecraft.network.chat.Component>();
+        lines.add(net.minecraft.network.chat.Component.translatable("gui.ic2.remastered.draw", processingKind().energyPerTick));
+        if (fluid() >= 0 && !isAlloySmelter()) lines.add(net.minecraft.network.chat.Component.translatable("gui.ic2.remastered.machine_aux", fluid()));
+        return lines;
     }
 
     @Override

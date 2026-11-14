@@ -1263,6 +1263,8 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
                 case ESU -> Machines.ESU_MENU.get();
                 case ISU -> Machines.ISU_MENU.get();
                 case PESU -> Machines.PESU_MENU.get();
+                case MACERATOR, ELECTRIC_FURNACE, ELECTRIC_BLAST_FURNACE, ELECTRIC_SMOKER,
+                    EXTRACTOR, COMPRESSOR, SAWMILL, RECYCLER, PUMP -> Machines.PROCESSING_MENU.get();
                 case ALLOY_SMELTER -> Machines.ALLOY_SMELTER_MENU.get();
                 case URANIUM_ENRICHER -> Machines.URANIUM_ENRICHER_MENU.get();
                 case STEAM_TURBINE -> Machines.STEAM_TURBINE_MENU.get();
@@ -1283,6 +1285,10 @@ final class MachineEntity extends BlockEntity implements MenuProvider, EnergySin
     }
 
     private int menuFluid() {
+        // The alloy smelter has no fluid tank; reuse its existing synchronized status field.
+        if (kind == MachineKind.ALLOY_SMELTER) {
+            return getBlockState().getValue(BlockStateProperties.LIT) ? 1 : 0;
+        }
         if (steamTurbine != null) {
             return steamTurbine.getFluidAmount();
         }

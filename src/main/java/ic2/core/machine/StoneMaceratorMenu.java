@@ -6,13 +6,13 @@ import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeBookType;
 
-final class StoneMaceratorMenu extends AbstractFurnaceMenu {
+final class StoneMaceratorMenu extends FuelProcessingMenu {
     StoneMaceratorMenu(int id, Inventory inventory) {
-        super(Machines.STONE_MACERATOR_MENU.get(), Machines.MACERATING.get(), RecipeBookType.FURNACE, id, inventory);
+        this(id, inventory, new net.minecraft.world.SimpleContainer(3), new net.minecraft.world.inventory.SimpleContainerData(4));
     }
 
     StoneMaceratorMenu(int id, Inventory inventory, Container machine, ContainerData data) {
-        super(Machines.STONE_MACERATOR_MENU.get(), Machines.MACERATING.get(), RecipeBookType.FURNACE,
-            id, inventory, machine, data);
+        super(Machines.STONE_MACERATOR_MENU.get(), Machines.MACERATING.get(), id, inventory, machine, data,
+            MachineRecipeView.Process.STONE_MACERATOR);
     }
 }

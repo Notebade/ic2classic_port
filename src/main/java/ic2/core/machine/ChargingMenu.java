@@ -26,16 +26,20 @@ final class ChargingMenu extends AbstractContainerMenu {
             int y = slot < 16 && kind.inventoryGrid() ? 43 + slot / 4 * 18 : 70;
             if (kind.pad()) {
                 int upgrade = slot - kind.projectionSlots() - 1;
-                x = slot == 0 ? 8 : slot <= kind.projectionSlots() ? 152 : upgrade == 0 ? 98 : upgrade == 1 ? 88 : 108;
-                y = slot == 0 ? 56 : slot <= kind.projectionSlots() ? slot == 1 ? 58 : 29 : upgrade == 0 ? 38 : 58;
+                x = slot == 0 ? 120 : slot <= kind.projectionSlots() ? 196 : 150 + upgrade % 2 * 20;
+                y = slot == 0 ? 56 : slot <= kind.projectionSlots() ? slot == 1 ? 58 : 29 : 38 + upgrade / 2 * 20;
+            } else if (kind.inventoryGrid()) {
+                x = slot < 16 ? 116 + slot % 4 * 18 : 200;
             }
             final boolean stacked = kind.pad() && slot > kind.projectionSlots();
             addSlot(new SlotItemHandler(inventory, slot, x, y) { @Override public int getMaxStackSize() { return stacked ? 64 : 1; } });
         }
         int inventoryY = kind.pad() ? 87 : 160;
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, inventoryY + row * 18));
-        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, inventoryY + 58));
+        int inventoryX = styled() ? 36 : 8;
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, inventoryX + col * 18, inventoryY + row * 18));
+        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, inventoryX + col * 18, inventoryY + 58));
     }
+    boolean styled() { return kind.pad() || kind.inventoryGrid(); }
     int value(int index) { return data.get(index * 2) & 65535 | data.get(index * 2 + 1) << 16; }
     @Override public boolean clickMenuButton(Player player, int button) {
         if (device == null || !stillValid(player) || button < 0 || button > (kind == ChargingDevices.Kind.MASTER ? 12 : 3)) return false;

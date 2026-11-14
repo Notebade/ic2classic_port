@@ -46,10 +46,14 @@ public final class Machines {
         RECIPE_SERIALIZERS.register("stone_macerating", () -> new SimpleCookingSerializer<>(MacerationRecipe::new, 400));
     static final Supplier<MenuType<StoneMaceratorMenu>> STONE_MACERATOR_MENU =
         MENUS.register("stone_macerator", () -> new MenuType<>(StoneMaceratorMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<IronFurnaceMenu>> IRON_FURNACE_MENU =
+        MENUS.register("iron_furnace", () -> new MenuType<>(IronFurnaceMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<ComparingCableMenu>> COMPARING_CABLE_MENU =
         MENUS.register("comparing_cable", () -> new MenuType<>(ComparingCableMenu::new, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> MENU =
         MENUS.register("machine", () -> new MenuType<>(MachineMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    static final Supplier<MenuType<MachineMenu>> PROCESSING_MENU =
+        MENUS.register("processing", () -> new MenuType<>(MachineMenu::processing, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> BATBOX_MENU =
         MENUS.register("batbox", () -> new MenuType<>(MachineMenu::batbox, FeatureFlags.DEFAULT_FLAGS));
     static final Supplier<MenuType<MachineMenu>> MFE_MENU =

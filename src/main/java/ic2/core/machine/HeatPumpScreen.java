@@ -45,6 +45,7 @@ final class HeatPumpScreen extends AbstractContainerScreen<HeatPumpMenu> {
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFFC6C6C6);
+        RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+        graphics.fill(leftPos + 7, topPos + 18, leftPos + imageWidth - 7, topPos + 116, 0xff252d37);
     }
 }

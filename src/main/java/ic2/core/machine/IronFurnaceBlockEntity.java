@@ -25,6 +25,6 @@ public final class IronFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
 
     @Override
     protected AbstractContainerMenu createMenu(int id, Inventory inventory) {
-        return new FurnaceMenu(id, inventory, this, dataAccess);
+        return new IronFurnaceMenu(id, inventory, this, dataAccess);
     }
 }

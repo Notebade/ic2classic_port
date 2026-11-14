@@ -21,10 +21,17 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
     PowerMachineScreen(PowerMachineMenu menu, Inventory player, Component title) {
         super(menu, player, title);
         layout = GenerationLayout.forId(menu.kind.id);
-        imageHeight = layout == null ? 214 : layout.height();
+        if (menu.plasmaPanel()) imageWidth = 232;
+        if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) imageWidth = 244;
+        imageHeight = menu.conversionPanel() ? 191 : menu.plasmaPanel() ? 214 : menu.steamPanel() ? 206 : menu.generatorPanel() ? 189 : layout == null ? 214 : layout.height();
     }
     @SubscribeEvent public static void register(RegisterMenuScreensEvent event) {
-        for (var type : PowerMachines.SCREENS.values()) event.register(type.get(), PowerMachineScreen::new);
+        for (var entry : PowerMachines.SCREENS.entrySet()) {
+            var kind = entry.getKey();
+            if (kind == PowerMachines.Kind.GASIFIER || kind == PowerMachines.Kind.ELECTRIC_GASIFIER || kind == PowerMachines.Kind.REFINERY)
+                event.register(entry.getValue().get(), ProcessingMachineScreen<PowerMachineMenu>::new);
+            else event.register(entry.getValue().get(), PowerMachineScreen::new);
+        }
     }
     @SubscribeEvent public static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
@@ -39,28 +46,87 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
         if (menu.kind == PowerMachines.Kind.REFINERY) {
             chemicalButton(6, "1 → out", 8, 50); chemicalButton(7, "2 → out", 61, 50); chemicalButton(8, "out → in", 114, 54);
         } else if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) {
-            chemicalButton(9, Component.translatable("gui.ic2.power_seal").getString(), 8, 76);
-            chemicalButton(10, Component.translatable("gui.ic2.power_open").getString(), 88, 80);
+            chemicalButton(9, Component.translatable("gui.ic2.power_seal").getString(), 126, 91, 52);
+            chemicalButton(10, Component.translatable("gui.ic2.power_open").getString(), 181, 91, 52);
         }
         if (menu.kind != PowerMachines.Kind.TRANSFORMER) return;
         String[] names = {"÷2", "×2", "-1", "+1", "-", "+"};
         for (int i = 0; i < names.length; i++) {
             final int button = i;
             addRenderableWidget(Button.builder(Component.literal(names[i]), ignored -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, button))
-                .bounds(leftPos + 8 + i * 27, topPos + 74, 25, 20).build());
+                .bounds(leftPos + 115 + i % 2 * 26, topPos + 26 + i / 2 * 21, 24, 18).build());
         }
     }
     private void chemicalButton(int id, String label, int x, int width) {
+        chemicalButton(id, label, x, 74, width);
+    }
+    private void chemicalButton(int id, String label, int x, int y, int width) {
         addRenderableWidget(Button.builder(Component.literal(label), ignored -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, id))
-            .bounds(leftPos + x, topPos + 74, width, 20).build());
+            .bounds(leftPos + x, topPos + y, width, 20).build());
     }
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float tick) {
         super.render(graphics, mouseX, mouseY, tick); renderTooltip(graphics, mouseX, mouseY);
-        if (layout != null && hoveredSlot == null && mouseX >= leftPos + 8 && mouseX < leftPos + 168
+        if (!menu.plasmaPanel() && layout != null && hoveredSlot == null && mouseX >= leftPos + 8 && mouseX < leftPos + 168
             && mouseY >= topPos + 14 && mouseY < topPos + layout.inventoryY() - 10)
             graphics.renderComponentTooltip(font, details, mouseX, mouseY);
     }
     @Override protected void renderBg(GuiGraphics graphics, float tick, int mouseX, int mouseY) {
+        if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) {
+            RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+            graphics.fill(leftPos + 7, topPos + 19, leftPos + 117, topPos + 117, 0xff302923);
+            graphics.fill(leftPos + 121, topPos + 19, leftPos + 237, topPos + 117, 0xff8b8278);
+            graphics.fill(leftPos + 7, topPos + 19, leftPos + 237, topPos + 22, 0xffa56e38);
+            RemasteredGui.bar(graphics, leftPos + 12, topPos + 103, 100, 4, barrelProgress(), 100, RemasteredGui.ORANGE);
+            for (var slot : menu.slots) RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            return;
+        }
+        if (menu.conversionPanel()) {
+            RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+            graphics.fill(leftPos + 7, topPos + 20, leftPos + 107, topPos + 94, 0xff252d37);
+            graphics.fill(leftPos + 111, topPos + 20, leftPos + 169, topPos + 94, 0xff737e8b);
+            int accent = switch (menu.kind) {
+                case FLUX_LV -> 0xffb96c42;
+                case FLUX_MV -> RemasteredGui.ORANGE;
+                case FLUX_HV -> 0xffdd5353;
+                default -> RemasteredGui.GREEN;
+            };
+            graphics.fill(leftPos + 111, topPos + 20, leftPos + 169, topPos + 22, accent);
+            RemasteredGui.bar(graphics, leftPos + 11, topPos + 84, 92, 4, menu.value(0), menu.value(12), accent);
+            for (var slot : menu.slots) RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            return;
+        }
+        if (menu.plasmaPanel()) {
+            RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+            graphics.fill(leftPos + 7, topPos + 19, leftPos + 106, topPos + 118, 0xff252d37);
+            graphics.fill(leftPos + 110, topPos + 19, leftPos + 225, topPos + 118, 0xffc5c1b2);
+            graphics.fill(leftPos + 110, topPos + 19, leftPos + 225, topPos + 21, 0xff9153a7);
+            drawPlasmaMetrics(graphics, false);
+            for (var slot : menu.slots) RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            return;
+        }
+        if (menu.steamPanel()) {
+            boolean boiler = menu.kind == PowerMachines.Kind.BOILER;
+            RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+            graphics.fill(leftPos + 7, topPos + 18, leftPos + 169, topPos + 33, 0xff252d37);
+            graphics.fill(leftPos + 7, topPos + 37, leftPos + (boiler ? 107 : 169), topPos + 111, 0xff252d37);
+            if (boiler) graphics.fill(leftPos + 111, topPos + 37, leftPos + 169, topPos + 111, 0xff737e8b);
+            drawSteamMetrics(graphics, boiler, false);
+            for (var slot : menu.slots) RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            return;
+        }
+        if (menu.generatorPanel()) {
+            RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+            graphics.fill(leftPos + 7, topPos + 18, leftPos + 169, topPos + 35, 0xff252d37);
+            RemasteredGui.lightning(graphics, leftPos + 9, topPos + 20);
+            RemasteredGui.bar(graphics, leftPos + 23, topPos + 30, 142, 3, menu.value(0), menu.value(12), RemasteredGui.GREEN);
+            graphics.fill(leftPos + 7, topPos + 38, leftPos + 104, topPos + 94, 0xff252d37);
+            graphics.fill(leftPos + 108, topPos + 38, leftPos + 169, topPos + 94, 0xff737e8b);
+            if (menu.kind == PowerMachines.Kind.LIQUID_FUEL) {
+                RemasteredGui.bar(graphics, leftPos + 11, topPos + 86, 89, 4, menu.value(14), 16000, RemasteredGui.ORANGE);
+            }
+            for (var slot : menu.slots) RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            return;
+        }
         if (layout != null) {
             var texture = ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, layout.texture());
             graphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight);
@@ -98,6 +164,37 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         details.clear();
         graphics.drawString(font, title, 8, 6, 0x404040, false);
+        if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) {
+            int y = barrelLine(graphics, 28, "barrel_state_" + menu.value(20));
+            y = barrelLine(graphics, y, "barrel_contents", menu.value(14), menu.value(15));
+            y = barrelLine(graphics, y, "barrel_stage", menu.value(19));
+            barrelLine(graphics, y, "chemical_progress", barrelProgress());
+            graphics.drawString(font, playerInventoryTitle, 42, 122, 0x404040, false);
+            return;
+        }
+        if (menu.conversionPanel()) {
+            boolean flux = menu.kind.flux();
+            Component energy = Component.translatable(flux ? "gui.ic2.power_fe" : "gui.ic2.power_eu", menu.value(0), menu.value(12));
+            Component rate = flux ? Component.translatable("gui.ic2.power_flux_rate", menu.kind.input)
+                : Component.translatable("gui.ic2.power_packet", menu.value(8), menu.value(9));
+            graphics.drawWordWrap(font, energy, 11, 27, 92, RemasteredGui.TEXT);
+            graphics.drawWordWrap(font, rate, 11, 49, 92, RemasteredGui.TEXT);
+            graphics.drawString(font, playerInventoryTitle, 8, 98, 0x404040, false);
+            return;
+        }
+        if (menu.plasmaPanel()) {
+            drawPlasmaMetrics(graphics, true);
+            graphics.drawString(font, playerInventoryTitle, 36, 121, 0x404040, false);
+            return;
+        }
+        if (menu.steamPanel()) {
+            boolean formed = menu.value(10) == 1;
+            graphics.drawString(font, Component.translatable(formed ? "gui.ic2.power_formed" : "gui.ic2.power_incomplete"),
+                11, 21, formed ? RemasteredGui.GREEN : RemasteredGui.ORANGE, false);
+            drawSteamMetrics(graphics, menu.kind == PowerMachines.Kind.BOILER, true);
+            graphics.drawString(font, playerInventoryTitle, 8, 113, 0x404040, false);
+            return;
+        }
         if (menu.kind == PowerMachines.Kind.GASIFIER) line(graphics, 0, "solid_fuel", menu.value(18));
         else if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) line(graphics, 0, "barrel_state_" + menu.value(20));
         else if (menu.kind.multiblock()) line(graphics, 0, menu.value(10) == 1 ? "formed" : "incomplete");
@@ -136,6 +233,79 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
                 line(graphics, 3, "chemical_progress", menu.value(17) == 0 ? 0 : (int) (menu.value(13) * 100L / menu.value(17)));
             }
         }
+        if (menu.generatorPanel()) {
+            graphics.drawString(font, Component.translatable("gui.ic2.power_eu", menu.value(0), menu.value(12)),
+                23, 20, RemasteredGui.TEXT, false);
+            int y = 41;
+            int bottom = menu.kind == PowerMachines.Kind.LIQUID_FUEL ? 84 : 93;
+            for (Component metric : details.subList(1, details.size() - 1)) {
+                for (var text : font.split(metric, 89)) {
+                    if (y + font.lineHeight > bottom) break;
+                    graphics.drawString(font, text, 11, y, RemasteredGui.TEXT, false);
+                    y += font.lineHeight;
+                }
+            }
+            graphics.drawString(font, playerInventoryTitle, 8, 96, 0x404040, false);
+            return;
+        }
         graphics.drawString(font, playerInventoryTitle, 8, layout == null ? 122 : layout.inventoryY() - 10, 0x404040, false);
+    }
+
+    private int barrelProgress() {
+        int duration = menu.value(17);
+        return duration <= 0 ? 0 : (int) Math.clamp(menu.value(13) * 100L / duration, 0, 100);
+    }
+
+    private int barrelLine(GuiGraphics graphics, int y, String key, Object... args) {
+        for (var line : font.split(Component.translatable("gui.ic2.power_" + key, args), 100)) {
+            if (y + font.lineHeight > 100) break;
+            graphics.drawString(font, line, 12, y, RemasteredGui.TEXT, false);
+            y += font.lineHeight;
+        }
+        return y + 3;
+    }
+
+    private void drawPlasmaMetrics(GuiGraphics graphics, boolean labels) {
+        if (menu.kind == PowerMachines.Kind.FUSION) {
+            boolean formed = menu.value(10) == 1;
+            if (labels) {
+                Component state = Component.translatable(formed ? "gui.ic2.power_formed" : "gui.ic2.power_incomplete");
+                int y = 24;
+                for (var line : font.split(state, 90)) {
+                    if (y >= 42) break;
+                    graphics.drawString(font, line, 11, y, formed ? RemasteredGui.GREEN : RemasteredGui.ORANGE, false);
+                    y += 9;
+                }
+            }
+            steamMetric(graphics, labels, 48, 90, "heat", 1, 48000, RemasteredGui.ORANGE);
+            steamMetric(graphics, labels, 68, 90, "lava", 4, 522000, 0xffed6532);
+            if (labels) steamMetric(graphics, true, 90, 90, "feed", 5, 0, RemasteredGui.TEXT);
+        } else {
+            steamMetric(graphics, labels, 31, 90, "plasma", 6, 10000, 0xffbd57ff);
+            steamMetric(graphics, labels, 57, 90, "reserve", 7, 149, 0xffbd57ff);
+            steamMetric(graphics, labels, 83, 90, "eu", 0, menu.value(12), RemasteredGui.GREEN);
+        }
+    }
+
+    private void drawSteamMetrics(GuiGraphics graphics, boolean boiler, boolean labels) {
+        if (boiler) steamMetric(graphics, labels, 41, 92, "heat", 1, 24000, RemasteredGui.ORANGE);
+        int width = boiler ? 92 : 154;
+        steamMetric(graphics, labels, boiler ? 57 : 43, width, "water", 2, boiler ? 16000 : 2000, 0xff439fdf);
+        steamMetric(graphics, labels, boiler ? 73 : 64, width, "steam", 3, boiler ? 128000 : 16000, 0xff53d9e8);
+        if (boiler) {
+            if (labels) steamMetric(graphics, true, 91, width, "fuel", 11, 0, RemasteredGui.ORANGE);
+        } else {
+            steamMetric(graphics, labels, 85, width, "eu", 0, menu.value(12), RemasteredGui.GREEN);
+        }
+    }
+
+    private void steamMetric(GuiGraphics graphics, boolean labels, int y, int width, String key, int index, int max, int color) {
+        int value = menu.value(index);
+        if (labels) {
+            Component text = Component.translatable("gui.ic2.power_" + key, value, max);
+            graphics.drawString(font, font.plainSubstrByWidth(text.getString(), width), 11, y, RemasteredGui.TEXT, false);
+        } else if (max > 0) {
+            RemasteredGui.bar(graphics, leftPos + 11, topPos + y + 10, width, 3, value, max, color);
+        }
     }
 }

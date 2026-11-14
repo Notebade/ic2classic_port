@@ -58,6 +58,9 @@ final class MachineRecipeViews {
                 .map(recipe -> new MachineRecipeView(recipe.sourceId(), recipe.inputs(), recipe.outputs(),
                     List.of(recipe.notes().getFirst(), note("advanced_energy"), note("advanced_speed")))).toList();
             case ROTARY_MACERATOR -> advanced(forProcess(Process.MACERATOR, level));
+            case INDUCTION_FURNACE -> advanced(forProcess(Process.ELECTRIC_FURNACE, level));
+            case INDUCTION_BLAST_FURNACE -> advanced(forProcess(Process.ELECTRIC_BLAST_FURNACE, level));
+            case INDUCTION_SMOKER -> advanced(forProcess(Process.ELECTRIC_SMOKER, level));
             case CENTRIFUGAL_EXTRACTOR -> advanced(forProcess(Process.EXTRACTOR, level));
             case SINGULARITY_COMPRESSOR -> advanced(forProcess(Process.COMPRESSOR, level));
             case STONE_MACERATOR -> cooking(level, Machines.MACERATING.get(), ticks -> Math.max(1, ticks), 0);
@@ -71,6 +74,7 @@ final class MachineRecipeViews {
             case RARE_EARTH_EXTRACTOR -> registeredItems().map(MachineRecipeViews::rareEarth).flatMap(Stream::ofNullable).toList();
             case COMPRESSOR -> compressor();
             case ALLOY_SMELTER -> alloy();
+            case CANNER, VACUUM_CANNER -> CanningRecipes.recipeViews(level, process == Process.VACUUM_CANNER);
             case URANIUM_ENRICHER -> UraniumEnrichment.recipeViews();
             case COLOSSAL_FURNACE -> colossal(Process.ELECTRIC_FURNACE, level, false);
             case COLOSSAL_MACERATOR -> colossal(Process.MACERATOR, level, false);

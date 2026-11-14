@@ -82,7 +82,7 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
     private final IItemHandler bottom = new CombinedInvWrapper(output, battery);
     private final IItemHandler sides = new CombinedInvWrapper(battery, input, output);
     final ContainerData data = new ContainerData() {
-        @Override public int getCount() { return 13; }
+        @Override public int getCount() { return 15; }
         @Override public void set(int index, int value) {}
         @Override public int get(int index) {
             return switch (index) {
@@ -99,6 +99,8 @@ final class AdvancedMachineEntity extends BlockEntity implements MenuProvider, E
                 case 10 -> modifiers().packet() & 65535;
                 case 11 -> modifiers().packet() >>> 16;
                 case 12 -> (int) Math.min(Integer.MAX_VALUE, modifiers().sound() * 1000);
+                case 13 -> variant.ordinal();
+                case 14 -> heat >>> 16;
                 default -> throw new IndexOutOfBoundsException(index);
             };
         }

@@ -74,13 +74,14 @@ final class ComparingCableScreen extends AbstractContainerScreen<ComparingCableM
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFFC6C6C6);
+        RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+        graphics.fill(leftPos + 7, topPos + 20, leftPos + 94, topPos + 72, 0xff252d37);
     }
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, 8, 7, 0x404040, false);
-        graphics.drawString(font, MINIMUM, 8, 30, 0x404040, false);
-        graphics.drawString(font, MAXIMUM, 8, 54, 0x404040, false);
+        graphics.drawString(font, MINIMUM, 11, 30, RemasteredGui.TEXT, false);
+        graphics.drawString(font, MAXIMUM, 11, 54, RemasteredGui.TEXT, false);
     }
 }

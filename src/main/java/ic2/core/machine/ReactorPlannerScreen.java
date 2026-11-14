@@ -23,7 +23,9 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
 
     ReactorPlannerScreen(ReactorPlannerMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
+        imageWidth = 282;
         imageHeight = 278;
+        inventoryLabelX = 60;
         inventoryLabelY = 185;
     }
 
@@ -31,9 +33,9 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
     protected void init() {
         super.init();
         addRenderableWidget(Button.builder(Component.literal("F"), b -> send(14))
-            .bounds(leftPos + 134, topPos + 3, 14, 13).tooltip(Tooltip.create(label("full_run"))).build());
+            .bounds(leftPos + 221, topPos + 6, 14, 13).tooltip(Tooltip.create(label("full_run"))).build());
         addRenderableWidget(Button.builder(Component.literal("↔"), b -> exchangeCode())
-            .bounds(leftPos + 151, topPos + 3, 17, 13)
+            .bounds(leftPos + 242, topPos + 6, 17, 13)
             .tooltip(Tooltip.create(label("code_help"))).build());
         button(0, 8, 20, "-");
         button(1, 30, 20, "+");
@@ -57,7 +59,7 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
         addRenderableWidget(CycleButton.<ReactorPlanCode.Format>builder(format -> Component.literal(format.name()))
             .withValues(ReactorPlanCode.Format.values()).withInitialValue(exportFormat).displayOnlyValue()
             .withTooltip(format -> Tooltip.create(label("code_format")))
-            .create(leftPos + 119, topPos + 182, 50, 13, label("code_format"), (button, format) -> exportFormat = format));
+            .create(leftPos + 178, topPos + 165, 50, 13, label("code_format"), (button, format) -> exportFormat = format));
         displayedLimit = -1;
         displayedSpeed = -1;
         updateTooltips();
@@ -66,7 +68,7 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
     private Button button(int command, int x, int width, String key) {
         Component title = key.length() == 1 ? Component.literal(key) : label(key);
         return addRenderableWidget(Button.builder(title, b -> send(command))
-            .bounds(leftPos + x, topPos + 17, width, 16).build());
+            .bounds(leftPos + x, topPos + 145, width, 16).build());
     }
 
     private void send(int command) {
@@ -125,7 +127,7 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
             graphics.renderTooltip(font, part, mouseX, mouseY);
         }
         renderTooltip(graphics, mouseX, mouseY);
-        if (mouseX >= leftPos + 8 && mouseX < leftPos + 168 && mouseY >= topPos + 38 && mouseY < topPos + 47) {
+        if (mouseX >= leftPos + 8 && mouseX < leftPos + 104 && mouseY >= topPos + 29 && mouseY < topPos + 139) {
             Component total = Component.translatable(menu.steam()
                 ? "gui.ic2.reactor_planner.total_steam" : "gui.ic2.reactor_planner.total_energy",
                 menu.totalProduction());
@@ -153,26 +155,33 @@ final class ReactorPlannerScreen extends AbstractContainerScreen<ReactorPlannerM
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
-        graphics.drawString(font, Component.translatable(menu.steam()
-            ? "gui.ic2.steam_reactor_status" : "gui.ic2.reactor_status", menu.output(), menu.heat(), menu.maxHeat()),
-            8, 38, 0x404040, false);
-        graphics.drawString(font, Component.translatable("gui.ic2.reactor_planner.cycles", menu.cycles()),
-            8, 47, 0x404040, false);
-        Component initialHeat = Component.translatable("gui.ic2.reactor_planner.starting_heat", menu.startingHeat());
-        graphics.drawString(font, initialHeat, 168 - font.width(initialHeat), 47, 0x404040, false);
+        int y = metric(graphics, Component.translatable(menu.steam()
+            ? "gui.ic2.steam_reactor_status" : "gui.ic2.reactor_status", menu.output(), menu.heat(), menu.maxHeat()), 35);
+        y = metric(graphics, Component.translatable("gui.ic2.reactor_planner.cycles", menu.cycles()), y);
+        metric(graphics, Component.translatable("gui.ic2.reactor_planner.starting_heat", menu.startingHeat()), y);
+    }
+
+    private int metric(GuiGraphics graphics, Component text, int y) {
+        for (var line : font.split(text, 90)) {
+            if (y + font.lineHeight > 119) break;
+            graphics.drawString(font, line, 11, y, RemasteredGui.TEXT, false);
+            y += font.lineHeight;
+        }
+        return y + 5;
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFFC6C6C6);
+        RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+        graphics.fill(leftPos + 7, topPos + 29, leftPos + 105, topPos + 139, 0xff252d37);
+        graphics.fill(leftPos + 109, topPos + 29, leftPos + 276, topPos + 144, 0xffc5c1b2);
+        RemasteredGui.bar(graphics, leftPos + 12, topPos + 128, 88, 4,
+            menu.heat(), menu.maxHeat(), RemasteredGui.ORANGE);
         for (var slot : menu.slots) {
-            int x = leftPos + slot.x - 1;
-            int y = topPos + slot.y - 1;
-            graphics.fill(x, y, x + 18, y + 18, slot.isActive() ? 0xFF8B8B8B : 0xFFAAAAAA);
-            graphics.fill(x, y, x + 17, y + 1, 0xFF373737);
-            graphics.fill(x, y, x + 1, y + 17, 0xFF373737);
-            graphics.fill(x + 1, y + 17, x + 18, y + 18, 0xFFFFFFFF);
-            graphics.fill(x + 17, y + 1, x + 18, y + 18, 0xFFFFFFFF);
+            int x = leftPos + slot.x;
+            int y = topPos + slot.y;
+            if (slot.isActive()) RemasteredGui.slot(graphics, x, y);
+            else graphics.fill(x - 1, y - 1, x + 17, y + 17, 0xff606571);
         }
     }
 }
