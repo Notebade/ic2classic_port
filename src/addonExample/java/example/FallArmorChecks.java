@@ -8,11 +8,19 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 
 final class FallArmorChecks {
-    static void run(ServerLevel level) {
+    static void run(ServerLevel level) throws ReflectiveOperationException {
+        var fallRule = level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_FALL_DAMAGE);
+        boolean fallDamage = fallRule.get();
+        fallRule.set(true, level.getServer());
         var player = new net.neoforged.neoforge.common.util.FakePlayer(level,
             new com.mojang.authlib.GameProfile(java.util.UUID.fromString("1725625c-1634-4bd9-8b1d-e7ab71cbda4e"), "FallFixture")) {
             @Override public boolean isInvulnerableTo(net.minecraft.world.damagesource.DamageSource source) { return false; }
         };
+        // FakePlayer.tick() is empty, so its initial spawn protection never expires.
+        // Dedicated servers bypass that protection for falls; integrated servers do not.
+        var spawnProtection = net.minecraft.server.level.ServerPlayer.class.getDeclaredField("spawnInvulnerableTime");
+        spawnProtection.setAccessible(true);
+        spawnProtection.setInt(player, 0);
         var slots = java.util.List.of(EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD);
         var saved = slots.stream().map(s -> player.getItemBySlot(s).copy()).toList(); var gameMode = player.gameMode.getGameModeForPlayer(); float health = player.getHealth(); int invulnerable = player.invulnerableTime;
         try {
@@ -32,6 +40,7 @@ final class FallArmorChecks {
             var addon = new ItemStack(ExampleAddon.FALL_TEST_BOOTS.get()); player.setItemSlot(EquipmentSlot.FEET, addon); fall(player, 8);
             require(player.getHealth() == 17 && addon.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.EMPTY).copyTag().getInt("falls") == 1, "separately compiled addon fall protection runs exactly once before actual native damage");
         } finally {
+            fallRule.set(fallDamage, level.getServer());
             for (int i = 0; i < slots.size(); i++) player.setItemSlot(slots.get(i), saved.get(i)); player.setGameMode(gameMode); player.setHealth(health); player.invulnerableTime = invulnerable;
         }
     }
