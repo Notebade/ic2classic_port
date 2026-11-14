@@ -9,6 +9,12 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 @EventBusSubscriber(modid = "ic2", value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public final class EquipmentEntityRenderers {
     @SubscribeEvent public static void setup(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
+        var id = net.minecraft.resources.ResourceLocation.parse("ic2:nano_saber");
+        event.enqueueWork(() -> net.minecraft.client.renderer.item.ItemProperties.register(
+            net.minecraft.core.registries.BuiltInRegistries.ITEM.get(id), net.minecraft.resources.ResourceLocation.parse("ic2:active"),
+            (stack, level, entity, seed) -> NanoSaber.active(stack) ? 1 + java.util.concurrent.ThreadLocalRandom.current().nextInt(2) : 0));
+        NanoSaber.miningSound = NanoSaberAudio::miningSound;
+        NanoSaber.clientAlt = EquipmentKeys::altDown;
         event.enqueueWork(() -> net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(EquipmentEntityRenderers::drawEnergy));
     }
     private static void drawEnergy(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event) {

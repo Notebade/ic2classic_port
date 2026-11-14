@@ -662,5 +662,8 @@
   "item.ic2.cf_pellet": "Гранула строительной пены",
   "item.ic2.cf_pack": "Ранец с пеной",
   "item.ic2.auto_feeder_module": "Модуль автокормления",
-  "item.ic2.food_storage_module": "Модуль хранения еды"
+  "item.ic2.food_storage_module": "Модуль хранения еды",
+  "item.ic2.nano_saber": "Наносабля",
+  "tooltip.item.ic2.nano_saber.enable": "Включить нано-саблю",
+  "tooltip.item.ic2.nano_saber.disable": "Отключить нано-саблю"
 }

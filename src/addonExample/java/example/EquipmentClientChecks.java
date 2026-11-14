@@ -19,6 +19,7 @@ public final class EquipmentClientChecks {
         if (selection.equals("sonar")) return List.of(new Case("sonar", 480, ModularArmorChecks::checkSonar));
         if (selection.equals("foam")) return List.of(new Case("foam", 480, FoamChecks::run));
         if (selection.equals("food")) return List.of(new Case("food", 480, FoodStorageChecks::run));
+        if (selection.equals("saber")) return List.of(new Case("saber", 480, NanoSaberChecks::run));
         var all = List.of(
             new Case("mining tools", 480, MiningToolChecks::run),
             new Case("portable energy", 480, PortableEnergyChecks::run),

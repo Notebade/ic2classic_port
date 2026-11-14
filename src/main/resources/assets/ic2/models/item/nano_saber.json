@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {"layer0": "ic2:item/tools/nano_saber/off"},
+  "overrides": [
+    {"predicate": {"ic2:active": 1}, "model": "ic2:item/nano_saber_active"},
+    {"predicate": {"ic2:active": 2}, "model": "ic2:item/nano_saber_active_1"}
+  ]
+}

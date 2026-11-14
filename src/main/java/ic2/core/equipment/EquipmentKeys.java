@@ -19,6 +19,7 @@ public final class EquipmentKeys {
     private static final KeyMapping ALT = new KeyMapping("key.ic2.alt", GLFW.GLFW_KEY_LEFT_ALT, "key.categories.ic2");
     private static EquipmentInput last = EquipmentInput.NONE;
     private static int ticks;
+    static boolean altDown() { return ALT.isDown(); }
     @SubscribeEvent public static void register(RegisterKeyMappingsEvent event) {
         event.register(MODE); event.register(HUD); event.register(BOOST); event.register(ALT);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(EquipmentKeys::tick);

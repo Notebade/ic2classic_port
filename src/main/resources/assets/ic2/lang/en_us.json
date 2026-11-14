@@ -662,5 +662,8 @@
   "item.ic2.cf_pellet": "CF Pellet",
   "item.ic2.cf_pack": "CFoam Backpack",
   "item.ic2.auto_feeder_module": "Auto Feeder Module",
-  "item.ic2.food_storage_module": "Food Storage Module"
+  "item.ic2.food_storage_module": "Food Storage Module",
+  "item.ic2.nano_saber": "Nano Saber",
+  "tooltip.item.ic2.nano_saber.enable": "Enable the Nano Saber",
+  "tooltip.item.ic2.nano_saber.disable": "Disable the Nano Saber"
 }

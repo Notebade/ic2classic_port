@@ -16,6 +16,7 @@ import net.minecraft.world.phys.Vec3;
 
 final class UtilityToolChecks {
     static void run(ServerLevel level) {
+        NanoSaberChecks.run(level);
         FoamChecks.run(level);
         checkChainsaws(level);
         for (boolean advanced : new boolean[]{false, true}) {

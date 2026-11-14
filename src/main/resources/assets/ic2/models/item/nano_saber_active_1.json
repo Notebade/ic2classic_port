@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {"layer0": "ic2:item/tools/nano_saber/active_1"}
+}

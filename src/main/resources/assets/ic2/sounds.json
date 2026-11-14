@@ -112,6 +112,31 @@
       "ic2:tools/mininglaser/explosive"
     ]
   },
+  "tools.nanosaber.nanosaber_powerup": {
+    "sounds": [
+      "ic2:tools/nanosaber/nanosaber_powerup"
+    ]
+  },
+  "tools.nanosaber.nanosaber_swing_1": {
+    "sounds": [
+      "ic2:tools/nanosaber/nanosaber_swing_1"
+    ]
+  },
+  "tools.nanosaber.nanosaber_swing_2": {
+    "sounds": [
+      "ic2:tools/nanosaber/nanosaber_swing_2"
+    ]
+  },
+  "tools.nanosaber.nanosaber_swing_3": {
+    "sounds": [
+      "ic2:tools/nanosaber/nanosaber_swing_3"
+    ]
+  },
+  "tools.nanosaber.nanosaber_idle": {
+    "sounds": [
+      "ic2:tools/nanosaber/nanosaber_idle"
+    ]
+  },
   "tools.treetap": {
     "sounds": [
       "ic2:tools/treetap"
