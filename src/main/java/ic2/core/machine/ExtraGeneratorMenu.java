@@ -27,15 +27,15 @@ final class ExtraGeneratorMenu extends AbstractContainerMenu {
         this.type = type; this.data = data; this.access = access; this.generator = generator;
         addDataSlots(data);
         var points = GenerationLayout.forId(type == ExtraGenerators.Type.SOLAR ? "solar_turbine" : "slag_generator").slots();
-        addSlot(new SlotItemHandler(inventory, 0, points.get(0).x(), points.get(0).y()));
-        addSlot(new SlotItemHandler(inventory, 1, points.get(1).x(), points.get(1).y()));
-        addSlot(new SlotItemHandler(inventory, 2, points.get(2).x(), points.get(2).y()) {
+        addSlot(new SlotItemHandler(inventory, 0, points.get(0).x(), points.get(0).y() + 23));
+        addSlot(new SlotItemHandler(inventory, 1, points.get(1).x(), points.get(1).y() + 23));
+        addSlot(new SlotItemHandler(inventory, 2, points.get(2).x(), points.get(2).y() + 23) {
             @Override public boolean mayPlace(ItemStack stack) { return false; }
         });
         for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, 84 + row * 18));
+            for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, 107 + row * 18));
         }
-        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, 142));
+        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, 165));
     }
 
     int energy() { return data.get(0); }
