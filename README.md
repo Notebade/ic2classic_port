@@ -7,7 +7,7 @@
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1.219-F07C32?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java-21-3973B9?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.71.0-8E78C9?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.71.1-8E78C9?style=for-the-badge)
 
 **⚙️ Machines · 🔋 EU Power · 🌊 Generators · 🧪 UU-Matter · 🔌 Automation**
 
@@ -62,7 +62,7 @@ Launch the development client:
 | Tested NeoForge version | `21.1.219` |
 | Java | `21` |
 | Original mod | IC2 Classic `1.19.2-2.1.3.3` |
-| Project version | `0.71.0` |
+| Project version | `0.71.1` |
 | Project status | In development |
 
 ### Generator Comparison
