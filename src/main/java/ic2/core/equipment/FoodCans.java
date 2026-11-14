@@ -12,24 +12,21 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class FoodCans extends Item {
-    private final boolean chorus;
+    private final String variant;
 
-    private FoodCans(Properties properties, boolean chorus) {
+    private FoodCans(Properties properties, String variant) {
         super(properties);
-        this.chorus = chorus;
+        this.variant = variant;
     }
 
     static void register(DeferredRegister.Items items) {
         var empty = items.registerSimpleItem("tin_can");
         for (String variant : new String[]{"", "_bad", "_poison", "_chicken", "_golden_apple", "_enchanted_golden_apple", "_chorus_fruit", "_pufferfish"}) {
             items.registerItem("filled_tin_can" + variant, p -> {
-                var food = new FoodProperties.Builder().nutrition(2).saturationModifier(.95f).alwaysEdible().fast()
+                var food = new FoodProperties.Builder().nutrition(2).saturationModifier(.95f).alwaysEdible()
                     .usingConvertsTo(empty.get());
                 switch (variant) {
-                    case "_bad" -> food.effect(new MobEffectInstance(MobEffects.CONFUSION, 150), .8f)
-                        .effect(new MobEffectInstance(MobEffects.HUNGER, 150), .8f);
                     case "_poison" -> food.effect(new MobEffectInstance(MobEffects.POISON, 50), 1);
-                    case "_chicken" -> food.effect(new MobEffectInstance(MobEffects.HUNGER, 300), .3f);
                     case "_golden_apple" -> food.effect(new MobEffectInstance(MobEffects.REGENERATION, 25, 1), 1)
                         .effect(new MobEffectInstance(MobEffects.ABSORPTION, 600), 1);
                     case "_enchanted_golden_apple" -> food.effect(new MobEffectInstance(MobEffects.REGENERATION, 100, 1), 1)
@@ -41,7 +38,9 @@ public final class FoodCans extends Item {
                         .effect(new MobEffectInstance(MobEffects.CONFUSION, 300, 1), 1);
                     default -> { }
                 }
-                return new FoodCans(p.food(food.build()), variant.equals("_chorus_fruit"));
+                var properties = food.build();
+                return new FoodCans(p.food(new FoodProperties(properties.nutrition(), properties.saturation(), properties.canAlwaysEat(),
+                    1F, properties.usingConvertsTo(), properties.effects())), variant);
             });
         }
     }
@@ -65,9 +64,20 @@ public final class FoodCans extends Item {
         var result = super.finishUsingItem(stack, level, eater);
         if (!level.isClientSide && eater instanceof Player player) {
             player.heal(2);
-            if (chorus) teleport(level, player);
+            if (variant.equals("_bad") && level.random.nextFloat() < .8F) {
+                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 150));
+                player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 150));
+            } else if (variant.equals("_chicken") && level.random.nextFloat() < .3F) {
+                player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 300));
+            } else if (variant.equals("_chorus_fruit")) teleport(level, player);
         }
         return result;
+    }
+
+    @Override public void appendHoverText(ItemStack stack, TooltipContext context,
+            java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
+        tooltip.add(net.minecraft.network.chat.Component.translatable("tooltip.item.ic2.filled_tin_can"
+            + (variant.isEmpty() ? "" : "." + variant.substring(1))));
     }
 
     private static void teleport(Level level, Player player) {

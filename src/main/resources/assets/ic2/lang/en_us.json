@@ -665,5 +665,13 @@
   "item.ic2.food_storage_module": "Food Storage Module",
   "item.ic2.nano_saber": "Nano Saber",
   "tooltip.item.ic2.nano_saber.enable": "Enable the Nano Saber",
-  "tooltip.item.ic2.nano_saber.disable": "Disable the Nano Saber"
+  "tooltip.item.ic2.nano_saber.disable": "Disable the Nano Saber",
+  "tooltip.item.ic2.filled_tin_can": "This looks good.",
+  "tooltip.item.ic2.filled_tin_can.bad": "This doesn't look appetizing.",
+  "tooltip.item.ic2.filled_tin_can.chicken": "If I concentrate, I can hear a faint sound of clucking.",
+  "tooltip.item.ic2.filled_tin_can.chorus_fruit": "I swear this can of food was over there a second ago.",
+  "tooltip.item.ic2.filled_tin_can.enchanted_golden_apple": "This food reminds me of Notch.",
+  "tooltip.item.ic2.filled_tin_can.golden_apple": "This smells of apple.",
+  "tooltip.item.ic2.filled_tin_can.poison": "This smells kinda sweet.",
+  "tooltip.item.ic2.filled_tin_can.pufferfish": "This smells fishy."
 }
