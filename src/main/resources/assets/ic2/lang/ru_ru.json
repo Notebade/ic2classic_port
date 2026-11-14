@@ -641,5 +641,16 @@
   "item.ic2.advanced_tree_tap": "Улучшенный краник",
   "block.ic2.treetap_and_bucket": "Краник с ведром",
   "item.ic2.tin_can": "Жестяная банка",
-  "item.ic2.filled_tin_can": "Консервы"
+  "item.ic2.filled_tin_can": "Консервы",
+  "item.ic2.energy_hud_module": "Модуль индикации заряда",
+  "gui.ic2.energy_hud": "%1$s %2$s / %3$s EU",
+  "item.ic2.energy_shield_overlay_module": "Модуль энергетического щита",
+  "tooltip.item.ic2.sonar_module.disabled": "Сканирование нижнего диапазона отключено",
+  "item.ic2.sonar_module": "Гидролокационный модуль",
+  "tooltip.ic2.sonar.controls": "Alt + H: дальний скан; Shift + Alt + H: ближний скан",
+  "tooltip.item.ic2.sonar_module.toggle": "Включить сканирование нижнего диапазона",
+  "tooltip.item.ic2.sonar_module.enable": "Включить сканирование нижнего диапазона",
+  "tooltip.item.ic2.sonar_module.long_scan": "Запустить сканирование на большие расстояния",
+  "tooltip.item.ic2.sonar_module.disable": "Отключить сканирование нижнего диапазона",
+  "tooltip.item.ic2.sonar_module.enabled": "Сканирование нижнего диапазона включено"
 }

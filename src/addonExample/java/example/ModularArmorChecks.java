@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 
 final class ModularArmorChecks {
     static void run(ServerLevel level) throws Exception {
+        checkSonar(level);
         for (String piece : java.util.List.of("helmet", "chestplate", "leggings", "boots")) {
             var shell = stack("nano_suit_" + piece); var armor = (ModularArmor) shell.getItem();
             require(!ElectricItem.supports(shell, Integer.MAX_VALUE, true), "bare nano shell has no installed energy store");
@@ -39,6 +40,40 @@ final class ModularArmorChecks {
         WaterWalkerChecks.run(level);
         FallArmorChecks.run(level);
         ElectricArmorChecks.run(level);
+    }
+    static void checkSonar(ServerLevel level) {
+        var player = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(level);
+        var position = player.position();
+        var slot = net.minecraft.world.entity.EquipmentSlot.HEAD;
+        var previous = player.getItemBySlot(slot);
+        boolean sneaking = player.isShiftKeyDown();
+        var helmet = stack("nano_suit_helmet");
+        var armor = (ModularArmor) helmet.getItem();
+        helmet = armor.defaultArmor();
+        var cow = net.minecraft.world.entity.EntityType.COW.create(level);
+        try {
+            require(armor.install(helmet, ArmorModule.HUD, stack("sonar_module")), "sonar uses the source HUD slot");
+            armor.setCharge(helmet, 20_000);
+            player.setPos(470.5, 138, 470.5);
+            player.setShiftKeyDown(false);
+            player.setItemSlot(slot, helmet);
+            cow.setPos(473.5, 138, 470.5);
+            require(level.addFreshEntity(cow), "sonar fixture spawns");
+            ic2.api.item.EquipmentControls.update(player, new ic2.api.item.EquipmentInput(false, false, false, true, false, true));
+            ((ic2.api.item.ArmorTickItem) helmet.getItem()).tickArmor(helmet, player, slot);
+            require(!cow.hasEffect(net.minecraft.world.effect.MobEffects.GLOWING) && armor.charge(helmet) == 0,
+                "Alt+H starts the source wave for 20000 EU without immediately revealing distant mobs");
+            ic2.api.item.EquipmentControls.clear(player);
+            for (int tick = 0; tick < 4; tick++) ((ic2.api.item.ArmorTickItem) helmet.getItem()).tickArmor(helmet, player, slot);
+            require(cow.hasEffect(net.minecraft.world.effect.MobEffects.GLOWING) && armor.charge(helmet) == 0,
+                "sonar wave reaches the mob as its radius expands without further EU cost");
+        } finally {
+            cow.discard();
+            player.setPos(position);
+            player.setItemSlot(slot, previous);
+            player.setShiftKeyDown(sneaking);
+            ic2.api.item.EquipmentControls.clear(player);
+        }
     }
     private static void checkCrafting(ServerLevel level) {
         var cell = stack("energy_crystal"); ((ElectricItem) cell.getItem()).setCharge(cell, 4321);

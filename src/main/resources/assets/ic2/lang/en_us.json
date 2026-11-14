@@ -641,5 +641,16 @@
   "item.ic2.advanced_tree_tap": "Advanced Treetap",
   "block.ic2.treetap_and_bucket": "Tree Tap and Bucket",
   "item.ic2.tin_can": "Tin Can",
-  "item.ic2.filled_tin_can": "Filled Tin Can"
+  "item.ic2.filled_tin_can": "Filled Tin Can",
+  "item.ic2.energy_hud_module": "Energy HUD Module",
+  "gui.ic2.energy_hud": "%1$s %2$s / %3$s EU",
+  "item.ic2.energy_shield_overlay_module": "Energy Shield Overlay Module",
+  "tooltip.item.ic2.sonar_module.disabled": "Low Range Scan Disabled",
+  "item.ic2.sonar_module": "Sonar Module",
+  "tooltip.ic2.sonar.controls": "Alt + H: long scan; Shift + Alt + H: toggle short scan",
+  "tooltip.item.ic2.sonar_module.toggle": "Toggle Low Range Scan",
+  "tooltip.item.ic2.sonar_module.enable": "Enable Low Range Scan",
+  "tooltip.item.ic2.sonar_module.long_scan": "Run Long Range Scan",
+  "tooltip.item.ic2.sonar_module.disable": "Disable Low Range Scan",
+  "tooltip.item.ic2.sonar_module.enabled": "Low Range Scan Enabled"
 }

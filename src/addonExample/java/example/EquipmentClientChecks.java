@@ -12,19 +12,28 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 @EventBusSubscriber(modid = ExampleAddon.MOD_ID, value = Dist.CLIENT)
 public final class EquipmentClientChecks {
     @FunctionalInterface private interface Check { void run(ServerLevel level) throws Exception; }
-    private record Case(String name, Check check) {}
-    private static final List<Case> CASES = List.of(
-        new Case("mining tools", MiningToolChecks::run),
-        new Case("portable energy", PortableEnergyChecks::run),
-        new Case("equipment", EquipmentChecks::run),
-        new Case("utility tools", UtilityToolChecks::run),
-        new Case("toolboxes", ToolboxChecks::run),
-        new Case("equipment power", EquipmentPowerChecks::run),
-        new Case("solar armor", SolarArmorChecks::run),
-        new Case("modular armor", ModularArmorChecks::run),
-        new Case("movement modules", MovementModuleChecks::run),
-        new Case("fall armor", FallArmorChecks::run),
-        new Case("electrical armor", ElectricArmorChecks::run));
+    private record Case(String name, double coordinate, Check check) {}
+    private static final List<Case> CASES = cases();
+    private static List<Case> cases() {
+        String selection = System.getProperty("ic2.equipment.case", "all");
+        if (selection.equals("sonar")) return List.of(new Case("sonar", 480, ModularArmorChecks::checkSonar));
+        var all = List.of(
+            new Case("mining tools", 480, MiningToolChecks::run),
+            new Case("portable energy", 480, PortableEnergyChecks::run),
+            new Case("equipment", 480, EquipmentChecks::run),
+            new Case("utility tools", 480, UtilityToolChecks::run),
+            new Case("toolboxes", 480, ToolboxChecks::run),
+            new Case("equipment power", 480, EquipmentPowerChecks::run),
+            new Case("solar armor", 600, SolarArmorChecks::run),
+            new Case("modular armor", 600, ModularArmorChecks::run),
+            new Case("movement modules", 600, MovementModuleChecks::run),
+            new Case("fall armor", 600, FallArmorChecks::run),
+            new Case("electrical armor", 790, ElectricArmorChecks::run));
+        if (selection.equals("all")) return all;
+        var selected = all.stream().filter(test -> test.name.equals(selection)).toList();
+        if (selected.isEmpty()) throw new IllegalArgumentException("Unknown equipment case: " + selection);
+        return selected;
+    }
     private static int index;
     private static int ticks;
     private static boolean preparing;
@@ -49,7 +58,7 @@ public final class EquipmentClientChecks {
             var id = client.player.getUUID();
             server.execute(() -> {
                 var player = server.getPlayerList().getPlayer(id);
-                double coordinate = index < 6 ? 480 : index < 10 ? 600 : 790;
+                double coordinate = CASES.get(index).coordinate;
                 player.teleportTo(coordinate, 200, coordinate);
                 player.setNoGravity(true);
             });

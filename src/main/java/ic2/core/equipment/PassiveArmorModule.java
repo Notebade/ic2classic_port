@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 final class PassiveArmorModule extends Item implements ArmorModule {
-    private enum Kind { AIR, CHARGER, PROTECTION, EXTINGUISH, GOLD }
+    private enum Kind { AIR, CHARGER, PROTECTION, EXTINGUISH, GOLD, ENERGY_HUD, SHIELD }
     private final Kind kind;
     private PassiveArmorModule(Properties properties, Kind kind) { super(properties); this.kind = kind; }
     static void register(DeferredRegister.Items items) {
@@ -24,15 +24,35 @@ final class PassiveArmorModule extends Item implements ArmorModule {
         items.registerItem("protective_module", p -> new PassiveArmorModule(p, Kind.PROTECTION));
         items.registerItem("extinguish_module", p -> new PassiveArmorModule(p, Kind.EXTINGUISH));
         items.registerItem("golden_module", p -> new PassiveArmorModule(p, Kind.GOLD));
+        items.registerItem("energy_hud_module", p -> new PassiveArmorModule(p, Kind.ENERGY_HUD));
+        items.registerItem("energy_shield_overlay_module", p -> new PassiveArmorModule(p, Kind.SHIELD));
     }
     @Override public ResourceLocation category(ItemStack module) {
-        return switch (kind) { case CHARGER -> CHARGER; case PROTECTION, EXTINGUISH -> ANY; default -> GENERIC; };
+        return switch (kind) { case CHARGER -> CHARGER; case PROTECTION, EXTINGUISH -> ANY; case ENERGY_HUD, SHIELD -> HUD; default -> GENERIC; };
     }
     @Override public boolean supportsArmor(ItemStack module, ItemStack armor, EquipmentSlot slot) {
-        return kind != Kind.AIR || slot == EquipmentSlot.HEAD;
+        return (kind != Kind.AIR && kind != Kind.ENERGY_HUD && kind != Kind.SHIELD) || slot == EquipmentSlot.HEAD;
     }
     @Override public ArmorEnergyModifier energyModifier(ItemStack module, ItemStack armor) { return new ArmorEnergyModifier(0, 0, 0, kind == Kind.CHARGER); }
-    @Override public Set<ResourceLocation> features(ItemStack module, ItemStack armor) { return kind == Kind.GOLD ? Set.of(ArmorModule.id("golden")) : Set.of(); }
+    @Override public Set<ResourceLocation> features(ItemStack module, ItemStack armor) {
+        return switch (kind) {
+            case GOLD -> Set.of(ArmorModule.id("golden"));
+            case ENERGY_HUD -> Set.of(ArmorModule.id("energy_hud"));
+            case SHIELD -> module.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                net.minecraft.world.item.component.CustomData.EMPTY).copyTag().getBoolean("always")
+                ? Set.of(ArmorModule.id("energy_shield_overlay"), ArmorModule.id("energy_shield_always"))
+                : Set.of(ArmorModule.id("energy_shield_overlay"));
+            default -> Set.of();
+        };
+    }
+    @Override public net.minecraft.world.InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level,
+            Player player, net.minecraft.world.InteractionHand hand) {
+        if (kind != Kind.SHIELD || !player.isShiftKeyDown()) return super.use(level, player, hand);
+        var stack = player.getItemInHand(hand);
+        if (!level.isClientSide) net.minecraft.world.item.component.CustomData.update(
+            net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, tag -> tag.putBoolean("always", !tag.getBoolean("always")));
+        return net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+    }
     @Override public void tickModule(ItemStack module, ItemStack armor, Player player) {
         switch (kind) {
             case AIR -> { if (player.getAirSupply() < 100 && spend(armor, 2000)) player.setAirSupply(Math.min(player.getMaxAirSupply(), player.getAirSupply() + 200)); }
