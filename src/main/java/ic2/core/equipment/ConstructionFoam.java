@@ -104,6 +104,7 @@ final class ConstructionFoam {
             }
             return net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
         }
+        @Override public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) { return useOn(context); }
         @Override public InteractionResult useOn(UseOnContext context) {
             var player = context.getPlayer(); var level = context.getLevel(); var stack = context.getItemInHand();
             if (player == null || !player.mayBuild() || EquipmentControls.current(player).mode()) return InteractionResult.PASS;

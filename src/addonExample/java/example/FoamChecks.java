@@ -73,6 +73,13 @@ public final class FoamChecks {
             var filled = ((net.minecraft.world.item.crafting.CraftingRecipe) refill).assemble(grid, level.registryAccess());
             require(manualFoam.storedFoam(filled) == 100, "crafting pellet restores 100 manual foam uses");
             checkCanner(level, origin.offset(8, 0, 8));
+            player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY); player.setItemInHand(InteractionHand.MAIN_HAND, sprayer);
+            modes.setMode(sprayer, "1"); foam.setFoam(sprayer, 100); power.setCharge(sprayer, 100);
+            level.setBlockAndUpdate(origin.below(), Blocks.CHEST.defaultBlockState());
+            level.setBlockAndUpdate(origin, Blocks.AIR.defaultBlockState());
+            player.gameMode.useItemOn(player, level, sprayer, InteractionHand.MAIN_HAND, hit);
+            require(level.getBlockState(origin).is(wet) && power.charge(sprayer) == 95,
+                "sprayer use-first places foam before interactive block opens its menu");
         } finally {
             saved.forEach((pos, state) -> level.setBlock(pos, state, 2 | 16));
             player.setItemInHand(InteractionHand.MAIN_HAND, savedHand); player.setItemSlot(EquipmentSlot.CHEST, savedChest);
