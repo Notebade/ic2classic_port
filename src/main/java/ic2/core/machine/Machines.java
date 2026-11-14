@@ -464,6 +464,7 @@ public final class Machines {
         var quadrupleInsulatedAluminiumCableItem =
             items.registerSimpleBlockItem("aluminium_quadruple_insulated_cable_item", QUADRUPLE_INSULATED_ALUMINIUM_CABLE);
         var wrench = items.registerItem("wrench", WrenchItem::new, new Item.Properties().durability(160));
+        items.registerItem("precision_wrench", p -> new ElectricWrenchItem(p, true), new Item.Properties().stacksTo(1));
         var electricWrench = items.registerItem("electric_wrench", ElectricWrenchItem::new, new Item.Properties().stacksTo(1));
         var cutter = items.registerItem("cutter", CutterItem::new, new Item.Properties().durability(128).setNoRepair());
         NeoForge.EVENT_BUS.addListener(CutterItem::onLeftClickBlock);

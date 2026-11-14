@@ -6,10 +6,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 
 final class ElectricWrenchItem extends RechargeableItem {
-    private static final int ENERGY_PER_USE = 50;
+    private final int energyPerUse;
 
     ElectricWrenchItem(Properties properties) {
-        super(properties, 12_000, 250, 32);
+        this(properties, false);
+    }
+
+    ElectricWrenchItem(Properties properties, boolean precision) {
+        super(properties, precision ? 40_000 : 12_000, precision ? 350 : 250, precision ? 128 : 32);
+        energyPerUse = precision ? 100 : 50;
     }
 
     @Override
@@ -19,7 +24,7 @@ final class ElectricWrenchItem extends RechargeableItem {
 
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
-        return WrenchItem.useOnMachine(context, cost -> ic2.api.item.ElectricEquipment.canUse(stack, cost * ENERGY_PER_USE),
-            cost -> ic2.api.item.ElectricEquipment.use(stack, cost * ENERGY_PER_USE, context.getPlayer()));
+        return WrenchItem.useOnMachine(context, cost -> ic2.api.item.ElectricEquipment.canUse(stack, cost * energyPerUse),
+            cost -> ic2.api.item.ElectricEquipment.use(stack, cost * energyPerUse, context.getPlayer()));
     }
 }
