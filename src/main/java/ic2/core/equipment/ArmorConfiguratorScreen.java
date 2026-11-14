@@ -3,7 +3,7 @@ package ic2.core.equipment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import ic2.core.machine.RemasteredGui;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -12,7 +12,6 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 @EventBusSubscriber(modid = "ic2", value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 final class ArmorConfiguratorScreen extends AbstractContainerScreen<ArmorConfiguratorMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.parse("ic2:textures/gui_sprites/blocks/machines/stone/gui_armor_configurator.png");
     private boolean scrolling;
     ArmorConfiguratorScreen(ArmorConfiguratorMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -24,11 +23,10 @@ final class ArmorConfiguratorScreen extends AbstractContainerScreen<ArmorConfigu
         event.register(ArmorConfiguratorStorage.MENU.get(), ArmorConfiguratorScreen::new);
     }
     @Override protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        for (int row = 0; row < 3; row++) for (int column = 0; column < menu.rowSize(row); column++)
-            graphics.blit(TEXTURE, leftPos + 7 + column * 18, topPos + 28 + row * 30, 17, 238, 18, 18);
+        RemasteredGui.container(graphics, leftPos, topPos, imageWidth, imageHeight, menu.slots, inventoryLabelY);
         int slider = menu.maxOffset() == 0 ? 0 : Math.round(71F * menu.offset() / menu.maxOffset());
-        graphics.blit(TEXTURE, leftPos + 172, topPos + 21 + slider, 0, 241, 12, 15);
+        graphics.fill(leftPos + 172, topPos + 21, leftPos + 184, topPos + 107, 0xff111820);
+        graphics.fill(leftPos + 173, topPos + 21 + slider, leftPos + 183, topPos + 36 + slider, RemasteredGui.ORANGE);
     }
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
@@ -36,7 +34,7 @@ final class ArmorConfiguratorScreen extends AbstractContainerScreen<ArmorConfigu
             var category = menu.category(row);
             if (category == null) continue;
             String key = category.getPath().equals("charge") ? "charger" : category.getPath();
-            graphics.drawString(font, Component.translatable("misc." + category.getNamespace() + ".module." + key), 7, 19 + row * 30, 4210752, false);
+            graphics.drawString(font, Component.translatable("misc." + category.getNamespace() + ".module." + key), 7, 19 + row * 30, RemasteredGui.TEXT, false);
         }
     }
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {

@@ -898,5 +898,13 @@
   "gui.ic2.remastered.fuel_wait": "Waiting for fuel or ingredients",
   "gui.ic2.remastered.fluid_external": "This recipe requires machine fluids. Supply them through the existing tanks, pipes or container slots; Create does not move fluids.",
   "gui.ic2.remastered.create": "Create",
-  "gui.ic2.remastered.create_hint": "Load one batch and open Work. Shift: load the maximum complete batches that fit. Processing still requires EU and time. Green rows have ingredients and room to load them."
+  "gui.ic2.remastered.create_hint": "Load one batch and open Work. Shift: load the maximum complete batches that fit. Processing still requires EU and time. Green rows have ingredients and room to load them.",
+  "gui.ic2.remaining.miner": "Targets: %s | Y: %s",
+  "gui.ic2.remaining.fluid": "%s mB | Cycle: %s",
+  "gui.ic2.remaining.start": "Start",
+  "gui.ic2.remaining.enchant_mode.0": "Enchant",
+  "gui.ic2.remaining.enchant_mode.1": "Combine",
+  "gui.ic2.remaining.enchant_mode.2": "Disenchant",
+  "gui.ic2.remaining.cost": "Cost: %s XP",
+  "gui.ic2.remaining.level": "Level: %s"
 }

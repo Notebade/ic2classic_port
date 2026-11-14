@@ -20,7 +20,7 @@ final class ElectricEnchanterMenu extends AbstractContainerMenu {
     ElectricEnchanterMenu(int id, Inventory inventory) { this(id, inventory, null, new ItemStackHandler(7), new SimpleContainerData(20)); }
     ElectricEnchanterMenu(int id, Inventory inventory, ElectricEnchanterEntity device, ItemStackHandler items, ContainerData data) {
         super(ElectricEnchanting.MENU.get(), id); this.device = device; this.data = data; player = inventory.player; addDataSlots(data);
-        int[] x = {13,42,46,64,82,64,126}; int[] y = {39,39,16,16,16,39,39};
+        int[] x = {110,130,160,180,200,180,224}; int[] y = {45,45,24,24,24,45,45};
         for (int slot = 0; slot < 7; slot++) {
             if (slot == 6) addSlot(new SlotItemHandler(items, slot, x[slot], y[slot]) {
                 @Override public boolean mayPlace(ItemStack stack) { return false; }
@@ -28,8 +28,8 @@ final class ElectricEnchanterMenu extends AbstractContainerMenu {
             });
             else addSlot(new SlotItemHandler(items, slot, x[slot], y[slot]));
         }
-        for (int row = 0; row < 3; row++) for (int column = 0; column < 9; column++) addSlot(new Slot(inventory, 9 + row * 9 + column, 8 + column * 18, 90 + row * 18));
-        for (int column = 0; column < 9; column++) addSlot(new Slot(inventory, column, 8 + column * 18, 148));
+        for (int row = 0; row < 3; row++) for (int column = 0; column < 9; column++) addSlot(new Slot(inventory, 9 + row * 9 + column, 47 + column * 18, 158 + row * 18));
+        for (int column = 0; column < 9; column++) addSlot(new Slot(inventory, column, 47 + column * 18, 216));
         addSlot(new Slot(preview, 0, -10000, -10000) {
             @Override public boolean mayPlace(ItemStack stack) { return false; }
             @Override public boolean mayPickup(Player player) { return false; }

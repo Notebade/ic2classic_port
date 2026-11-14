@@ -15,6 +15,22 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class StorageInfrastructure {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(IC2.MOD_ID);
     private static final DeferredRegister<BlockEntityType<?>> ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, IC2.MOD_ID);
+    private static final DeferredRegister<net.minecraft.world.inventory.MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, IC2.MOD_ID);
+    static final Supplier<net.minecraft.world.inventory.MenuType<net.minecraft.world.inventory.ChestMenu>> BUFFER_MENU = chest("machine_buffer", 1);
+    static final Supplier<net.minecraft.world.inventory.MenuType<net.minecraft.world.inventory.ChestMenu>> PERSONAL_MENU = chest("personal_chest", 6);
+    static final Supplier<net.minecraft.world.inventory.MenuType<ToolboxMenu>> TOOLBOX_MENU = toolbox("toolbox", 8);
+    static final Supplier<net.minecraft.world.inventory.MenuType<ToolboxMenu>> CARBON_MENU = toolbox("carbon_box", 15);
+    static final Supplier<net.minecraft.world.inventory.MenuType<ToolboxMenu>> IRIDIUM_MENU = toolbox("iridium_box", 45);
+    private static Supplier<net.minecraft.world.inventory.MenuType<net.minecraft.world.inventory.ChestMenu>> chest(String name, int rows) {
+        return MENUS.register(name, () -> new net.minecraft.world.inventory.MenuType<>((id, player) ->
+            new net.minecraft.world.inventory.ChestMenu(rows == 1 ? BUFFER_MENU.get() : PERSONAL_MENU.get(), id, player,
+                new net.minecraft.world.SimpleContainer(rows * 9), rows), net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS));
+    }
+    private static Supplier<net.minecraft.world.inventory.MenuType<ToolboxMenu>> toolbox(String name, int capacity) {
+        return MENUS.register(name, () -> new net.minecraft.world.inventory.MenuType<>((id, player) ->
+            new ToolboxMenu(id, player, new net.minecraft.world.SimpleContainer(capacity == 8 ? 9 : capacity == 15 ? 18 : 45),
+                net.minecraft.world.item.ItemStack.EMPTY, capacity), net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS));
+    }
     static final DeferredBlock<StorageBlock> BUFFER = BLOCKS.registerBlock("machine_buffer", (p)->new StorageBlock(p, false), PowerMachines.properties());
     static final DeferredBlock<StorageBlock> PERSONAL = BLOCKS.registerBlock("personal_chest", (p)->new StorageBlock(p, true), PowerMachines.properties().strength(3, 3600000));
     static final Supplier<BlockEntityType<StorageEntity>> ENTITY = ENTITIES.register("dependency_storage", ()->BlockEntityType.Builder.of(StorageEntity::new, BUFFER.get(), PERSONAL.get()).build(null));
@@ -24,6 +40,7 @@ public final class StorageInfrastructure {
     }
 
     static void register(IEventBus bus, DeferredRegister.Items items) {
+        MENUS.register(bus);
         BLOCKS.register(bus);
         ENTITIES.register(bus);
         items.registerSimpleBlockItem(BUFFER);

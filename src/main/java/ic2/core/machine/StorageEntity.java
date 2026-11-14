@@ -11,7 +11,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -108,7 +107,7 @@ final class StorageEntity extends BlockEntity implements MenuProvider, EnergySin
                 for (int i = 0; i < getContainerSize(); i++) inventory.setStackInSlot(i, ItemStack.EMPTY);
             }
         };
-        return new ChestMenu(personal() ? MenuType.GENERIC_9x6 : MenuType.GENERIC_9x1, id, player, container, personal() ? 6 : 1);
+        return new ChestMenu(personal() ? StorageInfrastructure.PERSONAL_MENU.get() : StorageInfrastructure.BUFFER_MENU.get(), id, player, container, personal() ? 6 : 1);
     }
 
     @Override

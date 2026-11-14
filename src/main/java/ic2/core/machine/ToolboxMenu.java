@@ -4,7 +4,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -14,7 +13,7 @@ final class ToolboxMenu extends AbstractContainerMenu {
     private final int physical;
 
     ToolboxMenu(int id, Inventory player, Container contents, ItemStack box, int capacity) {
-        super(capacity == 8 ? MenuType.GENERIC_3x3 : capacity == 15 ? MenuType.GENERIC_9x2 : MenuType.GENERIC_9x5, id);
+        super(capacity == 8 ? StorageInfrastructure.TOOLBOX_MENU.get() : capacity == 15 ? StorageInfrastructure.CARBON_MENU.get() : StorageInfrastructure.IRIDIUM_MENU.get(), id);
         this.contents = contents;
         this.capacity = capacity; this.physical = contents.getContainerSize();
         int columns = capacity == 8 ? 3 : 9;
@@ -22,8 +21,10 @@ final class ToolboxMenu extends AbstractContainerMenu {
 
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return contents.canPlaceItem(getContainerSlot(), stack);
+                return getContainerSlot() < capacity && contents.canPlaceItem(getContainerSlot(), stack);
             }
+
+            @Override public boolean isActive() { return getContainerSlot() < capacity; }
 
             @Override
             public boolean mayPickup(Player owner) {
