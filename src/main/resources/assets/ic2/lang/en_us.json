@@ -637,5 +637,7 @@
   "tooltip.item.ic2.mining_laser.mode.explosive": "Explosive",
   "tooltip.item.ic2.mining_laser.mode.tracking": "Tracking",
   "tooltip.item.ic2.mining_laser.error.no_target": "No target found",
-  "tooltip.item.ic2.mining_laser.error.steep": "Target block is too high or too low"
+  "tooltip.item.ic2.mining_laser.error.steep": "Target block is too high or too low",
+  "item.ic2.advanced_tree_tap": "Advanced Treetap",
+  "block.ic2.treetap_and_bucket": "Tree Tap and Bucket"
 }

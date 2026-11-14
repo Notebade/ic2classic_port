@@ -637,5 +637,7 @@
   "tooltip.item.ic2.mining_laser.mode.explosive": "Взрывной",
   "tooltip.item.ic2.mining_laser.mode.tracking": "Наведение",
   "tooltip.item.ic2.mining_laser.error.no_target": "Цель не найдена",
-  "tooltip.item.ic2.mining_laser.error.steep": "Блок слишком высоко или низко"
+  "tooltip.item.ic2.mining_laser.error.steep": "Блок слишком высоко или низко",
+  "item.ic2.advanced_tree_tap": "Улучшенный краник",
+  "block.ic2.treetap_and_bucket": "Краник с ведром"
 }

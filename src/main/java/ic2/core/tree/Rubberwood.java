@@ -48,6 +48,9 @@ public final class Rubberwood {
     public static void register(IEventBus bus, DeferredRegister.Items items) {
         BLOCKS.register(bus);
         TRUNKS.register(bus);
+        ElectricTreeTapItem.registerSounds(bus);
+        items.registerSimpleBlockItem(BLOCKS.registerBlock("treetap_and_bucket", TapCollector::new,
+            net.minecraft.world.level.block.state.BlockBehaviour.Properties.of().strength(1).noOcclusion()));
         var log = items.registerSimpleBlockItem(LOG);
         var leaves = items.registerSimpleBlockItem(LEAVES);
         var planks = items.registerSimpleBlockItem(PLANKS);
@@ -55,6 +58,7 @@ public final class Rubberwood {
         var treeTap = items.registerItem("tree_tap", TreeTapItem::new, new Item.Properties().durability(16));
         var electricTreeTap = items.registerItem("electric_tree_tap", ElectricTreeTapItem::new,
             new Item.Properties().stacksTo(1));
+        items.registerItem("advanced_tree_tap", p -> new ElectricTreeTapItem(p, true), new Item.Properties().stacksTo(1));
         bus.addListener((BuildCreativeModeTabContentsEvent event) -> {
             if (event.getTabKey().equals(CreativeModeTabs.BUILDING_BLOCKS)) {
                 event.accept(planks.get());

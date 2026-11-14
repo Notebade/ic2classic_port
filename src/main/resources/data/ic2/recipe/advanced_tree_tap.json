@@ -1,0 +1,14 @@
+{
+  "type": "ic2:electric_shaped",
+  "category": "equipment",
+  "pattern": ["XYX", "CVC", "BNB"],
+  "key": {
+    "X": {"item": "ic2:complex_circuit"},
+    "Y": {"item": "ic2:advanced_field_expansion_pad_upgrade"},
+    "C": {"item": "minecraft:netherite_ingot"},
+    "V": {"item": "ic2:treetap_and_bucket"},
+    "N": {"item": "ic2:electric_tree_tap"},
+    "B": {"item": "ic2:plate_iridium"}
+  },
+  "result": {"id": "ic2:advanced_tree_tap"}
+}

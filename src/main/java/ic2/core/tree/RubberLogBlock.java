@@ -51,23 +51,29 @@ final class RubberLogBlock extends RotatedPillarBlock {
             && state.getValue(RESIN) && state.getValue(RESIN_FACING) == face;
     }
 
-    void tap(ServerLevel level, BlockPos pos, BlockState state, Direction face) {
+    void tap(ServerLevel level, BlockPos pos, BlockState state, Direction face, ItemStack tool) {
         if (state.getValue(COLLECTABLE)) {
             level.setBlockAndUpdate(pos, state.setValue(COLLECTABLE, false));
             level.scheduleTick(pos, this, REFILL_INTERVAL);
-            dropResin(level, pos, face);
+            dropResin(level, pos, face, tool);
             return;
         }
         if (level.random.nextInt(DRY_TAP_CHANCE) == 0) {
             level.setBlockAndUpdate(pos, state.setValue(RESIN, false));
         }
         if (level.random.nextInt(DRY_TAP_CHANCE) == 0) {
-            dropResin(level, pos, face);
+            dropResin(level, pos, face, tool);
         }
     }
 
-    private static void dropResin(ServerLevel level, BlockPos pos, Direction face) {
-        popResourceFromFace(level, pos, face, new ItemStack(IC2.STICKY_RESIN.get(), 1 + level.random.nextInt(3)));
+    static int resinAmount(ServerLevel level, ItemStack tool, int base, int extra) {
+        var fortune = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+            .getHolderOrThrow(net.minecraft.world.item.enchantment.Enchantments.FORTUNE);
+        return base + level.random.nextInt(extra + tool.getEnchantmentLevel(fortune));
+    }
+
+    private static void dropResin(ServerLevel level, BlockPos pos, Direction face, ItemStack tool) {
+        popResourceFromFace(level, pos, face, new ItemStack(IC2.STICKY_RESIN.get(), resinAmount(level, tool, 1, 3)));
     }
 
     @Override

@@ -1,0 +1,18 @@
+{
+  "key": {
+    "X": {
+      "item": "ic2:tree_tap"
+    },
+    "Y": {
+      "item": "minecraft:bucket"
+    }
+  },
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X",
+    "Y"
+  ],
+  "result": {
+    "id": "ic2:treetap_and_bucket"
+  }
+}

@@ -21,7 +21,7 @@ final class TreeTapItem extends Item {
             return InteractionResult.PASS;
         }
         if (level instanceof ServerLevel server && context.getPlayer() != null) {
-            ((RubberLogBlock) state.getBlock()).tap(server, pos, state, face);
+            ((RubberLogBlock) state.getBlock()).tap(server, pos, state, face, context.getItemInHand());
             context.getItemInHand().hurtAndBreak(1, context.getPlayer(), LivingEntity.getSlotForHand(context.getHand()));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

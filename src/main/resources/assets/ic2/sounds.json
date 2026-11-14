@@ -111,5 +111,10 @@
     "sounds": [
       "ic2:tools/mininglaser/explosive"
     ]
+  },
+  "tools.treetap": {
+    "sounds": [
+      "ic2:tools/treetap"
+    ]
   }
 }
