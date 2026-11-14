@@ -39,7 +39,7 @@ public final class FoodClientCheck {
                 require(armor.install(chest, ArmorModule.STORAGE, stack("food_storage_module")), "food module installs");
                 player.setItemInHand(InteractionHand.MAIN_HAND, chest);
                 player.getInventory().setItem(1, stack("filled_tin_can").copyWithCount(2));
-                player.setShiftKeyDown(true); chest.use(player.level(), player, InteractionHand.MAIN_HAND); player.setShiftKeyDown(false);
+                EquipmentControls.update(player, EquipmentInput.fromMask(64)); chest.use(player.level(), player, InteractionHand.MAIN_HAND); EquipmentControls.clear(player);
                 require(player.containerMenu.getSlot(0).getItem().isEmpty(), "food menu starts empty without exposing armor modules");
                 require(!player.containerMenu.getSlot(0).mayPlace(new ItemStack(net.minecraft.world.item.Items.STONE))
                     && !player.containerMenu.getSlot(2).mayPlace(stack("filled_tin_can")), "food menu rejects invalid items and filled cans in output slots");
@@ -71,7 +71,7 @@ public final class FoodClientCheck {
                 require(chest.get(FoodStorageChecks.foodComponent()).getStackInSlot(2).getCount() == 2, "empty cans retained in armor output slots");
                 require(((ModularArmor) chest.getItem()).modules(chest).size() == 2, "battery and storage module survive feeding");
                 player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY); player.setItemInHand(InteractionHand.MAIN_HAND, chest);
-                player.setShiftKeyDown(true); chest.use(player.level(), player, InteractionHand.MAIN_HAND); player.setShiftKeyDown(false);
+                EquipmentControls.update(player, EquipmentInput.fromMask(64)); chest.use(player.level(), player, InteractionHand.MAIN_HAND); EquipmentControls.clear(player);
                 com.mojang.logging.LogUtils.getLogger().info("IC2 food client armor storage feeding passed");
             } catch (Throwable error) { failure = error; }
         });

@@ -676,5 +676,13 @@
   "tooltip.item.ic2.filled_tin_can.pufferfish": "This smells fishy.",
   "tooltip.item.ic2.module_energy_shield": "Toggle the Visibility of the Overlay",
   "tooltip.item.ic2.module_energy_shield.enable": "Energy Shield always Active",
-  "tooltip.item.ic2.module_energy_shield.disable": "Energy Shield only active on Hurt"
+  "tooltip.item.ic2.module_energy_shield.disable": "Energy Shield only active on Hurt",
+  "key.ic2.keys": "IC2 Keybindings",
+  "key.ic2.alt": "Alt Key",
+  "key.ic2.boost": "Boost Key",
+  "key.ic2.mode": "Mode Switch Key",
+  "key.ic2.inv": "Side Inventory Key",
+  "key.ic2.hud": "Hud Expand Key",
+  "key.ic2.toggle": "Toggle Key",
+  "key.categories.ic2": "IndustrialCraft 2 Classic"
 }

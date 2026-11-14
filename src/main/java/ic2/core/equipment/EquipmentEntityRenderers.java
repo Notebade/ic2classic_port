@@ -15,6 +15,7 @@ public final class EquipmentEntityRenderers {
             (stack, level, entity, seed) -> NanoSaber.active(stack) ? 1 + java.util.concurrent.ThreadLocalRandom.current().nextInt(2) : 0));
         NanoSaber.miningSound = NanoSaberAudio::miningSound;
         NanoSaber.clientAlt = EquipmentKeys::altDown;
+        ModularSuitItem.clientSideInventory = EquipmentKeys::sideInventoryDown;
         event.enqueueWork(() -> net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(EquipmentEntityRenderers::drawEnergy));
     }
     private static void drawEnergy(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event) {

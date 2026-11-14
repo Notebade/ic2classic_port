@@ -676,5 +676,13 @@
   "tooltip.item.ic2.filled_tin_can.pufferfish": "Это пахнет рыбой.",
   "tooltip.item.ic2.module_energy_shield": "Переключить видимость наложения",
   "tooltip.item.ic2.module_energy_shield.enable": "Энергетический щит всегда активен",
-  "tooltip.item.ic2.module_energy_shield.disable": "Энергетический щит активен только при ранении"
+  "tooltip.item.ic2.module_energy_shield.disable": "Энергетический щит активен только при ранении",
+  "key.ic2.keys": "Привязки клавиш IC2",
+  "key.ic2.alt": "Клавиша Alt",
+  "key.ic2.boost": "Клавиша ускорения",
+  "key.ic2.mode": "Клавиша переключения режимов",
+  "key.ic2.inv": "Клавиша дополнительного инвентаря",
+  "key.ic2.hud": "Клавиша открытия HUD",
+  "key.ic2.toggle": "Клавиша переключения",
+  "key.categories.ic2": "IndustrialCraft 2 Classic"
 }

@@ -36,6 +36,11 @@ public final class FoodStorageChecks {
         var mode = player.gameMode.getGameModeForPlayer();
         try {
             inventory.items.clear(); player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+            player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, chest);
+            EquipmentControls.update(player, EquipmentInput.fromMask(64));
+            require(chest.use(level, player, net.minecraft.world.InteractionHand.MAIN_HAND).getResult().consumesAction()
+                && player.getMainHandItem() == chest, "side-inventory key opens food storage without equipping the held armor");
+            EquipmentControls.clear(player); player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             var armor = (ModularArmor) stack("nano_suit_helmet").getItem(); var helmet = armor.defaultArmor();
             require(armor.install(helmet, ArmorModule.GENERIC, stack("auto_feeder_module")), "install feeder in Nano helmet");
             player.setItemSlot(EquipmentSlot.HEAD, helmet); player.setItemSlot(EquipmentSlot.CHEST, chest);

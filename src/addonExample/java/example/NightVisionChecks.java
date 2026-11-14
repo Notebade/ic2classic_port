@@ -37,8 +37,8 @@ final class NightVisionChecks {
     private static void checkInput(ServerLevel level, net.minecraft.world.entity.player.Player player) {
         long now = level.getGameTime(); var oldMenu = player.containerMenu;
         try {
-            for (int mask = 0; mask < 64; mask++) require(EquipmentInput.fromMask(mask).mask() == mask, "input mask round trip");
-            boolean rejected = false; try { EquipmentInput.fromMask(64); } catch (IllegalArgumentException expected) { rejected = true; }
+            for (int mask = 0; mask <= EquipmentInput.KNOWN_MASK; mask++) require(EquipmentInput.fromMask(mask).mask() == mask, "input mask round trip");
+            boolean rejected = false; try { EquipmentInput.fromMask(EquipmentInput.KNOWN_MASK + 1); } catch (IllegalArgumentException expected) { rejected = true; }
             require(rejected, "unknown input bits rejected");
             var input = new EquipmentInput(false, false, false, true, true, false);
             require(EquipmentControls.update(player, input) && EquipmentControls.current(player).equals(input), "server equipment input belongs to its player");

@@ -14,7 +14,7 @@ record EquipmentInputPayload(int mask) implements CustomPacketPayload {
     @Override public Type<EquipmentInputPayload> type() { return TYPE; }
     static void register(RegisterPayloadHandlersEvent event) {
         event.registrar("1").playToServer(TYPE, StreamCodec.composite(ByteBufCodecs.VAR_INT, EquipmentInputPayload::mask, EquipmentInputPayload::new),
-            (payload, context) -> { if ((payload.mask & ~63) == 0) EquipmentControls.update(context.player(), EquipmentInput.fromMask(payload.mask)); });
+            (payload, context) -> { if ((payload.mask & ~EquipmentInput.KNOWN_MASK) == 0) EquipmentControls.update(context.player(), EquipmentInput.fromMask(payload.mask)); });
     }
     static void send(EquipmentInput input) { PacketDistributor.sendToServer(new EquipmentInputPayload(input.mask())); }
 }

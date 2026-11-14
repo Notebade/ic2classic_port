@@ -29,6 +29,7 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
     private static final TagKey<DamageType> MAGIC = TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.parse("ic2:armor_magic"));
     private static final net.minecraft.resources.ResourceKey<DamageType> ELECTRICITY = net.minecraft.resources.ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.parse("ic2:electricity"));
     private final Type piece;
+    static java.util.function.BooleanSupplier clientSideInventory = () -> false;
     ModularSuitItem(Holder<ArmorMaterial> material, Type piece, Properties properties) { super(material, piece, properties); this.piece = piece; }
     static void register(DeferredRegister.Items items) {
         for (var type : List.of(Type.HELMET, Type.CHESTPLATE, Type.LEGGINGS, Type.BOOTS)) {
@@ -92,7 +93,7 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
     @Override public net.minecraft.world.InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level,
             Player player, net.minecraft.world.InteractionHand hand) {
         var stack = player.getItemInHand(hand);
-        if (player.isShiftKeyDown() && FoodStorageModule.enabled(stack)) {
+        if ((level.isClientSide ? clientSideInventory.getAsBoolean() : EquipmentControls.current(player).sideInventory()) && FoodStorageModule.enabled(stack)) {
             return FoodStorageModule.open(level, player, hand, stack);
         }
         var entries = new ArrayList<>(modules(stack));

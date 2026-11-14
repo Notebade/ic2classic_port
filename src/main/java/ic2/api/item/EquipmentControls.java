@@ -16,7 +16,7 @@ public final class EquipmentControls {
         if (player.level().isClientSide || !player.isAlive()) return EquipmentInput.NONE;
         var data = player.getPersistentData().getCompound(KEY); long age = player.level().getGameTime() - data.getLong("tick");
         if (age < 0 || age > 20) return EquipmentInput.NONE;
-        int mask = data.getInt("mask"); return (mask & ~63) == 0 ? EquipmentInput.fromMask(mask) : EquipmentInput.NONE;
+        int mask = data.getInt("mask"); return (mask & ~EquipmentInput.KNOWN_MASK) == 0 ? EquipmentInput.fromMask(mask) : EquipmentInput.NONE;
     }
     public static void clear(Player player) { player.getPersistentData().remove(KEY); }
 }
