@@ -105,9 +105,10 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         if (menu.isStorage() || isFuelGenerator() || isGeothermal()) {
             RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
-            graphics.fill(leftPos + 7, topPos + 18, leftPos + imageWidth - 7, topPos + 38, 0xff252d37);
+            int panelBottom = menu.isStorage() ? 38 : 35;
+            graphics.fill(leftPos + 7, topPos + 18, leftPos + imageWidth - 7, topPos + panelBottom, 0xff252d37);
             RemasteredGui.lightning(graphics, leftPos + 9, topPos + 20);
-            RemasteredGui.bar(graphics, leftPos + 23, topPos + 31, imageWidth - 34, 4,
+            RemasteredGui.bar(graphics, leftPos + 23, topPos + 30, imageWidth - 34, menu.isStorage() ? 4 : 3,
                 menu.energy(), energyCapacity(), RemasteredGui.GREEN);
             for (Slot slot : menu.slots) {
                 RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
