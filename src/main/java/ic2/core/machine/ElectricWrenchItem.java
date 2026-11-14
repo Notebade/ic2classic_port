@@ -25,6 +25,6 @@ final class ElectricWrenchItem extends RechargeableItem {
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         return WrenchItem.useOnMachine(context, cost -> ic2.api.item.ElectricEquipment.canUse(stack, cost * energyPerUse),
-            cost -> ic2.api.item.ElectricEquipment.use(stack, cost * energyPerUse, context.getPlayer()));
+            cost -> ic2.api.item.ElectricEquipment.use(stack, cost * energyPerUse, context.getPlayer()), energyPerUse == 100);
     }
 }

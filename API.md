@@ -392,3 +392,5 @@ Movement modules: jump_boost_module (MOVEMENT/FEET), speed_boost_module (MOVEMEN
 Nano protection recognizes existing `ic2:electricity` from native hazards. `ic2-equipment-server.toml`: `enableSpecialElectricArmor=true`, `electricSuitAbsorptionScale=1.0`, `electricSuitEnergyCostModifier=1.0` (last two 0.01–500). Special electrical absorption stores absorbed integer damage as EU when capacity is free; full armor spends normal wear unless electric boots stand above a nonempty block. Disabling special behavior uses normal affordable absorption. The source fall-payment rule remains separate from the general suit energy multiplier.
 
 The native precision_wrench uses ElectricItem with 40,000 EU capacity, 350 EU transfer and a 128 EU packet limit. Rotation costs 100 EU and dismantling costs 1,000 EU before enchantment adjustments.
+
+The precision wrench can rotate vanilla directional blocks and change pillar axes. The existing machine dismantling path remains limited to supported IC2 machines.

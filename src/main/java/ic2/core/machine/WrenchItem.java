@@ -26,27 +26,48 @@ final class WrenchItem extends Item {
     }
 
     static InteractionResult useOnMachine(UseOnContext context, IntPredicate canPay, IntConsumer pay) {
+        return useOnMachine(context, canPay, pay, false);
+    }
+
+    static InteractionResult useOnMachine(UseOnContext context, IntPredicate canPay, IntConsumer pay, boolean precision) {
         var level = context.getLevel();
         var player = context.getPlayer();
         var pos = context.getClickedPos();
         var state = level.getBlockState(pos);
-        if (!(state.getBlock() instanceof MachineBlock || state.getBlock() instanceof AdvancedMachineBlock
+        boolean vanillaRotation = precision && state.getBlock().builtInRegistryHolder().key().location().getNamespace().equals("minecraft")
+            && (state.getBlock() instanceof net.minecraft.world.level.block.DirectionalBlock
+                || state.getBlock() instanceof net.minecraft.world.level.block.HorizontalDirectionalBlock
+                || state.getBlock() instanceof net.minecraft.world.level.block.RotatedPillarBlock);
+        if ((!vanillaRotation && !(state.getBlock() instanceof MachineBlock || state.getBlock() instanceof AdvancedMachineBlock
                 || state.getBlock() instanceof PressurePartBlock || state.getBlock() instanceof ExtraGeneratorBlock
                 || state.getBlock() instanceof MonitorBlock || state.getBlock() instanceof FluidPipeBlock || state.getBlock() instanceof PoweredLampBlock
-                || state.getBlock() instanceof ChargingBlock || state.getBlock() instanceof PowerMachineBlock || state.getBlock() instanceof PowerPartBlock || state.getBlock() instanceof PowerTankBlock) || player == null || !player.mayBuild()
+                || state.getBlock() instanceof ChargingBlock || state.getBlock() instanceof PowerMachineBlock || state.getBlock() instanceof PowerPartBlock || state.getBlock() instanceof PowerTankBlock)) || player == null || !player.mayBuild()
             || !level.mayInteract(player, pos)) {
             return InteractionResult.PASS;
         }
 
         var facing = state.getBlock() instanceof MachineBlock machine ? machine.facingProperty()
             : state.getBlock() instanceof PowerMachineBlock || state.getBlock() instanceof ChargingBlock || state.getBlock() instanceof PoweredLampBlock ? net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING
-            : net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
+            : state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING)
+                ? net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING
+                : net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
         Direction target = selectedFace(context, player.isShiftKeyDown());
         boolean hasFacing = state.hasProperty(facing);
         if (state.getBlock() instanceof PowerMachineBlock block && (block.kind.multiblock() || block.kind == PowerMachines.Kind.WINDMILL)
                 && target.getAxis().isVertical()) return InteractionResult.PASS;
-        if (hasFacing && !facing.getPossibleValues().contains(target)) {
+        if (!vanillaRotation && hasFacing && !facing.getPossibleValues().contains(target)) {
             return InteractionResult.PASS;
+        }
+        if (vanillaRotation) {
+            BlockState rotated = state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS)
+                ? state.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS, target.getAxis())
+                : state.hasProperty(facing) && facing.getPossibleValues().contains(target) ? state.setValue(facing, target) : state;
+            if (rotated == state || !canPay.test(1)) return InteractionResult.PASS;
+            if (level instanceof ServerLevel server) {
+                if (!server.setBlockAndUpdate(pos, rotated)) return InteractionResult.PASS;
+                pay.accept(1);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
         boolean rotate = hasFacing && state.getValue(facing) != target;
         if (rotate && state.getBlock() instanceof ChargingBlock block && !block.canFace(level, pos, target)) return InteractionResult.PASS;

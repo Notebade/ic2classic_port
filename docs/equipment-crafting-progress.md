@@ -157,3 +157,5 @@ Electrical configuration verification is now green: `.tools/equipment-electric-a
 Checkpoint artifact: `build/checkpoints/ic2-classic-re-0.71.0-equipment-checkpoint-20261114.jar`, SHA256 `7282F0E7EB439F17958996B90FCCB9A082D32AEE66682ABFD7D974A471F74CEA`. Development version retained at 0.71.0; do not treat this as a completed equipment release. No game-instance installation or push performed.
 
 Added the precision wrench electric stats and source base recipe using the shared native wrench path. Source-specific loss prevention and the lossless upgrade remain open. Gradle check passed.
+
+Precision wrench supports vanilla directional and pillar rotation. Legacy probabilistic loss and its upgrade remain open. Gradle check passed.
