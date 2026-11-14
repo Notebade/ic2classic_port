@@ -22,7 +22,7 @@ final class MonitorMenu extends AbstractContainerMenu {
         this.access = access;
         this.entity = entity;
         addDataSlots(data);
-        for (int i = 0; i < 8; i++) addSlot(new SlotItemHandler(items, i, 26 + i % 4 * 18, 19 + i / 4 * 18));
+        for (int i = 0; i < 8; i++) addSlot(new SlotItemHandler(items, i, 96 + i % 4 * 18, 28 + i / 4 * 18));
         for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, 8 + col * 18, 137 + row * 18));
         for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 8 + col * 18, 195));
     }

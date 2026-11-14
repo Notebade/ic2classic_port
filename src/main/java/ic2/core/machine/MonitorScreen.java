@@ -63,19 +63,17 @@ final class MonitorScreen extends AbstractContainerScreen<MonitorMenu> {
 
     @Override
     protected void renderBg(GuiGraphics g, float tick, int x, int y) {
-        g.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, -3750202);
-        var background = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(IC2.MOD_ID, "textures/gui_sprites/blocks/misc/gui_monitor.png");
-        g.blit(background, leftPos, topPos, 0, 0, imageWidth, 74);
-        g.blit(background, leftPos, topPos + 137, 0, 84, imageWidth, 82);
-        for (var slot : menu.slots) {
-            g.fill(leftPos + slot.x - 1, topPos + slot.y - 1, leftPos + slot.x + 17, topPos + slot.y + 17, -11184811);
-            g.fill(leftPos + slot.x, topPos + slot.y, leftPos + slot.x + 16, topPos + slot.y + 16, -7631989);
-        }
+        RemasteredGui.frame(g, leftPos, topPos, imageWidth, imageHeight);
+        g.fill(leftPos + 7, topPos + 20, leftPos + 87, topPos + 69, 0xff252d37);
+        g.fill(leftPos + 92, topPos + 20, leftPos + 169, topPos + 69, 0xff737e8b);
+        RemasteredGui.lightning(g, leftPos + 12, topPos + 26);
+        RemasteredGui.bar(g, leftPos + 12, topPos + 56, 70, 4, menu.energy(), 1000, RemasteredGui.GREEN);
+        for (var slot : menu.slots) RemasteredGui.slot(g, leftPos + slot.x, topPos + slot.y);
     }
 
     @Override
     protected void renderLabels(GuiGraphics g, int x, int y) {
         super.renderLabels(g, x, y);
-        g.drawString(font, menu.energy() + " / 1000 EU", 8, 58, 4210752, false);
+        g.drawString(font, menu.energy() + " / 1000 EU", 12, 43, RemasteredGui.TEXT, false);
     }
 }
