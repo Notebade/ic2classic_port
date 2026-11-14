@@ -704,5 +704,9 @@
   "tooltip.item.ic2.electric_wrench.losslessWrenchModeOff": "Режим без потерь отключен",
   "tooltip.item.ic2.electric_wrench.losslessWrenchModeOn": "Режим без потерь включен",
   "tooltip.item.ic2.electric_wrench.losslessWrenchUses": "Осталось использования без потерь: %s",
-  "tooltip.item.ic2.electric_wrench.toggleLosslessMode": "Включить/отключить режим Без потерь"
+  "tooltip.item.ic2.electric_wrench.toggleLosslessMode": "Включить/отключить режим Без потерь",
+  "item.ic2.light_module": "Модуль света",
+  "tooltip.item.ic2.light.disable": "Источник света отключен",
+  "tooltip.item.ic2.light.enable": "Источник света включен",
+  "tooltip.item.ic2.light.name": "Переключить источник света"
 }

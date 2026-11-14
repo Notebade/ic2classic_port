@@ -706,5 +706,9 @@
   "tooltip.item.ic2.electric_wrench.losslessWrenchUses": "Lossless uses Left: %s",
   "tooltip.item.ic2.electric_wrench.losslessVanilla": "Lossless in Vanilla IC2Classic, addons may Vary",
   "tooltip.item.ic2.electric_wrench.toggleLosslessMode": "Enable/Disable Lossless Mode",
-  "tooltip.item.ic2.electric_wrench.machine_saved": "Machine Saved, Lossless uses Left: %s"
+  "tooltip.item.ic2.electric_wrench.machine_saved": "Machine Saved, Lossless uses Left: %s",
+  "item.ic2.light_module": "Light Module",
+  "tooltip.item.ic2.light.disable": "Light Source Disabled",
+  "tooltip.item.ic2.light.enable": "Light Source Enabled",
+  "tooltip.item.ic2.light.name": "Toggle the Light Source"
 }

@@ -17,6 +17,7 @@ public final class Equipment {
         PassiveArmorModule.register(items);
         items.registerItem("sonar_module", SonarModule::new);
         FoodCans.register(items);
+        HelmetLight.register(bus, items);
         items.registerItem("food_storage_module", FoodStorageModule::new);
         FoodStorageMenu.register(bus);
         NightVisionGoggles.register(items);
