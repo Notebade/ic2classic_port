@@ -30,7 +30,7 @@ final class RemasteredGui {
         recess(graphics, x + 46, y + 160, 164, 76);
     }
 
-    private static void frame(GuiGraphics graphics, int x, int y, int width, int height) {
+    static void frame(GuiGraphics graphics, int x, int y, int width, int height) {
         graphics.fill(x, y, x + width, y + height, 0xff10151b);
         graphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0xff737e8b);
         graphics.fill(x + 2, y + 2, x + width - 2, y + height - 2, 0xffa3adb8);

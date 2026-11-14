@@ -86,6 +86,17 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+        if (menu.isStorage()) {
+            RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+            graphics.fill(leftPos + 7, topPos + 18, leftPos + imageWidth - 7, topPos + 38, 0xff252d37);
+            RemasteredGui.lightning(graphics, leftPos + 9, topPos + 20);
+            RemasteredGui.bar(graphics, leftPos + 23, topPos + 31, imageWidth - 34, 4,
+                menu.energy(), menu.storageCapacity(), RemasteredGui.GREEN);
+            for (Slot slot : menu.slots) {
+                RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            }
+            return;
+        }
         graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFFC6C6C6);
         for (Slot slot : menu.slots) {
             int x = leftPos + slot.x;
@@ -115,7 +126,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         }
         if (menu.isStorage()) {
             graphics.drawString(font, Component.translatable("gui.ic2.storage_energy", menu.energy(), menu.storageCapacity()),
-                8, 21, 0x404040, false);
+                23, 21, RemasteredGui.TEXT, false);
             graphics.drawString(font, Component.translatable("gui.ic2.charge"), 43, 61, 0x404040, false);
             graphics.drawString(font, Component.translatable("gui.ic2.discharge"), 95, 61, 0x404040, false);
             Direction direction = Direction.from3DDataValue(menu.work());
