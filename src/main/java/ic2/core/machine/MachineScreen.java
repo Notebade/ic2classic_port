@@ -82,9 +82,12 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
-        if (isGeothermal() && isHovering(160, 39, 8, 22, mouseX, mouseY)) {
-            graphics.renderTooltip(font, Component.translatable("gui.ic2.generator_tank",
-                menu.fluid(), FluidGeneratorBlock.GEOTHERMAL_TANK), mouseX, mouseY);
+        if (hasGeneratorTank() && isHovering(160, 39, 8, 22, mouseX, mouseY)) {
+            Component tank = isGeothermal()
+                ? Component.translatable("gui.ic2.generator_tank", menu.fluid(), tankCapacity())
+                : Component.translatable(menu.isWaterMill() ? "gui.ic2.water_mill_status" : "gui.ic2.thermal_generator_status",
+                    production(), menu.fluid(), tankCapacity());
+            graphics.renderTooltip(font, tank, mouseX, mouseY);
         }
     }
 
@@ -93,17 +96,31 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
 
     private boolean isFuelGenerator() {
-        return menu.getType() == Machines.MENU.get();
+        return menu.getType() == Machines.MENU.get() && menu.processingKind() == MachineKind.GENERATOR;
+    }
+
+    private boolean hasGeneratorTank() {
+        return MachineMenu.isFluidGenerator(menu.getType());
+    }
+
+    private int tankCapacity() {
+        if (menu.isWaterMill()) return FluidGeneratorBlock.WATER_TANK;
+        return isGeothermal() ? FluidGeneratorBlock.GEOTHERMAL_TANK : ThermalProduction.TANK_CAPACITY;
+    }
+
+    private String production() {
+        int units = menu.isWaterMill() ? WaterMillTier.UNITS_PER_EU : ThermalProduction.DISPLAY_UNITS_PER_EU;
+        return String.format(Locale.ROOT, "%.2f", menu.work() / (double) units);
     }
 
     private int energyCapacity() {
         if (menu.isStorage()) return menu.storageCapacity();
-        return isGeothermal() ? MachineKind.GEOTHERMAL.capacity : MachineKind.GENERATOR.capacity;
+        return menu.processingKind().capacity;
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        if (menu.isStorage() || isFuelGenerator() || isGeothermal()) {
+        if (menu.isStorage() || isFuelGenerator() || hasGeneratorTank()) {
             RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
             int panelBottom = menu.isStorage() ? 38 : 35;
             graphics.fill(leftPos + 7, topPos + 18, leftPos + imageWidth - 7, topPos + panelBottom, 0xff252d37);
@@ -113,14 +130,14 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             for (Slot slot : menu.slots) {
                 RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
             }
-            if (isGeothermal()) {
+            if (hasGeneratorTank()) {
                 int x = leftPos + 161;
                 int y = topPos + 40;
                 graphics.fill(x - 1, y - 1, x + 7, y + 21, 0xff10151b);
                 graphics.fill(x, y, x + 6, y + 20, 0xff303945);
-                int fill = 20 * Math.clamp(menu.fluid(), 0, FluidGeneratorBlock.GEOTHERMAL_TANK)
-                    / FluidGeneratorBlock.GEOTHERMAL_TANK;
-                graphics.fill(x, y + 20 - fill, x + 6, y + 20, RemasteredGui.ORANGE);
+                int capacity = tankCapacity();
+                int fill = 20 * Math.clamp(menu.fluid(), 0, capacity) / capacity;
+                graphics.fill(x, y + 20 - fill, x + 6, y + 20, menu.isWaterMill() ? 0xff439fdf : RemasteredGui.ORANGE);
             }
             return;
         }
@@ -136,10 +153,10 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
-        if (isFuelGenerator() || isGeothermal()) {
+        if (isFuelGenerator() || hasGeneratorTank()) {
             graphics.drawString(font, Component.translatable("gui.ic2.storage_energy", menu.energy(), energyCapacity()),
                 23, 21, RemasteredGui.TEXT, false);
-            if (isGeothermal()) {
+            if (hasGeneratorTank()) {
                 drawSlotLabel(graphics, "gui.ic2.input", 32);
                 drawSlotLabel(graphics, "gui.ic2.output", 88);
                 drawSlotLabel(graphics, "gui.ic2.charge", 144);

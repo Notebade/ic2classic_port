@@ -388,7 +388,7 @@ final class MachineMenu extends AbstractContainerMenu implements ProcessingMenu 
             || isCanner(getType()) || isElectrolyzer() || isFabricator();
     }
 
-    private MachineKind processingKind() {
+    MachineKind processingKind() {
         if (isAlloySmelter()) return MachineKind.ALLOY_SMELTER;
         return MachineKind.values()[Math.clamp(data.get(KIND), 0, MachineKind.values().length - 1)];
     }
