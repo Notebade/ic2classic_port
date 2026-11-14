@@ -37,7 +37,13 @@ final class ChargingScreen extends AbstractContainerScreen<ChargingMenu> {
         addRenderableWidget(Button.builder(Component.literal(text), ignored -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, id))
             .bounds(leftPos + x, topPos + y, width, 16).build());
     }
-    @Override public void render(GuiGraphics graphics, int x, int y, float tick) { super.render(graphics, x, y, tick); renderTooltip(graphics, x, y); }
+    @Override public void render(GuiGraphics graphics, int x, int y, float tick) {
+        super.render(graphics, x, y, tick);
+        renderTooltip(graphics, x, y);
+        if (menu.kind.pad() && isHovering(8, 43, 98, 30, x, y)) {
+            graphics.renderTooltip(font, Component.translatable("gui.ic2.charging_pad"), x, y);
+        }
+    }
     @Override protected void renderBg(GuiGraphics graphics, float tick, int x, int y) {
         if (menu.styled()) {
             int bottom = menu.kind.pad() ? 75 : 116;
@@ -72,7 +78,9 @@ final class ChargingScreen extends AbstractContainerScreen<ChargingMenu> {
                         11, 47 + row * 18, RemasteredGui.TEXT, false);
                 }
             } else {
-                graphics.drawWordWrap(font, Component.translatable("gui.ic2.charging_" + key), 11, 45, 93, RemasteredGui.TEXT);
+                Component hint = Component.translatable(menu.kind.pad()
+                    ? "gui.ic2.charging_pad_hint" : "gui.ic2.charging_" + key);
+                graphics.drawWordWrap(font, hint, 11, 45, 93, RemasteredGui.TEXT);
             }
             graphics.drawString(font, playerInventoryTitle, 36, inventoryLabelY, 0x404040, false);
             return;

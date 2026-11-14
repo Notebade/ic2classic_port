@@ -578,6 +578,7 @@
   "gui.ic2.charging_sort": "Сорт.",
   "gui.ic2.charging_bench": "16 слотов зарядки →",
   "gui.ic2.charging_north": "Север",
+  "gui.ic2.charging_pad_hint": "Вход EU снизу",
   "gui.ic2.charging_pad": "EU снизу. Встаньте на площадку: руки, затем броня.",
   "gui.ic2.charging_station": "16 источников →",
   "gui.ic2.charging_armor_0": "Г",

@@ -578,6 +578,7 @@
   "gui.ic2.charging_sort": "Sort",
   "gui.ic2.charging_bench": "16 charging slots →",
   "gui.ic2.charging_north": "North",
+  "gui.ic2.charging_pad_hint": "EU input below",
   "gui.ic2.charging_pad": "Input EU below. Stand on pad; held items first, then armor.",
   "gui.ic2.charging_station": "16 source cells →",
   "gui.ic2.charging_armor_0": "H",
