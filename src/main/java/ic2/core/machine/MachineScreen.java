@@ -122,11 +122,15 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         if (menu.isStorage() || isFuelGenerator() || hasGeneratorTank()) {
             RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
-            int panelBottom = menu.isStorage() ? 38 : 35;
+            int panelBottom = menu.isStorage() ? 34 : 35;
             graphics.fill(leftPos + 7, topPos + 18, leftPos + imageWidth - 7, topPos + panelBottom, 0xff252d37);
             RemasteredGui.lightning(graphics, leftPos + 9, topPos + 20);
-            RemasteredGui.bar(graphics, leftPos + 23, topPos + 30, imageWidth - 34, menu.isStorage() ? 4 : 3,
-                menu.energy(), energyCapacity(), RemasteredGui.GREEN);
+            if (menu.isStorage()) {
+                renderStorageBattery(graphics);
+            } else {
+                RemasteredGui.bar(graphics, leftPos + 23, topPos + 30, imageWidth - 34, 3,
+                    menu.energy(), energyCapacity(), RemasteredGui.GREEN);
+            }
             for (Slot slot : menu.slots) {
                 RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
             }
@@ -148,6 +152,15 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             graphics.fill(x - 1, y - 1, x + 17, y + 17, 0xFF777777);
             graphics.fill(x, y, x + 17, y + 17, 0xFF8B8B8B);
         }
+    }
+
+    private void renderStorageBattery(GuiGraphics graphics) {
+        int x = leftPos + imageWidth / 2;
+        int y = topPos + 38;
+        graphics.fill(x - 4, y, x + 4, y + 3, 0xff303945);
+        graphics.fill(x - 10, y + 3, x + 10, y + 29, 0xff10151b);
+        graphics.fill(x - 8, y + 5, x + 8, y + 27, 0xff737e8b);
+        RemasteredGui.verticalBar(graphics, x - 6, y + 7, 12, 18, menu.energy(), menu.storageCapacity());
     }
 
     @Override
