@@ -30,7 +30,10 @@ final class PowerMachineMenu extends AbstractContainerMenu implements Processing
             final int index = slot;
             int x = layout == null ? 8 + slot * 22 : layout.slots().get(slot).x();
             int y = layout == null ? 100 : layout.slots().get(slot).y();
-            if (conversionPanel()) {
+            if (kind == PowerMachines.Kind.WHISKY_BARREL) {
+                x = slot < 3 ? 130 + slot * 28 : 144 + (slot - 3) * 28;
+                y = slot < 3 ? 36 : 61;
+            } else if (conversionPanel()) {
                 x = 139;
                 y = 52;
             } else if (plasmaPanel()) {
@@ -56,7 +59,8 @@ final class PowerMachineMenu extends AbstractContainerMenu implements Processing
         }
         int inventoryY = conversionPanel() ? 109 : plasmaPanel() ? 132 : steamPanel() ? 124 : generatorPanel() ? 107
             : processing() ? AlloyGuiLayout.INVENTORY_SLOTS_Y : layout == null ? 132 : layout.inventoryY();
-        int inventoryX = plasmaPanel() ? 36 : processing() ? AlloyGuiLayout.SLOT_X : 8;
+        int inventoryX = kind == PowerMachines.Kind.WHISKY_BARREL ? 42
+            : plasmaPanel() ? 36 : processing() ? AlloyGuiLayout.SLOT_X : 8;
         for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, inventoryX + col * 18, inventoryY + row * 18));
         for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, inventoryX + col * 18, processing() ? AlloyGuiLayout.HOTBAR_Y : inventoryY + 58));
     }

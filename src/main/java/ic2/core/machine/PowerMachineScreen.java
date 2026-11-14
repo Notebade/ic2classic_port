@@ -22,6 +22,7 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
         super(menu, player, title);
         layout = GenerationLayout.forId(menu.kind.id);
         if (menu.plasmaPanel()) imageWidth = 232;
+        if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) imageWidth = 244;
         imageHeight = menu.conversionPanel() ? 191 : menu.plasmaPanel() ? 214 : menu.steamPanel() ? 206 : menu.generatorPanel() ? 189 : layout == null ? 214 : layout.height();
     }
     @SubscribeEvent public static void register(RegisterMenuScreensEvent event) {
@@ -45,8 +46,8 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
         if (menu.kind == PowerMachines.Kind.REFINERY) {
             chemicalButton(6, "1 → out", 8, 50); chemicalButton(7, "2 → out", 61, 50); chemicalButton(8, "out → in", 114, 54);
         } else if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) {
-            chemicalButton(9, Component.translatable("gui.ic2.power_seal").getString(), 8, 76);
-            chemicalButton(10, Component.translatable("gui.ic2.power_open").getString(), 88, 80);
+            chemicalButton(9, Component.translatable("gui.ic2.power_seal").getString(), 126, 91, 52);
+            chemicalButton(10, Component.translatable("gui.ic2.power_open").getString(), 181, 91, 52);
         }
         if (menu.kind != PowerMachines.Kind.TRANSFORMER) return;
         String[] names = {"÷2", "×2", "-1", "+1", "-", "+"};
@@ -57,8 +58,11 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
         }
     }
     private void chemicalButton(int id, String label, int x, int width) {
+        chemicalButton(id, label, x, 74, width);
+    }
+    private void chemicalButton(int id, String label, int x, int y, int width) {
         addRenderableWidget(Button.builder(Component.literal(label), ignored -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, id))
-            .bounds(leftPos + x, topPos + 74, width, 20).build());
+            .bounds(leftPos + x, topPos + y, width, 20).build());
     }
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float tick) {
         super.render(graphics, mouseX, mouseY, tick); renderTooltip(graphics, mouseX, mouseY);
@@ -67,6 +71,15 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
             graphics.renderComponentTooltip(font, details, mouseX, mouseY);
     }
     @Override protected void renderBg(GuiGraphics graphics, float tick, int mouseX, int mouseY) {
+        if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) {
+            RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+            graphics.fill(leftPos + 7, topPos + 19, leftPos + 117, topPos + 117, 0xff302923);
+            graphics.fill(leftPos + 121, topPos + 19, leftPos + 237, topPos + 117, 0xff8b8278);
+            graphics.fill(leftPos + 7, topPos + 19, leftPos + 237, topPos + 22, 0xffa56e38);
+            RemasteredGui.bar(graphics, leftPos + 12, topPos + 103, 100, 4, barrelProgress(), 100, RemasteredGui.ORANGE);
+            for (var slot : menu.slots) RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            return;
+        }
         if (menu.conversionPanel()) {
             RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
             graphics.fill(leftPos + 7, topPos + 20, leftPos + 107, topPos + 94, 0xff252d37);
@@ -151,6 +164,14 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         details.clear();
         graphics.drawString(font, title, 8, 6, 0x404040, false);
+        if (menu.kind == PowerMachines.Kind.WHISKY_BARREL) {
+            int y = barrelLine(graphics, 28, "barrel_state_" + menu.value(20));
+            y = barrelLine(graphics, y, "barrel_contents", menu.value(14), menu.value(15));
+            y = barrelLine(graphics, y, "barrel_stage", menu.value(19));
+            barrelLine(graphics, y, "chemical_progress", barrelProgress());
+            graphics.drawString(font, playerInventoryTitle, 42, 122, 0x404040, false);
+            return;
+        }
         if (menu.conversionPanel()) {
             boolean flux = menu.kind.flux();
             Component energy = Component.translatable(flux ? "gui.ic2.power_fe" : "gui.ic2.power_eu", menu.value(0), menu.value(12));
@@ -228,6 +249,20 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
             return;
         }
         graphics.drawString(font, playerInventoryTitle, 8, layout == null ? 122 : layout.inventoryY() - 10, 0x404040, false);
+    }
+
+    private int barrelProgress() {
+        int duration = menu.value(17);
+        return duration <= 0 ? 0 : (int) Math.clamp(menu.value(13) * 100L / duration, 0, 100);
+    }
+
+    private int barrelLine(GuiGraphics graphics, int y, String key, Object... args) {
+        for (var line : font.split(Component.translatable("gui.ic2.power_" + key, args), 100)) {
+            if (y + font.lineHeight > 100) break;
+            graphics.drawString(font, line, 12, y, RemasteredGui.TEXT, false);
+            y += font.lineHeight;
+        }
+        return y + 3;
     }
 
     private void drawPlasmaMetrics(GuiGraphics graphics, boolean labels) {
