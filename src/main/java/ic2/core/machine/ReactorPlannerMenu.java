@@ -47,14 +47,14 @@ final class ReactorPlannerMenu extends AbstractContainerMenu {
         addDataSlots(data);
         addDataSlot(selection);
         for (int slot = 0; slot < ReactorRules.SLOT_COUNT; slot++) {
-            addSlot(new SlotItemHandler(layout, slot, 8 + slot % ReactorRules.COLUMNS * 18, 56 + slot / ReactorRules.COLUMNS * 18) {
+            addSlot(new SlotItemHandler(layout, slot, 112 + slot % ReactorRules.COLUMNS * 18, 36 + slot / ReactorRules.COLUMNS * 18) {
                 @Override public boolean isActive() { return getSlotIndex() % ReactorRules.COLUMNS < width(); }
                 @Override public boolean mayPickup(Player player) { return false; }
                 @Override public boolean mayPlace(ItemStack stack) { return false; }
             });
         }
         for (int index = 0; index < 36; index++) {
-            addSlot(new Slot(player, index, 8 + index % 9 * 18, index < 9 ? 254 : 196 + (index / 9 - 1) * 18));
+            addSlot(new Slot(player, index, 60 + index % 9 * 18, index < 9 ? 254 : 196 + (index / 9 - 1) * 18));
         }
     }
 
