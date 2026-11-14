@@ -39,7 +39,9 @@ final class ExtraGeneratorScreen extends AbstractContainerScreen<ExtraGeneratorM
         RemasteredGui.lightning(graphics, leftPos + 9, topPos + 20);
         RemasteredGui.bar(graphics, leftPos + 23, topPos + 30, 142, 3, menu.energy(),
             solar() ? SolarTurbineCycle.MAX_STORED : SlagGeneratorCycle.CAPACITY, RemasteredGui.GREEN);
-        RemasteredGui.bar(graphics, leftPos + 9, topPos + 82, 45, 4,
+        graphics.fill(leftPos + 7, topPos + 38, leftPos + 104, topPos + 94, 0xff252d37);
+        graphics.fill(leftPos + 108, topPos + 38, leftPos + 169, topPos + 94, 0xff737e8b);
+        RemasteredGui.bar(graphics, leftPos + 11, topPos + 85, 89, 4,
             solar() ? menu.heat() : menu.fuelPercent(),
             solar() ? SolarTurbineCycle.MAX_HEAT : 100, solar() ? 0xff439fdf : RemasteredGui.ORANGE);
         for (var slot : menu.slots) {
@@ -52,13 +54,22 @@ final class ExtraGeneratorScreen extends AbstractContainerScreen<ExtraGeneratorM
         graphics.drawString(font, Component.translatable("gui.ic2.extra_energy", menu.energy()),
             23, 20, RemasteredGui.TEXT, false);
         String output = String.format(Locale.ROOT, "%.2f", menu.outputHundredths() / 100.0);
-        graphics.drawString(font, Component.translatable("gui.ic2.turbine_output", output), 8, 42, 0x404040, false);
+        int y = drawMetric(graphics, Component.translatable("gui.ic2.turbine_output", output), 42);
         if (solar()) {
-            graphics.drawString(font, Component.translatable("gui.ic2.extra_water", menu.water()), 8, 53, 0x404040, false);
-            graphics.drawString(font, Component.translatable("gui.ic2.induction_heat",
-                100 * menu.heat() / SolarTurbineCycle.MAX_HEAT), 8, 71, 0x404040, false);
+            y = drawMetric(graphics, Component.translatable("gui.ic2.extra_water", menu.water()), y);
+            drawMetric(graphics, Component.translatable("gui.ic2.induction_heat",
+                100 * menu.heat() / SolarTurbineCycle.MAX_HEAT), y);
         } else {
-            graphics.drawString(font, Component.translatable("gui.ic2.extra_fuel", menu.fuelPercent()), 8, 71, 0x404040, false);
+            drawMetric(graphics, Component.translatable("gui.ic2.extra_fuel", menu.fuelPercent()), y);
         }
+    }
+
+    private int drawMetric(GuiGraphics graphics, Component text, int y) {
+        for (var line : font.split(text, 89)) {
+            if (y + font.lineHeight > 83) break;
+            graphics.drawString(font, line, 11, y, RemasteredGui.TEXT, false);
+            y += font.lineHeight;
+        }
+        return y + 2;
     }
 }
