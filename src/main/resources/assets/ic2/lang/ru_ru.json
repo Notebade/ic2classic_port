@@ -673,5 +673,8 @@
   "tooltip.item.ic2.filled_tin_can.enchanted_golden_apple": "Эта еда напоминает мне Нотча.",
   "tooltip.item.ic2.filled_tin_can.golden_apple": "Это пахнет яблоком.",
   "tooltip.item.ic2.filled_tin_can.poison": "Это сладко пахнет.",
-  "tooltip.item.ic2.filled_tin_can.pufferfish": "Это пахнет рыбой."
+  "tooltip.item.ic2.filled_tin_can.pufferfish": "Это пахнет рыбой.",
+  "tooltip.item.ic2.module_energy_shield": "Переключить видимость наложения",
+  "tooltip.item.ic2.module_energy_shield.enable": "Энергетический щит всегда активен",
+  "tooltip.item.ic2.module_energy_shield.disable": "Энергетический щит активен только при ранении"
 }

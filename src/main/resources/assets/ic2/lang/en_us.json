@@ -673,5 +673,8 @@
   "tooltip.item.ic2.filled_tin_can.enchanted_golden_apple": "This food reminds me of Notch.",
   "tooltip.item.ic2.filled_tin_can.golden_apple": "This smells of apple.",
   "tooltip.item.ic2.filled_tin_can.poison": "This smells kinda sweet.",
-  "tooltip.item.ic2.filled_tin_can.pufferfish": "This smells fishy."
+  "tooltip.item.ic2.filled_tin_can.pufferfish": "This smells fishy.",
+  "tooltip.item.ic2.module_energy_shield": "Toggle the Visibility of the Overlay",
+  "tooltip.item.ic2.module_energy_shield.enable": "Energy Shield always Active",
+  "tooltip.item.ic2.module_energy_shield.disable": "Energy Shield only active on Hurt"
 }

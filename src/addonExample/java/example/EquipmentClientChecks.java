@@ -21,6 +21,7 @@ public final class EquipmentClientChecks {
         if (selection.equals("food")) return List.of(new Case("food", 480, FoodStorageChecks::run));
         if (selection.equals("saber")) return List.of(new Case("saber", 480, NanoSaberChecks::run));
         if (selection.equals("cans")) return List.of(new Case("cans", 480, FoodCanEffectsChecks::run));
+        if (selection.equals("shield")) return List.of(new Case("shield", 480, ShieldModuleChecks::run));
         var all = List.of(
             new Case("mining tools", 480, MiningToolChecks::run),
             new Case("portable energy", 480, PortableEnergyChecks::run),

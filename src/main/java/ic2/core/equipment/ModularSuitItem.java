@@ -95,6 +95,17 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
         if (player.isShiftKeyDown() && FoodStorageModule.enabled(stack)) {
             return FoodStorageModule.open(level, player, hand, stack);
         }
+        var entries = new ArrayList<>(modules(stack));
+        for (int index = 0; index < entries.size(); index++) {
+            var entry = entries.get(index); var module = entry.stack();
+            if (module.getItem() instanceof ArmorModule action && action.useOnArmor(module, stack, player)) {
+                if (!level.isClientSide) {
+                    entries.set(index, new InstalledArmorModule(entry.category(), module));
+                    ArmorModules.write(stack, entries, ArmorModules.derive(stack, entries, enhanced(stack)));
+                }
+                return net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+            }
+        }
         return super.use(level, player, hand);
     }
 

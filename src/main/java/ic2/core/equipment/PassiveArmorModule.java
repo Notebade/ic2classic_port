@@ -50,9 +50,31 @@ final class PassiveArmorModule extends Item implements ArmorModule {
             Player player, net.minecraft.world.InteractionHand hand) {
         if (kind != Kind.SHIELD || !player.isShiftKeyDown()) return super.use(level, player, hand);
         var stack = player.getItemInHand(hand);
-        if (!level.isClientSide) net.minecraft.world.item.component.CustomData.update(
-            net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, tag -> tag.putBoolean("always", !tag.getBoolean("always")));
+        toggleShield(stack, player);
         return net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+    }
+    @Override public boolean useOnArmor(ItemStack module, ItemStack armor, Player player) {
+        if (kind != Kind.SHIELD || !player.isShiftKeyDown()) return false;
+        toggleShield(module, player);
+        return true;
+    }
+    private static void toggleShield(ItemStack module, Player player) {
+        if (player.level().isClientSide) return;
+        net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+            module, tag -> tag.putBoolean("always", !tag.getBoolean("always")));
+        boolean always = module.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).copyTag().getBoolean("always");
+        player.displayClientMessage(net.minecraft.network.chat.Component.translatable(always
+            ? "tooltip.item.ic2.module_energy_shield.enable" : "tooltip.item.ic2.module_energy_shield.disable"), false);
+    }
+    @Override public void appendHoverText(ItemStack stack, TooltipContext context,
+            java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
+        if (kind != Kind.SHIELD) return;
+        tooltip.add(net.minecraft.network.chat.Component.literal("Shift + ").append(net.minecraft.network.chat.Component.translatable("key.mouse.right"))
+            .append(": ").append(net.minecraft.network.chat.Component.translatable("tooltip.item.ic2.module_energy_shield")));
+        boolean always = stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+            net.minecraft.world.item.component.CustomData.EMPTY).copyTag().getBoolean("always");
+        tooltip.add(net.minecraft.network.chat.Component.translatable(always
+            ? "tooltip.item.ic2.module_energy_shield.enable" : "tooltip.item.ic2.module_energy_shield.disable"));
     }
     @Override public void tickModule(ItemStack module, ItemStack armor, Player player) {
         switch (kind) {

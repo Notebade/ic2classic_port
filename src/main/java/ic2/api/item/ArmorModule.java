@@ -22,4 +22,6 @@ public interface ArmorModule {
     default void installed(ItemStack module, ItemStack armor) {}
     default void removed(ItemStack module, ItemStack armor) {}
     default void tickModule(ItemStack module, ItemStack armor, Player wearer) {}
+    /** Handles use of the held armor. Server mutations to the module are persisted by its holder. */
+    default boolean useOnArmor(ItemStack module, ItemStack armor, Player wearer) { return false; }
 }

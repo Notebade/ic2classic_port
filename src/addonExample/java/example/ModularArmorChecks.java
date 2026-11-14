@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 
 final class ModularArmorChecks {
     static void run(ServerLevel level) throws Exception {
+        ShieldModuleChecks.run(level);
         checkSonar(level);
         for (String piece : java.util.List.of("helmet", "chestplate", "leggings", "boots")) {
             var shell = stack("nano_suit_" + piece); var armor = (ModularArmor) shell.getItem();
