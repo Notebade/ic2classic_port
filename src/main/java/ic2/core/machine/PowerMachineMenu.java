@@ -30,7 +30,10 @@ final class PowerMachineMenu extends AbstractContainerMenu implements Processing
             final int index = slot;
             int x = layout == null ? 8 + slot * 22 : layout.slots().get(slot).x();
             int y = layout == null ? 100 : layout.slots().get(slot).y();
-            if (plasmaPanel()) {
+            if (conversionPanel()) {
+                x = 139;
+                y = 52;
+            } else if (plasmaPanel()) {
                 x += kind == PowerMachines.Kind.FUSION ? 56 : 70;
                 y += 24;
             } else if (steamPanel()) {
@@ -51,7 +54,7 @@ final class PowerMachineMenu extends AbstractContainerMenu implements Processing
                 }
             });
         }
-        int inventoryY = plasmaPanel() ? 132 : steamPanel() ? 124 : generatorPanel() ? 107
+        int inventoryY = conversionPanel() ? 109 : plasmaPanel() ? 132 : steamPanel() ? 124 : generatorPanel() ? 107
             : processing() ? AlloyGuiLayout.INVENTORY_SLOTS_Y : layout == null ? 132 : layout.inventoryY();
         int inventoryX = plasmaPanel() ? 36 : processing() ? AlloyGuiLayout.SLOT_X : 8;
         for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, 9 + row * 9 + col, inventoryX + col * 18, inventoryY + row * 18));
@@ -66,6 +69,9 @@ final class PowerMachineMenu extends AbstractContainerMenu implements Processing
     }
     boolean plasmaPanel() {
         return kind == PowerMachines.Kind.FUSION || kind == PowerMachines.Kind.PLASMAFIER;
+    }
+    boolean conversionPanel() {
+        return kind == PowerMachines.Kind.TRANSFORMER || kind.flux();
     }
     @Override public boolean clickMenuButton(Player player, int button) {
         if (processing() && button >= 1000) return ProcessingTransfer.handle(this, this, player, button);

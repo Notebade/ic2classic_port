@@ -22,7 +22,7 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
         super(menu, player, title);
         layout = GenerationLayout.forId(menu.kind.id);
         if (menu.plasmaPanel()) imageWidth = 232;
-        imageHeight = menu.plasmaPanel() ? 214 : menu.steamPanel() ? 206 : menu.generatorPanel() ? 189 : layout == null ? 214 : layout.height();
+        imageHeight = menu.conversionPanel() ? 191 : menu.plasmaPanel() ? 214 : menu.steamPanel() ? 206 : menu.generatorPanel() ? 189 : layout == null ? 214 : layout.height();
     }
     @SubscribeEvent public static void register(RegisterMenuScreensEvent event) {
         for (var entry : PowerMachines.SCREENS.entrySet()) {
@@ -53,7 +53,7 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
         for (int i = 0; i < names.length; i++) {
             final int button = i;
             addRenderableWidget(Button.builder(Component.literal(names[i]), ignored -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, button))
-                .bounds(leftPos + 8 + i * 27, topPos + 74, 25, 20).build());
+                .bounds(leftPos + 115 + i % 2 * 26, topPos + 26 + i / 2 * 21, 24, 18).build());
         }
     }
     private void chemicalButton(int id, String label, int x, int width) {
@@ -67,6 +67,21 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
             graphics.renderComponentTooltip(font, details, mouseX, mouseY);
     }
     @Override protected void renderBg(GuiGraphics graphics, float tick, int mouseX, int mouseY) {
+        if (menu.conversionPanel()) {
+            RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
+            graphics.fill(leftPos + 7, topPos + 20, leftPos + 107, topPos + 94, 0xff252d37);
+            graphics.fill(leftPos + 111, topPos + 20, leftPos + 169, topPos + 94, 0xff737e8b);
+            int accent = switch (menu.kind) {
+                case FLUX_LV -> 0xffb96c42;
+                case FLUX_MV -> RemasteredGui.ORANGE;
+                case FLUX_HV -> 0xffdd5353;
+                default -> RemasteredGui.GREEN;
+            };
+            graphics.fill(leftPos + 111, topPos + 20, leftPos + 169, topPos + 22, accent);
+            RemasteredGui.bar(graphics, leftPos + 11, topPos + 84, 92, 4, menu.value(0), menu.value(12), accent);
+            for (var slot : menu.slots) RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            return;
+        }
         if (menu.plasmaPanel()) {
             RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
             graphics.fill(leftPos + 7, topPos + 19, leftPos + 106, topPos + 118, 0xff252d37);
@@ -136,6 +151,16 @@ final class PowerMachineScreen extends AbstractContainerScreen<PowerMachineMenu>
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         details.clear();
         graphics.drawString(font, title, 8, 6, 0x404040, false);
+        if (menu.conversionPanel()) {
+            boolean flux = menu.kind.flux();
+            Component energy = Component.translatable(flux ? "gui.ic2.power_fe" : "gui.ic2.power_eu", menu.value(0), menu.value(12));
+            Component rate = flux ? Component.translatable("gui.ic2.power_flux_rate", menu.kind.input)
+                : Component.translatable("gui.ic2.power_packet", menu.value(8), menu.value(9));
+            graphics.drawWordWrap(font, energy, 11, 27, 92, RemasteredGui.TEXT);
+            graphics.drawWordWrap(font, rate, 11, 49, 92, RemasteredGui.TEXT);
+            graphics.drawString(font, playerInventoryTitle, 8, 98, 0x404040, false);
+            return;
+        }
         if (menu.plasmaPanel()) {
             drawPlasmaMetrics(graphics, true);
             graphics.drawString(font, playerInventoryTitle, 36, 121, 0x404040, false);
