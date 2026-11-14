@@ -660,5 +660,7 @@
   "tooltip.item.ic2.electric_sprayer.change_range": "Переключить диапазон",
   "tooltip.item.ic2.electric_sprayer.stored": "Хранится строительной пены: %s",
   "item.ic2.cf_pellet": "Гранула строительной пены",
-  "item.ic2.cf_pack": "Ранец с пеной"
+  "item.ic2.cf_pack": "Ранец с пеной",
+  "item.ic2.auto_feeder_module": "Модуль автокормления",
+  "item.ic2.food_storage_module": "Модуль хранения еды"
 }

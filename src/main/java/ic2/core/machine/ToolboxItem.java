@@ -22,7 +22,7 @@ final class ToolboxItem extends Item implements ic2.api.item.Toolbox {
     @Override public boolean accepts(ItemStack stack) {
         if (stack.isEmpty()) return true;
         if (!stack.canFitInsideContainerItems() || stack.getItem() instanceof ic2.api.item.Toolbox || stack.getCount() > stack.getMaxStackSize()) return false;
-        return stack.is(TOOLS) || stack.getItem() instanceof ic2.api.item.BoxableItem boxable && boxable.canStoreInToolbox(stack)
+        return stack.has(DataComponents.FOOD) || stack.is(TOOLS) || stack.getItem() instanceof ic2.api.item.BoxableItem boxable && boxable.canStoreInToolbox(stack)
             || stack.getItem() instanceof net.minecraft.world.item.TieredItem || stack.getItem() instanceof net.minecraft.world.item.ShearsItem
             || stack.getItem() instanceof net.minecraft.world.item.FishingRodItem || stack.getItem() instanceof net.minecraft.world.item.FlintAndSteelItem
             || stack.getItem() instanceof net.minecraft.world.item.BrushItem || stack.getItem() instanceof ic2.api.item.ElectricItem;

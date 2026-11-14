@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/armor/modules/auto_feed"
+  },
+  "parent": "minecraft:item/generated"
+}

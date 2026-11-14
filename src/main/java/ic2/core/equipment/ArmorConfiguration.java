@@ -24,5 +24,8 @@ record ArmorConfiguration(List<ResourceLocation> categories, int capacity, int r
     ).apply(i, ArmorConfiguration::new));
     private static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(net.minecraft.core.registries.Registries.DATA_COMPONENT_TYPE, "ic2");
     static final java.util.function.Supplier<DataComponentType<ArmorConfiguration>> TYPE = COMPONENTS.registerComponentType("armor_configuration", b -> b.persistent(CODEC));
+    static final java.util.function.Supplier<DataComponentType<net.minecraft.world.item.component.ItemContainerContents>> FOOD =
+        COMPONENTS.registerComponentType("armor_food", b -> b.persistent(net.minecraft.world.item.component.ItemContainerContents.CODEC)
+            .networkSynchronized(net.minecraft.world.item.component.ItemContainerContents.STREAM_CODEC));
     static void register(IEventBus bus) { COMPONENTS.register(bus); }
 }

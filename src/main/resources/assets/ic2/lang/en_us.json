@@ -660,5 +660,7 @@
   "tooltip.item.ic2.electric_sprayer.change_range": "Toggle the Range",
   "tooltip.item.ic2.electric_sprayer.stored": "CFoam Stored: %s",
   "item.ic2.cf_pellet": "CF Pellet",
-  "item.ic2.cf_pack": "CFoam Backpack"
+  "item.ic2.cf_pack": "CFoam Backpack",
+  "item.ic2.auto_feeder_module": "Auto Feeder Module",
+  "item.ic2.food_storage_module": "Food Storage Module"
 }

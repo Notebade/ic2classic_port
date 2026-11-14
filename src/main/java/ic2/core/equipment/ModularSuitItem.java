@@ -89,11 +89,21 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
         }
         return true;
     }
+    @Override public net.minecraft.world.InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level,
+            Player player, net.minecraft.world.InteractionHand hand) {
+        var stack = player.getItemInHand(hand);
+        if (player.isShiftKeyDown() && FoodStorageModule.enabled(stack)) {
+            return FoodStorageModule.open(level, player, hand, stack);
+        }
+        return super.use(level, player, hand);
+    }
+
     @Override public ItemStack removeModule(ItemStack armor, int index, boolean simulate) {
         if (!armor.is(this) || armor.getCount() != 1) return ItemStack.EMPTY;
         var entries = new ArrayList<>(modules(armor));
         if (index < 0 || index >= entries.size()) return ItemStack.EMPTY;
         var removed = entries.remove(index).stack(); int stored = charge(armor), moved = 0;
+        if (removed.getItem() instanceof FoodStorageModule && FoodStorageModule.hasContents(armor)) return ItemStack.EMPTY;
         if (ArmorModules.shares(removed, armor) && removed.getItem() instanceof ElectricItem battery) {
             moved = Math.min(stored, battery.capacity(removed) - battery.charge(removed));
             battery.setCharge(removed, battery.charge(removed) + moved);

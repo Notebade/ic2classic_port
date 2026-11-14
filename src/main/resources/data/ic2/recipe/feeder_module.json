@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": ["XY", "CV"],
+  "key": {
+    "X": {"item": "ic2:energy_crystal"},
+    "Y": {"item": "minecraft:smoker"},
+    "C": {"item": "ic2:advanced_circuit"},
+    "V": {"item": "ic2:base_module"}
+  },
+  "result": {"id": "ic2:auto_feeder_module"}
+}
