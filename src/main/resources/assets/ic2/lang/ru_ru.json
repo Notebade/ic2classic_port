@@ -159,6 +159,8 @@
   "fluid_type.ic2.steam": "Пар",
   "gui.ic2.steam_reactor_status": "%s мБ/тик · Нагрев %s/%s",
   "gui.ic2.steam_reactor_tanks": "Вода %s мБ · Пар %s мБ",
+  "gui.ic2.turbine_output": "%s EU/тик",
+  "gui.ic2.turbine_steam": "Пар: %s / %s мБ",
   "gui.ic2.steam_turbine_status": "Запас %s EU · %s EU/тик",
   "gui.ic2.steam_turbine_tank": "Бак пара · %s мБ",
   "item.ic2.steam_vent": "Паровой теплоотвод",

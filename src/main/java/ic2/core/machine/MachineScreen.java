@@ -120,7 +120,7 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        if (menu.isStorage() || isFuelGenerator() || hasGeneratorTank()) {
+        if (menu.isStorage() || isFuelGenerator() || hasGeneratorTank() || menu.isWindTurbine() || menu.isSteamTurbine()) {
             RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
             int panelBottom = menu.isStorage() ? 34 : 35;
             graphics.fill(leftPos + 7, topPos + 18, leftPos + imageWidth - 7, topPos + panelBottom, 0xff252d37);
@@ -142,6 +142,10 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 int capacity = tankCapacity();
                 int fill = 20 * Math.clamp(menu.fluid(), 0, capacity) / capacity;
                 graphics.fill(x, y + 20 - fill, x + 6, y + 20, menu.isWaterMill() ? 0xff439fdf : RemasteredGui.ORANGE);
+            }
+            if (menu.isSteamTurbine()) {
+                RemasteredGui.bar(graphics, leftPos + 9, topPos + 60, imageWidth - 18, 5,
+                    menu.fluid(), SteamTurbine.CAPACITY, 0xff439fdf);
             }
             return;
         }
@@ -180,19 +184,19 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             }
             return;
         }
-        if (menu.isSteamTurbine()) {
-            graphics.drawString(font, Component.translatable("gui.ic2.steam_turbine_status", menu.energy(), menu.work()),
-                8, 21, 0x404040, false);
-            graphics.drawString(font, Component.translatable("gui.ic2.steam_turbine_tank", menu.fluid()),
-                8, 33, 0x404040, false);
-            return;
-        }
-        if (menu.isWindTurbine()) {
-            String output = String.format(Locale.ROOT, "%.2f", menu.work() / (double) WindProduction.UNITS_PER_EU);
-            graphics.drawString(font, Component.translatable("gui.ic2.wind_status", output, menu.energy()),
-                8, 21, 0x404040, false);
-            Component charge = Component.translatable("gui.ic2.charge");
-            graphics.drawString(font, charge, 88 - font.width(charge) / 2, 61, 0x404040, false);
+        if (menu.isWindTurbine() || menu.isSteamTurbine()) {
+            graphics.drawString(font, Component.translatable("gui.ic2.storage_energy", menu.energy(), energyCapacity()),
+                23, 21, RemasteredGui.TEXT, false);
+            String output = menu.isWindTurbine()
+                ? String.format(Locale.ROOT, "%.2f", menu.work() / (double) WindProduction.UNITS_PER_EU)
+                : Integer.toString(menu.work());
+            graphics.drawString(font, Component.translatable("gui.ic2.turbine_output", output), 8, 43, 0x404040, false);
+            if (menu.isWindTurbine()) {
+                drawSlotLabel(graphics, "gui.ic2.charge", 88);
+            } else {
+                graphics.drawString(font, Component.translatable("gui.ic2.turbine_steam", menu.fluid(),
+                    SteamTurbine.CAPACITY), 8, 51, 0x404040, false);
+            }
             return;
         }
         if (menu.isStorage()) {

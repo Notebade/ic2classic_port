@@ -159,6 +159,8 @@
   "fluid_type.ic2.steam": "Steam",
   "gui.ic2.steam_reactor_status": "%s mB/t · Heat %s/%s",
   "gui.ic2.steam_reactor_tanks": "Water %s mB · Steam %s mB",
+  "gui.ic2.turbine_output": "%s EU/t",
+  "gui.ic2.turbine_steam": "Steam: %s / %s mB",
   "gui.ic2.steam_turbine_status": "%s EU stored · %s EU/t",
   "gui.ic2.steam_turbine_tank": "Steam tank · %s mB",
   "item.ic2.steam_vent": "Steam Vent",
