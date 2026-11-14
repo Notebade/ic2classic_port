@@ -82,6 +82,10 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
+        if (isGeothermal() && isHovering(160, 39, 8, 22, mouseX, mouseY)) {
+            graphics.renderTooltip(font, Component.translatable("gui.ic2.generator_tank",
+                menu.fluid(), FluidGeneratorBlock.GEOTHERMAL_TANK), mouseX, mouseY);
+        }
     }
 
     private boolean isGeothermal() {
@@ -138,8 +142,6 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 drawSlotLabel(graphics, "gui.ic2.input", 32);
                 drawSlotLabel(graphics, "gui.ic2.output", 88);
                 drawSlotLabel(graphics, "gui.ic2.charge", 144);
-                graphics.drawString(font, Component.translatable("gui.ic2.generator_tank", menu.fluid(),
-                    FluidGeneratorBlock.GEOTHERMAL_TANK), 8, 69, 0x404040, false);
             } else {
                 drawSlotLabel(graphics, "gui.ic2.generator_fuel", 61);
                 drawSlotLabel(graphics, "gui.ic2.output", 115);
