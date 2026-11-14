@@ -84,16 +84,38 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         renderTooltip(graphics, mouseX, mouseY);
     }
 
+    private boolean isGeothermal() {
+        return menu.getType() == Machines.GEOTHERMAL_MENU.get();
+    }
+
+    private boolean isFuelGenerator() {
+        return menu.getType() == Machines.MENU.get();
+    }
+
+    private int energyCapacity() {
+        if (menu.isStorage()) return menu.storageCapacity();
+        return isGeothermal() ? MachineKind.GEOTHERMAL.capacity : MachineKind.GENERATOR.capacity;
+    }
+
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        if (menu.isStorage()) {
+        if (menu.isStorage() || isFuelGenerator() || isGeothermal()) {
             RemasteredGui.frame(graphics, leftPos, topPos, imageWidth, imageHeight);
             graphics.fill(leftPos + 7, topPos + 18, leftPos + imageWidth - 7, topPos + 38, 0xff252d37);
             RemasteredGui.lightning(graphics, leftPos + 9, topPos + 20);
             RemasteredGui.bar(graphics, leftPos + 23, topPos + 31, imageWidth - 34, 4,
-                menu.energy(), menu.storageCapacity(), RemasteredGui.GREEN);
+                menu.energy(), energyCapacity(), RemasteredGui.GREEN);
             for (Slot slot : menu.slots) {
                 RemasteredGui.slot(graphics, leftPos + slot.x, topPos + slot.y);
+            }
+            if (isGeothermal()) {
+                int x = leftPos + 161;
+                int y = topPos + 40;
+                graphics.fill(x - 1, y - 1, x + 7, y + 21, 0xff10151b);
+                graphics.fill(x, y, x + 6, y + 20, 0xff303945);
+                int fill = 20 * Math.clamp(menu.fluid(), 0, FluidGeneratorBlock.GEOTHERMAL_TANK)
+                    / FluidGeneratorBlock.GEOTHERMAL_TANK;
+                graphics.fill(x, y + 20 - fill, x + 6, y + 20, RemasteredGui.ORANGE);
             }
             return;
         }
@@ -109,6 +131,22 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderLabels(graphics, mouseX, mouseY);
+        if (isFuelGenerator() || isGeothermal()) {
+            graphics.drawString(font, Component.translatable("gui.ic2.storage_energy", menu.energy(), energyCapacity()),
+                23, 21, RemasteredGui.TEXT, false);
+            if (isGeothermal()) {
+                drawSlotLabel(graphics, "gui.ic2.input", 32);
+                drawSlotLabel(graphics, "gui.ic2.output", 88);
+                drawSlotLabel(graphics, "gui.ic2.charge", 144);
+                graphics.drawString(font, Component.translatable("gui.ic2.generator_tank", menu.fluid(),
+                    FluidGeneratorBlock.GEOTHERMAL_TANK), 8, 69, 0x404040, false);
+            } else {
+                drawSlotLabel(graphics, "gui.ic2.generator_fuel", 61);
+                drawSlotLabel(graphics, "gui.ic2.output", 115);
+                if (menu.work() > 0) RemasteredGui.lightning(graphics, 84, 43);
+            }
+            return;
+        }
         if (menu.isSteamTurbine()) {
             graphics.drawString(font, Component.translatable("gui.ic2.steam_turbine_status", menu.energy(), menu.work()),
                 8, 21, 0x404040, false);
@@ -197,5 +235,10 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         graphics.drawString(font, input, 61 - font.width(input) / 2, 61, 0x404040, false);
         graphics.drawString(font, Component.translatable(menu.isElectrolyzer() ? "gui.ic2.discharge" : "gui.ic2.output"),
             102, 61, 0x404040, false);
+    }
+
+    private void drawSlotLabel(GuiGraphics graphics, String key, int center) {
+        Component label = Component.translatable(key);
+        graphics.drawString(font, label, center - font.width(label) / 2, 59, 0x404040, false);
     }
 }

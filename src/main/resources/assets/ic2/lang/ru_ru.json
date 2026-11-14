@@ -404,6 +404,8 @@
   "item.ic2.re_battery.charge": "Заряд: %s / %s EU",
   "gui.ic2.machine_status": "%s EU | %s тиков",
   "gui.ic2.pump_status": "%s EU | %s т | %s мБ",
+  "gui.ic2.generator_fuel": "Топливо",
+  "gui.ic2.generator_tank": "Лава: %s / %s мБ",
   "gui.ic2.geothermal_status": "%s EU | %s/%s мБ",
   "gui.ic2.input": "Вход",
   "gui.ic2.amplifier": "Запас усилителя: %s",

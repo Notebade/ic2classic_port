@@ -404,6 +404,8 @@
   "item.ic2.re_battery.charge": "Charge: %s / %s EU",
   "gui.ic2.machine_status": "%s EU | %s ticks",
   "gui.ic2.pump_status": "%s EU | %s t | %s mB",
+  "gui.ic2.generator_fuel": "Fuel",
+  "gui.ic2.generator_tank": "Lava: %s / %s mB",
   "gui.ic2.geothermal_status": "%s EU | %s/%s mB",
   "gui.ic2.input": "Input",
   "gui.ic2.amplifier": "Amplifier reserve: %s",
