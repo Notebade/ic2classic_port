@@ -27,6 +27,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /** Module custody and derived EU configuration change together; rejected operations preserve caller stacks. */
 final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTickItem, ProtectiveArmor, FallProtectiveArmor, ElectricEnchantable {
     private static final TagKey<DamageType> MAGIC = TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.parse("ic2:armor_magic"));
+    private static final net.minecraft.resources.ResourceKey<DamageType> ELECTRICITY = net.minecraft.resources.ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.parse("ic2:electricity"));
     private final Type piece;
     ModularSuitItem(Holder<ArmorMaterial> material, Type piece, Properties properties) { super(material, piece, properties); this.piece = piece; }
     static void register(DeferredRegister.Items items) {
@@ -133,11 +134,17 @@ final class ModularSuitItem extends ArmorItem implements ModularArmor, ArmorTick
     }
     @Override public Absorption absorption(ItemStack stack, LivingEntity wearer, DamageSource source, double damage, EquipmentSlot slot) {
         if (!protects(source, wearer)) return Absorption.NONE;
+        if (source.is(ELECTRICITY) && EquipmentConfig.SPECIAL_ELECTRIC.get()) return new Absorption(0, 1, Integer.MAX_VALUE);
         double share = switch (slot) { case HEAD -> .15; case CHEST -> .4; case LEGS, FEET -> .3; default -> 0; };
-        return new Absorption(0, .9 * share, charge(stack) / 800);
+        return new Absorption(0, .9 * share * EquipmentConfig.ARMOR_ABSORPTION.get(), (int) (charge(stack) / (800 * EquipmentConfig.ARMOR_ENERGY_COST.get())));
     }
     @Override public void absorbed(ItemStack stack, LivingEntity wearer, DamageSource source, int damage, EquipmentSlot slot, Wear kind) {
-        setCharge(stack, charge(stack) - ElectricEquipment.energyCost(stack, (int) Math.min(Integer.MAX_VALUE, (long) damage * 800)));
+        if (source.is(ELECTRICITY) && EquipmentConfig.SPECIAL_ELECTRIC.get()) {
+            if (capacity(stack) > charge(stack)) { setCharge(stack, (int) Math.min(capacity(stack), (long) charge(stack) + damage)); return; }
+            if (wearer.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ElectricItem && !wearer.level().isEmptyBlock(wearer.blockPosition().below())) return;
+        }
+        int cost = (int) Math.min(Integer.MAX_VALUE, damage * 800.0 * EquipmentConfig.ARMOR_ENERGY_COST.get());
+        setCharge(stack, charge(stack) - ElectricEquipment.energyCost(stack, cost));
     }
     @Override public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) { return false; }
     @Override public int absorbFall(ItemStack stack, Player wearer, int damage, boolean simulate) {

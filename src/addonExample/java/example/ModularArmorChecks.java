@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 
 final class ModularArmorChecks {
-    static void run(ServerLevel level) {
+    static void run(ServerLevel level) throws Exception {
         for (String piece : java.util.List.of("helmet", "chestplate", "leggings", "boots")) {
             var shell = stack("nano_suit_" + piece); var armor = (ModularArmor) shell.getItem();
             require(!ElectricItem.supports(shell, Integer.MAX_VALUE, true), "bare nano shell has no installed energy store");
@@ -38,6 +38,7 @@ final class ModularArmorChecks {
         MovementModuleChecks.run(level);
         WaterWalkerChecks.run(level);
         FallArmorChecks.run(level);
+        ElectricArmorChecks.run(level);
     }
     private static void checkCrafting(ServerLevel level) {
         var cell = stack("energy_crystal"); ((ElectricItem) cell.getItem()).setCharge(cell, 4321);
