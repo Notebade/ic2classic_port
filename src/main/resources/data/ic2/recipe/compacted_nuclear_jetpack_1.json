@@ -1,0 +1,1 @@
+{"type":"ic2:sized_shaped","category":"equipment","pattern":[" C ","XYX","VBV"],"key":{"C":{"item":"ic2:batpack"},"Y":{"item":"ic2:nuclear_jetpack"},"X":{"item":"ic2:advanced_circuit"},"V":{"item":"ic2:electric_jetpack"},"B":{"item":"ic2:lappack"}},"counts":{"ic2:advanced_circuit":4},"result":{"id":"ic2:compacted_nuclear_jetpack"}}

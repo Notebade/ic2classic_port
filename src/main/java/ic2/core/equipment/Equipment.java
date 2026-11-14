@@ -28,6 +28,10 @@ public final class Equipment {
         items.registerItem("nano_shield", NanoShield::new);
         NanoSaber.register(bus, items);
         MiningLaser.register(bus, items);
+        ElectricJetpack.register(items);
+        NuclearJetpackMenu.register(bus);
+        JetpackFlight.register(bus);
+        FuelJetpack.register(bus, items);
         ConstructionFoam.register(bus, items);
         ObscuratorItem.register(bus, items);
         PoweredDrill.register(items);

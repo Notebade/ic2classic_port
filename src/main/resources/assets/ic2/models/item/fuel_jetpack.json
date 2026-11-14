@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "ic2:item/armor/jetpack/base"
+  },
+  "parent": "minecraft:item/generated"
+}

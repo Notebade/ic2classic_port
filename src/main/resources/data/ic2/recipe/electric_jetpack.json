@@ -1,0 +1,12 @@
+{
+  "type": "ic2:electric_shaped",
+  "category": "equipment",
+  "pattern": ["ICI", "IBI", "G G"],
+  "key": {
+    "I": {"tag": "c:ingots/refined_iron"},
+    "C": {"item": "ic2:advanced_circuit"},
+    "B": {"item": "ic2:batbox"},
+    "G": {"item": "minecraft:glowstone_dust"}
+  },
+  "result": {"id": "ic2:electric_jetpack"}
+}

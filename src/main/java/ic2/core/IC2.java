@@ -62,6 +62,8 @@ public final class IC2 {
         RECIPE_SERIALIZERS.register("sized_shaped", () -> ic2.core.recipe.SizedShapedRecipe.SERIALIZER);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ic2.core.recipe.ToolboxUpgradeRecipe>> TOOLBOX_UPGRADE_RECIPE =
         RECIPE_SERIALIZERS.register("toolbox_upgrade", () -> ic2.core.recipe.ToolboxUpgradeRecipe.SERIALIZER);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ic2.core.recipe.JetpackRepairRecipe>> JETPACK_REPAIR_RECIPE =
+        RECIPE_SERIALIZERS.register("jetpack_repair", () -> ic2.core.recipe.JetpackRepairRecipe.SERIALIZER);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ic2.core.recipe.ElectricShapedRecipe>> ELECTRIC_SHAPED_RECIPE =
         RECIPE_SERIALIZERS.register("electric_shaped", () -> ic2.core.recipe.ElectricShapedRecipe.SERIALIZER);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ReactorFuelCellRecipe>> REACTOR_FUEL_CELL_RECIPE =

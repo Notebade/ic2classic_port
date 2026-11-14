@@ -10,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 
 final class MovementModuleChecks {
     static void run(ServerLevel level) {
+        JetpackChecks.run(level);
         var player = net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(level);
         var slots = java.util.List.of(EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST);
         var saved = slots.stream().map(s -> player.getItemBySlot(s).copy()).toList(); var position = player.position(); var velocity = player.getDeltaMovement(); boolean ground = player.onGround(), shift = player.isShiftKeyDown(); float fall = player.fallDistance;

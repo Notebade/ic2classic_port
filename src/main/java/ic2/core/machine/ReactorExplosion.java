@@ -45,18 +45,24 @@ public final class ReactorExplosion {
     }
 
     private ReactorExplosion(ServerLevel level, Vec3 origin, float power, boolean electrical, Entity shot) {
+        this(level, origin, power, electrical, shot, shot != null, shot != null ? .85f : electrical ? .75f : .01f);
+    }
+    private ReactorExplosion(ServerLevel level, Vec3 origin, float power, boolean electrical, Entity source, boolean laser, float dropRate) {
         this.level = level;
-        this.laser = shot != null;
-        this.dropRate = laser ? .85f : electrical ? .75f : .01f;
+        this.laser = laser;
+        this.dropRate = dropRate;
         this.electrical = electrical;
         this.origin = origin;
         this.power = power;
-        event = new Explosion(level, shot, origin.x, origin.y, origin.z, (float)ReactorBlastMath.radius(power), false, Explosion.BlockInteraction.DESTROY);
+        event = new Explosion(level, source, origin.x, origin.y, origin.z, (float)ReactorBlastMath.radius(power), false, Explosion.BlockInteraction.DESTROY);
         bounds = new AABB(BlockPos.containing(origin)).inflate(ReactorBlastMath.radius(power));
     }
 
     public static void detonate(ServerLevel level, BlockPos pos, float power) {
         if (Float.isFinite(power) && power > 0) new ReactorExplosion(level, pos, power, false).run();
+    }
+    public static void detonatePortable(ServerLevel level, net.minecraft.world.entity.player.Player owner, float power) {
+        if (Float.isFinite(power) && power > 0) new ReactorExplosion(level, owner.position(), power, false, owner, false, 1.5f).run();
     }
     static void detonateElectrical(ServerLevel level, BlockPos pos) { new ReactorExplosion(level, pos, 2.5F, true).run(); }
 

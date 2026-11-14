@@ -146,5 +146,15 @@
     "sounds": [
       "ic2:tools/wrench"
     ]
+  },
+  "tools.jetpack.jetpack_loop": {
+    "sounds": [
+      "ic2:tools/jetpack/jetpack_loop"
+    ]
+  },
+  "tools.jetpack.jetpack_fire": {
+    "sounds": [
+      "ic2:tools/jetpack/jetpack_fire"
+    ]
   }
 }

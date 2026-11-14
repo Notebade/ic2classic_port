@@ -1,0 +1,1 @@
+{"type":"ic2:sized_shaped","category":"equipment","pattern":[" C ","XYX","VBV"],"key":{"C":{"item":"ic2:upgrade_transformer"},"Y":{"item":"ic2:batpack"},"X":{"item":"ic2:advanced_circuit"},"V":{"item":"ic2:electric_jetpack"},"B":{"item":"ic2:lappack"}},"counts":{"ic2:advanced_circuit":4},"result":{"id":"ic2:compacted_electric_jetpack"}}
