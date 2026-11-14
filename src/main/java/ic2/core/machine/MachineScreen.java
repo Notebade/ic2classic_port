@@ -158,9 +158,9 @@ final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         int x = leftPos + imageWidth / 2;
         int y = topPos + 38;
         graphics.fill(x - 4, y, x + 4, y + 3, 0xff303945);
-        graphics.fill(x - 10, y + 3, x + 10, y + 29, 0xff10151b);
-        graphics.fill(x - 8, y + 5, x + 8, y + 27, 0xff737e8b);
-        RemasteredGui.verticalBar(graphics, x - 6, y + 7, 12, 18, menu.energy(), menu.storageCapacity());
+        graphics.fill(x - 10, y + 3, x + 10, y + 20, 0xff10151b);
+        graphics.fill(x - 8, y + 5, x + 8, y + 18, 0xff737e8b);
+        RemasteredGui.verticalBar(graphics, x - 6, y + 7, 12, 9, menu.energy(), menu.storageCapacity());
     }
 
     @Override
