@@ -40,7 +40,7 @@ final class ElectricArmorChecks {
             var properties = ((ProtectiveArmor) armor).absorption(helmet, wearer, wearer.damageSources().generic(), 10, EquipmentSlot.HEAD);
             require(Math.abs(properties.ratio() - .27) < .00001 && properties.maximum() == 2 && armor.charge(helmet) == 3200, "source absorption and energy cost configuration change the pure protection descriptor");
             wearer.hurt(wearer.damageSources().generic(), 10);
-            require(wearer.getHealth() == 18 && armor.charge(helmet) == 0, "configured protection caps real absorbed damage by affordable EU and spends configured wear");
+            require(wearer.getHealth() == 12 && armor.charge(helmet) == 0, "configured protection absorbs two of ten damage and spends configured wear: health=" + wearer.getHealth() + ", EU=" + armor.charge(helmet));
         } finally { absorption.set(oldAbsorption); cost.set(oldCost); }
     }
     private static net.minecraft.world.entity.animal.Cow mob(ServerLevel level, ItemStack helmet) {
