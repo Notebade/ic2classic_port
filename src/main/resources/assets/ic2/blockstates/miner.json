@@ -1,0 +1,36 @@
+{
+  "variants": {
+    "facing=south,lit=true": {
+      "model": "ic2:block/miner_on",
+      "y": 180
+    },
+    "facing=east,lit=false": {
+      "model": "ic2:block/miner",
+      "y": 90
+    },
+    "facing=north,lit=false": {
+      "model": "ic2:block/miner",
+      "y": 0
+    },
+    "facing=east,lit=true": {
+      "model": "ic2:block/miner_on",
+      "y": 90
+    },
+    "facing=north,lit=true": {
+      "model": "ic2:block/miner_on",
+      "y": 0
+    },
+    "facing=south,lit=false": {
+      "model": "ic2:block/miner",
+      "y": 180
+    },
+    "facing=west,lit=true": {
+      "model": "ic2:block/miner_on",
+      "y": 270
+    },
+    "facing=west,lit=false": {
+      "model": "ic2:block/miner",
+      "y": 270
+    }
+  }
+}

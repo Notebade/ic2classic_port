@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "south": "ic2:block/machine/lv/miner/active_south",
+    "east": "ic2:block/machine/lv/miner/active_east",
+    "up": "ic2:block/machine/lv/miner/active_up",
+    "north": "ic2:block/machine/lv/miner/active_north",
+    "down": "ic2:block/machine/lv/miner/active_down",
+    "particle": "ic2:block/machine/lv/miner/active_north",
+    "west": "ic2:block/machine/lv/miner/active_west"
+  }
+}

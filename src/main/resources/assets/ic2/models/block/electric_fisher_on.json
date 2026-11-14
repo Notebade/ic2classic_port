@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "south": "ic2:block/machine/ev/fisher/side",
+    "east": "ic2:block/machine/ev/fisher/side",
+    "up": "ic2:block/machine/ev/fisher/up",
+    "north": "ic2:block/machine/ev/fisher/side",
+    "down": "ic2:block/machine/ev/fisher/down",
+    "particle": "ic2:block/machine/ev/fisher/side",
+    "west": "ic2:block/machine/ev/fisher/side"
+  }
+}

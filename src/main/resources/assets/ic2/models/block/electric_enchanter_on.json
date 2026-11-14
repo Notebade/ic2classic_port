@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "south": "ic2:block/machine/hv/electric_enchanter/south",
+    "east": "ic2:block/machine/hv/electric_enchanter/east",
+    "up": "ic2:block/machine/hv/electric_enchanter/up",
+    "north": "ic2:block/machine/hv/electric_enchanter/north",
+    "down": "ic2:block/machine/hv/electric_enchanter/down",
+    "particle": "ic2:block/machine/hv/electric_enchanter/north",
+    "west": "ic2:block/machine/hv/electric_enchanter/west"
+  }
+}

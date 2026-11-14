@@ -39,6 +39,7 @@ public final class ApiSmokeChecks {
             RangedPumpChecks.run(server.overworld());
             OvervoltageChecks.run(server.overworld());
             PortableEnergyChecks.run(server.overworld());
+            AssetCatalogChecks.run();
             EquipmentChecks.run(server.overworld());
             UtilityToolChecks.run(server.overworld());
             ToolboxChecks.run(server.overworld());

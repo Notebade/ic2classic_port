@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "south": "ic2:block/machine/hv/colossal_furnace/inactive_south",
+    "east": "ic2:block/machine/hv/colossal_furnace/inactive_east",
+    "up": "ic2:block/machine/hv/colossal_furnace/inactive_up",
+    "north": "ic2:block/machine/hv/colossal_furnace/inactive_north",
+    "down": "ic2:block/machine/hv/colossal_furnace/inactive_down",
+    "particle": "ic2:block/machine/hv/colossal_furnace/inactive_north",
+    "west": "ic2:block/machine/hv/colossal_furnace/inactive_west"
+  }
+}

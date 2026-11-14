@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "south": "ic2:block/machine/hv/colossal_extractor/active_south",
+    "east": "ic2:block/machine/hv/colossal_extractor/active_east",
+    "up": "ic2:block/machine/hv/colossal_extractor/active_up",
+    "north": "ic2:block/machine/hv/colossal_extractor/active_north",
+    "down": "ic2:block/machine/hv/colossal_extractor/active_down",
+    "particle": "ic2:block/machine/hv/colossal_extractor/active_north",
+    "west": "ic2:block/machine/hv/colossal_extractor/active_west"
+  }
+}
